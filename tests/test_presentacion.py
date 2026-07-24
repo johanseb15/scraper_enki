@@ -19,3 +19,22 @@ def test_generar_reporte_texto():
     assert "28000" in reporte
     assert "30666" in reporte
     assert "34000" in reporte
+
+def test_generar_reporte_texto_muestra_precios_por_empresa():
+    resumen = {
+        "servicio": "Eliminación de malware",
+        "cantidad": 2,
+        "precio_minimo": 25000,
+        "precio_promedio": 27408,
+        "precio_maximo": 29816,
+        "empresas_relevadas": 2,
+        "precios_por_empresa": {
+            "Vida Informatica": 29816,
+            "BairesCloud": 25000,
+        },
+    }
+
+    reporte = generar_reporte_texto(resumen)
+
+    assert "Vida Informatica: 29816" in reporte
+    assert "BairesCloud: 25000" in reporte
