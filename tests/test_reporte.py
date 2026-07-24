@@ -111,3 +111,15 @@ def test_generar_resumen_compara_precios_entre_empresas():
     assert resumen["precio_minimo"] == 25000
     assert resumen["precio_maximo"] == 29816
     assert resumen["precio_promedio"] == 27408
+
+def test_generar_resumen_servicio_sin_datos_devuelve_resumen_vacio():
+    resumen = generar_resumen_servicio(
+        [],
+        "Eliminación de malware",
+    )
+
+    assert resumen["cantidad"] == 0
+    assert resumen["empresas_relevadas"] == 0
+    assert resumen["precio_minimo"] is None
+    assert resumen["precio_promedio"] is None
+    assert resumen["precio_maximo"] is None

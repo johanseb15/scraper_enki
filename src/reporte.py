@@ -42,6 +42,16 @@ def generar_resumen_servicio(
         if _es_mismo_servicio(d.servicio, servicio)
     ]
 
+    if not filtrados:
+        return {
+            "servicio": servicio,
+            "cantidad": 0,
+            "precio_minimo": None,
+            "precio_promedio": None,
+            "precio_maximo": None,
+            "empresas_relevadas": 0,
+        }
+
     return {
         "servicio": servicio,
         "cantidad": len(filtrados),
