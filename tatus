@@ -1,0 +1,60 @@
+[1mdiff --git a/src/__pycache__/estadisticas.cpython-314.pyc b/src/__pycache__/estadisticas.cpython-314.pyc[m
+[1mindex 64145b7..2a48be0 100644[m
+Binary files a/src/__pycache__/estadisticas.cpython-314.pyc and b/src/__pycache__/estadisticas.cpython-314.pyc differ
+[1mdiff --git a/src/estadisticas.py b/src/estadisticas.py[m
+[1mindex 4694b10..8b1912b 100644[m
+[1m--- a/src/estadisticas.py[m
+[1m+++ b/src/estadisticas.py[m
+[36m@@ -11,8 +11,12 @@[m [mdef calcular_precio_promedio([m
+         if item.servicio == servicio[m
+     ][m
+ [m
+[32m+[m[32m    if not precios:[m
+[32m+[m[32m        raise ValueError(f"{servicio}: sin datos relevados")[m
+[32m+[m
+     return sum(precios) // len(precios)[m
+ [m
+[32m+[m
+ def calcular_precio_minimo([m
+     datos: list[ServicioPrecio],[m
+     servicio: str,[m
+[36m@@ -22,14 +26,16 @@[m [mdef calcular_precio_minimo([m
+         for item in datos[m
+         if item.servicio == servicio[m
+     ][m
+[32m+[m
+     if not precios:[m
+         raise ValueError(f"{servicio}: sin datos relevados")[m
+[31m-    [m
+[32m+[m
+     return min(precios)[m
+ [m
+[32m+[m
+ def calcular_precio_maximo([m
+[31m-        datos: list[ServicioPrecio],[m
+[31m-        servicio: str,[m
+[32m+[m[32m    datos: list[ServicioPrecio],[m
+[32m+[m[32m    servicio: str,[m
+ ) -> int:[m
+     precios = [[m
+         item.precio_freelance[m
+[36m@@ -40,16 +46,4 @@[m [mdef calcular_precio_maximo([m
+     if not precios:[m
+         raise ValueError(f"{servicio}: sin datos relevados")[m
+ [m
+[31m-    return max(precios)[m
+[31m-[m
+[31m-def calcular_precio_promedio(datos: list[ServicioPrecio], servicio: str) -> int:[m
+[31m-    precios = [[m
+[31m-        item.precio_freelance[m
+[31m-        for item in datos[m
+[31m-        if item.servicio == servicio[m
+[31m-    ][m
+[31m-[m
+[31m-    if not precios:[m
+[31m-        raise ValueError(f"{servicio}: sin datos relevados")    [m
+[31m-    [m
+[31m-    return sum(precios) // len(precios)[m
+\ No newline at end of file[m
+[32m+[m[32m    return max(precios)[m
+\ No newline at end of file[m
