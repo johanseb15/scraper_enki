@@ -5,6 +5,20 @@ from bs4 import BeautifulSoup
 
 from src.modelos.servicio_precio import ServicioPrecio
 
+from src.downloader import descargar_html
+
+class BairesCloudScraper:
+
+    URL = "https://bairescloud.ar/servicio-tecnico.php"
+
+    def obtener_servicios(self) -> list[ServicioPrecio]:
+        html = descargar_html(self.URL)
+
+        return extraer_precios_bairescloud(
+            html,
+            fecha_relevamiento=date.today(),
+        )
+
 
 def _a_numero(precio: str) -> int:
     coincidencia = re.search(r"\d[\d.]*,\d{2}", precio)
