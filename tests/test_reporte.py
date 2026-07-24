@@ -123,3 +123,42 @@ def test_generar_resumen_servicio_sin_datos_devuelve_resumen_vacio():
     assert resumen["precio_minimo"] is None
     assert resumen["precio_promedio"] is None
     assert resumen["precio_maximo"] is None
+
+
+def test_generar_resumen_incluye_precios_por_empresa():
+    servicios = [
+        ServicioPrecio(
+            empresa="Vida Informatica",
+            provincia="Cordoba",
+            ciudad="Cordoba",
+            servicio="Eliminación de malware",
+            equipo="PC",
+            precio_freelance=29816,
+            precio_local=41411,
+            moneda="ARS",
+            fecha_relevamiento=date(2026, 7, 20),
+            fuente="",
+        ),
+        ServicioPrecio(
+            empresa="BairesCloud",
+            provincia="Buenos Aires",
+            ciudad="Buenos Aires",
+            servicio="Eliminación de malware / spyware",
+            equipo="PC",
+            precio_freelance=25000,
+            precio_local=25000,
+            moneda="ARS",
+            fecha_relevamiento=date(2026, 7, 20),
+            fuente="",
+        ),
+    ]
+
+    resumen = generar_resumen_servicio(
+        servicios,
+        "Eliminación de malware",
+    )
+
+    assert resumen["precios_por_empresa"] == {
+        "Vida Informatica": 29816,
+        "BairesCloud": 25000,
+    }

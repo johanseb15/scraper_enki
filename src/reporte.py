@@ -53,12 +53,16 @@ def generar_resumen_servicio(
         }
 
     return {
-        "servicio": servicio,
-        "cantidad": len(filtrados),
-        "precio_minimo": calcular_precio_minimo(datos, servicio),
-        "precio_promedio": calcular_precio_promedio(datos, servicio),
-        "precio_maximo": calcular_precio_maximo(datos, servicio),
-        "empresas_relevadas": len(
-            {d.empresa for d in filtrados}
-        ),
-    }
+    "servicio": servicio,
+    "cantidad": len(filtrados),
+    "precio_minimo": calcular_precio_minimo(datos, servicio),
+    "precio_promedio": calcular_precio_promedio(datos, servicio),
+    "precio_maximo": calcular_precio_maximo(datos, servicio),
+    "empresas_relevadas": len(
+        {d.empresa for d in filtrados}
+    ),
+    "precios_por_empresa": {
+        d.empresa: d.precio_freelance
+        for d in filtrados
+    },
+}
