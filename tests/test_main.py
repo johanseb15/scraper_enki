@@ -150,3 +150,13 @@ def test_ejecutar_tolera_fallo_de_un_scraper_y_continua(tmp_path):
     reporte = ejecutar(ruta_db=db_path, scrapers=scrapers)
 
     assert "Empresa Resiliente" in reporte
+
+def test_ejecutar_registra_metricas_de_exito_y_fallo(tmp_path):
+    db_path = str(tmp_path / "test_enki.db")
+    scrapers = [ScraperFallado(), ScraperDummy("Empresa Resiliente")]
+
+    resultado = ejecutar(ruta_db=db_path, scrapers=scrapers)
+
+    assert resultado.metricas.exitosos == ["ScraperDummy"]
+    assert resultado.metricas.fallidos == ["ScraperFallado"]
+    assert resultado.metricas.total == 2
