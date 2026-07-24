@@ -1,6 +1,19 @@
 from src.modelos.servicio_precio import ServicioPrecio
 
 
+def _es_mismo_servicio(nombre: str, servicio_buscado: str) -> bool:
+    nombre_normalizado = nombre.lower().strip()
+    servicio_normalizado = servicio_buscado.lower().strip()
+
+    return (
+        nombre_normalizado == servicio_normalizado
+        or (
+            servicio_normalizado in nombre_normalizado
+            and "malware" in nombre_normalizado
+        )
+    )
+
+
 def calcular_precio_promedio(
     datos: list[ServicioPrecio],
     servicio: str,
@@ -8,7 +21,7 @@ def calcular_precio_promedio(
     precios = [
         item.precio_freelance
         for item in datos
-        if item.servicio == servicio
+        if _es_mismo_servicio(item.servicio, servicio)
     ]
 
     if not precios:
@@ -24,7 +37,7 @@ def calcular_precio_minimo(
     precios = [
         item.precio_freelance
         for item in datos
-        if item.servicio == servicio
+        if _es_mismo_servicio(item.servicio, servicio)
     ]
 
     if not precios:
@@ -40,7 +53,7 @@ def calcular_precio_maximo(
     precios = [
         item.precio_freelance
         for item in datos
-        if item.servicio == servicio
+        if _es_mismo_servicio(item.servicio, servicio)
     ]
 
     if not precios:
