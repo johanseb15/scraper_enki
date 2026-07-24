@@ -3,12 +3,12 @@ import re
 
 from bs4 import BeautifulSoup
 
-from src.modelos.servicio_precio import ServicioPrecio
-
 from src.downloader import descargar_html
+from src.modelos.servicio_precio import ServicioPrecio
+from src.scrapers.base import BaseScraper
 
-class BairesCloudScraper:
 
+class BairesCloudScraper(BaseScraper):
     URL = "https://bairescloud.ar/servicio-tecnico.php"
 
     def obtener_servicios(self) -> list[ServicioPrecio]:

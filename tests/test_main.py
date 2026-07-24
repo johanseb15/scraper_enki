@@ -7,7 +7,42 @@ from src.extractor import extraer_datos
 from datetime import date
 from src.modelos.servicio_precio import ServicioPrecio
 from src.repositorio import RepositorioSQLite
-from src.scrapers.bairescloud import BairesCloudScraper
+from src.scrapers.baires_cloud import BairesCloudScraper
+
+from src.scrapers.base import BaseScraper
+from src.modelos.servicio_precio import ServicioPrecio
+from datetime import date
+
+class ScraperDummy(BaseScraper):
+    """Scraper simulado para probar el orquestador en aislamiento."""
+    def __init__(self, empresa: str):
+        self.empresa = empresa
+
+    def obtener_servicios(self) -> list[ServicioPrecio]:
+        return [
+            ServicioPrecio(
+                empresa=self.empresa,
+                provincia="Test",
+                ciudad="Test",
+                servicio="Limpieza de virus",
+                equipo="PC",
+                precio_freelance=15000,
+                precio_local=20000,
+                moneda="ARS",
+                fecha_relevamiento=date.today(),
+                fuente="https://test.com",
+            )
+        ]
+
+def test_ejecutar_procesa_lista_dinamica_de_scrapers(tmp_path):
+    # RED: Verificar que ejecutar pueda recibir una lista custom de BaseScraper
+    db_path = tmp_path / "test_enki.db"
+    scrapers = [ScraperDummy("Empresa A"), ScraperDummy("Empresa B")]
+    
+    reporte = ejecutar(db_path=db_path, scrapers=scrapers)
+    
+    assert "Empresa A" in reporte
+    assert "Empresa B" in reporte
 
 @pytest.fixture
 def servicios_desde_fixture():
@@ -68,3 +103,50 @@ def test_ejecutar_persiste_datos_de_ambos_scrapers(tmp_path):
     empresas_guardadas = {s.empresa for s in repo.obtener_todos()}
 
     assert empresas_guardadas == {"Vida informatica", "BairesCloud"}
+
+class ScraperDummy(BaseScraper):
+    """Scraper de prueba para validar inyección dinámica."""
+    def __init__(self, empresa: str):
+        self.empresa = empresa
+
+    def obtener_servicios(self) -> list[ServicioPrecio]:
+        return [
+            ServicioPrecio(
+                empresa=self.empresa,
+                provincia="Córdoba",
+                ciudad="Córdoba",
+                servicio="Limpieza de virus",
+                equipo="PC",
+                precio_freelance=15000,
+                precio_local=20000,
+                moneda="ARS",
+                fecha_relevamiento=date.today(),
+                fuente="https://test.com",
+            )
+        ]
+
+
+def test_ejecutar_procesa_lista_dinamica_de_scrapers(tmp_path):
+    db_path = str(tmp_path / "test_enki.db")
+    scrapers = [ScraperDummy("Empresa Alpha"), ScraperDummy("Empresa Beta")]
+
+    reporte = ejecutar(ruta_db=db_path, scrapers=scrapers)
+
+    assert "Empresa Alpha" in reporte
+    assert "Empresa Beta" in reporte
+
+
+class ScraperFallado(BaseScraper):
+    """Scraper que simula una caída de red o error de parsing."""
+    def obtener_servicios(self) -> list[ServicioPrecio]:
+        raise RuntimeError("Error de conexión con el sitio destino")
+
+
+def test_ejecutar_tolera_fallo_de_un_scraper_y_continua(tmp_path):
+    db_path = str(tmp_path / "test_enki.db")
+    scrapers = [ScraperFallado(), ScraperDummy("Empresa Resiliente")]
+
+    # Debe ejecutar sin propagar el RuntimeError de ScraperFallado
+    reporte = ejecutar(ruta_db=db_path, scrapers=scrapers)
+
+    assert "Empresa Resiliente" in reporte

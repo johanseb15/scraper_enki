@@ -3,7 +3,7 @@ from pathlib import Path
 
 from src.modelos.servicio_precio import ServicioPrecio
 from src.repositorio import RepositorioSQLite
-from src.scrapers.bairescloud import extraer_precios_bairescloud
+from src.scrapers.baires_cloud import extraer_precios_bairescloud
 
 
 def test_guardar_y_recuperar_servicio():

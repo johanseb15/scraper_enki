@@ -1,7 +1,7 @@
 from datetime import date
 from pathlib import Path
 
-from src.scrapers.bairescloud import extraer_precios_bairescloud
+from src.scrapers.baires_cloud import extraer_precios_bairescloud
 from src.modelos.servicio_precio import ServicioPrecio
 
 
@@ -57,7 +57,7 @@ def test_bairescloud_acepta_precio_con_texto_adicional():
 
 from unittest.mock import patch
 
-from src.scrapers.bairescloud import BairesCloudScraper
+from src.scrapers.baires_cloud import BairesCloudScraper
 
 
 
@@ -93,7 +93,7 @@ def test_bairescloud_scraper_descarga_y_extrae_servicios():
     scraper = BairesCloudScraper()
 
     with patch(
-        "src.scrapers.bairescloud.descargar_html",
+        "src.scrapers.baires_cloud.descargar_html",
         return_value=html,
     ):
         resultados = scraper.obtener_servicios()
