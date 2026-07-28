@@ -2,6 +2,7 @@ from fastapi import FastAPI, Depends
 
 from src.repositorio import RepositorioSQLite
 from src.reporte import generar_resumen_servicio
+from src.normalizacion import es_mismo_servicio
 
 
 app = FastAPI(
@@ -29,7 +30,10 @@ def consultar_servicio(
     servicios_filtrados = [
         servicio
         for servicio in servicios
-        if servicio.servicio.lower() == nombre_servicio.lower()
+        if es_mismo_servicio(
+            servicio.servicio,
+            nombre_servicio
+        )
     ]
 
     resumen["empresas"] = [
@@ -39,5 +43,13 @@ def consultar_servicio(
         }
         for servicio in servicios_filtrados
     ]
+
+    resumen["ciudades"] = list(
+        {
+            servicio.ciudad
+            for servicio in servicios_filtrados
+            if servicio.ciudad
+        }
+    )
 
     return resumen

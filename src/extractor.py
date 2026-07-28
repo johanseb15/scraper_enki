@@ -1,6 +1,8 @@
 from datetime import date
 from bs4 import BeautifulSoup
+
 from src.modelos.servicio_precio import ServicioPrecio
+
 
 def _a_numero(texto: str) -> int:
     """
@@ -10,13 +12,13 @@ def _a_numero(texto: str) -> int:
     return int(solo_digitos) if solo_digitos else 0
 
 
-def extraer_datos(html: str) -> list[dict]:
+def extraer_datos(html: str) -> list[ServicioPrecio]:
     """
-    Recibe el HTML de una página de precios y devuelve una lista
-    de diccionarios, uno por cada fila de la tabla de precios.
+    Recibe HTML de una página de precios y devuelve servicios.
     """
 
     soup = BeautifulSoup(html, "html.parser")
+
     tabla = soup.find("table")
 
     if tabla is None:
@@ -26,7 +28,8 @@ def extraer_datos(html: str) -> list[dict]:
 
     filas = tabla.find_all("tr")
 
-    for fila in filas[1:]:  # Ignorar encabezados
+    for fila in filas[1:]:
+
         celdas = fila.find_all("td")
 
         if len(celdas) < 4:
@@ -34,21 +37,27 @@ def extraer_datos(html: str) -> list[dict]:
 
         tipo_arreglo = celdas[0].get_text(strip=True)
         tipo_equipo = celdas[1].get_text(strip=True)
-        precio_freelance = _a_numero(celdas[2].get_text(strip=True))
-        precio_local = _a_numero(celdas[3].get_text(strip=True))
+
+        precio_freelance = _a_numero(
+            celdas[2].get_text(strip=True)
+        )
+
+        precio_local = _a_numero(
+            celdas[3].get_text(strip=True)
+        )
 
         resultados.append(
             ServicioPrecio(
                 empresa="Vida informatica",
-                provincia="",
-                ciudad="",
+                provincia="Córdoba",
+                ciudad="Córdoba",
                 servicio=tipo_arreglo,
                 equipo=tipo_equipo,
                 precio_freelance=precio_freelance,
                 precio_local=precio_local,
                 moneda="ARS",
                 fecha_relevamiento=date.today(),
-                fuente="",
+                fuente="https://vidainformatica.com.ar/listado-de-precios-zona-1/",
             )
         )
 

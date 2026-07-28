@@ -23,3 +23,9 @@ def test_vida_informatica_scraper_orquesta_descarga_y_parseo():
         
         # Verificamos que se intente conectar al endpoint correcto de la empresa
         mock_descargar_html.assert_called_once_with("https://vidainformatica.com.ar/listado-de-precios-zona-1/")
+
+def test_vida_informatica_asigna_ciudad():
+    servicios = scraper.obtener_servicios()
+
+    assert len(servicios) > 0
+    assert servicios[0].ciudad == "Córdoba"
