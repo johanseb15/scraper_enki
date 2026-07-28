@@ -7,7 +7,11 @@ from src.modelos.servicio_precio import ServicioPrecio
 class RepositorioSQLite:
 
     def __init__(self, ruta_db: str):
-        self.conexion = sqlite3.connect(ruta_db)
+        self.conexion = sqlite3.connect(
+            ruta_db,
+            check_same_thread=False
+        )
+
         self._crear_tabla()
 
     def _crear_tabla(self):
@@ -26,7 +30,12 @@ class RepositorioSQLite:
                 fuente TEXT,
 
                 UNIQUE (
-                    empresa, provincia, ciudad, servicio, equipo, fecha_relevamiento
+                    empresa,
+                    provincia,
+                    ciudad,
+                    servicio,
+                    equipo,
+                    fecha_relevamiento
                 )
             )
         """)
