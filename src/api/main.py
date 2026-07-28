@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, Query
 
 from src.repositorio import RepositorioSQLite
 from src.reporte import generar_resumen_servicio
@@ -18,15 +18,13 @@ def obtener_repositorio():
 @app.get("/servicios/{nombre_servicio}")
 def consultar_servicio(
     nombre_servicio: str,
+    provincia: str | None = Query(default=None),
+    ciudad: str | None = Query(default=None),
     repo: RepositorioSQLite = Depends(obtener_repositorio)
 ):
     servicios = repo.obtener_todos()
 
-    resumen = generar_resumen_servicio(
-        servicios,
-        nombre_servicio
-    )
-
+    # Aplicamos filtros geográficos si existen
     servicios_filtrados = [
         servicio
         for servicio in servicios
@@ -35,6 +33,25 @@ def consultar_servicio(
             nombre_servicio
         )
     ]
+
+    if provincia:
+        servicios_filtrados = [
+            servicio
+            for servicio in servicios_filtrados
+            if servicio.provincia.lower() == provincia.lower()
+        ]
+
+    if ciudad:
+        servicios_filtrados = [
+            servicio
+            for servicio in servicios_filtrados
+            if servicio.ciudad.lower() == ciudad.lower()
+        ]
+
+    resumen = generar_resumen_servicio(
+        servicios_filtrados,
+        nombre_servicio
+    )
 
     resumen["empresas"] = [
         {
@@ -48,7 +65,13 @@ def consultar_servicio(
         {
             servicio.ciudad
             for servicio in servicios_filtrados
-            if servicio.ciudad
+        }
+    )
+
+    resumen["provincias"] = list(
+        {
+            servicio.provincia
+            for servicio in servicios_filtrados
         }
     )
 
