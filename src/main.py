@@ -7,6 +7,8 @@ from src.repositorio import RepositorioSQLite
 from src.reporte import generar_resumen_servicio
 from src.presentacion import generar_reporte_texto
 from src.metricas import MetricasEjecucion, ResultadoEjecucion
+from src.normalizacion import es_mismo_servicio
+
 
 logger = logging.getLogger(__name__)
 
@@ -46,7 +48,7 @@ def ejecutar(
 
     datos = repo.obtener_todos()
     
-    if datos and not any(s.servicio.lower() == servicio_target.lower() for s in datos):
+    if datos and not any(es_mismo_servicio(s.servicio, servicio_target) for s in datos):
         servicio_target = datos[0].servicio
 
     resumen = generar_resumen_servicio(datos, servicio_target)

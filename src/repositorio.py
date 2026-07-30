@@ -1,22 +1,19 @@
 import sqlite3
 from datetime import date
-
+from typing import List
 from src.modelos.servicio_precio import ServicioPrecio
 
 
 class RepositorioSQLite:
 
-    def __init__(self, ruta_db: str):
-        self.conexion = sqlite3.connect(
-            ruta_db,
-            check_same_thread=False
-        )
-
+    def __init__(self, ruta_db: str = "enki.db"):
+        # check_same_thread=False evita el error de SQLite al ser llamado desde FastAPI/TestClient
+        self.conexion = sqlite3.connect(ruta_db, check_same_thread=False)
         self._crear_tabla()
 
     def _crear_tabla(self):
-
-        self.conexion.execute("""
+        self.conexion.execute(
+            """
             CREATE TABLE IF NOT EXISTS servicio_precio (
                 empresa TEXT,
                 provincia TEXT,
@@ -28,21 +25,24 @@ class RepositorioSQLite:
                 moneda TEXT,
                 fecha_relevamiento TEXT,
                 fuente TEXT,
-
-                UNIQUE (
-                    empresa,
-                    provincia,
-                    ciudad,
-                    servicio,
-                    equipo,
-                    fecha_relevamiento
-                )
+                PRIMARY KEY (empresa, provincia, ciudad, servicio, equipo, fecha_relevamiento)
             )
-        """)
-
+            """
+        )
         self.conexion.commit()
 
     def guardar(self, servicio: ServicioPrecio):
+        nombre_servicio = (
+            servicio.servicio.value
+            if hasattr(servicio.servicio, "value")
+            else str(servicio.servicio)
+        )
+
+        fecha_str = (
+            servicio.fecha_relevamiento.isoformat()
+            if hasattr(servicio.fecha_relevamiento, "isoformat")
+            else str(servicio.fecha_relevamiento)
+        )
 
         self.conexion.execute(
             """
@@ -53,40 +53,30 @@ class RepositorioSQLite:
                 servicio.empresa,
                 servicio.provincia,
                 servicio.ciudad,
-                servicio.servicio,
+                nombre_servicio,
                 servicio.equipo,
                 servicio.precio_freelance,
                 servicio.precio_local,
                 servicio.moneda,
-                servicio.fecha_relevamiento.isoformat(),
+                fecha_str,
                 servicio.fuente,
             ),
         )
-
         self.conexion.commit()
 
-    def obtener_todos(self) -> list[ServicioPrecio]:
+    def obtener_todos(self) -> List[ServicioPrecio]:
+        cursor = self.conexion.cursor()
+        cursor.execute("SELECT * FROM servicio_precio")
+        filas = cursor.fetchall()
 
-        cursor = self.conexion.execute("""
-            SELECT
-                empresa,
-                provincia,
-                ciudad,
-                servicio,
-                equipo,
-                precio_freelance,
-                precio_local,
-                moneda,
-                fecha_relevamiento,
-                fuente
-            FROM servicio_precio
-        """)
-
-        resultados = []
-
-        for fila in cursor.fetchall():
-
-            resultados.append(
+        servicios = []
+        for fila in filas:
+            fecha = (
+                date.fromisoformat(fila[8])
+                if isinstance(fila[8], str)
+                else fila[8]
+            )
+            servicios.append(
                 ServicioPrecio(
                     empresa=fila[0],
                     provincia=fila[1],
@@ -96,9 +86,8 @@ class RepositorioSQLite:
                     precio_freelance=fila[5],
                     precio_local=fila[6],
                     moneda=fila[7],
-                    fecha_relevamiento=date.fromisoformat(fila[8]),
+                    fecha_relevamiento=fecha,
                     fuente=fila[9],
                 )
             )
-
-        return resultados
+        return servicios
