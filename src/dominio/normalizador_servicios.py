@@ -1,33 +1,56 @@
-import unicodedata
-from src.dominio.servicios import ServicioCanonico
+from src.dominio.servicios import ServicioCanonico, DetalleServicioCanonico, CATALOGO_SERVICIOS
+from src.normalizacion import normalizar_texto
+
+
+MAPEO_SERVICIOS = {
+    "malware": ServicioCanonico.MALWARE,
+    "virus": ServicioCanonico.MALWARE,
+    "spyware": ServicioCanonico.MALWARE,
+    "troyanos": ServicioCanonico.MALWARE,
+    
+    "formateo": ServicioCanonico.FORMATEO,
+    "instalacion de so": ServicioCanonico.FORMATEO,
+    "windows 11": ServicioCanonico.FORMATEO,
+    "reinstalacion": ServicioCanonico.FORMATEO,
+    
+    "mantenimiento": ServicioCanonico.MANTENIMIENTO,
+    "limpieza fisica": ServicioCanonico.MANTENIMIENTO,
+    
+    "redes": ServicioCanonico.SOPORTE_REDES,
+    "router": ServicioCanonico.SOPORTE_REDES,
+    "soporte de redes": ServicioCanonico.SOPORTE_REDES,
+}
 
 
 class NormalizadorServicios:
-    def __init__(self) -> None:
-        self._alias_map: dict[str, ServicioCanonico] = {
-            # Malware
-            "eliminacion de malware": ServicioCanonico.MALWARE,
-            "eliminacion de malware / spyware": ServicioCanonico.MALWARE,
-            # Formateo
-            "formateo e instalacion de so": ServicioCanonico.FORMATEO,
-            "instalacion de windows 11": ServicioCanonico.FORMATEO,
-            # Mantenimiento
-            "mantenimiento preventivo": ServicioCanonico.MANTENIMIENTO,
-            "limpieza fisica de pc": ServicioCanonico.MANTENIMIENTO,
-            # Redes
-            "diagnostico y soporte de redes": ServicioCanonico.SOPORTE_REDES,
-            "configuracion de router": ServicioCanonico.SOPORTE_REDES,
-        }
-
-    def _normalizar_clave(self, texto: str) -> str:
-        """Limpia espacios, pasa a minúsculas y remueve acentos."""
-        texto_limpio = texto.strip().lower()
-
-        # Remueve tildes/acentos
-        texto_nfkd = unicodedata.normalize("NFKD", texto_limpio)
-        return "".join(c for c in texto_nfkd if not unicodedata.combining(c))
-
     def normalizar(self, texto: str) -> ServicioCanonico | str:
-        """Devuelve el Enum normalizado o el texto original si no existe alias."""
-        clave = self._normalizar_clave(texto)
-        return self._alias_map.get(clave, texto)
+        texto_limpio = normalizar_texto(texto).lower()
+
+        for clave, servicio_canonico in MAPEO_SERVICIOS.items():
+            if clave in texto_limpio:
+                return servicio_canonico
+
+        return texto
+
+    def normalizar_avanzado(self, texto: str) -> DetalleServicioCanonico:
+        texto_limpio = normalizar_texto(texto).lower()
+
+        for clave, servicio_canonico in MAPEO_SERVICIOS.items():
+            if clave in texto_limpio:
+                info = CATALOGO_SERVICIOS.get(servicio_canonico)
+                nombre_val = info.nombre if info else servicio_canonico.value
+                return DetalleServicioCanonico(
+                    categoria="soporte_tecnico",
+                    subcategoria=servicio_canonico.value,
+                    nombre_normalizado=nombre_val,
+                    confianza=0.95,
+                    regla_aplicada=f"alias_{clave}"
+                )
+
+        return DetalleServicioCanonico(
+            categoria="desconocido",
+            subcategoria="desconocido",
+            nombre_normalizado=texto,
+            confianza=0.0,
+            regla_aplicada="fallback_original"
+        )

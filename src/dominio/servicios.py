@@ -1,6 +1,11 @@
 from dataclasses import dataclass
 from enum import Enum
-from typing import Optional
+
+
+@dataclass(frozen=True)
+class ServicioInfo:
+    id: "ServicioCanonico"
+    nombre: str
 
 
 class ServicioCanonico(Enum):
@@ -8,34 +13,35 @@ class ServicioCanonico(Enum):
     FORMATEO = "formateo"
     MANTENIMIENTO = "mantenimiento"
     SOPORTE_REDES = "soporte_redes"
+    OTRO = "otro"
 
 
-@dataclass
-class ServicioDominio:
-    id: ServicioCanonico
-    nombre: str
-
-
-CATALOGO_SERVICIOS: dict[ServicioCanonico, ServicioDominio] = {
-    ServicioCanonico.MALWARE: ServicioDominio(
-        id=ServicioCanonico.MALWARE,
-        nombre="Eliminación de malware",
+CATALOGO_SERVICIOS = {
+    ServicioCanonico.MALWARE: ServicioInfo(
+        id=ServicioCanonico.MALWARE, nombre="Eliminación de malware"
     ),
-    ServicioCanonico.FORMATEO: ServicioDominio(
-        id=ServicioCanonico.FORMATEO,
-        nombre="Formateo e instalación de SO",
+    ServicioCanonico.FORMATEO: ServicioInfo(
+        id=ServicioCanonico.FORMATEO, nombre="Formateo e instalación de SO"
     ),
-    ServicioCanonico.MANTENIMIENTO: ServicioDominio(
-        id=ServicioCanonico.MANTENIMIENTO,
-        nombre="Mantenimiento preventivo",
+    ServicioCanonico.MANTENIMIENTO: ServicioInfo(
+        id=ServicioCanonico.MANTENIMIENTO, nombre="Mantenimiento preventivo"
     ),
-    ServicioCanonico.SOPORTE_REDES: ServicioDominio(
-        id=ServicioCanonico.SOPORTE_REDES,
-        nombre="Diagnóstico y soporte de redes",
+    ServicioCanonico.SOPORTE_REDES: ServicioInfo(
+        id=ServicioCanonico.SOPORTE_REDES, nombre="Diagnóstico y soporte de redes"
     ),
 }
 
 
-def obtener_servicio(clave: ServicioCanonico | str) -> Optional[ServicioDominio]:
-    """Retorna el ServicioDominio según el Enum o None si no existe."""
-    return CATALOGO_SERVICIOS.get(clave)  # type: ignore[arg-type]
+def obtener_servicio(servicio: ServicioCanonico) -> ServicioInfo | None:
+    return CATALOGO_SERVICIOS.get(servicio)
+
+
+@dataclass(frozen=True)
+class DetalleServicioCanonico:
+    categoria: str
+    subcategoria: str
+    nombre_normalizado: str
+    equipo: str | None = None
+    modalidad: str | None = None
+    confianza: float = 1.0
+    regla_aplicada: str | None = None

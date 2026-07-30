@@ -1,5 +1,5 @@
 import pytest
-from src.dominio.servicios import ServicioCanonico
+from src.dominio.servicios import ServicioCanonico, DetalleServicioCanonico
 from src.dominio.normalizador_servicios import NormalizadorServicios
 
 
@@ -56,3 +56,20 @@ def test_normaliza_ignorando_mayusculas_y_espacios(normalizador, entrada):
 )
 def test_normaliza_nuevos_servicios(normalizador, entrada, esperado):
     assert normalizador.normalizar(entrada) == esperado
+
+
+def test_normalizador_avanzado_detecta_estructura_canonica(normalizador):
+    resultado = normalizador.normalizar_avanzado("Limpieza virus PC")
+
+    assert isinstance(resultado, DetalleServicioCanonico)
+    assert resultado.categoria == "soporte_tecnico"
+    assert resultado.subcategoria == "malware"
+    assert resultado.confianza == 0.95
+
+
+def test_normalizador_avanzado_maneja_servicio_desconocido(normalizador):
+    resultado = normalizador.normalizar_avanzado("Servicio cuántico desconocido 3000")
+
+    assert resultado.categoria == "desconocido"
+    assert resultado.subcategoria == "desconocido"
+    assert resultado.confianza == 0.0
