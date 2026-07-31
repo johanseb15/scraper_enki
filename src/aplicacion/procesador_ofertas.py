@@ -3,7 +3,7 @@ from src.dominio.oferta import Oferta
 from src.dominio.servicios import ServicioCanonico
 from src.dominio.normalizador_servicios import NormalizadorServicios
 from src.aplicacion.dtos import OfertaDTO
-from src.aplicacion.factories import OfertaFactory
+from src.aplicacion.oferta_factory import OfertaFactory  # <-- Cambio aquí
 
 
 class ProcesadorOfertas:
