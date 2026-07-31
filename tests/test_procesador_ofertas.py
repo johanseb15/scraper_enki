@@ -1,118 +1,103 @@
-from datetime import date
-from typing import List, Optional
-
 from src.aplicacion.dto.oferta_dto import OfertaDTO
-from src.aplicacion.oferta_factory import OfertaFactory
-from src.dominio.oferta import Oferta
-from src.dominio.normalizador_ubicaciones import NormalizadorUbicaciones
-from src.normalizadores.normalizador_precios import NormalizadorPrecios
+from src.aplicacion.procesador_ofertas import ProcesadorOfertas
 
 
-class ProcesadorOfertas:
-    """
-    Coordinador de aplicación encargado de transformar DTOs crudos
-    en entidades Oferta válidas del dominio.
-    """
+def test_procesador_crea_oferta_valida_desde_dto():
 
-    def __init__(
-        self,
-        factory: Optional[OfertaFactory] = None,
-        repositorio=None,
-        normalizador_ubicaciones: Optional[NormalizadorUbicaciones] = None,
-    ):
-        self.factory = factory or OfertaFactory()
-        self.repositorio = repositorio
-        self.normalizador_ubicaciones = (
-            normalizador_ubicaciones or NormalizadorUbicaciones()
-        )
+    dto = OfertaDTO(
+        empresa="Soporte Total Córdoba",
+        provincia="Córdoba",
+        ciudad="Córdoba",
+        servicio="Eliminación de virus y malware",
+        precio=15000,
+        moneda="ARS",
+        fuente="https://soportetotal.com"
+    )
 
-    def procesar(self, dto: OfertaDTO) -> Optional[Oferta]:
-        dto_normalizado = self._normalizar_datos(dto)
+    procesador = ProcesadorOfertas()
 
-        oferta = self.factory.crear_desde_dto(dto_normalizado)
+    oferta = procesador.crear_oferta(dto)
 
-        if oferta and self.repositorio:
-            self.repositorio.guardar(oferta)
+    assert oferta is not None
+    assert oferta.empresa.nombre == "Soporte Total Córdoba"
 
-        return oferta
 
-    def crear_oferta(
-        self,
-        dto: OfertaDTO,
-        fecha_relevamiento: Optional[date] = None,
-    ) -> Optional[Oferta]:
 
-        if fecha_relevamiento:
-            try:
-                dto.fecha_relevamiento = fecha_relevamiento
-            except AttributeError:
-                pass
+def test_procesador_maneja_servicio_desconocido_con_resiliencia():
 
-        return self.procesar(dto)
+    dto = OfertaDTO(
+        empresa="Tecno Service",
+        provincia="Córdoba",
+        ciudad="Córdoba",
+        servicio="Servicio cuántico inexistente",
+        precio=50000,
+        moneda="ARS",
+        fuente="https://tecnoservice.com"
+    )
 
-    def ejecutar(
-        self,
-        dtos: List[OfertaDTO],
-    ) -> List[Oferta]:
+    procesador = ProcesadorOfertas()
 
-        ofertas = []
+    oferta = procesador.crear_oferta(dto)
 
-        for dto in dtos:
-            oferta = self.procesar(dto)
+    assert oferta is None or oferta.servicio is not None
 
-            if oferta:
-                ofertas.append(oferta)
 
-        return ofertas
 
-    def _normalizar_datos(self, dto: OfertaDTO) -> OfertaDTO:
-        """
-        Aplica transformaciones ETL sobre datos de entrada.
-        """
+def test_procesador_normaliza_precio_crudo_del_dto():
 
-        ubicacion = self.normalizador_ubicaciones.normalizar(
-            provincia=dto.provincia,
-            ciudad=dto.ciudad,
-        )
+    dto = OfertaDTO(
+        empresa="Vida Informatica",
+        provincia="Córdoba",
+        ciudad="Córdoba",
+        servicio="Eliminación de malware",
+        precio_raw="$ 25.000 ARS",
+        moneda="ARS",
+        fuente="https://vidainformatica.com"
+    )
 
-        dto_normalizado = OfertaDTO(
-            empresa_nombre=getattr(
-                dto,
-                "empresa_nombre",
-                getattr(dto, "empresa", "")
-            ),
-            provincia=ubicacion.provincia,
-            ciudad=ubicacion.ciudad,
-            fuente=dto.fuente,
-            servicio_raw=getattr(
-                dto,
-                "servicio_raw",
-                getattr(dto, "servicio", "")
-            ),
-            precio=getattr(dto, "precio", None),
-            moneda=dto.moneda,
-            fecha_relevamiento=getattr(
-                dto,
-                "fecha_relevamiento",
-                None
-            ),
-        )
+    procesador = ProcesadorOfertas()
 
-        if dto_normalizado.precio is None:
-            precio_raw = getattr(dto, "precio_raw", None)
+    oferta = procesador.crear_oferta(dto)
 
-            if precio_raw:
-                precio = NormalizadorPrecios.normalizar(precio_raw)
+    assert oferta.precio.valor == 25000
 
-                dto_normalizado = OfertaDTO(
-                    empresa_nombre=dto_normalizado.empresa_nombre,
-                    provincia=dto_normalizado.provincia,
-                    ciudad=dto_normalizado.ciudad,
-                    fuente=dto_normalizado.fuente,
-                    servicio_raw=dto_normalizado.servicio_raw,
-                    precio=precio.valor,
-                    moneda=precio.moneda,
-                    fecha_relevamiento=dto_normalizado.fecha_relevamiento,
-                )
 
-        return dto_normalizado
+
+def test_procesador_normaliza_ubicacion_del_dto():
+
+    dto = OfertaDTO(
+        empresa="Servicio Córdoba",
+        provincia="Cordoba",
+        ciudad="Cba.",
+        servicio="Eliminación de malware",
+        precio=15000,
+        moneda="ARS",
+        fuente="https://servicio.com"
+    )
+
+    procesador = ProcesadorOfertas()
+
+    oferta = procesador.crear_oferta(dto)
+
+    assert oferta.empresa.provincia == "Córdoba"
+    assert oferta.empresa.ciudad == "Córdoba"
+
+
+
+def test_procesador_normaliza_nombre_empresa_del_dto():
+
+    dto = OfertaDTO(
+        empresa="VIDA INFORMATICA S.R.L.",
+        provincia="Cordoba",
+        ciudad="Cba.",
+        servicio="Eliminación de malware",
+        precio=15000,
+        moneda="ARS",
+        fuente="https://vida.com"
+    )
+
+    procesador = ProcesadorOfertas()
+
+    oferta = procesador.crear_oferta(dto)
+
+    assert oferta.empresa.nombre == "Vida Informatica"

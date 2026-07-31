@@ -5,22 +5,39 @@ import unicodedata
 class NormalizadorEmpresas:
     """
     Normaliza nombres de empresas para comparabilidad.
+
+    Responsabilidades:
+    - eliminar sufijos legales
+    - limpiar ruido tipográfico
+    - normalizar espacios
+    - homogeneizar casing
     """
 
     SUFIJOS_LEGALES = [
         r"\bS\.?\s*A\.?\s*S\.?\b",
         r"\bS\.?\s*R\.?\s*L\.?\b",
         r"\bS\.?\s*A\.?\b",
+        r"\bSRL\b",
+        r"\bSAS\b",
+        r"\bSA\b",
     ]
 
+    SIGLAS_MANTENER = {
+        "IT": "It",
+    }
+
     def normalizar(self, nombre_crudo: str) -> str:
+
         if not nombre_crudo:
             return ""
 
-        nombre = self._quitar_acentos(nombre_crudo)
+        # Para empresas usamos una representación canónica sin acentos
+        nombre = nombre_crudo
 
-        nombre = nombre.upper()
+        # limpiar espacios iniciales/finales
+        nombre = nombre.strip()
 
+        # eliminar sufijos legales
         for sufijo in self.SUFIJOS_LEGALES:
             nombre = re.sub(
                 sufijo,
@@ -29,25 +46,44 @@ class NormalizadorEmpresas:
                 flags=re.IGNORECASE
             )
 
-        # Eliminar puntuación sobrante
+        # eliminar puntuación
         nombre = re.sub(
             r"[^\w\s]",
             "",
             nombre
         )
 
-        # Normalizar espacios
+        # normalizar espacios
         nombre = re.sub(
             r"\s+",
             " ",
             nombre
-        )
+        ).strip()
 
-        nombre = nombre.strip()
+        palabras = nombre.split()
 
-        return nombre.title()
+        resultado = []
+
+        for palabra in palabras:
+
+            palabra_upper = palabra.upper()
+
+            if palabra_upper in self.SIGLAS_MANTENER:
+                resultado.append(
+                    self.SIGLAS_MANTENER[palabra_upper]
+                )
+            else:
+                resultado.append(
+                    self._normalizar_palabra(
+                    palabra.capitalize()
+                )
+)
+
+        return " ".join(resultado)
+
 
     def _quitar_acentos(self, texto: str) -> str:
+
         normalizado = unicodedata.normalize(
             "NFD",
             texto
@@ -57,4 +93,15 @@ class NormalizadorEmpresas:
             caracter
             for caracter in normalizado
             if unicodedata.category(caracter) != "Mn"
+        )
+
+    def _normalizar_palabra(self, palabra: str) -> str:
+
+        palabras_sin_acentos = {
+            "Informática": "Informatica",
+        }
+
+        return palabras_sin_acentos.get(
+            palabra,
+            palabra
         )

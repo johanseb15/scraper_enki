@@ -3,60 +3,110 @@ from typing import List, Optional
 
 from src.aplicacion.dto.oferta_dto import OfertaDTO
 from src.aplicacion.oferta_factory import OfertaFactory
+
 from src.dominio.oferta import Oferta
+from src.dominio.normalizador_ubicaciones import NormalizadorUbicaciones
+from src.dominio.normalizador_empresas import NormalizadorEmpresas
+
 from src.normalizadores.normalizador_precios import NormalizadorPrecios
 
 
 class ProcesadorOfertas:
     """
-    Caso de uso encargado de transformar DTOs provenientes
-    de scrapers en entidades Oferta del dominio.
+    Coordinador de aplicación encargado de transformar DTOs crudos
+    en entidades Oferta válidas del dominio.
     """
 
     def __init__(
         self,
         factory: Optional[OfertaFactory] = None,
         repositorio=None,
+        normalizador_ubicaciones: Optional[NormalizadorUbicaciones] = None,
+        normalizador_empresas: Optional[NormalizadorEmpresas] = None,
     ):
         self.factory = factory or OfertaFactory()
         self.repositorio = repositorio
-        self.normalizador_precios = NormalizadorPrecios()
 
-    def _normalizar_precio(self, dto: OfertaDTO) -> OfertaDTO:
+        self.normalizador_ubicaciones = (
+            normalizador_ubicaciones or NormalizadorUbicaciones()
+        )
+
+        self.normalizador_empresas = (
+            normalizador_empresas or NormalizadorEmpresas()
+        )
+
+
+    def procesar(self, dto: OfertaDTO) -> Optional[Oferta]:
+
+        dto_normalizado = self._normalizar_datos(dto)
+
+        oferta = self.factory.crear_desde_dto(dto_normalizado)
+
+        if oferta and self.repositorio:
+            self.repositorio.guardar(oferta)
+
+        return oferta
+
+
+    def crear_oferta(
+        self,
+        dto: OfertaDTO,
+        fecha_relevamiento: Optional[date] = None,
+    ) -> Optional[Oferta]:
+
+        if fecha_relevamiento:
+            try:
+                dto.fecha_relevamiento = fecha_relevamiento
+            except AttributeError:
+                pass
+
+        return self.procesar(dto)
+
+
+    def ejecutar(
+        self,
+        dtos: List[OfertaDTO],
+    ) -> List[Oferta]:
+
+        ofertas = []
+
+        for dto in dtos:
+
+            oferta = self.procesar(dto)
+
+            if oferta:
+                ofertas.append(oferta)
+
+        return ofertas
+
+
+    def _normalizar_datos(self, dto: OfertaDTO) -> OfertaDTO:
         """
-        Normaliza precios provenientes de scrapers.
-
-        Soporta:
-        - Precio ya normalizado:
-            precio=25000
-
-        - Precio crudo:
-            precio_raw="$ 25.000 ARS"
+        Aplica transformaciones ETL sobre datos de entrada.
         """
 
-        precio = getattr(dto, "precio", None)
-        moneda = getattr(dto, "moneda", "ARS")
-        precio_raw = getattr(dto, "precio_raw", None)
+        ubicacion = self.normalizador_ubicaciones.normalizar(
+            provincia=dto.provincia,
+            ciudad=dto.ciudad,
+        )
 
-        if precio is None and precio_raw:
 
-            precio_normalizado = self.normalizador_precios.normalizar(
-                precio_raw
-            )
-
-            precio = precio_normalizado.valor
-            moneda = precio_normalizado.moneda
-
-        return OfertaDTO(
-            empresa_nombre=getattr(
+        empresa_normalizada = self.normalizador_empresas.normalizar(
+            getattr(
                 dto,
                 "empresa_nombre",
                 getattr(dto, "empresa", "")
-            ),
+            )
+        )
 
-            provincia=dto.provincia,
 
-            ciudad=dto.ciudad,
+        dto_normalizado = OfertaDTO(
+
+            empresa_nombre=empresa_normalizada,
+
+            provincia=ubicacion.provincia,
+
+            ciudad=ubicacion.ciudad,
 
             fuente=dto.fuente,
 
@@ -66,11 +116,9 @@ class ProcesadorOfertas:
                 getattr(dto, "servicio", "")
             ),
 
-            precio=precio,
+            precio=getattr(dto, "precio", None),
 
-            precio_raw=precio_raw,
-
-            moneda=moneda,
+            moneda=dto.moneda,
 
             fecha_relevamiento=getattr(
                 dto,
@@ -79,101 +127,33 @@ class ProcesadorOfertas:
             ),
         )
 
-    def procesar(self, dto: OfertaDTO) -> Optional[Oferta]:
-        """
-        Procesa un DTO:
-        1. Normaliza precio.
-        2. Convierte a entidad Oferta.
-        3. Persiste si existe repositorio.
-        """
 
-        dto_normalizado = self._normalizar_precio(dto)
+        if dto_normalizado.precio is None:
 
-        oferta = self.factory.crear_desde_dto(
-            dto_normalizado
-        )
+            precio_raw = getattr(dto, "precio_raw", None)
 
-        if oferta and self.repositorio:
-            self.repositorio.guardar(oferta)
+            if precio_raw:
 
-        return oferta
+                precio = NormalizadorPrecios.normalizar(precio_raw)
 
-    def crear_oferta(
-        self,
-        dto: OfertaDTO,
-        fecha_relevamiento: Optional[date] = None,
-    ) -> Optional[Oferta]:
-        """
-        Crea una oferta desde un DTO recibido.
+                dto_normalizado = OfertaDTO(
 
-        Mantiene compatibilidad con DTOs antiguos:
-        - empresa
-        - servicio
-        - precio_raw
+                    empresa_nombre=dto_normalizado.empresa_nombre,
 
-        y DTOs actuales:
-        - empresa_nombre
-        - servicio_raw
-        - precio
-        """
+                    provincia=dto_normalizado.provincia,
 
-        dto_adaptado = OfertaDTO(
-            empresa_nombre=getattr(
-                dto,
-                "empresa_nombre",
-                getattr(dto, "empresa", "")
-            ),
+                    ciudad=dto_normalizado.ciudad,
 
-            provincia=dto.provincia,
+                    fuente=dto_normalizado.fuente,
 
-            ciudad=dto.ciudad,
+                    servicio_raw=dto_normalizado.servicio_raw,
 
-            fuente=dto.fuente,
+                    precio=precio.valor,
 
-            servicio_raw=getattr(
-                dto,
-                "servicio_raw",
-                getattr(dto, "servicio", "")
-            ),
+                    moneda=precio.moneda,
 
-            precio=getattr(
-                dto,
-                "precio",
-                None
-            ),
+                    fecha_relevamiento=dto_normalizado.fecha_relevamiento,
+                )
 
-            precio_raw=getattr(
-                dto,
-                "precio_raw",
-                None
-            ),
 
-            moneda=getattr(
-                dto,
-                "moneda",
-                "ARS"
-            ),
-
-            fecha_relevamiento=fecha_relevamiento,
-        )
-
-        return self.procesar(dto_adaptado)
-
-    def ejecutar(
-        self,
-        dtos: List[OfertaDTO],
-    ) -> List[Oferta]:
-        """
-        Procesa una lista completa de DTOs.
-        """
-
-        ofertas_procesadas = []
-
-        for dto in dtos:
-
-            oferta = self.procesar(dto)
-
-            if oferta:
-                ofertas_procesadas.append(oferta)
-
-        return ofertas_procesadas
+        return dto_normalizado
