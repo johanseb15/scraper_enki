@@ -1,45 +1,74 @@
 from typing import Optional
+
 from src.aplicacion.dto.oferta_dto import OfertaDTO
 from src.dominio.empresa import Empresa
 from src.dominio.normalizador_servicios import NormalizadorServicios
 from src.dominio.oferta import Oferta
+from src.normalizadores.normalizador_precios import NormalizadorPrecios
 
 
 class OfertaFactory:
-    """Fábrica encargada de instanciar entidades Oferta a partir de DTOs de entrada."""
+    """
+    Fabrica entidades Oferta desde DTOs de aplicación.
+    """
 
-    def __init__(self, normalizador: Optional[NormalizadorServicios] = None):
+    def __init__(
+        self,
+        normalizador: Optional[NormalizadorServicios] = None,
+    ):
         self.normalizador = normalizador or NormalizadorServicios()
 
-    def crear_desde_dto(self, dto: OfertaDTO) -> Optional[Oferta]:
-        # Compatibilidad con atributos de empresa según el DTO
-        empresa_nombre = getattr(dto, "empresa", getattr(dto, "empresa_nombre", ""))
-        fuente = getattr(dto, "fuente", "")
+
+    def crear_desde_dto(
+        self,
+        dto: OfertaDTO,
+    ) -> Optional[Oferta]:
 
         empresa = Empresa(
-            nombre=empresa_nombre,
+            nombre=dto.empresa_nombre,
             provincia=dto.provincia,
             ciudad=dto.ciudad,
-            fuente=fuente,
+            fuente=dto.fuente,
         )
 
-        servicio_raw = getattr(dto, "servicio", getattr(dto, "servicio_raw", ""))
-        servicio_canonico = self.normalizador.normalizar(servicio_raw)
 
-        # Si el servicio no puede normalizarse o mapearse, se maneja de forma resiliente
+        servicio_canonico = self.normalizador.normalizar(
+            dto.servicio_raw
+        )
+
         if not servicio_canonico:
             return None
 
-        # src/aplicacion/oferta_factory.py (línea ~33)
+
+        precio = dto.precio
+        moneda = dto.moneda
+
+
+        # Compatibilidad con scrapers que entregan precio crudo
+        precio_raw = getattr(
+            dto,
+            "precio_raw",
+            None
+        )
+
+        if precio_raw and precio is None:
+
+            precio_normalizado = (
+                NormalizadorPrecios.normalizar(precio_raw)
+            )
+
+            precio = precio_normalizado.valor
+            moneda = precio_normalizado.moneda
+
 
         return Oferta(
             empresa=empresa,
             servicio=servicio_canonico,
-            precio=dto.precio,
-            moneda=dto.moneda,
-            
-            fecha_relevamiento=getattr(dto, "fecha_relevamiento", None),
+            precio=precio,
+            moneda=moneda,
+            fecha_relevamiento=dto.fecha_relevamiento,
         )
 
-    # Alias para compatibilidad
+
+    # Compatibilidad histórica
     crear_oferta_desde_dto = crear_desde_dto

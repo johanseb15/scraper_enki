@@ -1,12 +1,3 @@
-from dataclasses import dataclass
+from src.aplicacion.dto.oferta_dto import OfertaDTO
 
-
-@dataclass(frozen=True)
-class OfertaDTO:
-    empresa: str
-    provincia: str
-    ciudad: str
-    servicio: str
-    precio: int
-    moneda: str
-    fuente: str
+__all__ = ["OfertaDTO"]

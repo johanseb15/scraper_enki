@@ -53,3 +53,28 @@ def test_procesador_maneja_servicio_desconocido_con_resiliencia():
     assert isinstance(oferta, Oferta)
     if hasattr(ServicioCanonico, "DESCONOCIDO"):
         assert oferta.servicio == ServicioCanonico.DESCONOCIDO
+
+def test_procesador_normaliza_precio_crudo_del_dto():
+    # Arrange: El scraper entrega precio sin normalizar
+    dto = OfertaDTO(
+        empresa="Vida Informatica",
+        provincia="Córdoba",
+        ciudad="Córdoba",
+        servicio="Eliminación de malware",
+        precio_raw="$ 25.000 ARS",
+        moneda="ARS",
+        fuente="https://vidainformatica.com"
+    )
+
+    procesador = ProcesadorOfertas()
+
+    # Act
+    oferta = procesador.crear_oferta(
+        dto,
+        fecha_relevamiento=date(2026, 7, 31)
+    )
+
+    # Assert
+    assert isinstance(oferta, Oferta)
+    assert oferta.precio == 25000
+    assert oferta.moneda == "ARS"
