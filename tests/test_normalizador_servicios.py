@@ -20,14 +20,14 @@ def test_normaliza_servicio_malware(normalizador, entrada, esperado):
 
 
 @pytest.mark.parametrize(
-    "entrada",
-    [
-        "Cambio de disco SSD",
-        "Servicio inventado",
-    ],
-)
-def test_devuelve_el_nombre_original_si_no_existe_alias(normalizador, entrada):
-    assert normalizador.normalizar(entrada) == entrada
+        "entrada",
+        [
+            "Cambio de disco SSD",
+            "Servicio inventado",
+        ],
+    )
+def test_devuelve_desconocido_si_no_existe_alias(normalizador, entrada):
+        assert normalizador.normalizar(entrada) == ServicioCanonico.DESCONOCIDO
 
 
 @pytest.mark.parametrize(

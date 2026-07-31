@@ -14,6 +14,7 @@ class ServicioCanonico(Enum):
     MANTENIMIENTO = "mantenimiento"
     SOPORTE_REDES = "soporte_redes"
     OTRO = "otro"
+    DESCONOCIDO = "DESCONOCIDO"
 
 
 CATALOGO_SERVICIOS = {
