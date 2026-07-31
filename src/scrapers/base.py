@@ -1,4 +1,4 @@
-﻿from abc import ABC, abstractmethod
+from abc import ABC, abstractmethod
 
 from src.aplicacion.dto.oferta_dto import OfertaDTO
 

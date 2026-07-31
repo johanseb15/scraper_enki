@@ -1,4 +1,4 @@
-from src.normalizacion.normalizador_precios import NormalizadorPrecios
+from src.normalizadores.normalizador_precios import NormalizadorPrecios
 
 
 def test_normaliza_precio_argentino_con_simbolo_y_separadores():
