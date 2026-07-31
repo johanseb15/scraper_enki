@@ -1,27 +1,52 @@
 from datetime import date
+from typing import List, Optional
+from src.aplicacion.dto.oferta_dto import OfertaDTO
+from src.aplicacion.oferta_factory import OfertaFactory
 from src.dominio.oferta import Oferta
-from src.dominio.servicios import ServicioCanonico
-from src.dominio.normalizador_servicios import NormalizadorServicios
-from src.aplicacion.dtos import OfertaDTO
-from src.aplicacion.oferta_factory import OfertaFactory  # <-- Cambio aquí
 
 
 class ProcesadorOfertas:
+    """Coordinador de aplicación para transformar DTOs en entidades de dominio
 
-    def __init__(self):
-        self.normalizador = NormalizadorServicios()
-        self.factory = OfertaFactory()
+    y llevar a cabo su persistencia.
+    """
 
-    def crear_oferta(self, dto: OfertaDTO, fecha_relevamiento: date) -> Oferta:
-        # 1. Interpretación semántica (Responsabilidad del Caso de Uso)
-        try:
-            servicio_canonico = self.normalizador.normalizar(dto.servicio)
-        except Exception:
-            servicio_canonico = getattr(ServicioCanonico, "DESCONOCIDO", list(ServicioCanonico)[0])
+    def __init__(self, factory: Optional[OfertaFactory] = None, repositorio=None):
+        self.factory = factory or OfertaFactory()
+        self.repositorio = repositorio
 
-        # Si el normalizador devuelve None o un valor no mapeado, aseguramos el fallback a DESCONOCIDO
-        if servicio_canonico is None:
-            servicio_canonico = getattr(ServicioCanonico, "DESCONOCIDO", list(ServicioCanonico)[0])
+    def procesar(self, dto: OfertaDTO) -> Optional[Oferta]:
+        """Procesa un único DTO, lo convierte en Oferta y lo guarda si hay repositorio configurado."""
+        if hasattr(self.factory, "crear_desde_dto"):
+            oferta = self.factory.crear_desde_dto(dto)
+        elif hasattr(self.factory, "crear_oferta_desde_dto"):
+            oferta = self.factory.crear_oferta_desde_dto(dto)
+        else:
+            raise AttributeError(
+                "OfertaFactory no implementa 'crear_desde_dto' ni 'crear_oferta_desde_dto'"
+            )
 
-        # 2. Ensamblado de la entidad a través de la factoría pura
-        return self.factory.crear(dto, servicio_canonico, fecha_relevamiento)
+        if oferta and self.repositorio:
+            self.repositorio.guardar(oferta)
+
+        return oferta
+
+    def crear_oferta(
+        self, dto: OfertaDTO, fecha_relevamiento: Optional[date] = None
+    ) -> Optional[Oferta]:
+        """Crea una oferta desde un DTO actualizando la fecha de relevamiento si se provee."""
+        if fecha_relevamiento is not None:
+            try:
+                dto.fecha_relevamiento = fecha_relevamiento
+            except AttributeError:
+                pass
+        return self.procesar(dto)
+
+    def ejecutar(self, dtos: List[OfertaDTO]) -> List[Oferta]:
+        """Procesa una lista completa de DTOs y retorna las ofertas creadas exitosamente."""
+        ofertas_procesadas: List[Oferta] = []
+        for dto in dtos:
+            oferta = self.procesar(dto)
+            if oferta:
+                ofertas_procesadas.append(oferta)
+        return ofertas_procesadas

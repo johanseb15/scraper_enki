@@ -1,0 +1,1 @@
+# Paquete de Data Transfer Objects (DTO) de la capa de aplicación

@@ -1,3 +1,4 @@
+from src.aplicacion.dto.oferta_dto import OfertaDTO
 from src.downloader import descargar_html
 from src.extractor import extraer_datos
 from src.scrapers.base import BaseScraper
@@ -14,6 +15,6 @@ class VidaInformaticaScraper(BaseScraper):
     def __init__(self, downloader=None):
         self.downloader = downloader or _DownloaderPorDefecto()
 
-    def obtener_servicios(self):
+    def obtener_servicios(self) -> list[OfertaDTO]:
         html = self.downloader.descargar(self.URL)
         return extraer_datos(html)

@@ -3,15 +3,15 @@ import re
 
 from bs4 import BeautifulSoup
 
+from src.aplicacion.dto.oferta_dto import OfertaDTO
 from src.downloader import descargar_html
-from src.modelos.servicio_precio import ServicioPrecio
 from src.scrapers.base import BaseScraper
 
 
 class BairesCloudScraper(BaseScraper):
     URL = "https://bairescloud.ar/servicio-tecnico.php"
 
-    def obtener_servicios(self) -> list[ServicioPrecio]:
+    def obtener_servicios(self) -> list[OfertaDTO]:
         html = descargar_html(self.URL)
 
         return extraer_precios_bairescloud(
@@ -40,7 +40,7 @@ def _a_numero(precio: str) -> int:
 def extraer_precios_bairescloud(
     html: str,
     fecha_relevamiento: date,
-) -> list[ServicioPrecio]:
+) -> list[OfertaDTO]:
     soup = BeautifulSoup(html, "html.parser")
 
     resultados = []
@@ -71,21 +71,18 @@ def extraer_precios_bairescloud(
                 celdas[2].get_text(strip=True)
             )
 
+            servicio_raw = f"{servicio} - {equipo}" if equipo else servicio
+
             resultados.append(
-                ServicioPrecio(
-                    empresa="BairesCloud",
+                OfertaDTO(
+                    empresa_nombre="BairesCloud",
                     provincia="Buenos Aires",
                     ciudad="Buenos Aires",
-                    servicio=servicio,
-                    equipo=equipo,
-                    precio_freelance=precio,
-                    precio_local=precio,
+                    fuente="https://bairescloud.ar/servicio-tecnico.php",
+                    servicio_raw=servicio_raw,
+                    precio=precio,
                     moneda="ARS",
                     fecha_relevamiento=fecha_relevamiento,
-                    fuente=(
-                        "https://bairescloud.ar/"
-                        "servicio-tecnico.php"
-                    ),
                 )
             )
 
