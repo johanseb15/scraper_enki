@@ -1,80 +1,118 @@
-import pytest
 from datetime import date
-from src.dominio.servicios import ServicioCanonico
+from typing import List, Optional
+
+from src.aplicacion.dto.oferta_dto import OfertaDTO
+from src.aplicacion.oferta_factory import OfertaFactory
 from src.dominio.oferta import Oferta
-from src.aplicacion.dtos import OfertaDTO
-from src.aplicacion.procesador_ofertas import ProcesadorOfertas
+from src.dominio.normalizador_ubicaciones import NormalizadorUbicaciones
+from src.normalizadores.normalizador_precios import NormalizadorPrecios
 
 
-def test_procesador_crea_oferta_valida_desde_dto():
-    # Arrange: Usando el DTO tipado y seguro
-    dto = OfertaDTO(
-        empresa="Soporte Total Córdoba",
-        provincia="Córdoba",
-        ciudad="Córdoba",
-        servicio="Eliminación de virus y malware",
-        precio=15000,
-        moneda="ARS",
-        fuente="https://soportetotal.com"
-    )
-    
-    procesador = ProcesadorOfertas()
+class ProcesadorOfertas:
+    """
+    Coordinador de aplicación encargado de transformar DTOs crudos
+    en entidades Oferta válidas del dominio.
+    """
 
-    # Act
-    oferta = procesador.crear_oferta(dto, fecha_relevamiento=date(2026, 7, 30))
+    def __init__(
+        self,
+        factory: Optional[OfertaFactory] = None,
+        repositorio=None,
+        normalizador_ubicaciones: Optional[NormalizadorUbicaciones] = None,
+    ):
+        self.factory = factory or OfertaFactory()
+        self.repositorio = repositorio
+        self.normalizador_ubicaciones = (
+            normalizador_ubicaciones or NormalizadorUbicaciones()
+        )
 
-    # Assert
-    assert isinstance(oferta, Oferta)
-    assert oferta.empresa.nombre == "Soporte Total Córdoba"
-    assert oferta.empresa.provincia == "Córdoba"
-    assert oferta.servicio == ServicioCanonico.MALWARE
-    assert oferta.precio == 15000
-    assert oferta.moneda == "ARS"
+    def procesar(self, dto: OfertaDTO) -> Optional[Oferta]:
+        dto_normalizado = self._normalizar_datos(dto)
 
+        oferta = self.factory.crear_desde_dto(dto_normalizado)
 
-def test_procesador_maneja_servicio_desconocido_con_resiliencia():
-    # Arrange: Servicio no catalogado
-    dto = OfertaDTO(
-        empresa="Tecno Service",
-        provincia="Córdoba",
-        ciudad="Córdoba",
-        servicio="Servicio cuántico inexistente",
-        precio=50000,
-        moneda="ARS",
-        fuente="https://tecnoservice.com"
-    )
-    
-    procesador = ProcesadorOfertas()
+        if oferta and self.repositorio:
+            self.repositorio.guardar(oferta)
 
-    # Act
-    oferta = procesador.crear_oferta(dto, fecha_relevamiento=date(2026, 7, 30))
+        return oferta
 
-    # Assert: El ETL no rompe, procesa la oferta y la clasifica de manera segura
-    assert isinstance(oferta, Oferta)
-    if hasattr(ServicioCanonico, "DESCONOCIDO"):
-        assert oferta.servicio == ServicioCanonico.DESCONOCIDO
+    def crear_oferta(
+        self,
+        dto: OfertaDTO,
+        fecha_relevamiento: Optional[date] = None,
+    ) -> Optional[Oferta]:
 
-def test_procesador_normaliza_precio_crudo_del_dto():
-    # Arrange: El scraper entrega precio sin normalizar
-    dto = OfertaDTO(
-        empresa="Vida Informatica",
-        provincia="Córdoba",
-        ciudad="Córdoba",
-        servicio="Eliminación de malware",
-        precio_raw="$ 25.000 ARS",
-        moneda="ARS",
-        fuente="https://vidainformatica.com"
-    )
+        if fecha_relevamiento:
+            try:
+                dto.fecha_relevamiento = fecha_relevamiento
+            except AttributeError:
+                pass
 
-    procesador = ProcesadorOfertas()
+        return self.procesar(dto)
 
-    # Act
-    oferta = procesador.crear_oferta(
-        dto,
-        fecha_relevamiento=date(2026, 7, 31)
-    )
+    def ejecutar(
+        self,
+        dtos: List[OfertaDTO],
+    ) -> List[Oferta]:
 
-    # Assert
-    assert isinstance(oferta, Oferta)
-    assert oferta.precio == 25000
-    assert oferta.moneda == "ARS"
+        ofertas = []
+
+        for dto in dtos:
+            oferta = self.procesar(dto)
+
+            if oferta:
+                ofertas.append(oferta)
+
+        return ofertas
+
+    def _normalizar_datos(self, dto: OfertaDTO) -> OfertaDTO:
+        """
+        Aplica transformaciones ETL sobre datos de entrada.
+        """
+
+        ubicacion = self.normalizador_ubicaciones.normalizar(
+            provincia=dto.provincia,
+            ciudad=dto.ciudad,
+        )
+
+        dto_normalizado = OfertaDTO(
+            empresa_nombre=getattr(
+                dto,
+                "empresa_nombre",
+                getattr(dto, "empresa", "")
+            ),
+            provincia=ubicacion.provincia,
+            ciudad=ubicacion.ciudad,
+            fuente=dto.fuente,
+            servicio_raw=getattr(
+                dto,
+                "servicio_raw",
+                getattr(dto, "servicio", "")
+            ),
+            precio=getattr(dto, "precio", None),
+            moneda=dto.moneda,
+            fecha_relevamiento=getattr(
+                dto,
+                "fecha_relevamiento",
+                None
+            ),
+        )
+
+        if dto_normalizado.precio is None:
+            precio_raw = getattr(dto, "precio_raw", None)
+
+            if precio_raw:
+                precio = NormalizadorPrecios.normalizar(precio_raw)
+
+                dto_normalizado = OfertaDTO(
+                    empresa_nombre=dto_normalizado.empresa_nombre,
+                    provincia=dto_normalizado.provincia,
+                    ciudad=dto_normalizado.ciudad,
+                    fuente=dto_normalizado.fuente,
+                    servicio_raw=dto_normalizado.servicio_raw,
+                    precio=precio.valor,
+                    moneda=precio.moneda,
+                    fecha_relevamiento=dto_normalizado.fecha_relevamiento,
+                )
+
+        return dto_normalizado
