@@ -3,7 +3,7 @@ from typing import Optional
 from src.aplicacion.dto.oferta_dto import OfertaDTO
 from src.dominio.empresa import Empresa
 from src.dominio.normalizador_servicios import NormalizadorServicios
-from src.dominio.oferta import Oferta
+from src.dominio.oferta import Oferta, PrecioValor
 from src.normalizadores.normalizador_precios import NormalizadorPrecios
 
 
@@ -43,6 +43,23 @@ class OfertaFactory:
         precio = dto.precio
         moneda = dto.moneda
 
+        if isinstance(precio, type(None)):
+            precio = None
+        elif isinstance(precio, PrecioValor):
+            moneda = precio.moneda
+        elif isinstance(precio, int) and not isinstance(precio, bool):
+            precio = PrecioValor(
+                valor=precio,
+                moneda=moneda,
+            )
+        elif hasattr(precio, "valor"):
+            moneda = getattr(precio, "moneda", moneda)
+            precio = PrecioValor(
+                valor=precio.valor,
+                moneda=moneda,
+                periodo=getattr(precio, "periodo", None),
+            )
+
 
         # Compatibilidad con scrapers que entregan precio crudo
         precio_raw = getattr(
@@ -57,8 +74,12 @@ class OfertaFactory:
                 NormalizadorPrecios.normalizar(precio_raw)
             )
 
-            precio = precio_normalizado.valor
-            moneda = precio_normalizado.moneda
+            precio = PrecioValor(
+                valor=precio_normalizado.valor,
+                moneda=precio_normalizado.moneda,
+                periodo=precio_normalizado.periodo,
+            )
+            moneda = precio.moneda
 
 
         return Oferta(

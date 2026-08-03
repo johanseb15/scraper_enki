@@ -115,4 +115,8 @@ class OfertaDTO:
         """
         Compatibilidad con código antiguo.
         """
-        return self.servicio_raw
+        servicio_raw = self.servicio_raw
+        if isinstance(servicio_raw, str) and servicio_raw in {"malware", "formateo", "mantenimiento", "soporte_redes", "otro", "DESCONOCIDO"}:
+            from src.dominio.servicios import ServicioCanonico
+            return ServicioCanonico(servicio_raw)
+        return servicio_raw

@@ -15,6 +15,7 @@ class TestNormalizadorEmpresas:
             ("  Vida   Informatica  S.A.  ", "Vida Informatica"),
             ("VIDA INFORMATICA srl", "Vida Informatica"),
             ("Soluciones IT S.A.S", "Soluciones It"),
+            ("Empresa Álvarez S.A.", "Empresa Alvarez"),
         ]
     )
     def test_normaliza_nombres_de_empresa_eliminando_ruido_legal_y_tipografico(

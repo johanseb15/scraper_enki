@@ -1,9 +1,9 @@
 from datetime import date
 from bs4 import BeautifulSoup
 
+from src.aplicacion.dto.oferta_dto import OfertaDTO
 from src.dominio.normalizador_servicios import NormalizadorServicios
 from src.dominio.servicios import ServicioCanonico
-from src.modelos.servicio_precio import ServicioPrecio
 
 
 def _a_numero(texto: str) -> int:
@@ -16,9 +16,9 @@ def _a_numero(texto: str) -> int:
 
 def extraer_datos(
     html: str, normalizador: NormalizadorServicios | None = None
-) -> list[ServicioPrecio]:
+) -> list[OfertaDTO]:
     """
-    Recibe HTML de una página de precios y devuelve servicios normalizados.
+    Recibe HTML de una página de precios y devuelve ofertas de aplicación.
     """
     soup = BeautifulSoup(html, "html.parser")
     tabla = soup.find("table")
@@ -47,18 +47,21 @@ def extraer_datos(
         precio_freelance = _a_numero(celdas[2].get_text(strip=True))
         precio_local = _a_numero(celdas[3].get_text(strip=True))
 
+        servicio_canonico = normalizador.normalizar(tipo_arreglo)
+        servicio_raw = (
+            f"{tipo_arreglo} - {tipo_equipo}" if tipo_equipo else tipo_arreglo
+        )
+
         resultados.append(
-            ServicioPrecio(
-                empresa="Vida informatica",
+            OfertaDTO(
+                empresa_nombre="Vida informatica",
                 provincia="Córdoba",
                 ciudad="Córdoba",
-                servicio=servicio_normalizado,
-                equipo=tipo_equipo,
-                precio_freelance=precio_freelance,
-                precio_local=precio_local,
+                fuente="https://vidainformatica.com.ar/listado-de-precios-zona-1/",
+                servicio_raw=servicio_canonico.value if hasattr(servicio_canonico, "value") else servicio_raw,
+                precio=precio_freelance,
                 moneda="ARS",
                 fecha_relevamiento=date.today(),
-                fuente="https://vidainformatica.com.ar/listado-de-precios-zona-1/",
             )
         )
 

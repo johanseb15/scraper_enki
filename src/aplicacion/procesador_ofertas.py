@@ -4,7 +4,7 @@ from typing import List, Optional
 from src.aplicacion.dto.oferta_dto import OfertaDTO
 from src.aplicacion.oferta_factory import OfertaFactory
 
-from src.dominio.oferta import Oferta
+from src.dominio.oferta import Oferta, PrecioValor
 from src.dominio.normalizador_ubicaciones import NormalizadorUbicaciones
 from src.dominio.normalizador_empresas import NormalizadorEmpresas
 
@@ -39,6 +39,9 @@ class ProcesadorOfertas:
     def procesar(self, dto: OfertaDTO) -> Optional[Oferta]:
 
         dto_normalizado = self._normalizar_datos(dto)
+
+        if not dto_normalizado.servicio_raw:
+            return None
 
         oferta = self.factory.crear_desde_dto(dto_normalizado)
 
@@ -148,7 +151,11 @@ class ProcesadorOfertas:
 
                     servicio_raw=dto_normalizado.servicio_raw,
 
-                    precio=precio.valor,
+                    precio=PrecioValor(
+                        valor=precio.valor,
+                        moneda=precio.moneda,
+                        periodo=precio.periodo,
+                    ),
 
                     moneda=precio.moneda,
 

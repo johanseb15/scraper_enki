@@ -1,6 +1,7 @@
 from pathlib import Path
 from unittest.mock import patch
 
+from src.aplicacion.dto.oferta_dto import OfertaDTO
 from src.scrapers.vida_informatica import VidaInformaticaScraper
 from src.modelos.servicio_precio import ServicioPrecio
 
@@ -33,7 +34,7 @@ def test_vida_informatica_scraper_orquesta_descarga_y_parseo():
 
         assert isinstance(
             resultados[0],
-            ServicioPrecio
+            OfertaDTO
         )
 
         mock_descargar_html.assert_called_once_with(

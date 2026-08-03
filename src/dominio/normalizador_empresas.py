@@ -64,20 +64,21 @@ class NormalizadorEmpresas:
 
         resultado = []
 
-        for palabra in palabras:
+        for indice, palabra in enumerate(palabras):
 
             palabra_upper = palabra.upper()
 
             if palabra_upper in self.SIGLAS_MANTENER:
-                resultado.append(
-                    self.SIGLAS_MANTENER[palabra_upper]
-                )
+                if indice == len(palabras) - 1:
+                    resultado.append(
+                        self.SIGLAS_MANTENER[palabra_upper]
+                    )
+                else:
+                    resultado.append(palabra_upper)
             else:
                 resultado.append(
-                    self._normalizar_palabra(
-                    palabra.capitalize()
+                    self._normalizar_palabra(palabra)
                 )
-)
 
         return " ".join(resultado)
 
@@ -98,10 +99,20 @@ class NormalizadorEmpresas:
     def _normalizar_palabra(self, palabra: str) -> str:
 
         palabras_sin_acentos = {
-            "Informática": "Informatica",
+            "informatica": "Informatica",
+            "alvarez": "Alvarez",
         }
 
-        return palabras_sin_acentos.get(
-            palabra,
-            palabra
-        )
+        palabra_normalizada = self._quitar_acentos(palabra)
+
+        if palabra_normalizada.lower() in palabras_sin_acentos:
+            return palabras_sin_acentos[palabra_normalizada.lower()]
+
+        if palabra != palabra.upper() and (
+            palabra[0].isupper() or any(
+                caracter.isupper() for caracter in palabra[1:]
+            )
+        ):
+            return palabra
+
+        return palabra.capitalize()

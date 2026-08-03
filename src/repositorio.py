@@ -1,6 +1,7 @@
 import sqlite3
 from datetime import date
 from typing import List
+from src.aplicacion.dto.oferta_dto import OfertaDTO
 from src.modelos.servicio_precio import ServicioPrecio
 
 
@@ -31,18 +32,41 @@ class RepositorioSQLite:
         )
         self.conexion.commit()
 
-    def guardar(self, servicio: ServicioPrecio):
-        nombre_servicio = (
-            servicio.servicio.value
-            if hasattr(servicio.servicio, "value")
-            else str(servicio.servicio)
-        )
-
-        fecha_str = (
-            servicio.fecha_relevamiento.isoformat()
-            if hasattr(servicio.fecha_relevamiento, "isoformat")
-            else str(servicio.fecha_relevamiento)
-        )
+    def guardar(self, servicio):
+        if isinstance(servicio, OfertaDTO):
+            nombre_servicio = servicio.servicio_raw
+            equipo = ""
+            precio_freelance = servicio.precio
+            precio_local = servicio.precio
+            fecha_str = (
+                servicio.fecha_relevamiento.isoformat()
+                if hasattr(servicio.fecha_relevamiento, "isoformat")
+                else str(servicio.fecha_relevamiento)
+            )
+            empresa = servicio.empresa_nombre
+            provincia = servicio.provincia
+            ciudad = servicio.ciudad
+            fuente = servicio.fuente
+            moneda = servicio.moneda
+        else:
+            nombre_servicio = (
+                servicio.servicio.value
+                if hasattr(servicio.servicio, "value")
+                else str(servicio.servicio)
+            )
+            equipo = servicio.equipo
+            precio_freelance = servicio.precio_freelance
+            precio_local = servicio.precio_local
+            fecha_str = (
+                servicio.fecha_relevamiento.isoformat()
+                if hasattr(servicio.fecha_relevamiento, "isoformat")
+                else str(servicio.fecha_relevamiento)
+            )
+            empresa = servicio.empresa
+            provincia = servicio.provincia
+            ciudad = servicio.ciudad
+            fuente = servicio.fuente
+            moneda = servicio.moneda
 
         self.conexion.execute(
             """
@@ -50,16 +74,16 @@ class RepositorioSQLite:
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             """,
             (
-                servicio.empresa,
-                servicio.provincia,
-                servicio.ciudad,
+                empresa,
+                provincia,
+                ciudad,
                 nombre_servicio,
-                servicio.equipo,
-                servicio.precio_freelance,
-                servicio.precio_local,
-                servicio.moneda,
+                equipo,
+                precio_freelance,
+                precio_local,
+                moneda,
                 fecha_str,
-                servicio.fuente,
+                fuente,
             ),
         )
         self.conexion.commit()
