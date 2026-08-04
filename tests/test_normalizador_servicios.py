@@ -1,6 +1,6 @@
 import pytest
 from src.dominio.servicios import ServicioCanonico, DetalleServicioCanonico
-from src.dominio.normalizador_servicios import NormalizadorServicios
+from src.normalizadores.normalizador_servicios import NormalizadorServicios
 
 
 @pytest.fixture

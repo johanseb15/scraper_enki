@@ -2,7 +2,7 @@ from datetime import date
 from bs4 import BeautifulSoup
 
 from src.aplicacion.dto.oferta_dto import OfertaDTO
-from src.dominio.normalizador_servicios import NormalizadorServicios
+from src.normalizadores.normalizador_servicios import NormalizadorServicios
 from src.dominio.servicios import ServicioCanonico
 
 

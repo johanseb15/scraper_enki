@@ -2,7 +2,7 @@ from typing import Optional
 
 from src.aplicacion.dto.oferta_dto import OfertaDTO
 from src.dominio.empresa import Empresa
-from src.dominio.normalizador_servicios import NormalizadorServicios
+from src.normalizadores.normalizador_servicios import NormalizadorServicios
 from src.dominio.oferta import Oferta, PrecioValor
 from src.normalizadores.normalizador_precios import NormalizadorPrecios
 

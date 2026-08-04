@@ -1,4 +1,4 @@
-from src.dominio.normalizador_ubicaciones import NormalizadorUbicaciones
+from src.normalizadores.normalizador_ubicaciones import NormalizadorUbicaciones
 
 
 def test_normalizador_ubicacion_unifica_variantes_de_ciudad():

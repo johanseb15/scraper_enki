@@ -7,12 +7,19 @@ from src.aplicacion.dto.oferta_dto import OfertaDTO
 from src.downloader import descargar_html
 from src.scrapers.base import BaseScraper
 
+class _DownloaderPorDefecto:
+
+    def descargar(self, url: str) -> str:
+        return descargar_html(url)
 
 class BairesCloudScraper(BaseScraper):
     URL = "https://bairescloud.ar/servicio-tecnico.php"
 
+    def __init__(self, downloader=None):
+        self.downloader = downloader or _DownloaderPorDefecto()
+
     def obtener_servicios(self) -> list[OfertaDTO]:
-        html = descargar_html(self.URL)
+        html = self.downloader.descargar(self.URL)
 
         return extraer_precios_bairescloud(
             html,

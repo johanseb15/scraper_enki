@@ -8,23 +8,28 @@ class OfertaDTO:
     """
     DTO de transporte entre scrapers y aplicación.
 
-    Compatible con:
-    
-    Formato antiguo:
-        empresa
-        servicio
-        precio_raw
+    Contrato:
+    - Los scrapers entregan datos crudos.
+    - La aplicación normaliza.
+    - El dominio recibe entidades limpias.
 
-    Formato nuevo:
-        empresa_nombre
-        servicio_raw
-        precio
+    Compatibilidad:
+        formato antiguo:
+            empresa
+            servicio
+            precio_raw
+
+        formato nuevo:
+            empresa_nombre
+            servicio_raw
+            precio
     """
 
     empresa_nombre: str
     provincia: str
     ciudad: str
     fuente: str
+
     servicio_raw: str
 
     precio: Optional[int]
@@ -33,6 +38,7 @@ class OfertaDTO:
     fecha_relevamiento: Optional[date]
 
     precio_raw: Optional[str]
+
 
     def __init__(
         self,
@@ -103,20 +109,37 @@ class OfertaDTO:
             fecha_relevamiento
         )
 
+
     @property
     def empresa(self):
         """
-        Compatibilidad con código antiguo.
+        Compatibilidad legacy.
         """
         return self.empresa_nombre
+
 
     @property
     def servicio(self):
         """
-        Compatibilidad con código antiguo.
+        Compatibilidad legacy.
+
+        Si el valor almacenado corresponde a un ServicioCanonico,
+        lo reconstruye automáticamente.
+
+        Si no pertenece al dominio, devuelve el texto original.
         """
-        servicio_raw = self.servicio_raw
-        if isinstance(servicio_raw, str) and servicio_raw in {"malware", "formateo", "mantenimiento", "soporte_redes", "otro", "DESCONOCIDO"}:
-            from src.dominio.servicios import ServicioCanonico
-            return ServicioCanonico(servicio_raw)
-        return servicio_raw
+
+        from src.dominio.servicios import ServicioCanonico
+
+        valor = self.servicio_raw
+
+        if isinstance(valor, ServicioCanonico):
+            return valor
+
+        if isinstance(valor, str):
+            try:
+                return ServicioCanonico(valor)
+            except ValueError:
+                return valor
+
+        return valor

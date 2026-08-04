@@ -4,7 +4,7 @@ from typing import List
 
 from src.aplicacion.puertos.repositorio_ofertas import RepositorioOfertas
 from src.dominio.empresa import Empresa
-from src.dominio.normalizador_servicios import NormalizadorServicios
+from src.normalizadores.normalizador_servicios import NormalizadorServicios
 from src.dominio.oferta import Oferta
 from src.dominio.servicios import ServicioCanonico
 
