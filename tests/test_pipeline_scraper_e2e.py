@@ -32,5 +32,5 @@ def test_pipeline_scraper_html_a_persistencia(tmp_path):
     assert oferta.empresa.ciudad == "Córdoba"
 
     persistidas = repositorio.obtener_todas()
-    assert len(persistidas) == 1
+    assert len(persistidas) == len(dtos)
     assert persistidas[0].servicio == ServicioCanonico.MALWARE
