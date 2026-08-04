@@ -1,6 +1,6 @@
 import sqlite3
 from datetime import date
-from typing import List
+from typing import List, Optional
 
 from src.aplicacion.puertos.repositorio_ofertas import RepositorioOfertas
 from src.dominio.empresa import Empresa
@@ -12,83 +12,95 @@ from src.dominio.servicios import ServicioCanonico
 class RepositorioSQLiteOfertas(RepositorioOfertas):
 
     def __init__(self, ruta_db: str = "enki.db"):
-        self.conexion = sqlite3.connect(
+        self.ruta_db = ruta_db
+        self.conexion: Optional[sqlite3.Connection] = sqlite3.connect(
             ruta_db,
             check_same_thread=False,
         )
         self._crear_tablas()
 
     def _crear_tablas(self) -> None:
-        self.conexion.execute(
-            """
-            CREATE TABLE IF NOT EXISTS empresas (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                nombre TEXT UNIQUE,
-                provincia TEXT,
-                ciudad TEXT,
-                fuente TEXT
-            )
-            """
-        )
+        if not self.conexion:
+            return
 
-        self.conexion.execute(
-            """
-            CREATE TABLE IF NOT EXISTS ofertas (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                empresa_id INTEGER,
-                servicio TEXT,
-                precio INTEGER,
-                moneda TEXT,
-                fecha_relevamiento TEXT,
-                FOREIGN KEY (empresa_id) REFERENCES empresas(id)
+        with self.conexion:
+            self.conexion.execute(
+                """
+                CREATE TABLE IF NOT EXISTS empresas (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    nombre TEXT UNIQUE,
+                    provincia TEXT,
+                    ciudad TEXT,
+                    fuente TEXT
+                )
+                """
             )
-            """
-        )
 
-        self.conexion.commit()
+            self.conexion.execute(
+                """
+                CREATE TABLE IF NOT EXISTS ofertas (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    empresa_id INTEGER,
+                    servicio TEXT,
+                    precio INTEGER,
+                    moneda TEXT,
+                    fecha_relevamiento TEXT,
+                    FOREIGN KEY (empresa_id) REFERENCES empresas(id)
+                )
+                """
+            )
 
     def guardar(self, oferta: Oferta) -> None:
-        cursor = self.conexion.cursor()
+        if not self.conexion:
+            raise RuntimeError("La conexión a la base de datos está cerrada.")
 
-        cursor.execute(
-            """
-            INSERT OR IGNORE INTO empresas
-            (nombre, provincia, ciudad, fuente)
-            VALUES (?, ?, ?, ?)
-            """,
-            (
-                oferta.empresa.nombre,
-                oferta.empresa.provincia,
-                oferta.empresa.ciudad,
-                oferta.empresa.fuente,
-            ),
-        )
+        with self.conexion:
+            cursor = self.conexion.cursor()
 
-        cursor.execute(
-            "SELECT id FROM empresas WHERE nombre = ?",
-            (oferta.empresa.nombre,),
-        )
+            cursor.execute(
+                """
+                INSERT OR IGNORE INTO empresas
+                (nombre, provincia, ciudad, fuente)
+                VALUES (?, ?, ?, ?)
+                """,
+                (
+                    oferta.empresa.nombre,
+                    oferta.empresa.provincia,
+                    oferta.empresa.ciudad,
+                    oferta.empresa.fuente,
+                ),
+            )
 
-        empresa_id = cursor.fetchone()[0]
+            cursor.execute(
+                "SELECT id FROM empresas WHERE nombre = ?",
+                (oferta.empresa.nombre,),
+            )
 
-        cursor.execute(
-            """
-            INSERT INTO ofertas
-            (empresa_id, servicio, precio, moneda, fecha_relevamiento)
-            VALUES (?, ?, ?, ?, ?)
-            """,
-            (
-                empresa_id,
-                oferta.servicio.value,
-                oferta.precio,
-                oferta.moneda,
-                oferta.fecha_relevamiento.isoformat(),
-            ),
-        )
+            resultado = cursor.fetchone()
+            if not resultado:
+                raise ValueError(f"No se pudo registrar o encontrar la empresa {oferta.empresa.nombre}")
+            
+            empresa_id = resultado[0]
 
-        self.conexion.commit()
+            cursor.execute(
+                """
+                INSERT INTO ofertas
+                (empresa_id, servicio, precio, moneda, fecha_relevamiento)
+                VALUES (?, ?, ?, ?, ?)
+                """,
+                (
+                    empresa_id,
+                    oferta.servicio.value,
+                    oferta.precio,
+                    oferta.moneda,
+                    oferta.fecha_relevamiento.isoformat(),
+                ),
+            )
 
     def obtener_todas(self) -> List[Oferta]:
+        if not self.conexion:
+            raise RuntimeError("La conexión a la base de datos está cerrada.")
+
         cursor = self.conexion.cursor()
 
         cursor.execute(
@@ -139,4 +151,15 @@ class RepositorioSQLiteOfertas(RepositorioOfertas):
         return ofertas
 
     def cerrar(self) -> None:
-        self.conexion.close()
+        if self.conexion:
+            self.conexion.close()
+            self.conexion = None
+
+    def close(self) -> None:
+        self.cerrar()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.cerrar()

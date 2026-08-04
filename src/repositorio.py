@@ -1,6 +1,6 @@
 import sqlite3
 from datetime import date
-from typing import List
+from typing import List, Optional
 from src.aplicacion.dto.oferta_dto import OfertaDTO
 from src.modelos.servicio_precio import ServicioPrecio
 
@@ -8,31 +8,40 @@ from src.modelos.servicio_precio import ServicioPrecio
 class RepositorioSQLite:
 
     def __init__(self, ruta_db: str = "enki.db"):
+        self.ruta_db = ruta_db
         # check_same_thread=False evita el error de SQLite al ser llamado desde FastAPI/TestClient
-        self.conexion = sqlite3.connect(ruta_db, check_same_thread=False)
+        self.conexion: Optional[sqlite3.Connection] = sqlite3.connect(
+            ruta_db, check_same_thread=False
+        )
         self._crear_tabla()
 
-    def _crear_tabla(self):
-        self.conexion.execute(
-            """
-            CREATE TABLE IF NOT EXISTS servicio_precio (
-                empresa TEXT,
-                provincia TEXT,
-                ciudad TEXT,
-                servicio TEXT,
-                equipo TEXT,
-                precio_freelance INTEGER,
-                precio_local INTEGER,
-                moneda TEXT,
-                fecha_relevamiento TEXT,
-                fuente TEXT,
-                PRIMARY KEY (empresa, provincia, ciudad, servicio, equipo, fecha_relevamiento)
-            )
-            """
-        )
-        self.conexion.commit()
+    def _crear_tabla(self) -> None:
+        if not self.conexion:
+            return
 
-    def guardar(self, servicio):
+        with self.conexion:
+            self.conexion.execute(
+                """
+                CREATE TABLE IF NOT EXISTS servicio_precio (
+                    empresa TEXT,
+                    provincia TEXT,
+                    ciudad TEXT,
+                    servicio TEXT,
+                    equipo TEXT,
+                    precio_freelance INTEGER,
+                    precio_local INTEGER,
+                    moneda TEXT,
+                    fecha_relevamiento TEXT,
+                    fuente TEXT,
+                    PRIMARY KEY (empresa, provincia, ciudad, servicio, equipo, fecha_relevamiento)
+                )
+                """
+            )
+
+    def guardar(self, servicio) -> None:
+        if not self.conexion:
+            raise RuntimeError("La conexión a la base de datos se encuentra cerrada.")
+
         if isinstance(servicio, OfertaDTO):
             nombre_servicio = servicio.servicio_raw
             equipo = ""
@@ -68,27 +77,30 @@ class RepositorioSQLite:
             fuente = servicio.fuente
             moneda = servicio.moneda
 
-        self.conexion.execute(
-            """
-            INSERT OR IGNORE INTO servicio_precio
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """,
-            (
-                empresa,
-                provincia,
-                ciudad,
-                nombre_servicio,
-                equipo,
-                precio_freelance,
-                precio_local,
-                moneda,
-                fecha_str,
-                fuente,
-            ),
-        )
-        self.conexion.commit()
+        with self.conexion:
+            self.conexion.execute(
+                """
+                INSERT OR IGNORE INTO servicio_precio
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    empresa,
+                    provincia,
+                    ciudad,
+                    nombre_servicio,
+                    equipo,
+                    precio_freelance,
+                    precio_local,
+                    moneda,
+                    fecha_str,
+                    fuente,
+                ),
+            )
 
     def obtener_todos(self) -> List[ServicioPrecio]:
+        if not self.conexion:
+            raise RuntimeError("La conexión a la base de datos se encuentra cerrada.")
+
         cursor = self.conexion.cursor()
         cursor.execute("SELECT * FROM servicio_precio")
         filas = cursor.fetchall()
@@ -115,3 +127,17 @@ class RepositorioSQLite:
                 )
             )
         return servicios
+
+    def cerrar(self) -> None:
+        if self.conexion:
+            self.conexion.close()
+            self.conexion = None
+
+    def close(self) -> None:
+        self.cerrar()
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.cerrar()

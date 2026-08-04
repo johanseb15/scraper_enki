@@ -14,8 +14,6 @@ def test_bairescloud_puede_guardarse_en_sqlite(tmp_path):
     )
 
     db_file = str(tmp_path / "test_bairescloud.db")
-
-    # Uso de context manager para asegurar el cierre automático de SQLite
     with RepositorioSQLiteOfertas(ruta_db=db_file) as repositorio:
         procesador = ProcesadorOfertas(repositorio=repositorio)
 

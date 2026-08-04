@@ -13,6 +13,7 @@ class ServicioCanonico(Enum):
     FORMATEO = "formateo"
     MANTENIMIENTO = "mantenimiento"
     SOPORTE_REDES = "soporte_redes"
+    SOPORTE_TECNICO = "soporte_tecnico"
     OTRO = "otro"
     DESCONOCIDO = "DESCONOCIDO"
 
