@@ -3,13 +3,15 @@ from typing import Any, Dict, List
 from playwright.sync_api import sync_playwright
 
 from src.aplicacion.dto.oferta_dto import OfertaDTO
-from src.scrapers.compragamer_parser import parsear_ofertas_compragamer
+from src.infraestructura.scrapers.base import BaseScraper
+from src.infraestructura.scrapers.compragamer_parser import parsear_ofertas_compragamer
 
 
-class CompraGamerPlaywrightScraper:
+class CompraGamerPlaywrightScraper(BaseScraper):
     """Scraper Playwright que intercepta el catálogo completo de productos de Compra Gamer."""
 
-    def obtener_ofertas(self, fecha_relevamiento: date | None = None) -> List[OfertaDTO]:
+    def obtener_servicios(self, fecha_relevamiento: date | None = None) -> List[OfertaDTO]:
+        """Obtiene y normaliza las ofertas interceptando las peticiones de red."""
         if fecha_relevamiento is None:
             fecha_relevamiento = date.today()
 
@@ -44,3 +46,7 @@ class CompraGamerPlaywrightScraper:
             raise RuntimeError("No se interceptó la respuesta de https://static.compragamer.com/productos")
 
         return parsear_ofertas_compragamer(productos_raw, fecha_relevamiento)
+
+    # Alias opcional por compatibilidad si algún módulo legacy llamaba a obtener_ofertas()
+    def obtener_ofertas(self, fecha_relevamiento: date | None = None) -> List[OfertaDTO]:
+        return self.obtener_servicios(fecha_relevamiento)

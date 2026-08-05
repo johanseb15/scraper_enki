@@ -1,165 +1,163 @@
+"""Repositorio SQLite para la persistencia de ofertas en scraper_enki."""
+
+import logging
 import sqlite3
 from datetime import date
-from typing import List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
-from src.aplicacion.puertos.repositorio_ofertas import RepositorioOfertas
-from src.dominio.empresa import Empresa
-from src.normalizadores.normalizador_servicios import NormalizadorServicios
-from src.dominio.oferta import Oferta
-from src.dominio.servicios import ServicioCanonico
+logger = logging.getLogger(__name__)
 
 
-class RepositorioSQLiteOfertas(RepositorioOfertas):
+class RepositorioSQLiteOfertas:
+    """Maneja el almacenamiento y consulta de ofertas en SQLite."""
 
-    def __init__(self, ruta_db: str = "enki.db"):
-        self.ruta_db = ruta_db
-        self.conexion: Optional[sqlite3.Connection] = sqlite3.connect(
-            ruta_db,
-            check_same_thread=False,
-        )
-        self._crear_tablas()
+    def __init__(self, db_path: str = "enki.db"):
+        self.db_path = db_path
+        self._crear_tabla()
 
-    def _crear_tablas(self) -> None:
-        if not self.conexion:
-            return
+    def _get_connection(self) -> sqlite3.Connection:
+        """Retorna una conexión a la base de datos SQLite."""
+        return sqlite3.connect(self.db_path)
 
-        with self.conexion:
-            self.conexion.execute(
-                """
-                CREATE TABLE IF NOT EXISTS empresas (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    nombre TEXT UNIQUE,
-                    provincia TEXT,
-                    ciudad TEXT,
-                    fuente TEXT
-                )
-                """
-            )
-
-            self.conexion.execute(
-                """
+    def _crear_tabla(self) -> None:
+        """Crea la tabla 'ofertas' si no existe en el esquema."""
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
                 CREATE TABLE IF NOT EXISTS ofertas (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    empresa_id INTEGER,
-                    servicio TEXT,
-                    precio INTEGER,
-                    moneda TEXT,
-                    fecha_relevamiento TEXT,
-                    FOREIGN KEY (empresa_id) REFERENCES empresas(id)
+                    nombre TEXT,
+                    titulo_raw TEXT,
+                    precio REAL,
+                    moneda TEXT DEFAULT 'ars',
+                    url TEXT,
+                    proveedor TEXT,
+                    categoria_normalizada TEXT DEFAULT 'General',
+                    subcategoria_normalizada TEXT DEFAULT 'otros',
+                    fecha_relevamiento TEXT
                 )
-                """
+            """)
+            conn.commit()
+
+    def _extraer_campos(self, oferta: Any) -> Tuple[str, str, float, str, str, str, str, str, str]:
+        """Extrae y sanitiza defensivamente los atributos de un DTO, dict u objeto."""
+        if isinstance(oferta, dict):
+            nombre = oferta.get("nombre") or oferta.get("servicio_raw") or oferta.get("titulo") or "Oferta"
+            titulo_raw = oferta.get("titulo_raw") or oferta.get("servicio_raw") or nombre
+            precio = float(oferta.get("precio", 0.0))
+            moneda = str(oferta.get("moneda", "ars")).lower()
+            url = str(oferta.get("url", ""))
+            proveedor = str(
+                oferta.get("proveedor")
+                or oferta.get("empresa_nombre")
+                or oferta.get("fuente")
+                or "CompraGamer"
+            )
+            cat_norm = oferta.get("categoria_normalizada", "General")
+            subcat_norm = oferta.get("subcategoria_normalizada", "otros")
+            fecha = str(oferta.get("fecha_relevamiento") or date.today().isoformat())
+        else:
+            nombre = (
+                getattr(oferta, "nombre", None)
+                or getattr(oferta, "servicio_raw", None)
+                or getattr(oferta, "_servicio_raw", None)
+                or getattr(oferta, "titulo", "Oferta")
+            )
+            titulo_raw = (
+                getattr(oferta, "titulo_raw", None)
+                or getattr(oferta, "servicio_raw", None)
+                or getattr(oferta, "_servicio_raw", nombre)
+            )
+            precio = float(
+                getattr(oferta, "precio", None)
+                or getattr(oferta, "_precio", 0.0)
+            )
+            moneda = str(
+                getattr(oferta, "moneda", None)
+                or getattr(oferta, "_moneda", "ars")
+            ).lower()
+            url = str(getattr(oferta, "url", ""))
+            proveedor = str(
+                getattr(oferta, "proveedor", None)
+                or getattr(oferta, "empresa_nombre", None)
+                or getattr(oferta, "_empresa_nombre", None)
+                or getattr(oferta, "fuente", "CompraGamer")
+            )
+            cat_norm = getattr(oferta, "categoria_normalizada", "General")
+            subcat_norm = getattr(oferta, "subcategoria_normalizada", "otros")
+            fecha = str(
+                getattr(oferta, "fecha_relevamiento", None)
+                or getattr(oferta, "_fecha_relevamiento", date.today().isoformat())
             )
 
-    def guardar(self, oferta: Oferta) -> None:
-        if not self.conexion:
-            raise RuntimeError("La conexión a la base de datos está cerrada.")
+        # Sanitización defensiva de categorias
+        cat_str = str(cat_norm) if cat_norm is not None else "General"
+        subcat_str = str(subcat_norm) if subcat_norm is not None else "otros"
 
-        with self.conexion:
-            cursor = self.conexion.cursor()
+        # Si subcategoria recibió un objeto stringificado, forzar valor limpio
+        if subcat_str.lower().startswith("ofertadto") or "(" in subcat_str:
+            subcat_str = "otros"
 
-            cursor.execute(
-                """
-                INSERT OR IGNORE INTO empresas
-                (nombre, provincia, ciudad, fuente)
-                VALUES (?, ?, ?, ?)
-                """,
-                (
-                    oferta.empresa.nombre,
-                    oferta.empresa.provincia,
-                    oferta.empresa.ciudad,
-                    oferta.empresa.fuente,
-                ),
-            )
+        if cat_str.lower().startswith("ofertadto") or "(" in cat_str:
+            cat_str = "General"
 
-            cursor.execute(
-                "SELECT id FROM empresas WHERE nombre = ?",
-                (oferta.empresa.nombre,),
-            )
-
-            resultado = cursor.fetchone()
-            if not resultado:
-                raise ValueError(f"No se pudo registrar o encontrar la empresa {oferta.empresa.nombre}")
-            
-            empresa_id = resultado[0]
-
-            cursor.execute(
-                """
-                INSERT INTO ofertas
-                (empresa_id, servicio, precio, moneda, fecha_relevamiento)
-                VALUES (?, ?, ?, ?, ?)
-                """,
-                (
-                    empresa_id,
-                    oferta.servicio.value,
-                    oferta.precio,
-                    oferta.moneda,
-                    oferta.fecha_relevamiento.isoformat(),
-                ),
-            )
-
-    def obtener_todas(self) -> List[Oferta]:
-        if not self.conexion:
-            raise RuntimeError("La conexión a la base de datos está cerrada.")
-
-        cursor = self.conexion.cursor()
-
-        cursor.execute(
-            """
-            SELECT
-                e.nombre,
-                e.provincia,
-                e.ciudad,
-                e.fuente,
-                o.servicio,
-                o.precio,
-                o.moneda,
-                o.fecha_relevamiento
-            FROM ofertas o
-            JOIN empresas e
-              ON o.empresa_id = e.id
-            """
+        return (
+            str(nombre),
+            str(titulo_raw),
+            precio,
+            moneda,
+            url,
+            proveedor,
+            cat_str,
+            subcat_str,
+            fecha,
         )
 
-        filas = cursor.fetchall()
-
-        normalizador = NormalizadorServicios()
-        ofertas: List[Oferta] = []
-
-        for fila in filas:
-            empresa = Empresa(
-                nombre=fila[0],
-                provincia=fila[1],
-                ciudad=fila[2],
-                fuente=fila[3],
-            )
-
-            try:
-                servicio = ServicioCanonico(fila[4])
-            except ValueError:
-                servicio = normalizador.normalizar(fila[4])
-
-            ofertas.append(
-                Oferta(
-                    empresa=empresa,
-                    servicio=servicio,
-                    precio=fila[5],
-                    moneda=fila[6],
-                    fecha_relevamiento=date.fromisoformat(fila[7]),
+    def guardar(self, oferta: Any) -> Optional[int]:
+        """Guarda un registro de oferta individual."""
+        campos = self._extraer_campos(oferta)
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("""
+                INSERT INTO ofertas (
+                    nombre, titulo_raw, precio, moneda, url,
+                    proveedor, categoria_normalizada, subcategoria_normalizada, fecha_relevamiento
                 )
-            )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, campos)
+            conn.commit()
+            return cursor.lastrowid
 
-        return ofertas
+    def guardar_muchas(self, ofertas: List[Any]) -> int:
+        """Inserta múltiples ofertas eficientemente en una sola transacción."""
+        if not ofertas:
+            return 0
 
-    def cerrar(self) -> None:
-        if self.conexion:
-            self.conexion.close()
-            self.conexion = None
+        registros = [self._extraer_campos(o) for o in ofertas]
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.executemany("""
+                INSERT INTO ofertas (
+                    nombre, titulo_raw, precio, moneda, url,
+                    proveedor, categoria_normalizada, subcategoria_normalizada, fecha_relevamiento
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, registros)
+            conn.commit()
+            return cursor.rowcount
 
-    def close(self) -> None:
-        self.cerrar()
+    def obtener_todas(self) -> List[Dict[str, Any]]:
+        """Devuelve todas las ofertas almacenadas como diccionarios."""
+        with self._get_connection() as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+            cursor.execute("SELECT * FROM ofertas")
+            return [dict(row) for row in cursor.fetchall()]
 
-    def __enter__(self):
-        return self
-
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        self.cerrar()
+    def limpiar_tabla(self) -> int:
+        """Borra el contenido de la tabla ofertas."""
+        with self._get_connection() as conn:
+            cursor = conn.cursor()
+            cursor.execute("DELETE FROM ofertas")
+            conn.commit()
+            return cursor.rowcount

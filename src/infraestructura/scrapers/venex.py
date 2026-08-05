@@ -1,7 +1,8 @@
 from src.aplicacion.dto.oferta_dto import OfertaDTO
+# Ajuste de downloader según su ubicación definitiva en infraestructura
 from src.downloader import descargar_html
-from src.scrapers.base import BaseScraper
-from src.scrapers.venex_parser import VenexParser
+from src.infraestructura.scrapers.base import BaseScraper
+from src.infraestructura.scrapers.venex_parser import VenexParser
 
 
 class _DownloaderPorDefecto:

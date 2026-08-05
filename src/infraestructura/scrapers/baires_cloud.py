@@ -4,13 +4,17 @@ import re
 from bs4 import BeautifulSoup
 
 from src.aplicacion.dto.oferta_dto import OfertaDTO
-from src.downloader import descargar_html
-from src.scrapers.base import BaseScraper
+from src.infraestructura.scrapers.base import BaseScraper
+# Si el downloader pasó a infraestructura:
+# from src.infraestructura.downloader import descargar_html 
+from src.downloader import descargar_html 
+
 
 class _DownloaderPorDefecto:
 
     def descargar(self, url: str) -> str:
         return descargar_html(url)
+
 
 class BairesCloudScraper(BaseScraper):
     URL = "https://bairescloud.ar/servicio-tecnico.php"

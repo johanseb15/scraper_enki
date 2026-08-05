@@ -1,137 +1,90 @@
-import re
-from typing import Dict, Tuple
+"""Normalizador de servicios e ítems IT."""
 
-from src.dominio.servicios import (
-    ServicioCanonico,
-    DetalleServicioCanonico,
-    CATALOGO_SERVICIOS,
-)
-from src.normalizacion import normalizar_texto
+from typing import Union, Tuple
+from src.modelos.servicio_canonico import ServicioCanonico
+from src.scrapers.compragamer_scraper import OfertaDTO
 
-# ==============================================================================
-# MAPEO EXPANDIDO DE SERVICIOS Y CATEGORÍAS IT
-# Estructura: 'clave_busqueda': (ServicioCanonico, categoria, subcategoria)
-# ==============================================================================
 
-MAPEO_IT_EXPANDIDO: Dict[str, Tuple[ServicioCanonico, str, str]] = {
-    # --- SERVICIOS IT Y SOPORTE TÉCNICO ---
-    "malware": (ServicioCanonico.MALWARE, "soporte_tecnico", ServicioCanonico.MALWARE.value),
-    "virus": (ServicioCanonico.MALWARE, "soporte_tecnico", ServicioCanonico.MALWARE.value),
-    "spyware": (ServicioCanonico.MALWARE, "soporte_tecnico", ServicioCanonico.MALWARE.value),
-    "troyanos": (ServicioCanonico.MALWARE, "soporte_tecnico", ServicioCanonico.MALWARE.value),
+def _get_canonico(nombre_enum: str, fallback: str) -> str:
+    """Obtiene el valor del enum ServicioCanonico de forma segura."""
+    if hasattr(ServicioCanonico, nombre_enum):
+        return getattr(ServicioCanonico, nombre_enum).value
+    return fallback
 
-    "formateo": (ServicioCanonico.FORMATEO, "soporte_tecnico", ServicioCanonico.FORMATEO.value),
-    "instalacion de so": (ServicioCanonico.FORMATEO, "soporte_tecnico", ServicioCanonico.FORMATEO.value),
-    "reinstalacion": (ServicioCanonico.FORMATEO, "soporte_tecnico", ServicioCanonico.FORMATEO.value),
 
-    "mantenimiento": (ServicioCanonico.MANTENIMIENTO, "soporte_tecnico", ServicioCanonico.MANTENIMIENTO.value),
-    "limpieza fisica": (ServicioCanonico.MANTENIMIENTO, "soporte_tecnico", ServicioCanonico.MANTENIMIENTO.value),
-    "armado de pc": (ServicioCanonico.MANTENIMIENTO, "soporte_tecnico", ServicioCanonico.MANTENIMIENTO.value),
-
-    "redes": (ServicioCanonico.SOPORTE_REDES, "soporte_tecnico", ServicioCanonico.SOPORTE_REDES.value),
-    "router": (ServicioCanonico.SOPORTE_REDES, "soporte_tecnico", ServicioCanonico.SOPORTE_REDES.value),
-    "soporte de redes": (ServicioCanonico.SOPORTE_REDES, "soporte_tecnico", ServicioCanonico.SOPORTE_REDES.value),
-    "switch": (ServicioCanonico.SOPORTE_REDES, "soporte_tecnico", ServicioCanonico.SOPORTE_REDES.value),
-    "cableado": (ServicioCanonico.SOPORTE_REDES, "soporte_tecnico", ServicioCanonico.SOPORTE_REDES.value),
-
-    # --- SOFTWARE & LICENCIAMIENTO ---
-    "windows 11": (ServicioCanonico.FORMATEO, "software", "licencias_so"),
-    "windows 10": (ServicioCanonico.FORMATEO, "software", "licencias_so"),
-    "windows server": (ServicioCanonico.DESCONOCIDO, "software", "licencias_servidores"),
-    "licencia": (ServicioCanonico.DESCONOCIDO, "software", "licenciamiento"),
-    "office 365": (ServicioCanonico.DESCONOCIDO, "software", "saas_ofimatica"),
-    "microsoft 365": (ServicioCanonico.DESCONOCIDO, "software", "saas_ofimatica"),
-    "antivirus": (ServicioCanonico.MALWARE, "software", "antivirus"),
-    "kaspersky": (ServicioCanonico.MALWARE, "software", "antivirus"),
-    "eset": (ServicioCanonico.MALWARE, "software", "antivirus"),
-
-    # --- HARDWARE & COMPONENTES ---
-    "procesador": (ServicioCanonico.DESCONOCIDO, "hardware", "procesadores"),
-    "intel": (ServicioCanonico.DESCONOCIDO, "hardware", "procesadores"),
-    "ryzen": (ServicioCanonico.DESCONOCIDO, "hardware", "procesadores"),
-    "core i3": (ServicioCanonico.DESCONOCIDO, "hardware", "procesadores"),
-    "core i5": (ServicioCanonico.DESCONOCIDO, "hardware", "procesadores"),
-    "core i7": (ServicioCanonico.DESCONOCIDO, "hardware", "procesadores"),
-    "core i9": (ServicioCanonico.DESCONOCIDO, "hardware", "procesadores"),
-
-    "placa de video": (ServicioCanonico.DESCONOCIDO, "hardware", "placas_de_video"),
-    "geforce": (ServicioCanonico.DESCONOCIDO, "hardware", "placas_de_video"),
-    "radeon": (ServicioCanonico.DESCONOCIDO, "hardware", "placas_de_video"),
-    "rtx": (ServicioCanonico.DESCONOCIDO, "hardware", "placas_de_video"),
-    "gtx": (ServicioCanonico.DESCONOCIDO, "hardware", "placas_de_video"),
-    "rx ": (ServicioCanonico.DESCONOCIDO, "hardware", "placas_de_video"),
-
-    "memoria ram": (ServicioCanonico.DESCONOCIDO, "hardware", "memorias_ram"),
-    "ddr4": (ServicioCanonico.DESCONOCIDO, "hardware", "memorias_ram"),
-    "ddr5": (ServicioCanonico.DESCONOCIDO, "hardware", "memorias_ram"),
-
-    "disco solido": (ServicioCanonico.DESCONOCIDO, "hardware", "almacenamiento"),
-    "ssd": (ServicioCanonico.DESCONOCIDO, "hardware", "almacenamiento"),
-    "nvme": (ServicioCanonico.DESCONOCIDO, "hardware", "almacenamiento"),
-    "hdd": (ServicioCanonico.DESCONOCIDO, "hardware", "almacenamiento"),
-
-    "motherboard": (ServicioCanonico.DESCONOCIDO, "hardware", "placas_madre"),
-    "mother": (ServicioCanonico.DESCONOCIDO, "hardware", "placas_madre"),
-
-    "fuente": (ServicioCanonico.DESCONOCIDO, "hardware", "fuentes"),
-    "gabinete": (ServicioCanonico.DESCONOCIDO, "hardware", "gabinetes"),
-    "cooler": (ServicioCanonico.DESCONOCIDO, "hardware", "refrigeracion"),
-    "monitor": (ServicioCanonico.DESCONOCIDO, "hardware", "monitores"),
-    "notebook": (ServicioCanonico.DESCONOCIDO, "hardware", "notebooks"),
-    "laptop": (ServicioCanonico.DESCONOCIDO, "hardware", "notebooks"),
-}
+def _set_attr_safe(obj, name: str, val):
+    """Asigna un atributo de manera segura sin fallar en dataclasses congeladas (frozen=True)."""
+    try:
+        setattr(obj, name, val)
+    except Exception:
+        try:
+            object.__setattr__(obj, name, val)
+        except Exception:
+            try:
+                obj.__dict__[name] = val
+            except Exception:
+                pass
 
 
 class NormalizadorServicios:
+    """Normaliza títulos y categorías de ofertas raw a categorías canónicas."""
 
-    def normalizar(self, texto: str) -> ServicioCanonico:
-        texto_limpio = normalizar_texto(texto).lower()
+    MAPPING_SUBKATS = {
+        "malware": _get_canonico("MALWARE", "malware"),
+        "virus": _get_canonico("MALWARE", "malware"),
+        "antivirus": _get_canonico("MALWARE", "antivirus"),
+        "limpieza": _get_canonico("LIMPIEZA", "limpieza"),
+        "formateo": _get_canonico("FORMATEO", "formateo"),
+        "formatear": _get_canonico("FORMATEO", "formateo"),
+        "reinstalacion": _get_canonico("FORMATEO", "formateo"),
+        "windows": _get_canonico("FORMATEO", "formateo"),
+        "mantenimiento": _get_canonico("MANTENIMIENTO", "mantenimiento"),
+        "preventivo": _get_canonico("MANTENIMIENTO", "mantenimiento"),
+        "optimización": _get_canonico("MANTENIMIENTO", "mantenimiento"),
+        "optimizacion": _get_canonico("MANTENIMIENTO", "mantenimiento"),
+        "redes": _get_canonico("SOPORTE_REDES", _get_canonico("REDES", "soporte_redes")),
+        "red": _get_canonico("SOPORTE_REDES", _get_canonico("REDES", "soporte_redes")),
+        "router": _get_canonico("SOPORTE_REDES", _get_canonico("REDES", "soporte_redes")),
+        "wifi": _get_canonico("SOPORTE_REDES", _get_canonico("REDES", "soporte_redes")),
+        "cableado": _get_canonico("SOPORTE_REDES", _get_canonico("REDES", "soporte_redes")),
+    }
 
-        for clave, (servicio, _, _) in MAPEO_IT_EXPANDIDO.items():
-            if clave in texto_limpio:
-                return servicio
+    def _normalizar_texto(self, texto: str) -> Tuple[str, str]:
+        texto_clean = texto.lower().strip()
+        for kw, subcat in self.MAPPING_SUBKATS.items():
+            if kw in texto_clean:
+                return "Soporte Técnico", subcat
 
-        return ServicioCanonico.DESCONOCIDO
+        if any(h in texto_clean for h in ["procesador", "placa de video", "motherboard", "ram", "ssd", "disco"]):
+            subcat = texto_clean.replace(" ", "_")
+            return "Hardware", subcat
+        if any(s in texto_clean for s in ["licencia", "software"]):
+            subcat = texto_clean.replace(" ", "_")
+            return "Software", subcat
 
-    def normalizar_avanzado(self, texto: str) -> DetalleServicioCanonico:
-        if not texto or not texto.strip():
-            return DetalleServicioCanonico(
-                categoria="desconocido",
-                subcategoria="desconocido",
-                nombre_normalizado="",
-                confianza=0.0,
-                regla_aplicada="input_vacio",
-            )
+        return "General", "otros"
 
-        texto_limpio = normalizar_texto(texto).lower()
+    def normalizar(self, entrada: Union[str, OfertaDTO]) -> Union[Tuple[str, str], OfertaDTO]:
+        """Normaliza una cadena de texto o un DTO OfertaDTO."""
+        if isinstance(entrada, str):
+            return self._normalizar_texto(entrada)
 
-        for clave, (servicio, categoria, subcategoria) in MAPEO_IT_EXPANDIDO.items():
-            if clave in texto_limpio:
-                info = CATALOGO_SERVICIOS.get(servicio)
-                
-                # Garantiza coincidencia exacta con el enum de dominio para soporte técnico
-                subcategoria_final = (
-                    servicio.value 
-                    if (servicio != ServicioCanonico.DESCONOCIDO and categoria == "soporte_tecnico") 
-                    else subcategoria
-                )
+        textos = []
+        for attr in ["nombre", "titulo", "titulo_raw", "descripcion", "categoria_raw", "subcategoria_raw"]:
+            val = getattr(entrada, attr, None)
+            if val and isinstance(val, str):
+                textos.append(val)
 
-                nombre_norm = info.nombre if info else (
-                    f"{subcategoria_final}: {texto.strip()}" if categoria != "soporte_tecnico" else servicio.value
-                )
+        texto_busqueda = " ".join(textos) if textos else str(entrada)
+        cat_norm, subcat_norm = self._normalizar_texto(texto_busqueda)
 
-                return DetalleServicioCanonico(
-                    categoria=categoria,
-                    subcategoria=subcategoria_final,
-                    nombre_normalizado=nombre_norm,
-                    confianza=0.95,
-                    regla_aplicada=f"alias_{clave}",
-                )
+        _set_attr_safe(entrada, "categoria_normalizada", cat_norm)
+        _set_attr_safe(entrada, "subcategoria_normalizada", subcat_norm)
 
-        return DetalleServicioCanonico(
-            categoria="desconocido",
-            subcategoria="desconocido",
-            nombre_normalizado=texto.strip(),
-            confianza=0.0,
-            regla_aplicada="fallback_original",
-        )
+        nombre_existente = getattr(entrada, "nombre", None) or getattr(entrada, "titulo", None)
+        if not nombre_existente:
+            nombre_val = getattr(entrada, "titulo_raw", None) or str(entrada)
+            _set_attr_safe(entrada, "nombre", nombre_val)
+            _set_attr_safe(entrada, "titulo", nombre_val)
+
+        return entrada

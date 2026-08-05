@@ -1,20 +1,23 @@
-# src/scrapers/compragamer_scraper.py
+# src/infraestructura/scrapers/compragamer_scraper.py
 from datetime import date
 from typing import List
 import requests
 
 from src.aplicacion.dto.oferta_dto import OfertaDTO
-from src.scrapers.compragamer_parser import parsear_ofertas_compragamer
+from src.infraestructura.scrapers.base import BaseScraper
+from src.infraestructura.scrapers.compragamer_parser import parsear_ofertas_compragamer
 
 URL_COMPRAGAMER_API = "https://compragamer.com/api/v1/productos"
 
 
-class CompraGamerScraper:
+class CompraGamerScraper(BaseScraper):
+    """Scraper HTTP directo para la API REST de Compra Gamer."""
 
     def __init__(self, url_api: str = URL_COMPRAGAMER_API):
         self.url_api = url_api
 
-    def obtener_ofertas(self, fecha_relevamiento: date | None = None) -> List[OfertaDTO]:
+    def obtener_servicios(self, fecha_relevamiento: date | None = None) -> List[OfertaDTO]:
+        """Obtiene y normaliza las ofertas consultando la API pública."""
         if fecha_relevamiento is None:
             fecha_relevamiento = date.today()
 
@@ -38,3 +41,7 @@ class CompraGamerScraper:
 
         datos = response.json()
         return parsear_ofertas_compragamer(datos, fecha_relevamiento)
+
+    # Alias por compatibilidad
+    def obtener_ofertas(self, fecha_relevamiento: date | None = None) -> List[OfertaDTO]:
+        return self.obtener_servicios(fecha_relevamiento)
