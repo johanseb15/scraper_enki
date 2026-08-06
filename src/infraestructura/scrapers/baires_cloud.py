@@ -7,7 +7,7 @@ from src.aplicacion.dto.oferta_dto import OfertaDTO
 from src.infraestructura.scrapers.base import BaseScraper
 # Si el downloader pasó a infraestructura:
 # from src.infraestructura.downloader import descargar_html 
-from src.downloader import descargar_html 
+from src.infraestructura.downloader import descargar_html 
 
 
 class _DownloaderPorDefecto:

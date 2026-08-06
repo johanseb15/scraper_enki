@@ -5,7 +5,7 @@ from src.main import ejecutar
 from src.extractor import extraer_datos
 
 from datetime import date
-from src.modelos.servicio_precio import ServicioPrecio
+from src.dominio.modelos.servicio_precio import ServicioPrecio
 from src.repositorio import RepositorioSQLite
 from src.scrapers.baires_cloud import BairesCloudScraper
 from src.scrapers.base import BaseScraper

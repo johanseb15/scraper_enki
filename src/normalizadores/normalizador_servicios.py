@@ -1,90 +1,90 @@
-"""Normalizador de servicios e ítems IT."""
+from dataclasses import dataclass
+from enum import Enum, auto
+import re
+import unicodedata
 
-from typing import Union, Tuple
-from src.modelos.servicio_canonico import ServicioCanonico
-from src.scrapers.compragamer_scraper import OfertaDTO
+class ServicioCanonico(Enum):
+    FORMATEO = auto()
+    MANTENIMIENTO = auto()
+    SOPORTE_REDES = auto()
+    INSTALACION_SO = auto()
+    DIAGNOSTICO = auto()
+    DESCONOCIDO = auto()
+    OTRO = auto()
 
 
-def _get_canonico(nombre_enum: str, fallback: str) -> str:
-    """Obtiene el valor del enum ServicioCanonico de forma segura."""
-    if hasattr(ServicioCanonico, nombre_enum):
-        return getattr(ServicioCanonico, nombre_enum).value
-    return fallback
-
-
-def _set_attr_safe(obj, name: str, val):
-    """Asigna un atributo de manera segura sin fallar en dataclasses congeladas (frozen=True)."""
-    try:
-        setattr(obj, name, val)
-    except Exception:
-        try:
-            object.__setattr__(obj, name, val)
-        except Exception:
-            try:
-                obj.__dict__[name] = val
-            except Exception:
-                pass
+@dataclass
+class DetalleServicioCanonico:
+    servicio: ServicioCanonico
+    categoria: str
+    subcategoria: str | None = None
+    confianza: float = 1.0
 
 
 class NormalizadorServicios:
-    """Normaliza títulos y categorías de ofertas raw a categorías canónicas."""
-
-    MAPPING_SUBKATS = {
-        "malware": _get_canonico("MALWARE", "malware"),
-        "virus": _get_canonico("MALWARE", "malware"),
-        "antivirus": _get_canonico("MALWARE", "antivirus"),
-        "limpieza": _get_canonico("LIMPIEZA", "limpieza"),
-        "formateo": _get_canonico("FORMATEO", "formateo"),
-        "formatear": _get_canonico("FORMATEO", "formateo"),
-        "reinstalacion": _get_canonico("FORMATEO", "formateo"),
-        "windows": _get_canonico("FORMATEO", "formateo"),
-        "mantenimiento": _get_canonico("MANTENIMIENTO", "mantenimiento"),
-        "preventivo": _get_canonico("MANTENIMIENTO", "mantenimiento"),
-        "optimización": _get_canonico("MANTENIMIENTO", "mantenimiento"),
-        "optimizacion": _get_canonico("MANTENIMIENTO", "mantenimiento"),
-        "redes": _get_canonico("SOPORTE_REDES", _get_canonico("REDES", "soporte_redes")),
-        "red": _get_canonico("SOPORTE_REDES", _get_canonico("REDES", "soporte_redes")),
-        "router": _get_canonico("SOPORTE_REDES", _get_canonico("REDES", "soporte_redes")),
-        "wifi": _get_canonico("SOPORTE_REDES", _get_canonico("REDES", "soporte_redes")),
-        "cableado": _get_canonico("SOPORTE_REDES", _get_canonico("REDES", "soporte_redes")),
+    # Mapeo de frases clave a ServicioCanonico
+    MAPEO_KEYWORDS = {
+        ServicioCanonico.FORMATEO: [
+            "formateo", "formatear", "instalacion de windows", "reinstalacion de sistema", "reinstalacion so"
+        ],
+        ServicioCanonico.MANTENIMIENTO: [
+            "mantenimiento", "limpieza fisica", "mantenimiento preventivo", "cambio de pasta termica"
+        ],
+        ServicioCanonico.SOPORTE_REDES: [
+            "redes", "router", "configuracion de router", "soporte de red", "instalacion de red", "wifi"
+        ],
+        ServicioCanonico.INSTALACION_SO: [
+            "instalacion sistema operativo", "instalar windows", "instalar linux"
+        ],
+        ServicioCanonico.DIAGNOSTICO: [
+            "diagnostico", "revision", "presupuesto", "chequeo"
+        ],
     }
 
-    def _normalizar_texto(self, texto: str) -> Tuple[str, str]:
-        texto_clean = texto.lower().strip()
-        for kw, subcat in self.MAPPING_SUBKATS.items():
-            if kw in texto_clean:
-                return "Soporte Técnico", subcat
+    # Categorías asociadas a cada servicio para el análisis avanzado
+    CATEGORIAS = {
+        ServicioCanonico.FORMATEO: "Software",
+        ServicioCanonico.MANTENIMIENTO: "Hardware",
+        ServicioCanonico.SOPORTE_REDES: "Conectividad",
+        ServicioCanonico.INSTALACION_SO: "Software",
+        ServicioCanonico.DIAGNOSTICO: "General",
+        ServicioCanonico.DESCONOCIDO: "Sin Clasificar",
+        ServicioCanonico.OTRO: "General",
+    }
 
-        if any(h in texto_clean for h in ["procesador", "placa de video", "motherboard", "ram", "ssd", "disco"]):
-            subcat = texto_clean.replace(" ", "_")
-            return "Hardware", subcat
-        if any(s in texto_clean for s in ["licencia", "software"]):
-            subcat = texto_clean.replace(" ", "_")
-            return "Software", subcat
+    @staticmethod
+    def normalizar_texto(texto: str) -> str:
+        """Limpia acentos, caracteres especiales y convierte a minúsculas."""
+        if not texto:
+            return ""
+        # Normaliza Unicode NFD para separar acentos y diacríticos
+        texto_nfd = unicodedata.normalize("NFD", texto)
+        texto_sin_acentos = "".join(
+            c for c in texto_nfd if unicodedata.category(c) != "Mn"
+        )
+        return re.sub(r"\s+", " ", texto_sin_acentos.lower()).strip()
 
-        return "General", "otros"
+    def normalizar(self, descripcion: str) -> ServicioCanonico:
+        """Determina el ServicioCanonico según el texto ingresado."""
+        texto_limpio = self.normalizar_texto(descripcion)
 
-    def normalizar(self, entrada: Union[str, OfertaDTO]) -> Union[Tuple[str, str], OfertaDTO]:
-        """Normaliza una cadena de texto o un DTO OfertaDTO."""
-        if isinstance(entrada, str):
-            return self._normalizar_texto(entrada)
+        if not texto_limpio:
+            return ServicioCanonico.DESCONOCIDO
 
-        textos = []
-        for attr in ["nombre", "titulo", "titulo_raw", "descripcion", "categoria_raw", "subcategoria_raw"]:
-            val = getattr(entrada, attr, None)
-            if val and isinstance(val, str):
-                textos.append(val)
+        for servicio, keywords in self.MAPEO_KEYWORDS.items():
+            for kw in keywords:
+                if kw in texto_limpio:
+                    return servicio
 
-        texto_busqueda = " ".join(textos) if textos else str(entrada)
-        cat_norm, subcat_norm = self._normalizar_texto(texto_busqueda)
+        return ServicioCanonico.DESCONOCIDO
 
-        _set_attr_safe(entrada, "categoria_normalizada", cat_norm)
-        _set_attr_safe(entrada, "subcategoria_normalizada", subcat_norm)
+    def normalizar_avanzado(self, descripcion: str) -> DetalleServicioCanonico:
+        """Retorna un objeto DetalleServicioCanonico con metadatos de categoría."""
+        servicio_canonico = self.normalizar(descripcion)
+        categoria = self.CATEGORIAS.get(servicio_canonico, "General")
 
-        nombre_existente = getattr(entrada, "nombre", None) or getattr(entrada, "titulo", None)
-        if not nombre_existente:
-            nombre_val = getattr(entrada, "titulo_raw", None) or str(entrada)
-            _set_attr_safe(entrada, "nombre", nombre_val)
-            _set_attr_safe(entrada, "titulo", nombre_val)
-
-        return entrada
+        return DetalleServicioCanonico(
+            servicio=servicio_canonico,
+            categoria=categoria,
+            confianza=1.0 if servicio_canonico != ServicioCanonico.DESCONOCIDO else 0.0,
+        )

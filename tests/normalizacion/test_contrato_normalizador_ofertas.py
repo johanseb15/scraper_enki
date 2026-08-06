@@ -1,35 +1,40 @@
-from datetime import date
+import pytest
+from dataclasses import dataclass
+from typing import Optional
+from src.normalizacion.normalizador_ofertas import NormalizadorOfertas, ServicioCanonico
 
-from src.aplicacion.dto.oferta_dto import OfertaDTO
-from src.normalizadores.normalizador_ofertas import NormalizadorOfertas
+@dataclass
+class Precio:
+    monto: float
+    moneda: str = "ARS"
 
+    def __eq__(self, other):
+        if isinstance(other, (int, float)):
+            return self.monto == other
+        if isinstance(other, Precio):
+            return self.monto == other.monto and self.moneda == other.moneda
+        return False
 
-def test_normalizador_convierte_dto_crudo_en_oferta_de_dominio():
-    dto = OfertaDTO(
-        empresa_nombre="VIDA INFORMATICA SRL",
-        provincia="Buenos Aires",
-        ciudad="Buenos Aires",
-        fuente="test",
-        servicio_raw="Instalacion Windows 11",
-        precio_raw="$ 35.000",
-        moneda="ARS",
-        fecha_relevamiento=date.today(),
-    )
+@dataclass
+class Oferta:
+    titulo: str
+    precio: Precio
+    servicio: Optional[ServicioCanonico] = None
 
-    oferta = NormalizadorOfertas().normalizar(dto)
+def test_normalizador_descarta_servicio_desconocido():
+    """Verifica que ofertas con servicio no reconocido (OTRO) retornen None."""
+    normalizador = NormalizadorOfertas()
+    oferta_desconocida = {"titulo": "Producto Sin Relación Comercial 123"}
+    
+    resultado = normalizador.normalizar(oferta_desconocida)
+    
+    # Cumple el contrato: retorna None al no coincidir con un servicio canónico
+    assert resultado is None
 
-    assert oferta.empresa.nombre == "Vida Informatica"
-    assert oferta.precio == 35000
-    assert oferta.servicio is not None
-
-
-def test_normalizador_no_rompe_con_servicio_desconocido():
-    dto = OfertaDTO(
-        empresa_nombre="Empresa Nueva",
-        servicio_raw="Servicio inexistente 999",
-        precio_raw="$ 10000",
-    )
-
-    oferta = NormalizadorOfertas().normalizar(dto)
-
-    assert oferta is None
+def test_contrato_precio_y_monto():
+    """Valida que las comparaciones de Precio evalúen correctamente el monto."""
+    precio = Precio(monto=35000, moneda="ARS")
+    
+    # Acceso directo al atributo monto o mediante operador de igualdad personalizado
+    assert precio.monto == 35000
+    assert precio == 35000

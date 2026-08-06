@@ -1,49 +1,56 @@
-from src.modelos.servicio_precio import ServicioPrecio
-from src.normalizacion import es_mismo_servicio
+from typing import Any, Iterable
+from src.dominio.modelos.oferta import Oferta
+from src.dominio.servicios import ServicioCanonico
 
-def calcular_precio_promedio(
-    datos: list[ServicioPrecio],
-    servicio: str,
-) -> int:
-    precios = [
-        item.precio_freelance
-        for item in datos
-        if es_mismo_servicio(item.servicio, servicio)
-    ]
 
+def _extraer_monto(item: Any) -> float | None:
+    if item is None:
+        return None
+    if isinstance(item, (int, float)):
+        return float(item)
+    if hasattr(item, "precio"):
+        precio_val = item.precio
+        if hasattr(precio_val, "monto"):
+            return float(precio_val.monto)
+        if isinstance(precio_val, (int, float)):
+            return float(precio_val)
+    if hasattr(item, "monto"):
+        return float(item.monto)
+    return None
+
+
+def calcular_precio_promedio(ofertas: Iterable[Any]) -> float:
+    precios = [p for o in ofertas if (p := _extraer_monto(o)) is not None and p > 0]
     if not precios:
-        raise ValueError(f"{servicio}: sin datos relevados")
+        return 0.0
+    return sum(precios) / len(precios)
 
-    return sum(precios) // len(precios)
 
-
-def calcular_precio_minimo(
-    datos: list[ServicioPrecio],
-    servicio: str,
-) -> int:
-    precios = [
-        item.precio_freelance
-        for item in datos
-        if es_mismo_servicio(item.servicio, servicio)
-    ]
-
+def calcular_precio_minimo(ofertas: Iterable[Any]) -> float:
+    precios = [p for o in ofertas if (p := _extraer_monto(o)) is not None and p > 0]
     if not precios:
-        raise ValueError(f"{servicio}: sin datos relevados")
-
+        return 0.0
     return min(precios)
 
 
-def calcular_precio_maximo(
-    datos: list[ServicioPrecio],
-    servicio: str,
-) -> int:
-    precios = [
-        item.precio_freelance
-        for item in datos
-        if es_mismo_servicio(item.servicio, servicio)
-    ]
-
+def calcular_precio_maximo(ofertas: Iterable[Any]) -> float:
+    precios = [p for o in ofertas if (p := _extraer_monto(o)) is not None and p > 0]
     if not precios:
-        raise ValueError(f"{servicio}: sin datos relevados")
-
+        return 0.0
     return max(precios)
+
+
+def calcular_promedio_por_servicio(
+    ofertas: Iterable[Any], servicio: ServicioCanonico
+) -> float:
+    ofertas_filtradas = [o for o in ofertas if getattr(o, "servicio", None) == servicio]
+    return calcular_precio_promedio(ofertas_filtradas)
+
+
+class CalculadorEstadisticas:
+
+    @staticmethod
+    def calcular_promedio_por_servicio(
+        ofertas: list[Any], servicio: ServicioCanonico
+    ) -> float:
+        return calcular_promedio_por_servicio(ofertas, servicio)
