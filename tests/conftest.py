@@ -1,6 +1,5 @@
 import pytest
-from src.repositorio import RepositorioSQLite
-
+from src.infraestructura.repositorios import RepositorioSQLite
 
 @pytest.fixture
 def repositorio_db():

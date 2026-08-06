@@ -1,8 +1,8 @@
 from src.aplicacion.dto.oferta_dto import OfertaDTO
-from src.scrapers.vida_informatica import VidaInformaticaScraper
-from src.scrapers.baires_cloud import BairesCloudScraper
-from src.scrapers.venex import VenexScraper
-from src.dominio.oferta import Oferta
+from src.infraestructura.scrapers.vida_informatica_scraper import VidaInformaticaScraper
+from src.infraestructura.scrapers.baires_cloud import BairesCloudScraper
+from src.infraestructura.scrapers.venex_scraper import VenexScraper
+from src.dominio.modelos.oferta import Oferta
 
 class FakeDownloader:
 
@@ -10,25 +10,11 @@ class FakeDownloader:
         return "<html></html>"
 
 
-class FakeParser:
-
-    def parsear(self, html_content, url_fuente):
-        return [
-            OfertaDTO(
-                empresa_nombre="Proveedor Test",
-                fuente=url_fuente,
-                servicio_raw="Servicio test",
-                precio_raw="$ 1000",
-            )
-        ]
-
-
 def obtener_scrapers():
 
     return [
         VenexScraper(
             downloader=FakeDownloader(),
-            parser=FakeParser(),
         ),
         VidaInformaticaScraper(
             downloader=FakeDownloader(),

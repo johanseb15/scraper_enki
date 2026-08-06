@@ -1,0 +1,2 @@
+# src/infraestructura/repositorios/__init__.py
+from .repositorio_sqlite_ofertas import RepositorioSQLiteOfertas as RepositorioSQLite

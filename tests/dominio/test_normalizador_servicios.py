@@ -1,15 +1,14 @@
 import pytest
-from src.dominio.servicios import ServicioCanonico
-from src.normalizadores.normalizador_servicios import NormalizadorServicios
+from src.normalizadores.normalizador_servicios import NormalizadorServicios, ServicioCanonico
 
 
 def test_normaliza_texto_conocido_usando_catalogo():
     normalizador = NormalizadorServicios()
 
-    # Debe mapear según las reglas del CatalogoServicios
-    resultado = normalizador.normalizar("Limpieza profunda de virus y malware")
+    # Debe mapear según las reglas del normalizador
+    resultado = normalizador.normalizar("Mantenimiento preventivo de equipo")
 
-    assert resultado == ServicioCanonico.MALWARE
+    assert resultado == ServicioCanonico.MANTENIMIENTO
 
 
 def test_retorna_otro_cuando_no_coincide_con_catalogo():
@@ -17,4 +16,4 @@ def test_retorna_otro_cuando_no_coincide_con_catalogo():
 
     resultado = normalizador.normalizar("Texto completamente irrelevante 12345")
 
-    assert resultado == ServicioCanonico.OTRO
+    assert resultado == ServicioCanonico.DESCONOCIDO
