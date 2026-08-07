@@ -6,6 +6,9 @@ from src.dominio.servicios import ServicioCanonico
 from src.infraestructura.scrapers.vida_informatica_parser import (
     extraer_datos_vida_informatica,
 )
+from src.infraestructura.sqlite.repositorio_sqlite_ofertas import (
+    RepositorioSQLiteOfertas,
+)
 
 
 def test_extraer_una_fila_sin_perder_sus_precios_originales():
@@ -135,3 +138,85 @@ def test_representar_cada_modalidad_de_precio_como_una_observacion():
     ]
 
     assert observaciones_obtenidas == observaciones_esperadas
+
+
+def test_persistir_y_recuperar_ofertas_sin_cambiar_su_significado(tmp_path):
+    dto = OfertaDTO(
+        empresa_nombre="Vida Informatica",
+        provincia="Córdoba",
+        ciudad="Córdoba",
+        servicio_raw="Eliminación de virus y malware",
+        precio_freelance_raw="$ 15.000",
+        precio_local_raw="$ 20.000",
+        moneda="ARS",
+        fuente="Vida Informática",
+        fecha_relevamiento=date(2026, 8, 7),
+    )
+    ofertas = ProcesadorOfertas().crear_ofertas(dto)
+
+    with RepositorioSQLiteOfertas(
+        ruta_db=str(tmp_path / "ofertas_trazables.db")
+    ) as repositorio:
+        for oferta in ofertas:
+            repositorio.guardar(oferta)
+
+        recuperadas = repositorio.obtener_todas()
+
+    observaciones_esperadas = [
+        {
+            "precio": 15000,
+            "modalidad": "freelance",
+            "precio_raw": "$ 15.000",
+            "servicio": ServicioCanonico.MALWARE,
+            "servicio_raw": "Eliminación de virus y malware",
+            "empresa": "Vida Informatica",
+            "provincia": "Córdoba",
+            "ciudad": "Córdoba",
+            "fuente": "Vida Informática",
+            "fecha_relevamiento": date(2026, 8, 7),
+        },
+        {
+            "precio": 20000,
+            "modalidad": "local",
+            "precio_raw": "$ 20.000",
+            "servicio": ServicioCanonico.MALWARE,
+            "servicio_raw": "Eliminación de virus y malware",
+            "empresa": "Vida Informatica",
+            "provincia": "Córdoba",
+            "ciudad": "Córdoba",
+            "fuente": "Vida Informática",
+            "fecha_relevamiento": date(2026, 8, 7),
+        },
+    ]
+    observaciones_obtenidas = [
+        {
+            "precio": getattr(oferta.precio, "valor", oferta.precio),
+            "modalidad": getattr(oferta, "modalidad", "<campo ausente>"),
+            "precio_raw": getattr(oferta, "precio_raw", "<campo ausente>"),
+            "servicio": oferta.servicio,
+            "servicio_raw": getattr(oferta, "servicio_raw", "<campo ausente>"),
+            "empresa": oferta.empresa.nombre,
+            "provincia": oferta.empresa.provincia,
+            "ciudad": getattr(oferta.empresa, "ciudad", "<campo ausente>"),
+            "fuente": getattr(
+                oferta.empresa,
+                "fuente",
+                getattr(oferta, "fuente", "<campo ausente>"),
+            ),
+            "fecha_relevamiento": getattr(
+                oferta,
+                "fecha_relevamiento",
+                getattr(oferta, "fecha", "<campo ausente>"),
+            ),
+        }
+        for oferta in recuperadas
+    ]
+
+    assert len(recuperadas) == 2
+    assert observaciones_obtenidas == observaciones_esperadas
+    assert all(observacion["precio"] != 0 for observacion in observaciones_obtenidas)
+    assert all(
+        valor not in {None, "", "<campo ausente>", "Desconocido"}
+        for observacion in observaciones_obtenidas
+        for valor in observacion.values()
+    )
