@@ -13,7 +13,13 @@ class OfertaFactory:
     def __init__(self, normalizador: Optional[NormalizadorServicios] = None):
         self.normalizador = normalizador or NormalizadorServicios()
 
-    def crear_desde_dto(self, dto: OfertaDTO) -> Optional[Oferta]:
+    def crear_desde_dto(
+        self,
+        dto: OfertaDTO,
+        precio_normalizado=None,
+        modalidad: Optional[str] = None,
+        precio_raw: Optional[str] = None,
+    ) -> Optional[Oferta]:
         servicio_canonico = self.normalizador.normalizar(dto.servicio_raw)
         if not servicio_canonico:
             return None
@@ -25,7 +31,7 @@ class OfertaFactory:
             fuente=dto.fuente,
         )
 
-        precio = dto.precio
+        precio = dto.precio if precio_normalizado is None else precio_normalizado
         moneda = dto.moneda
 
         if isinstance(precio, PrecioValor):
@@ -56,6 +62,8 @@ class OfertaFactory:
             moneda=moneda,
             fecha_relevamiento=dto.fecha_relevamiento,
             servicio_raw=dto.servicio_raw,
+            modalidad=modalidad,
+            precio_raw=precio_raw if precio_raw is not None else dto.precio_raw,
         )
 
     crear_oferta_desde_dto = crear_desde_dto

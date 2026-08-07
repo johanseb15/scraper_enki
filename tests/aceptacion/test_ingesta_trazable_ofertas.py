@@ -78,3 +78,60 @@ def test_normalizar_el_servicio_sin_reemplazar_su_valor_original():
     }
 
     assert valores_obtenidos == valores_esperados
+
+
+def test_representar_cada_modalidad_de_precio_como_una_observacion():
+    dto = OfertaDTO(
+        empresa_nombre="Vida Informatica",
+        provincia="Córdoba",
+        ciudad="Córdoba",
+        servicio_raw="Eliminación de virus y malware",
+        precio_freelance_raw="$ 15.000",
+        precio_local_raw="$ 20.000",
+        moneda="ARS",
+        fuente="Vida Informática",
+        fecha_relevamiento=date(2026, 8, 7),
+    )
+
+    observaciones = ProcesadorOfertas().crear_ofertas(dto)
+
+    observaciones_esperadas = [
+        {
+            "modalidad": "freelance",
+            "precio": 15000,
+            "moneda": "ARS",
+            "precio_raw": "$ 15.000",
+            "servicio": ServicioCanonico.MALWARE,
+            "servicio_raw": "Eliminación de virus y malware",
+            "empresa": "Vida Informatica",
+            "fuente": "Vida Informática",
+            "fecha_relevamiento": date(2026, 8, 7),
+        },
+        {
+            "modalidad": "local",
+            "precio": 20000,
+            "moneda": "ARS",
+            "precio_raw": "$ 20.000",
+            "servicio": ServicioCanonico.MALWARE,
+            "servicio_raw": "Eliminación de virus y malware",
+            "empresa": "Vida Informatica",
+            "fuente": "Vida Informática",
+            "fecha_relevamiento": date(2026, 8, 7),
+        },
+    ]
+    observaciones_obtenidas = [
+        {
+            "modalidad": getattr(oferta, "modalidad", "<campo ausente>"),
+            "precio": getattr(oferta.precio, "valor", oferta.precio),
+            "moneda": oferta.moneda,
+            "precio_raw": getattr(oferta, "precio_raw", "<campo ausente>"),
+            "servicio": oferta.servicio,
+            "servicio_raw": oferta.servicio_raw,
+            "empresa": oferta.empresa.nombre,
+            "fuente": oferta.empresa.fuente,
+            "fecha_relevamiento": oferta.fecha_relevamiento,
+        }
+        for oferta in observaciones
+    ]
+
+    assert observaciones_obtenidas == observaciones_esperadas

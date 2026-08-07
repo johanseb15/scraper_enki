@@ -22,3 +22,5 @@ class Oferta:
     moneda: str
     fecha_relevamiento: date
     servicio_raw: str = ""
+    modalidad: str | None = None
+    precio_raw: str | None = None
