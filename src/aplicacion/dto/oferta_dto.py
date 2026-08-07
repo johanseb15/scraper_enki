@@ -31,6 +31,7 @@ class OfertaDTO:
     fuente: str
 
     servicio_raw: str
+    equipo_raw: str
 
     precio: Optional[int]
     moneda: str
@@ -38,6 +39,8 @@ class OfertaDTO:
     fecha_relevamiento: Optional[date]
 
     precio_raw: Optional[str]
+    precio_freelance_raw: Optional[str]
+    precio_local_raw: Optional[str]
 
 
     def __init__(
@@ -53,6 +56,9 @@ class OfertaDTO:
         empresa_nombre=None,
         servicio_raw=None,
         fecha_relevamiento=None,
+        equipo_raw="",
+        precio_freelance_raw=None,
+        precio_local_raw=None,
     ):
 
         object.__setattr__(
@@ -87,6 +93,12 @@ class OfertaDTO:
 
         object.__setattr__(
             self,
+            "equipo_raw",
+            equipo_raw
+        )
+
+        object.__setattr__(
+            self,
             "precio",
             precio
         )
@@ -101,6 +113,18 @@ class OfertaDTO:
             self,
             "precio_raw",
             precio_raw
+        )
+
+        object.__setattr__(
+            self,
+            "precio_freelance_raw",
+            precio_freelance_raw
+        )
+
+        object.__setattr__(
+            self,
+            "precio_local_raw",
+            precio_local_raw
         )
 
         object.__setattr__(

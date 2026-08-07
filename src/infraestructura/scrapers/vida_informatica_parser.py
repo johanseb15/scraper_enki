@@ -37,14 +37,12 @@ def extraer_datos_vida_informatica(
         tipo_arreglo = celdas[0].get_text(strip=True)
         tipo_equipo = celdas[1].get_text(strip=True)
 
-        precio_freelance = _a_numero(celdas[2].get_text(strip=True))
+        precio_freelance_raw = celdas[2].get_text(strip=True)
+        precio_local_raw = celdas[3].get_text(strip=True)
+        precio_freelance = _a_numero(precio_freelance_raw)
 
         if precio_freelance <= 0:
             continue
-
-        servicio_raw = (
-            f"{tipo_arreglo} - {tipo_equipo}" if tipo_equipo else tipo_arreglo
-        )
 
         resultados.append(
             OfertaDTO(
@@ -52,8 +50,11 @@ def extraer_datos_vida_informatica(
                 provincia="Córdoba",
                 ciudad="Córdoba",
                 fuente=url_fuente,
-                servicio_raw=servicio_raw,
+                servicio_raw=tipo_arreglo,
+                equipo_raw=tipo_equipo,
                 precio=precio_freelance,
+                precio_freelance_raw=precio_freelance_raw,
+                precio_local_raw=precio_local_raw,
                 moneda="ARS",
                 fecha_relevamiento=fecha_relevamiento,
             )
