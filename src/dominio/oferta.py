@@ -21,3 +21,4 @@ class Oferta:
     precio: int
     moneda: str
     fecha_relevamiento: date
+    servicio_raw: str = ""

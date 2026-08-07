@@ -1,5 +1,8 @@
 from datetime import date
 
+from src.aplicacion.dto.oferta_dto import OfertaDTO
+from src.aplicacion.procesador_ofertas import ProcesadorOfertas
+from src.dominio.servicios import ServicioCanonico
 from src.infraestructura.scrapers.vida_informatica_parser import (
     extraer_datos_vida_informatica,
 )
@@ -43,3 +46,35 @@ def test_extraer_una_fila_sin_perder_sus_precios_originales():
     }
 
     assert campos_obtenidos == campos_esperados
+
+
+def test_normalizar_el_servicio_sin_reemplazar_su_valor_original():
+    dto = OfertaDTO(
+        empresa_nombre="VIDA INFORMATICA S.R.L.",
+        provincia="Cordoba",
+        ciudad="Cba.",
+        servicio_raw="Eliminación de virus y malware",
+        precio=15000,
+        moneda="ARS",
+        fuente="Vida Informática",
+        fecha_relevamiento=date(2026, 8, 7),
+    )
+
+    oferta = ProcesadorOfertas().procesar(dto)
+
+    valores_esperados = {
+        "servicio": ServicioCanonico.MALWARE,
+        "servicio_raw": "Eliminación de virus y malware",
+        "empresa": "Vida Informatica",
+        "provincia": "Córdoba",
+        "ciudad": "Córdoba",
+    }
+    valores_obtenidos = {
+        "servicio": oferta.servicio,
+        "servicio_raw": getattr(oferta, "servicio_raw", "<campo ausente>"),
+        "empresa": oferta.empresa.nombre,
+        "provincia": oferta.empresa.provincia,
+        "ciudad": oferta.empresa.ciudad,
+    }
+
+    assert valores_obtenidos == valores_esperados
