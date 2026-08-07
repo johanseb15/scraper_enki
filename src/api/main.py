@@ -4,14 +4,13 @@ from src.repositorio import RepositorioSQLite
 from src.reporte import generar_resumen_servicio
 from src.normalizacion import es_mismo_servicio
 
-
 app = FastAPI(
     title="Enki API",
-    version="0.1.0"
+    version="0.1.0",
 )
 
 
-def obtener_repositorio():
+def obtener_repositorio() -> RepositorioSQLite:
     return RepositorioSQLite("enki.db")
 
 
@@ -20,18 +19,16 @@ def consultar_servicio(
     nombre_servicio: str,
     provincia: str | None = Query(default=None),
     ciudad: str | None = Query(default=None),
-    repo: RepositorioSQLite = Depends(obtener_repositorio)
+    repo: RepositorioSQLite = Depends(obtener_repositorio),
 ):
-    # Invocación corregida: obtener_todas()
     servicios = repo.obtener_todas()
 
-    # Aplicamos filtros geográficos si existen
     servicios_filtrados = [
         servicio
         for servicio in servicios
         if es_mismo_servicio(
-            servicio.servicio,
-            nombre_servicio
+            servicio["servicio"],
+            nombre_servicio,
         )
     ]
 
@@ -39,40 +36,42 @@ def consultar_servicio(
         servicios_filtrados = [
             servicio
             for servicio in servicios_filtrados
-            if servicio.provincia.lower() == provincia.lower()
+            if (servicio.get("provincia") or "").lower() == provincia.lower()
         ]
 
     if ciudad:
         servicios_filtrados = [
             servicio
             for servicio in servicios_filtrados
-            if servicio.ciudad.lower() == ciudad.lower()
+            if (servicio.get("ciudad") or "").lower() == ciudad.lower()
         ]
 
     resumen = generar_resumen_servicio(
         servicios_filtrados,
-        nombre_servicio
+        nombre_servicio,
     )
 
     resumen["empresas"] = [
         {
-            "empresa": servicio.empresa,
-            "precio": servicio.precio_local
+            "empresa": servicio.get("proveedor"),
+            "precio": servicio.get("precio"),
         }
         for servicio in servicios_filtrados
     ]
 
-    resumen["ciudades"] = list(
+    resumen["ciudades"] = sorted(
         {
-            servicio.ciudad
+            servicio.get("ciudad")
             for servicio in servicios_filtrados
+            if servicio.get("ciudad")
         }
     )
 
-    resumen["provincias"] = list(
+    resumen["provincias"] = sorted(
         {
-            servicio.provincia
+            servicio.get("provincia")
             for servicio in servicios_filtrados
+            if servicio.get("provincia")
         }
     )
 
