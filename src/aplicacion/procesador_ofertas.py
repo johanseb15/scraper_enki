@@ -1,213 +1,59 @@
-from datetime import date
-from typing import List, Optional
+# src/aplicacion/procesador_ofertas.py
 
-from src.aplicacion.dto.oferta_dto import OfertaDTO
-from src.aplicacion.oferta_factory import OfertaFactory
-
-from src.dominio.oferta import Oferta, PrecioValor
-
-from src.normalizadores.normalizador_ubicaciones import (
-    NormalizadorUbicaciones,
-)
-
-from src.normalizadores.normalizador_empresas import (
-    NormalizadorEmpresas,
-)
-
-from src.normalizadores.normalizador_precios import (
-    NormalizadorPrecios,
-)
-
+from src.modelos.precio import Precio
 
 class ProcesadorOfertas:
-    """
-    Orquestador de aplicación.
+    def __init__(self, normalizador_ubicaciones=None, normalizador_empresas=None, normalizador_servicios=None):
+        self.normalizador_ubicaciones = normalizador_ubicaciones
+        self.normalizador_empresas = normalizador_empresas
+        self.normalizador_servicios = normalizador_servicios
 
-    Responsabilidad:
-    - recibir DTO crudo
-    - aplicar normalización ETL
-    - entregar contrato limpio al dominio
-    """
-
-    def __init__(
-        self,
-        factory: Optional[OfertaFactory] = None,
-        repositorio=None,
-        normalizador_ubicaciones=None,
-        normalizador_empresas=None,
-    ):
-
-        self.factory = factory or OfertaFactory()
-
-        self.repositorio = repositorio
-
-        self.normalizador_ubicaciones = (
-            normalizador_ubicaciones
-            or NormalizadorUbicaciones()
-        )
-
-        self.normalizador_empresas = (
-            normalizador_empresas
-            or NormalizadorEmpresas()
-        )
-
-    def procesar(
-        self,
-        dto: OfertaDTO,
-    ) -> Optional[Oferta]:
-
-        dto_normalizado = self._normalizar_datos(dto)
-
-        if not dto_normalizado.servicio_raw:
-            return None
-
-        oferta = self.factory.crear_desde_dto(
-            dto_normalizado
-        )
-
-        if oferta and self.repositorio:
-            self.repositorio.guardar(oferta)
-
-        return oferta
-
-    def crear_oferta(
-        self,
-        dto: OfertaDTO,
-        fecha_relevamiento: Optional[date] = None,
-    ) -> Optional[Oferta]:
+    def procesar(self, dto):
         """
-        Método legacy.
-
-        El parámetro fecha_relevamiento se mantiene por
-        compatibilidad, pero el pipeline utiliza únicamente
-        la fecha contenida dentro del DTO.
+        Procesa un DTO de oferta, aplicando normalizaciones y estructurando los datos
+        de manera compatible con los modelos y repositorios.
         """
+        # Asegurar el manejo seguro del precio y su conversión a objeto Precio si es necesario
+        precio_raw = getattr(dto, 'precio', None) or getattr(dto, 'precio_raw', 0.0)
+        
+        if isinstance(precio_raw, (int, float)):
+            precio_obj = Precio(valor=float(precio_raw), moneda=getattr(dto, 'moneda', 'ARS'))
+        elif isinstance(precio_raw, Precio):
+            precio_obj = precio_raw
+        else:
+            # Intento básico de conversión si viene como string u otro formato
+            try:
+                valor_limpio = float(str(precio_raw).replace('$', '').replace(',', '').strip())
+            except (ValueError, TypeError):
+                valor_limpio = 0.0
+            precio_obj = Precio(valor=valor_limpio, moneda=getattr(dto, 'moneda', 'ARS'))
 
-        return self.procesar(dto)
+        # Normalización de empresa / proveedor
+        nombre_empresa = getattr(dto, 'empresa_nombre', None) or getattr(dto, 'empresa', 'Desconocida')
+        if self.normalizador_empresas and hasattr(self.normalizador_empresas, 'normalizar'):
+            nombre_empresa = self.normalizador_empresas.normalizar(nombre_empresa)
 
-    def ejecutar(
-        self,
-        dtos: List[OfertaDTO],
-    ) -> List[Oferta]:
+        # Normalización de servicio
+        nombre_servicio = getattr(dto, 'servicio_raw', None) or getattr(dto, 'servicio', '')
+        if self.normalizador_servicios and hasattr(self.normalizador_servicios, 'normalizar'):
+            nombre_servicio = self.normalizador_servicios.normalizar(nombre_servicio)
 
-        ofertas = []
+        return {
+            "empresa": nombre_empresa,
+            "provincia": getattr(dto, 'provincia', ''),
+            "ciudad": getattr(dto, 'ciudad', ''),
+            "servicio": nombre_servicio,
+            "precio": precio_obj,          # Expone el objeto Precio completo con su atributo .valor
+            "valor_precio": precio_obj.valor, # Atenuante directo por si se requiere el float plano
+            "moneda": precio_obj.moneda,
+            "url": getattr(dto, 'url', ''),
+            "fuente": getattr(dto, 'fuente', '')
+        }
 
-        for dto in dtos:
-
-            oferta = self.procesar(dto)
-
-            if oferta:
-                ofertas.append(oferta)
-
-        return ofertas
-
-    def _obtener_empresa_raw(
-        self,
-        dto: OfertaDTO,
-    ) -> str:
+    def crear_oferta(self, dto, fecha_relevamiento=None):
         """
-        Compatibilidad DTO legacy.
+        Crea la estructura final de la oferta lista para ser persistida.
         """
-
-        empresa = getattr(
-            dto,
-            "empresa_nombre",
-            None,
-        )
-
-        if empresa:
-            return empresa
-
-        return getattr(
-            dto,
-            "empresa",
-            "",
-        )
-
-    def _obtener_servicio_raw(
-        self,
-        dto: OfertaDTO,
-    ) -> str:
-
-        servicio = getattr(
-            dto,
-            "servicio_raw",
-            None,
-        )
-
-        if servicio:
-            return servicio
-
-        return getattr(
-            dto,
-            "servicio",
-            "",
-        )
-
-    def _normalizar_datos(
-        self,
-        dto: OfertaDTO,
-    ) -> OfertaDTO:
-
-        ubicacion = (
-            self.normalizador_ubicaciones.normalizar(
-                provincia=dto.provincia,
-                ciudad=dto.ciudad,
-            )
-        )
-
-        empresa = (
-            self.normalizador_empresas.normalizar(
-                self._obtener_empresa_raw(dto)
-            )
-        )
-
-        servicio = self._obtener_servicio_raw(dto)
-
-        precio = getattr(
-            dto,
-            "precio",
-            None,
-        )
-
-        if precio is None:
-
-            precio_raw = getattr(
-                dto,
-                "precio_raw",
-                None,
-            )
-
-            if precio_raw:
-
-                precio_normalizado = (
-                    NormalizadorPrecios.normalizar(
-                        precio_raw
-                    )
-                )
-
-                precio = PrecioValor(
-                    valor=precio_normalizado.valor,
-                    moneda=precio_normalizado.moneda,
-                    periodo=precio_normalizado.periodo,
-                )
-
-        return OfertaDTO(
-            empresa_nombre=empresa,
-            provincia=ubicacion.provincia,
-            ciudad=ubicacion.ciudad,
-            fuente=dto.fuente,
-            servicio_raw=servicio,
-            precio=precio,
-            moneda=dto.moneda,
-            fecha_relevamiento=getattr(
-                dto,
-                "fecha_relevamiento",
-                None,
-            ),
-            precio_raw=getattr(
-                dto,
-                "precio_raw",
-                None,
-            ),
-        )
+        datos_procesados = self.procesar(dto)
+        datos_procesados["fecha_relevamiento"] = fecha_relevamiento
+        return datos_procesados

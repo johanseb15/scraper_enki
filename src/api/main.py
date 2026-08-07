@@ -22,7 +22,8 @@ def consultar_servicio(
     ciudad: str | None = Query(default=None),
     repo: RepositorioSQLite = Depends(obtener_repositorio)
 ):
-    servicios = repo.obtener_todos()
+    # Invocación corregida: obtener_todas()
+    servicios = repo.obtener_todas()
 
     # Aplicamos filtros geográficos si existen
     servicios_filtrados = [

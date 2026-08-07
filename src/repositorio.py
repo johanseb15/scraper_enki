@@ -1,20 +1,20 @@
+# src/repositorio.py
+
 import sqlite3
-from typing import Optional, List, Dict, Any
+from typing import List, Dict, Any, Optional
 
 class RepositorioSQLiteOfertas:
-    def __init__(self, ruta_db: Optional[str] = None, db_path: Optional[str] = None):
-        """
-        Acepta tanto 'ruta_db' como 'db_path' para mantener retrocompatibilidad
-        con la suite de pruebas y la interfaz del dominio.
-        """
-        self.db_path = ruta_db or db_path or "enki.db"
+    def __init__(self, ruta_db: str):
+        self.ruta_db = ruta_db
         self._inicializar_tabla()
 
     def _obtener_conexion(self) -> sqlite3.Connection:
-        return sqlite3.connect(self.db_path)
+        conn = sqlite3.connect(self.ruta_db)
+        conn.row_factory = sqlite3.Row
+        return conn
 
     def _inicializar_tabla(self) -> None:
-        """Crea la tabla asegurando que exista la columna 'titulo'."""
+        """Crea la tabla de ofertas si no existe para prevenir errores de tablas ausentes."""
         with self._obtener_conexion() as conn:
             cursor = conn.cursor()
             cursor.execute("""
@@ -25,55 +25,61 @@ class RepositorioSQLiteOfertas:
                     moneda TEXT,
                     servicio TEXT,
                     proveedor TEXT,
-                    url TEXT
-                );
+                    url TEXT,
+                    provincia TEXT,
+                    ciudad TEXT,
+                    fecha_relevamiento TEXT
+                )
             """)
             conn.commit()
 
-    def guardar(self, oferta: Any) -> None:
-        """Soporta tanto objetos DTO/Entidad como diccionarios."""
-        titulo = getattr(oferta, 'titulo', None) or (oferta.get('titulo') if isinstance(oferta, dict) else '')
-        precio = getattr(oferta, 'precio', None) or (oferta.get('precio') if isinstance(oferta, dict) else 0.0)
-        
-        # Extraer monto si precio es un objeto
-        if hasattr(precio, 'monto'):
-            precio_val = precio.monto
-        elif hasattr(precio, 'valor'):
-            precio_val = precio.valor
-        else:
-            precio_val = precio
-
-        moneda = getattr(oferta, 'moneda', 'ARS') or (oferta.get('moneda', 'ARS') if isinstance(oferta, dict) else 'ARS')
-        servicio = getattr(oferta, 'servicio', None) or (oferta.get('servicio') if isinstance(oferta, dict) else '')
-        proveedor = getattr(oferta, 'proveedor', None) or (oferta.get('proveedor') if isinstance(oferta, dict) else '')
-        url = getattr(oferta, 'url', None) or (oferta.get('url') if isinstance(oferta, dict) else '')
-
-        with self._obtener_conexion() as conn:
-            cursor = conn.cursor()
-            cursor.execute("""
-                INSERT INTO ofertas (titulo, precio, moneda, servicio, proveedor, url)
-                VALUES (?, ?, ?, ?, ?, ?)
-            """, (titulo, precio_val, str(moneda), str(servicio), proveedor, url))
-            conn.commit()
-
     def obtener_todas(self) -> List[Dict[str, Any]]:
-        """Consulta coincidente con las columnas del esquema."""
+        """Recupera todas las ofertas almacenadas en la base de datos."""
         with self._obtener_conexion() as conn:
-            conn.row_factory = sqlite3.Row
             cursor = conn.cursor()
-            cursor.execute("SELECT titulo, precio, moneda, servicio, proveedor, url FROM ofertas")
-            filas = cursor.fetchall()
-            return [dict(fila) for fila in filas]
+            cursor.execute("SELECT titulo, precio, moneda, servicio, proveedor, url, provincia, ciudad, fecha_relevamiento FROM ofertas")
+            return [dict(row) for row in cursor.fetchall()]
 
-    def obtener_todos(self) -> List[Dict[str, Any]]:
-        """Alias de compatibilidad para obtener_todas()"""
-        return self.obtener_todas()
+    def guardar(self, oferta: Any) -> None:
+        """Inserta una oferta o un diccionario de datos procesados en la base de datos."""
+        with self._obtener_conexion() as conn:
+            cursor = conn.cursor()
+            
+            # Soporte dual: si es un diccionario o un objeto/DTO con atributos
+            if isinstance(oferta, dict):
+                titulo = oferta.get('titulo') or oferta.get('servicio', '')
+                
+                # Manejo del precio si viene como objeto o flotante
+                precio_val = oferta.get('precio', 0.0)
+                if hasattr(precio_val, 'valor'):
+                    precio = precio_val.valor
+                else:
+                    try:
+                        precio = float(precio_val)
+                    except (ValueError, TypeError):
+                        precio = 0.0
 
-    def __enter__(self):
-        return self
+                moneda = oferta.get('moneda', 'ARS')
+                servicio = oferta.get('servicio', '')
+                proveedor = oferta.get('empresa') or oferta.get('proveedor', '')
+                url = oferta.get('url', '')
+                provincia = oferta.get('provincia', '')
+                ciudad = oferta.get('ciudad', '')
+                fecha_relevamiento = oferta.get('fecha_relevamiento', None)
+            else:
+                titulo = getattr(oferta, 'titulo', None) or getattr(oferta, 'servicio', '')
+                p_obj = getattr(oferta, 'precio', 0.0)
+                precio = p_obj.valor if hasattr(p_obj, 'valor') else float(p_obj)
+                moneda = getattr(oferta, 'moneda', 'ARS')
+                servicio = getattr(oferta, 'servicio', '')
+                proveedor = getattr(oferta, 'proveedor', None) or getattr(oferta, 'empresa', '')
+                url = getattr(oferta, 'url', '')
+                provincia = getattr(oferta, 'provincia', '')
+                ciudad = getattr(oferta, 'ciudad', '')
+                fecha_relevamiento = getattr(oferta, 'fecha_relevamiento', None)
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        pass
-
-# Alias de compatibilidad para la suite de pruebas
-RepositorioSQLite = RepositorioSQLiteOfertas
+            cursor.execute("""
+                INSERT INTO ofertas (titulo, precio, moneda, servicio, proveedor, url, provincia, ciudad, fecha_relevamiento)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (titulo, precio, moneda, servicio, proveedor, url, provincia, ciudad, fecha_relevamiento))
+            conn.commit()
