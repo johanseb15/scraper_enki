@@ -1,4 +1,4 @@
-from unittest.mock import patch
+from unittest.mock import Mock
 from src.scrapers.baires_cloud import BairesCloudScraper
 
 
@@ -18,13 +18,13 @@ def test_bairescloud_scraper_descarga_y_extrae_servicios():
         </body>
     </html>
     """
-    scraper = BairesCloudScraper()
+    downloader = Mock()
+    downloader.descargar.return_value = html
+    scraper = BairesCloudScraper(downloader=downloader)
 
-    with patch(
-        "src.scrapers.baires_cloud.descargar_html", return_value=html
-    ):
-        resultados = scraper.obtener_servicios()
+    resultados = scraper.obtener_servicios()
 
     assert len(resultados) == 2
+    downloader.descargar.assert_called_once_with(BairesCloudScraper.URL)
     # Corrección: El scraper concatena el servicio con la columna de equipo
     assert resultados[0].servicio_raw == "Soporte remoto - PC"
