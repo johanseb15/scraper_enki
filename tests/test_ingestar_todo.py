@@ -28,7 +28,7 @@ def test_ejecutar_ingesta_exitoso(tmp_path):
     oferta_mock = OfertaDTO(**kwargs)
 
     with patch(
-        "src.scrapers.compragamer_playwright_scraper.CompraGamerPlaywrightScraper.obtener_ofertas",
+        "src.infraestructura.scrapers.compragamer_playwright_scraper.CompraGamerPlaywrightScraper.obtener_ofertas",
         return_value=[oferta_mock, "Oferta en string puro"],
     ), patch(
         "src.infraestructura.sqlite.repositorio_sqlite_ofertas.RepositorioSQLiteOfertas"

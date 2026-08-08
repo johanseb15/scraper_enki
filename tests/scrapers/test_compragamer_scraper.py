@@ -2,8 +2,17 @@ from datetime import date
 from unittest.mock import MagicMock, patch
 
 from src.aplicacion.dto.oferta_dto import OfertaDTO
+from src.infraestructura.scrapers.compragamer_playwright_scraper import (
+    CompraGamerPlaywrightScraper as CompraGamerPlaywrightScraperOficial,
+)
 from src.scrapers.compragamer_parser import parsear_ofertas_compragamer
-from src.scrapers.compragamer_playwright_scraper import CompraGamerPlaywrightScraper
+from src.scrapers.compragamer_playwright_scraper import (
+    CompraGamerPlaywrightScraper as CompraGamerPlaywrightScraperLegacy,
+)
+
+
+def test_ruta_legacy_reexporta_scraper_oficial():
+    assert CompraGamerPlaywrightScraperLegacy is CompraGamerPlaywrightScraperOficial
 
 
 def test_parsear_ofertas_compragamer_exito():
@@ -38,7 +47,9 @@ def test_parsear_ofertas_compragamer_exito():
     assert ofertas[0].fuente == "compragamer_playwright"
 
 
-@patch("src.scrapers.compragamer_playwright_scraper.sync_playwright")
+@patch(
+    "src.infraestructura.scrapers.compragamer_playwright_scraper.sync_playwright"
+)
 def test_compragamer_playwright_scraper_obtener_ofertas(mock_playwright):
     # Mocking de la cadena de objetos de Playwright
     mock_browser = MagicMock()
@@ -72,7 +83,7 @@ def test_compragamer_playwright_scraper_obtener_ofertas(mock_playwright):
 
     mock_page.goto.side_effect = fake_goto
 
-    scraper = CompraGamerPlaywrightScraper()
+    scraper = CompraGamerPlaywrightScraperLegacy()
     resultado = scraper.obtener_ofertas(date(2026, 8, 4))
 
     assert len(resultado) == 1
