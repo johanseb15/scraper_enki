@@ -6,17 +6,9 @@ from src.api.main import app, obtener_repositorio
 from src.dominio.empresa import Empresa
 from src.dominio.oferta import Oferta
 from src.dominio.servicios import ServicioCanonico
-from src.infraestructura.repositorios import RepositorioSQLite
 from src.infraestructura.sqlite.repositorio_sqlite_ofertas import (
     RepositorioSQLiteOfertas,
 )
-
-@pytest.fixture
-def repositorio_db():
-    """Proporciona una instancia de RepositorioSQLite en memoria que se cierra automáticamente."""
-    repo = RepositorioSQLite(ruta_db=":memory:")
-    yield repo
-    repo.cerrar()
 
 
 @pytest.fixture
