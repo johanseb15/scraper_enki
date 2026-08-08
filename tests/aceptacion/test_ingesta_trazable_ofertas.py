@@ -4,6 +4,7 @@ from fastapi.testclient import TestClient
 
 from src.api.main import app, obtener_repositorio
 from src.aplicacion.dto.oferta_dto import OfertaDTO
+from src.aplicacion.dto.rechazo_ingesta import RechazoIngesta
 from src.aplicacion.procesador_ofertas import ProcesadorOfertas
 from src.dominio.servicios import ServicioCanonico
 from src.infraestructura.scrapers.vida_informatica_parser import (
@@ -318,3 +319,58 @@ def test_aislar_el_fallo_de_una_fuente(tmp_path, caplog):
         and "fallo durante la descarga" in registro.getMessage()
         for registro in caplog.records
     )
+
+
+def test_rechazar_una_fila_incompleta_de_forma_trazable(tmp_path):
+    html = """
+    <table>
+      <tr>
+        <th>Servicio</th>
+        <th>Equipo</th>
+        <th>Freelance</th>
+        <th>Local</th>
+      </tr>
+      <tr>
+        <td></td>
+        <td>PC</td>
+        <td>$ 15.000</td>
+        <td>$ 20.000</td>
+      </tr>
+      <tr>
+        <td>Eliminación de malware</td>
+        <td>PC</td>
+        <td>sin precio</td>
+        <td>$ 0</td>
+      </tr>
+    </table>
+    """
+    fuente = "Vida Informática"
+    rechazos: list[RechazoIngesta] = []
+
+    dtos = extraer_datos_vida_informatica(
+        html,
+        url_fuente=fuente,
+        fecha_relevamiento=date(2026, 8, 8),
+        rechazos=rechazos,
+    )
+    repositorio = RepositorioSQLiteOfertas(
+        ruta_db=str(tmp_path / "rechazos_trazables.db")
+    )
+    procesador = ProcesadorOfertas(repositorio=repositorio)
+    ofertas_validas = [
+        oferta
+        for dto in dtos
+        for oferta in procesador.crear_ofertas(dto)
+    ]
+    ofertas_persistidas = repositorio.obtener_todas()
+
+    assert ofertas_validas == []
+    assert ofertas_persistidas == []
+    assert not any(oferta.precio == 0 for oferta in ofertas_persistidas)
+    assert rechazos == [
+        RechazoIngesta(fuente=fuente, razon="sin servicio"),
+        RechazoIngesta(
+            fuente=fuente,
+            razon="sin ningún precio válido",
+        ),
+    ]
