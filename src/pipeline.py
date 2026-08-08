@@ -7,6 +7,7 @@ from src.aplicacion.procesador_ofertas import ProcesadorOfertas
 from src.aplicacion.puertos.repositorio_ofertas import RepositorioOfertas
 from src.dominio.oferta import Oferta
 from src.infraestructura.sqlite.repositorio_sqlite_ofertas import RepositorioSQLiteOfertas
+from src.metricas import MetricasEjecucion
 from src.scrapers.baires_cloud import BairesCloudScraper
 from src.scrapers.base import BaseScraper
 from src.scrapers.vida_informatica import VidaInformaticaScraper
@@ -41,8 +42,10 @@ class PipelineOfertas:
             factory=OfertaFactory(),
             repositorio=self.repositorio,
         )
+        self.metricas = MetricasEjecucion()
 
     def ejecutar(self) -> List[Oferta]:
+        self.metricas = MetricasEjecucion()
         dtos_totales: List[OfertaDTO] = []
 
         # 1. Extracción (Scraping -> DTOs)
@@ -53,8 +56,10 @@ class PipelineOfertas:
                 logger.info(f"Ejecutando scraper: {nombre_scraper}")
                 dtos = scraper.obtener_servicios()
                 dtos_totales.extend(dtos)
+                self.metricas.registrar_exito(nombre_scraper)
                 logger.info(f"{nombre_scraper} extrajo {len(dtos)} DTOs.")
             except Exception as e:
+                self.metricas.registrar_fallo(nombre_scraper)
                 logger.error(
                     f"Error al ejecutar fuente {fuente} ({nombre_scraper}): {e}",
                     exc_info=True,
