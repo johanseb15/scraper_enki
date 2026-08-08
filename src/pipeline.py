@@ -17,6 +17,15 @@ logger = logging.getLogger(__name__)
 class PipelineOfertas:
     """Orquestador principal del pipeline ETL de Enki."""
 
+    @staticmethod
+    def _identificar_fuente(scraper: BaseScraper) -> str:
+        return (
+            getattr(scraper, "fuente", None)
+            or getattr(scraper, "URL", None)
+            or getattr(scraper, "url_base", None)
+            or scraper.__class__.__name__
+        )
+
     def __init__(
         self,
         scrapers: Optional[List[BaseScraper]] = None,
@@ -39,6 +48,7 @@ class PipelineOfertas:
         # 1. Extracción (Scraping -> DTOs)
         for scraper in self.scrapers:
             nombre_scraper = scraper.__class__.__name__
+            fuente = self._identificar_fuente(scraper)
             try:
                 logger.info(f"Ejecutando scraper: {nombre_scraper}")
                 dtos = scraper.obtener_servicios()
@@ -46,7 +56,7 @@ class PipelineOfertas:
                 logger.info(f"{nombre_scraper} extrajo {len(dtos)} DTOs.")
             except Exception as e:
                 logger.error(
-                    f"Error al ejecutar scraper {nombre_scraper}: {e}",
+                    f"Error al ejecutar fuente {fuente} ({nombre_scraper}): {e}",
                     exc_info=True,
                 )
 

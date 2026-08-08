@@ -12,6 +12,8 @@ from src.infraestructura.scrapers.vida_informatica_parser import (
 from src.infraestructura.sqlite.repositorio_sqlite_ofertas import (
     RepositorioSQLiteOfertas,
 )
+from src.pipeline import PipelineOfertas
+from src.scrapers.base import BaseScraper
 
 
 def test_extraer_una_fila_sin_perder_sus_precios_originales():
@@ -265,3 +267,54 @@ def test_consultar_estadisticas_del_servicio(tmp_path):
         for empresa in datos["empresas"]
     )
     assert "Córdoba" in datos["ciudades"]
+
+
+def test_aislar_el_fallo_de_una_fuente(tmp_path, caplog):
+    class ScraperQueFalla(BaseScraper):
+        fuente = "Fuente Fallida"
+
+        def obtener_servicios(self) -> list[OfertaDTO]:
+            raise RuntimeError("fallo durante la descarga")
+
+    class ScraperValido(BaseScraper):
+        fuente = "Fuente Válida"
+
+        def obtener_servicios(self) -> list[OfertaDTO]:
+            return [
+                OfertaDTO(
+                    empresa_nombre="Vida Informatica",
+                    provincia="Córdoba",
+                    ciudad="Córdoba",
+                    servicio_raw="Eliminación de malware",
+                    precio=15000,
+                    moneda="ARS",
+                    fuente=self.fuente,
+                    fecha_relevamiento=date(2026, 8, 8),
+                )
+            ]
+
+    repositorio = RepositorioSQLiteOfertas(
+        ruta_db=str(tmp_path / "pipeline_resiliente.db")
+    )
+    pipeline = PipelineOfertas(
+        scrapers=[ScraperQueFalla(), ScraperValido()],
+        repositorio=repositorio,
+    )
+
+    caplog.set_level("ERROR", logger="src.pipeline")
+    ofertas_procesadas = pipeline.ejecutar()
+    ofertas_persistidas = repositorio.obtener_todas()
+
+    assert len(ofertas_procesadas) == 1
+    assert len(ofertas_persistidas) == 1
+    assert ofertas_persistidas[0].empresa.fuente == "Fuente Válida"
+    assert ofertas_persistidas[0].precio == 15000
+    assert all(
+        oferta.empresa.fuente != "Fuente Fallida"
+        for oferta in ofertas_persistidas
+    )
+    assert any(
+        "Fuente Fallida" in registro.getMessage()
+        and "fallo durante la descarga" in registro.getMessage()
+        for registro in caplog.records
+    )
