@@ -1,45 +1,56 @@
-"""Tests para el script orquestador de ingesta masiva scripts.ingestar_todo."""
+"""Tests para el entrypoint de ingesta masiva scripts.ingestar_todo."""
 
-import inspect
-from unittest.mock import MagicMock, patch
-import pytest
-from src.scrapers.compragamer_scraper import OfertaDTO
+from datetime import date
+
+from scripts.ingestar_todo import ejecutar_ingesta
+from src.aplicacion.dto.oferta_dto import OfertaDTO
+from src.dominio.oferta import Oferta
+from src.infraestructura.sqlite.repositorio_sqlite_ofertas import (
+    RepositorioSQLiteOfertas,
+)
+from src.scrapers.base import BaseScraper
+
+
+class ScraperCompraGamerFixture(BaseScraper):
+    def obtener_servicios(self) -> list[OfertaDTO]:
+        fecha = date(2026, 8, 8)
+        return [
+            OfertaDTO(
+                empresa_nombre="Compra Gamer",
+                provincia="Buenos Aires",
+                ciudad="CABA",
+                servicio_raw="Mantenimiento preventivo",
+                precio=12000,
+                precio_raw="$ 12.000",
+                moneda="ARS",
+                fuente="https://compragamer.com/item001",
+                fecha_relevamiento=fecha,
+            ),
+            OfertaDTO(
+                empresa_nombre="Compra Gamer",
+                provincia="Buenos Aires",
+                ciudad="CABA",
+                servicio_raw="Soporte técnico informático",
+                precio=18000,
+                precio_raw="$ 18.000",
+                moneda="ARS",
+                fuente="https://compragamer.com/item002",
+                fecha_relevamiento=fecha,
+            ),
+        ]
 
 
 def test_ejecutar_ingesta_exitoso(tmp_path):
     db_test = str(tmp_path / "test.db")
 
-    sig = inspect.signature(OfertaDTO.__init__)
-    params = [p for p in sig.parameters.keys() if p != "self"]
+    total = ejecutar_ingesta(
+        db_path=db_test,
+        scrapers=[ScraperCompraGamerFixture()],
+    )
 
-    kwargs = {}
-    for p in params:
-        if "precio" in p:
-            kwargs[p] = 12000.0
-        elif "moneda" in p:
-            kwargs[p] = "ARS"
-        elif "url" in p:
-            kwargs[p] = "https://compragamer.com/item001"
-        elif "proveedor" in p:
-            kwargs[p] = "CompraGamer"
-        else:
-            kwargs[p] = "Mantenimiento preventivo PC"
-
-    oferta_mock = OfertaDTO(**kwargs)
-
-    with patch(
-        "src.infraestructura.scrapers.compragamer_playwright_scraper.CompraGamerPlaywrightScraper.obtener_ofertas",
-        return_value=[oferta_mock, "Oferta en string puro"],
-    ), patch(
-        "src.infraestructura.sqlite.repositorio_sqlite_ofertas.RepositorioSQLiteOfertas"
-    ) as mock_repo_cls:
-        mock_repo_instance = MagicMock()
-        mock_repo_cls.return_value = mock_repo_instance
-
-        from scripts.ingestar_todo import ejecutar_ingesta
-
-        total = ejecutar_ingesta(db_path=db_test)
-
-        assert total == 2
-        mock_repo_cls.assert_called_once_with(db_test)
-        assert mock_repo_instance.guardar.call_count == 2
+    persistidas = RepositorioSQLiteOfertas(ruta_db=db_test).obtener_todas()
+    assert total == 2
+    assert len(persistidas) == 2
+    assert all(isinstance(oferta, Oferta) for oferta in persistidas)
+    assert {oferta.empresa.nombre for oferta in persistidas} == {"Compra Gamer"}
+    assert {oferta.precio.valor for oferta in persistidas} == {12000, 18000}
