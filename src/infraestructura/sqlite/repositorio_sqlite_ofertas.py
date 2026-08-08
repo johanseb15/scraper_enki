@@ -1,4 +1,5 @@
 import sqlite3
+from contextlib import closing
 from datetime import date
 
 from src.dominio.empresa import Empresa
@@ -20,8 +21,6 @@ class RepositorioSQLiteOfertas:
     def __init__(self, *args, **kwargs):
         ruta_db = args[0] if args else self._obtener_ruta(kwargs)
         self.ruta_db = ruta_db
-        self.conexion = sqlite3.connect(ruta_db)
-        self.conexion.row_factory = sqlite3.Row
         self._crear_o_migrar_tabla()
 
     @staticmethod
@@ -31,9 +30,14 @@ class RepositorioSQLiteOfertas:
                 return kwargs[nombre]
         return "datos.db"
 
+    def _conectar(self) -> sqlite3.Connection:
+        conexion = sqlite3.connect(self.ruta_db)
+        conexion.row_factory = sqlite3.Row
+        return conexion
+
     def _crear_o_migrar_tabla(self) -> None:
-        with self.conexion:
-            self.conexion.execute(
+        with closing(self._conectar()) as conexion, conexion:
+            conexion.execute(
                 """
                 CREATE TABLE IF NOT EXISTS ofertas (
                     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -53,15 +57,15 @@ class RepositorioSQLiteOfertas:
             )
             columnas = {
                 fila["name"]
-                for fila in self.conexion.execute("PRAGMA table_info(ofertas)")
+                for fila in conexion.execute("PRAGMA table_info(ofertas)")
             }
             for nombre, tipo in self._COLUMNAS_TRAZABLES.items():
                 if nombre not in columnas:
-                    self.conexion.execute(
+                    conexion.execute(
                         f"ALTER TABLE ofertas ADD COLUMN {nombre} {tipo}"
                     )
             if "fecha" in columnas:
-                self.conexion.execute(
+                conexion.execute(
                     """
                     UPDATE ofertas
                     SET fecha_relevamiento = fecha
@@ -86,8 +90,8 @@ class RepositorioSQLiteOfertas:
             else None
         )
 
-        with self.conexion:
-            self.conexion.execute(
+        with closing(self._conectar()) as conexion, conexion:
+            conexion.execute(
                 """
                 INSERT INTO ofertas (
                     empresa,
@@ -121,7 +125,8 @@ class RepositorioSQLiteOfertas:
         return oferta
 
     def obtener_todas(self) -> list[Oferta]:
-        filas = self.conexion.execute("SELECT * FROM ofertas").fetchall()
+        with closing(self._conectar()) as conexion:
+            filas = conexion.execute("SELECT * FROM ofertas").fetchall()
         return [self._reconstruir_oferta(fila) for fila in filas]
 
     @staticmethod
@@ -168,4 +173,4 @@ class RepositorioSQLiteOfertas:
         self.cerrar()
 
     def cerrar(self) -> None:
-        self.conexion.close()
+        pass

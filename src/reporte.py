@@ -3,16 +3,17 @@ from src.estadisticas import (
     calcular_precio_minimo,
     calcular_precio_maximo,
 )
-from src.normalizacion import es_mismo_servicio
+from src.normalizadores.normalizador_servicios import NormalizadorServicios
 
 
 def generar_resumen_servicio(
     datos,
     servicio: str,
 ):
+    servicio_canonico = NormalizadorServicios().normalizar(servicio)
     filtrados = [
         d for d in datos
-        if es_mismo_servicio(d.servicio, servicio)
+        if d.servicio == servicio_canonico
     ]
 
     if not filtrados:
@@ -25,17 +26,23 @@ def generar_resumen_servicio(
             "empresas_relevadas": 0,
         }
 
+    precios_por_empresa = {}
+    for oferta in filtrados:
+        precios_por_empresa.setdefault(oferta.empresa.nombre, []).append(
+            {
+                "modalidad": oferta.modalidad,
+                "precio": oferta.precio,
+            }
+        )
+
     return {
         "servicio": servicio,
         "cantidad": len(filtrados),
-        "precio_minimo": calcular_precio_minimo(datos, servicio),
-        "precio_promedio": calcular_precio_promedio(datos, servicio),
-        "precio_maximo": calcular_precio_maximo(datos, servicio),
+        "precio_minimo": calcular_precio_minimo(filtrados),
+        "precio_promedio": calcular_precio_promedio(filtrados),
+        "precio_maximo": calcular_precio_maximo(filtrados),
         "empresas_relevadas": len(
             {d.empresa for d in filtrados}
         ),
-        "precios_por_empresa": {
-            d.empresa: d.precio_freelance
-            for d in filtrados
-        },
+        "precios_por_empresa": precios_por_empresa,
     }

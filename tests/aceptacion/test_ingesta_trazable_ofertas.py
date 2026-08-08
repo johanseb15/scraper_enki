@@ -1,5 +1,8 @@
 from datetime import date
 
+from fastapi.testclient import TestClient
+
+from src.api.main import app, obtener_repositorio
 from src.aplicacion.dto.oferta_dto import OfertaDTO
 from src.aplicacion.procesador_ofertas import ProcesadorOfertas
 from src.dominio.servicios import ServicioCanonico
@@ -220,3 +223,45 @@ def test_persistir_y_recuperar_ofertas_sin_cambiar_su_significado(tmp_path):
         for observacion in observaciones_obtenidas
         for valor in observacion.values()
     )
+
+
+def test_consultar_estadisticas_del_servicio(tmp_path):
+    dto = OfertaDTO(
+        empresa_nombre="Vida Informatica",
+        provincia="Córdoba",
+        ciudad="Córdoba",
+        servicio_raw="Eliminación de virus y malware",
+        precio_freelance_raw="$ 15.000",
+        precio_local_raw="$ 20.000",
+        moneda="ARS",
+        fuente="Vida Informática",
+        fecha_relevamiento=date(2026, 8, 7),
+    )
+    ofertas = ProcesadorOfertas().crear_ofertas(dto)
+
+    with RepositorioSQLiteOfertas(
+        ruta_db=str(tmp_path / "ofertas_consultables.db")
+    ) as repositorio:
+        for oferta in ofertas:
+            repositorio.guardar(oferta)
+
+        app.dependency_overrides[obtener_repositorio] = lambda: repositorio
+        try:
+            respuesta = TestClient(app).get(
+                "/servicios/Eliminación de malware"
+            )
+        finally:
+            app.dependency_overrides.clear()
+
+    assert respuesta.status_code == 200
+
+    datos = respuesta.json()
+    assert datos["cantidad"] == 2
+    assert datos["precio_minimo"] == 15000
+    assert datos["precio_promedio"] == 17500
+    assert datos["precio_maximo"] == 20000
+    assert any(
+        empresa["empresa"] == "Vida Informatica"
+        for empresa in datos["empresas"]
+    )
+    assert "Córdoba" in datos["ciudades"]
