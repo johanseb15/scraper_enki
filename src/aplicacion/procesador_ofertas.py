@@ -94,9 +94,7 @@ class ProcesadorOfertas:
         ofertas = []
 
         for dto in dtos:
-            oferta = self.procesar(dto)
-            if oferta:
-                ofertas.append(oferta)
+            ofertas.extend(self.crear_ofertas(dto))
 
         return ofertas
 

@@ -38,7 +38,7 @@ def test_pipeline_completo_de_html_a_reporte(tmp_path):
     reporte = generar_reporte_texto(resumen)
 
     assert len(persistidas) == len(ofertas)
-    assert resumen["cantidad"] == 1
+    assert resumen["cantidad"] == 2
     assert resumen["precio_minimo"] == 29816
     assert "Eliminación de malware" in reporte
     assert "29816" in reporte
