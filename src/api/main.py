@@ -1,6 +1,10 @@
+import os
+
 from fastapi import FastAPI, Depends, Query
 
-from src.repositorio import RepositorioSQLite
+from src.infraestructura.sqlite.repositorio_sqlite_ofertas import (
+    RepositorioSQLiteOfertas,
+)
 from src.reporte import generar_resumen_servicio
 from src.normalizadores.normalizador_servicios import NormalizadorServicios
 
@@ -10,8 +14,10 @@ app = FastAPI(
 )
 
 
-def obtener_repositorio() -> RepositorioSQLite:
-    return RepositorioSQLite("enki.db")
+def obtener_repositorio() -> RepositorioSQLiteOfertas:
+    return RepositorioSQLiteOfertas(
+        ruta_db=os.getenv("ENKI_DB_PATH", "enki.db")
+    )
 
 
 @app.get("/servicios/{nombre_servicio}")
@@ -19,7 +25,7 @@ def consultar_servicio(
     nombre_servicio: str,
     provincia: str | None = Query(default=None),
     ciudad: str | None = Query(default=None),
-    repo: RepositorioSQLite = Depends(obtener_repositorio),
+    repo: RepositorioSQLiteOfertas = Depends(obtener_repositorio),
 ):
     servicios = repo.obtener_todas()
     servicio_canonico = NormalizadorServicios().normalizar(nombre_servicio)

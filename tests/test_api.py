@@ -14,6 +14,41 @@ from src.infraestructura.sqlite.repositorio_sqlite_ofertas import (
 cliente = TestClient(app)
 
 
+def test_api_compone_repositorio_oficial_sin_override(tmp_path, monkeypatch):
+    ruta_db = tmp_path / "api_productiva.db"
+    monkeypatch.setenv("ENKI_DB_PATH", str(ruta_db))
+    monkeypatch.chdir(tmp_path)
+
+    assert not app.dependency_overrides
+    repositorio = obtener_repositorio()
+
+    assert isinstance(repositorio, RepositorioSQLiteOfertas)
+    assert repositorio.ruta_db == str(ruta_db)
+
+    repositorio.guardar(
+        Oferta(
+            empresa=Empresa(
+                nombre="Vida Informatica",
+                provincia="Córdoba",
+                ciudad="Córdoba",
+                fuente="test-productivo",
+            ),
+            servicio=ServicioCanonico.MALWARE,
+            servicio_raw="Eliminación de malware",
+            precio=15000,
+            modalidad="freelance",
+            precio_raw="$ 15.000",
+            moneda="ARS",
+            fecha_relevamiento=date(2026, 8, 8),
+        )
+    )
+
+    respuesta = cliente.get("/servicios/Eliminación de malware")
+
+    assert respuesta.status_code == 200
+    assert respuesta.json()["precio_minimo"] == 15000
+
+
 def test_consultar_servicio_devuelve_estadisticas(mercado_api):
     respuesta = cliente.get(
         "/servicios/Eliminación de malware"
