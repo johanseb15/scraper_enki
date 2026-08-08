@@ -52,6 +52,7 @@ class VenexParser:
                 ciudad="Córdoba",
                 servicio_raw=nodo_titulo.get_text(strip=True),
                 precio=precio_int,
+                precio_raw=precio_texto,
                 moneda="ARS",
                 fecha_relevamiento=fecha_relevamiento,
                 fuente=url_fuente,
