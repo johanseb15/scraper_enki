@@ -1,24 +1,12 @@
-from datetime import date
-from src.infraestructura.persistencia.repositorio_sqlite_ofertas import (
-    RepositorioSQLiteOfertas,
-)
-from src.scrapers.compragamer_playwright_scraper import CompraGamerPlaywrightScraper
+"""Entry point compatible para la ingesta de ofertas de CompraGamer."""
+
+from scripts.ingestar_todo import ejecutar_ingesta
 
 
-def main():
-    print("Ejecutando scraper de Compra Gamer...")
-    scraper = CompraGamerPlaywrightScraper()
-    repo = RepositorioSQLiteOfertas()
-
-    ofertas = scraper.obtener_ofertas(fecha_relevamiento=date.today())
-    print(f"📦 Procesadas {len(ofertas)} ofertas.")
-
-    guardadas = 0
-    for oferta in ofertas:
-        if repo.guardar(oferta):
-            guardadas += 1
-
-    print(f"💾 Se guardaron {guardadas} nuevas ofertas en la base de datos SQLite.")
+def main(db_path: str = "enki.db") -> int:
+    guardadas = ejecutar_ingesta(db_path=db_path)
+    print(f"Se guardaron {guardadas} ofertas en la base de datos SQLite.")
+    return guardadas
 
 
 if __name__ == "__main__":
