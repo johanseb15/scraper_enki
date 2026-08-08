@@ -13,8 +13,15 @@ def test_pipeline_usa_unico_modulo_oficial_de_ofertadto():
     ]
 
     for nombre_modulo in modulos_alternativos:
-        modulo = importlib.import_module(nombre_modulo)
-        assert getattr(modulo, "OfertaDTO", None) is None or modulo.__name__ == "src.aplicacion.dto.oferta_dto"
+        try:
+            modulo = importlib.import_module(nombre_modulo)
+        except ModuleNotFoundError:
+            continue
+
+        oferta_dto_alternativa = getattr(modulo, "OfertaDTO", None)
+
+        if oferta_dto_alternativa is not None:
+            assert oferta_dto_alternativa is OfertaDTO
 
 
 def test_oferta_dto_puede_transportar_precio_crudo():
