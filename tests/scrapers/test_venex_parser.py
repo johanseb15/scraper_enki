@@ -1,4 +1,4 @@
-from src.scrapers.venex_parser import VenexParser
+from src.infraestructura.scrapers.venex_parser import VenexParser
 
 
 def test_parsea_producto_real_de_venex():
