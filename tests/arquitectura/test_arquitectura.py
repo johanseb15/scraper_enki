@@ -80,12 +80,17 @@ def test_aplicacion_no_depende_de_sqlite_directamente():
 
 
 def test_pipeline_usa_ofertadto_como_contrato():
+    from src.infraestructura.scrapers.base import BaseScraper as BaseScraperOficial
+    from src.scrapers.base import BaseScraper as BaseScraperLegacy
+
+    assert BaseScraperLegacy is BaseScraperOficial
+
     pipeline_files = [
         ROOT / "src" / "pipeline.py",
         ROOT / "src" / "extractor.py",
         ROOT / "src" / "aplicacion" / "procesador_ofertas.py",
         ROOT / "src" / "aplicacion" / "oferta_factory.py",
-        ROOT / "src" / "scrapers" / "base.py",
+        ROOT / "src" / "infraestructura" / "scrapers" / "base.py",
     ]
 
     violations = []

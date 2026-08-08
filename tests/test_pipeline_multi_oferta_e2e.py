@@ -1,5 +1,4 @@
 from pathlib import Path
-from unittest.mock import patch
 
 from src.aplicacion.procesador_ofertas import ProcesadorOfertas
 from src.dominio.servicios import ServicioCanonico
@@ -7,13 +6,20 @@ from src.infraestructura.sqlite.repositorio_sqlite_ofertas import RepositorioSQL
 from src.scrapers.vida_informatica import VidaInformaticaScraper
 
 
+class FakeDownloader:
+    def __init__(self, html):
+        self.html = html
+
+    def descargar(self, url):
+        return self.html
+
+
 def test_pipeline_multi_oferta_html_a_persistencia(tmp_path):
     fixture = Path(__file__).parent / "fixtures" / "vida_informatica.html"
     html = fixture.read_text(encoding="utf-8")
 
-    with patch("src.scrapers.vida_informatica.descargar_html", return_value=html):
-        scraper = VidaInformaticaScraper()
-        dtos = scraper.obtener_servicios()
+    scraper = VidaInformaticaScraper(downloader=FakeDownloader(html))
+    dtos = scraper.obtener_servicios()
 
     repositorio = RepositorioSQLiteOfertas(ruta_db=str(tmp_path / "multi_oferta.db"))
     procesador = ProcesadorOfertas(repositorio=repositorio)

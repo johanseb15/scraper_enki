@@ -1,16 +1,25 @@
 import pytest
 
+from src.infraestructura.scrapers.base import BaseScraper as BaseScraperOficial
+from src.infraestructura.scrapers.vida_informatica import (
+    VidaInformaticaScraper as VidaInformaticaScraperOficial,
+)
 from src.scrapers.base import BaseScraper
+from src.scrapers.base_scraper import BaseScraper as BaseScraperCompat
 from src.scrapers.vida_informatica import VidaInformaticaScraper
 from src.scrapers.baires_cloud import BairesCloudScraper
 
 
 def test_base_scraper_es_clase_abstracta():
+    assert BaseScraper is BaseScraperOficial
+    assert BaseScraperCompat is BaseScraperOficial
+
     with pytest.raises(TypeError):
         BaseScraper()
 
 
 def test_scrapers_implementan_interfaz_base():
+    assert VidaInformaticaScraper is VidaInformaticaScraperOficial
     assert issubclass(VidaInformaticaScraper, BaseScraper)
     assert issubclass(BairesCloudScraper, BaseScraper)
 

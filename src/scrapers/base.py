@@ -1,9 +1,4 @@
-from abc import ABC, abstractmethod
-from typing import List
-from src.aplicacion.dto.oferta_dto import OfertaDTO
+from src.infraestructura.scrapers.base import BaseScraper
 
 
-class BaseScraper(ABC):
-    @abstractmethod
-    def obtener_servicios(self) -> List[OfertaDTO]:
-        pass
+__all__ = ["BaseScraper"]
