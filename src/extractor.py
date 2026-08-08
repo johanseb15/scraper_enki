@@ -1,8 +1,8 @@
 from src.aplicacion.dto.oferta_dto import OfertaDTO
+from src.infraestructura.scrapers.vida_informatica_parser import (
+    extraer_datos_vida_informatica,
+)
 
-def extraer_datos(html: str) -> list:
-    try:
-        from src.scrapers import extraer_datos as _extraer
-        return _extraer(html)
-    except ImportError:
-        return []
+
+def extraer_datos(html: str) -> list[OfertaDTO]:
+    return extraer_datos_vida_informatica(html)

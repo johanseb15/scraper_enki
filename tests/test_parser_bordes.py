@@ -1,4 +1,3 @@
-from src.dominio.servicios import ServicioCanonico
 from src.extractor import extraer_datos
 
 def test_filas_imcompletas_se_ignoran():
@@ -28,4 +27,4 @@ def test_filas_imcompletas_se_ignoran():
     resultados = extraer_datos(html)
 
     assert len(resultados) == 1
-    assert resultados[0].servicio == ServicioCanonico.FORMATEO
+    assert resultados[0].servicio_raw == "Formateo"
