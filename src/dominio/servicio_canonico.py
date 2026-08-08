@@ -1,3 +1,0 @@
-class ServicioCanonico(Enum):
-    # ...
-    DIAGNOSTICO = "diagnostico"
