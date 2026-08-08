@@ -1,5 +1,4 @@
 from typing import Any, Iterable
-from src.dominio.modelos.oferta import Oferta
 from src.dominio.servicios import ServicioCanonico
 
 

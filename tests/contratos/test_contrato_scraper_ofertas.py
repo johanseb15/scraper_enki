@@ -2,7 +2,7 @@ from src.aplicacion.dto.oferta_dto import OfertaDTO
 from src.infraestructura.scrapers.vida_informatica_scraper import VidaInformaticaScraper
 from src.infraestructura.scrapers.baires_cloud import BairesCloudScraper
 from src.infraestructura.scrapers.venex_scraper import VenexScraper
-from src.dominio.modelos.oferta import Oferta
+from src.dominio.oferta import Oferta
 
 class FakeDownloader:
 
