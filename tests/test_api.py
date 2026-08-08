@@ -14,7 +14,7 @@ from src.infraestructura.sqlite.repositorio_sqlite_ofertas import (
 cliente = TestClient(app)
 
 
-def test_consultar_servicio_devuelve_estadisticas():
+def test_consultar_servicio_devuelve_estadisticas(mercado_api):
     respuesta = cliente.get(
         "/servicios/Eliminación de malware"
     )
@@ -86,7 +86,7 @@ def test_consultar_servicio_usa_datos_reales_del_repositorio(tmp_path):
     assert datos["precio_maximo"] == 20000
     assert datos["precio_promedio"] == 15000
 
-def test_consultar_servicio_devuelve_empresas():
+def test_consultar_servicio_devuelve_empresas(mercado_api):
 
     respuesta = cliente.get(
         "/servicios/Eliminación de malware"
@@ -107,7 +107,7 @@ def test_consultar_servicio_devuelve_empresas():
     assert "BairesCloud" in empresas
 
 
-def test_consultar_servicio_devuelve_ciudades():
+def test_consultar_servicio_devuelve_ciudades(mercado_api):
 
     respuesta = cliente.get(
         "/servicios/Eliminación de malware"

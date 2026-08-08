@@ -6,7 +6,7 @@ from src.api.main import app
 cliente = TestClient(app)
 
 
-def test_consultar_servicio_filtra_por_provincia():
+def test_consultar_servicio_filtra_por_provincia(mercado_api):
 
     respuesta = cliente.get(
         "/servicios/Eliminación de malware?provincia=Córdoba"
