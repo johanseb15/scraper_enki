@@ -28,11 +28,44 @@ class CatalogoServicios:
                 categoria="Seguridad IT",
                 sinonimos=(
                     "malware",
+                    "virus",
+                    "spyware",
                     "desinfeccion",
                     "limpieza de virus",
                     "remocion de virus",
                     "antivirus",
                     "remocion de malware",
+                ),
+            ),
+            ServicioDominio(
+                id=ServicioCanonico.FORMATEO,
+                nombre_display="Formateo e instalación de SO",
+                categoria="Software",
+                sinonimos=(
+                    "formateo",
+                    "instalación de so",
+                    "instalacion de so",
+                    "windows 11",
+                ),
+            ),
+            ServicioDominio(
+                id=ServicioCanonico.MANTENIMIENTO,
+                nombre_display="Mantenimiento preventivo",
+                categoria="Hardware",
+                sinonimos=(
+                    "mantenimiento",
+                    "limpieza física",
+                    "limpieza fisica",
+                ),
+            ),
+            ServicioDominio(
+                id=ServicioCanonico.SOPORTE_REDES,
+                nombre_display="Diagnóstico y soporte de redes",
+                categoria="Conectividad",
+                sinonimos=(
+                    "soporte de redes",
+                    "redes",
+                    "router",
                 ),
             ),
             ServicioDominio(

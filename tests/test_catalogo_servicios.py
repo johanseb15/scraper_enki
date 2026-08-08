@@ -1,3 +1,5 @@
+import pytest
+
 from src.dominio.catalogos.servicios import CatalogoServicios
 from src.dominio.servicios import ServicioCanonico
 
@@ -36,3 +38,29 @@ def test_catalogo_obtiene_servicio_por_enum_canonico():
 
     assert servicio is not None
     assert servicio.nombre_display == "Eliminación de Malware y Virus"
+
+
+@pytest.mark.parametrize(
+    "texto_raw,esperado",
+    [
+        ("Eliminación de malware", ServicioCanonico.MALWARE),
+        ("Eliminación de malware / spyware", ServicioCanonico.MALWARE),
+        ("  ELIMINACIÓN DE MALWARE  ", ServicioCanonico.MALWARE),
+        ("Limpieza virus PC", ServicioCanonico.MALWARE),
+        ("Formateo e instalación de SO", ServicioCanonico.FORMATEO),
+        ("Instalación de SO", ServicioCanonico.FORMATEO),
+        ("Instalación de Windows 11", ServicioCanonico.FORMATEO),
+        ("Mantenimiento preventivo", ServicioCanonico.MANTENIMIENTO),
+        ("Limpieza física de PC", ServicioCanonico.MANTENIMIENTO),
+        ("Diagnóstico y soporte de redes", ServicioCanonico.SOPORTE_REDES),
+        ("Configuración de router", ServicioCanonico.SOPORTE_REDES),
+        ("Soporte Técnico Informático", ServicioCanonico.SOPORTE_TECNICO),
+    ],
+)
+def test_catalogo_cubre_aliases_protegidos_por_normalizacion(texto_raw, esperado):
+    catalogo = CatalogoServicios()
+
+    servicio = catalogo.resolver_desde_raw(texto_raw)
+
+    assert servicio is not None
+    assert servicio.id == esperado
