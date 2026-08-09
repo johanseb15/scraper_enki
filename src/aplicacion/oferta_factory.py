@@ -24,6 +24,13 @@ class OfertaFactory:
         if not servicio_canonico:
             return None
 
+        precio_raw_observado = (
+            precio_raw if precio_raw is not None else dto.precio_raw
+        )
+        if precio_raw_observado not in (None, ""):
+            if NormalizadorPrecios.motivo_rechazo(precio_raw_observado):
+                return None
+
         empresa = Empresa(
             nombre=dto.empresa_nombre,
             provincia=dto.provincia,
@@ -48,12 +55,17 @@ class OfertaFactory:
 
         if precio is None and dto.precio_raw:
             precio_normalizado = NormalizadorPrecios.normalizar(dto.precio_raw)
+            if precio_normalizado is None:
+                return None
             precio = PrecioValor(
                 valor=precio_normalizado.valor,
                 moneda=precio_normalizado.moneda,
                 periodo=precio_normalizado.periodo,
             )
             moneda = precio.moneda
+
+        if precio is None or precio <= 0:
+            return None
 
         return Oferta(
             empresa=empresa,
@@ -63,7 +75,7 @@ class OfertaFactory:
             fecha_relevamiento=dto.fecha_relevamiento,
             servicio_raw=dto.servicio_raw,
             modalidad=modalidad,
-            precio_raw=precio_raw if precio_raw is not None else dto.precio_raw,
+            precio_raw=precio_raw_observado,
         )
 
     crear_oferta_desde_dto = crear_desde_dto

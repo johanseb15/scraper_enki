@@ -2,8 +2,9 @@ from datetime import date
 from typing import List, Optional
 
 from src.aplicacion.dto.oferta_dto import OfertaDTO
+from src.aplicacion.dto.rechazo_ingesta import RechazoIngesta
 from src.aplicacion.oferta_factory import OfertaFactory
-from src.dominio.oferta import Oferta, PrecioValor
+from src.dominio.oferta import Oferta
 from src.normalizadores.normalizador_empresas import NormalizadorEmpresas
 from src.normalizadores.normalizador_precios import NormalizadorPrecios
 from src.normalizadores.normalizador_ubicaciones import NormalizadorUbicaciones
@@ -26,11 +27,17 @@ class ProcesadorOfertas:
             normalizador_ubicaciones or NormalizadorUbicaciones()
         )
         self.normalizador_empresas = normalizador_empresas or NormalizadorEmpresas()
+        self.rechazos: list[RechazoIngesta] = []
 
     def procesar(self, dto: OfertaDTO) -> Optional[Oferta]:
         dto_normalizado = self._normalizar_datos(dto)
 
         if not dto_normalizado.servicio_raw:
+            return None
+
+        motivo = self._motivo_rechazo_precio(dto_normalizado)
+        if motivo:
+            self._registrar_rechazo(dto_normalizado, motivo)
             return None
 
         oferta = self.factory.crear_desde_dto(dto_normalizado)
@@ -63,16 +70,29 @@ class ProcesadorOfertas:
         )
 
         if not tiene_precios_por_modalidad:
-            oferta = self.factory.crear_desde_dto(dto_normalizado)
-            ofertas = [oferta] if oferta else []
+            motivo = self._motivo_rechazo_precio(dto_normalizado)
+            if motivo:
+                self._registrar_rechazo(dto_normalizado, motivo)
+                ofertas = []
+            else:
+                oferta = self.factory.crear_desde_dto(dto_normalizado)
+                ofertas = [oferta] if oferta else []
         else:
             ofertas = []
             for modalidad, precio_raw in precios_por_modalidad:
                 if not precio_raw:
                     continue
 
+                motivo = NormalizadorPrecios.motivo_rechazo(precio_raw)
+                if motivo:
+                    self._registrar_rechazo(
+                        dto_normalizado,
+                        f"{motivo}: modalidad={modalidad}, precio_raw={precio_raw!r}",
+                    )
+                    continue
+
                 precio_normalizado = NormalizadorPrecios.normalizar(precio_raw)
-                if precio_normalizado.valor <= 0:
+                if precio_normalizado is None or precio_normalizado.valor <= 0:
                     continue
 
                 oferta = self.factory.crear_desde_dto(
@@ -91,6 +111,7 @@ class ProcesadorOfertas:
         return ofertas
 
     def ejecutar(self, dtos: List[OfertaDTO]) -> List[Oferta]:
+        self.rechazos = []
         ofertas = []
 
         for dto in dtos:
@@ -106,6 +127,38 @@ class ProcesadorOfertas:
     def _obtener_servicio_raw(dto: OfertaDTO) -> str:
         return getattr(dto, "servicio_raw", None) or getattr(dto, "servicio", "")
 
+    @staticmethod
+    def _motivo_rechazo_precio(dto: OfertaDTO) -> str | None:
+        precio = getattr(dto, "precio", None)
+        precio_raw = getattr(dto, "precio_raw", None)
+
+        if precio is not None and precio > 0:
+            if precio_raw in (None, ""):
+                return None
+            motivo = NormalizadorPrecios.motivo_rechazo(precio_raw)
+            return (
+                f"{motivo}: precio_raw={precio_raw!r}"
+                if motivo
+                else None
+            )
+
+        motivo = NormalizadorPrecios.motivo_rechazo(precio_raw)
+        if motivo:
+            return f"{motivo}: precio_raw={precio_raw!r}"
+
+        if precio is not None and precio <= 0:
+            return f"PRECIO_NO_REPRESENTABLE: precio={precio!r}"
+
+        return None
+
+    def _registrar_rechazo(self, dto: OfertaDTO, razon: str) -> None:
+        self.rechazos.append(
+            RechazoIngesta(
+                fuente=dto.fuente,
+                razon=razon,
+            )
+        )
+
     def _normalizar_datos(self, dto: OfertaDTO) -> OfertaDTO:
         ubicacion = self.normalizador_ubicaciones.normalizar(
             provincia=dto.provincia,
@@ -115,16 +168,6 @@ class ProcesadorOfertas:
             self._obtener_empresa_raw(dto)
         )
         precio = getattr(dto, "precio", None)
-
-        if precio is None:
-            precio_raw = getattr(dto, "precio_raw", None)
-            if precio_raw:
-                precio_normalizado = NormalizadorPrecios.normalizar(precio_raw)
-                precio = PrecioValor(
-                    valor=precio_normalizado.valor,
-                    moneda=precio_normalizado.moneda,
-                    periodo=precio_normalizado.periodo,
-                )
 
         return OfertaDTO(
             empresa_nombre=empresa,
