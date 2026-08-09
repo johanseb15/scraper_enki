@@ -132,6 +132,7 @@ class ProcesadorOfertas:
             ciudad=ubicacion.ciudad,
             fuente=dto.fuente,
             servicio_raw=self._obtener_servicio_raw(dto),
+            equipo_raw=getattr(dto, "equipo_raw", ""),
             precio=precio,
             moneda=dto.moneda,
             fecha_relevamiento=getattr(dto, "fecha_relevamiento", None),

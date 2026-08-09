@@ -46,6 +46,7 @@ def parsear_ofertas_compragamer(
                 ciudad="CABA",
                 servicio_raw=nombre_clean,
                 precio=precio,
+                precio_raw=str(precio_raw),
                 moneda="ARS",
                 fecha_relevamiento=fecha_relevamiento,
                 fuente="compragamer_playwright",

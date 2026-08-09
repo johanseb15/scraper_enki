@@ -20,7 +20,7 @@ def test_parsear_ofertas_compragamer_exito():
         {
             "id_producto": 100,
             "nombre": "AMD Ryzen 5 5600X",
-            "precioEspecial": 215000,
+            "precioEspecial": "215000.00",
             "precioLista": 250000,
         },
         {
@@ -43,6 +43,7 @@ def test_parsear_ofertas_compragamer_exito():
     assert ofertas[0].empresa_nombre == "Compra Gamer"
     assert ofertas[0].servicio_raw == "AMD Ryzen 5 5600X"
     assert ofertas[0].precio == 215000
+    assert ofertas[0].precio_raw == "215000.00"
     assert ofertas[0].moneda == "ARS"
     assert ofertas[0].fuente == "compragamer_playwright"
 

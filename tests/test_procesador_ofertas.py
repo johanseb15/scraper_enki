@@ -181,3 +181,20 @@ def test_procesador_maneja_dto_incompleto_sin_romper_el_pipeline():
     oferta = procesador.crear_oferta(dto)
 
     assert oferta is None
+
+
+def test_normalizar_datos_preserva_equipo_raw_en_el_dto():
+    dto = OfertaDTO(
+        empresa_nombre="Vida Informatica",
+        provincia="Cordoba",
+        ciudad="Cba.",
+        servicio_raw="Formateo e instalación de SO",
+        equipo_raw="PC-Notebook-AIO",
+        precio=86000,
+        moneda="ARS",
+        fuente="https://vidainformatica.example",
+    )
+
+    dto_normalizado = ProcesadorOfertas()._normalizar_datos(dto)
+
+    assert dto_normalizado.equipo_raw == "PC-Notebook-AIO"

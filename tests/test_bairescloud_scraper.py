@@ -28,3 +28,5 @@ def test_bairescloud_scraper_descarga_y_extrae_servicios():
     downloader.descargar.assert_called_once_with(BairesCloudScraper.URL)
     # Corrección: El scraper concatena el servicio con la columna de equipo
     assert resultados[0].servicio_raw == "Soporte remoto - PC"
+    assert resultados[0].precio == 25000
+    assert resultados[0].precio_raw == "$25.000,00"

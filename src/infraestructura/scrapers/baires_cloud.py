@@ -78,9 +78,8 @@ def extraer_precios_bairescloud(
 
             servicio = celdas[0].get_text(strip=True)
             equipo = celdas[1].get_text(strip=True)
-            precio = _a_numero(
-                celdas[2].get_text(strip=True)
-            )
+            precio_raw = celdas[2].get_text(strip=True)
+            precio = _a_numero(precio_raw)
 
             servicio_raw = f"{servicio} - {equipo}" if equipo else servicio
 
@@ -92,6 +91,7 @@ def extraer_precios_bairescloud(
                     fuente="https://bairescloud.ar/servicio-tecnico.php",
                     servicio_raw=servicio_raw,
                     precio=precio,
+                    precio_raw=precio_raw,
                     moneda="ARS",
                     fecha_relevamiento=fecha_relevamiento,
                 )
