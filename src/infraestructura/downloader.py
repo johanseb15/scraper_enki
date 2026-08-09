@@ -11,5 +11,8 @@ def descargar_html(url: str, timeout: int = 15) -> str:
     }
     response = requests.get(url, headers=headers, timeout=timeout)
     response.raise_for_status()
+    encoding = (response.encoding or "").casefold()
+    if response.apparent_encoding and encoding in {"", "iso-8859-1", "latin-1"}:
+        response.encoding = response.apparent_encoding
     return response.text
 
