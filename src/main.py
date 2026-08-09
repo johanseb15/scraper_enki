@@ -10,9 +10,9 @@ from src.metricas import ResultadoEjecucion
 from src.pipeline import PipelineOfertas
 from src.presentacion import generar_reporte_texto
 from src.reporte import generar_resumen_servicio
-from src.scrapers.baires_cloud import BairesCloudScraper
-from src.scrapers.base import BaseScraper
-from src.scrapers.vida_informatica import VidaInformaticaScraper
+from src.infraestructura.scrapers.baires_cloud import BairesCloudScraper
+from src.infraestructura.scrapers.base import BaseScraper
+from src.infraestructura.scrapers.vida_informatica import VidaInformaticaScraper
 
 
 def ejecutar(

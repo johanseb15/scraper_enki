@@ -15,7 +15,7 @@ from src.infraestructura.sqlite.repositorio_sqlite_ofertas import (
     RepositorioSQLiteOfertas,
 )
 from src.pipeline import PipelineOfertas
-from src.scrapers.base import BaseScraper
+from src.infraestructura.scrapers.base import BaseScraper
 
 
 logger = logging.getLogger(__name__)

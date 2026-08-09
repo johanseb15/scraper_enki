@@ -8,9 +8,9 @@ from src.aplicacion.puertos.repositorio_ofertas import RepositorioOfertas
 from src.dominio.oferta import Oferta
 from src.infraestructura.sqlite.repositorio_sqlite_ofertas import RepositorioSQLiteOfertas
 from src.metricas import MetricasEjecucion
-from src.scrapers.baires_cloud import BairesCloudScraper
-from src.scrapers.base import BaseScraper
-from src.scrapers.vida_informatica import VidaInformaticaScraper
+from src.infraestructura.scrapers.baires_cloud import BairesCloudScraper
+from src.infraestructura.scrapers.base import BaseScraper
+from src.infraestructura.scrapers.vida_informatica import VidaInformaticaScraper
 
 logger = logging.getLogger(__name__)
 

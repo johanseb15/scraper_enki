@@ -1,5 +1,7 @@
 from datetime import date
-from src.scrapers.compragamer_playwright_scraper import CompraGamerPlaywrightScraper
+from src.infraestructura.scrapers.compragamer_playwright_scraper import (
+    CompraGamerPlaywrightScraper,
+)
 
 
 def main():
