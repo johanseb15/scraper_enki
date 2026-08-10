@@ -4,6 +4,7 @@ from src.dominio.evidencia import (
     ConsultaUsuarioRaw,
     DocumentoRaw,
     FuenteCandidata,
+    RegistroAwardUSASpendingObservado,
     RegistroContratacionObservado,
 )
 
@@ -22,3 +23,8 @@ class RepositorioEvidencia(Protocol):
         self, observacion: RegistroContratacionObservado
     ) -> bool:
         """Guarda una observacion; devuelve False cuando ya existia."""
+
+    def guardar_observacion_usaspending_award(
+        self, observacion: RegistroAwardUSASpendingObservado
+    ) -> bool:
+        """Guarda una observacion USASpending; devuelve False cuando ya existia."""

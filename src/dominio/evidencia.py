@@ -61,3 +61,33 @@ class RegistroContratacionObservado:
     value_semantics: str
     metadata: dict[str, Any] = field(default_factory=dict)
     rejection_reason: str = ""
+
+
+@dataclass(frozen=True)
+class RegistroAwardUSASpendingObservado:
+    raw_document_id: int
+    source: str
+    source_record_id: str
+    source_url: str
+    extractor_version: str
+    extraction_status: str
+    recipient_raw: Any
+    recipient_uei_raw: Any
+    awarding_agency_raw: Any
+    awarding_sub_agency_raw: Any
+    funding_agency_raw: Any
+    funding_sub_agency_raw: Any
+    description_raw: Any
+    award_amount_raw: Any
+    potential_award_amount_raw: Any
+    currency_raw: Any
+    naics_raw: Any
+    psc_raw: Any
+    award_type_raw: Any
+    start_date_raw: Any
+    end_date_raw: Any
+    award_date_raw: Any
+    place_of_performance_raw: Any
+    recipient_location_raw: Any
+    metadata: dict[str, Any] = field(default_factory=dict)
+    rejection_reason: str = ""
