@@ -1,4 +1,6 @@
 from typing import Any, Iterable
+
+from src.dominio.comparabilidad import es_observacion_puntual
 from src.dominio.servicios import ServicioCanonico
 
 
@@ -18,22 +20,32 @@ def _extraer_monto(item: Any) -> float | None:
     return None
 
 
+def _precios_puntuales_representables(ofertas: Iterable[Any]) -> list[float]:
+    return [
+        precio
+        for oferta in ofertas
+        if es_observacion_puntual(oferta)
+        and (precio := _extraer_monto(oferta)) is not None
+        and precio > 0
+    ]
+
+
 def calcular_precio_promedio(ofertas: Iterable[Any]) -> float:
-    precios = [p for o in ofertas if (p := _extraer_monto(o)) is not None and p > 0]
+    precios = _precios_puntuales_representables(ofertas)
     if not precios:
         return 0.0
     return sum(precios) / len(precios)
 
 
 def calcular_precio_minimo(ofertas: Iterable[Any]) -> float:
-    precios = [p for o in ofertas if (p := _extraer_monto(o)) is not None and p > 0]
+    precios = _precios_puntuales_representables(ofertas)
     if not precios:
         return 0.0
     return min(precios)
 
 
 def calcular_precio_maximo(ofertas: Iterable[Any]) -> float:
-    precios = [p for o in ofertas if (p := _extraer_monto(o)) is not None and p > 0]
+    precios = _precios_puntuales_representables(ofertas)
     if not precios:
         return 0.0
     return max(precios)
