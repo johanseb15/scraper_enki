@@ -26,3 +26,15 @@ class FuenteCandidata:
     last_checked_at: datetime | None = None
     notes: str = ""
     metadata: dict[str, Any] = field(default_factory=dict)
+
+
+@dataclass(frozen=True)
+class DocumentoRaw:
+    source: str
+    source_record_id: str
+    source_url: str
+    retrieved_at: datetime
+    content_type: str
+    raw_content: str
+    content_hash: str
+    metadata: dict[str, Any] = field(default_factory=dict)

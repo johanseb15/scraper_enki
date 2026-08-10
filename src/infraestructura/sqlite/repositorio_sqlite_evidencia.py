@@ -4,11 +4,11 @@ from contextlib import closing
 from datetime import datetime
 from typing import Any
 
-from src.dominio.evidencia import ConsultaUsuarioRaw, FuenteCandidata
+from src.dominio.evidencia import ConsultaUsuarioRaw, DocumentoRaw, FuenteCandidata
 
 
 class RepositorioSQLiteEvidencia:
-    """Persistencia SQLite para evidencia no económica."""
+    """Persistencia SQLite para evidencia no economica."""
 
     def __init__(self, ruta_db: str = "datos.db"):
         self.ruta_db = ruta_db
@@ -60,6 +60,35 @@ class RepositorioSQLiteEvidencia:
                     imported_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
                     UNIQUE(url, source_type)
                 )
+                """
+            )
+            conexion.execute(
+                """
+                CREATE TABLE IF NOT EXISTS raw_documents (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    source TEXT NOT NULL,
+                    source_record_id TEXT NOT NULL,
+                    source_url TEXT NOT NULL,
+                    retrieved_at TEXT NOT NULL,
+                    content_type TEXT NOT NULL,
+                    raw_content TEXT NOT NULL,
+                    content_hash TEXT NOT NULL,
+                    metadata_json TEXT NOT NULL DEFAULT '{}',
+                    imported_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    UNIQUE(source, source_record_id, content_hash)
+                )
+                """
+            )
+            conexion.execute(
+                """
+                CREATE INDEX IF NOT EXISTS idx_raw_documents_source_record
+                ON raw_documents(source, source_record_id)
+                """
+            )
+            conexion.execute(
+                """
+                CREATE INDEX IF NOT EXISTS idx_raw_documents_hash
+                ON raw_documents(content_hash)
                 """
             )
 
@@ -123,6 +152,35 @@ class RepositorioSQLiteEvidencia:
             )
             return cursor.rowcount == 1
 
+    def guardar_documento_raw(self, documento: DocumentoRaw) -> bool:
+        with closing(self._conectar()) as conexion, conexion:
+            cursor = conexion.execute(
+                """
+                INSERT OR IGNORE INTO raw_documents (
+                    source,
+                    source_record_id,
+                    source_url,
+                    retrieved_at,
+                    content_type,
+                    raw_content,
+                    content_hash,
+                    metadata_json
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    documento.source,
+                    documento.source_record_id,
+                    documento.source_url,
+                    documento.retrieved_at.isoformat(),
+                    documento.content_type,
+                    documento.raw_content,
+                    documento.content_hash,
+                    json.dumps(documento.metadata, ensure_ascii=False, sort_keys=True),
+                ),
+            )
+            return cursor.rowcount == 1
+
     def contar_lenguaje(
         self,
         source: str | None = None,
@@ -150,6 +208,15 @@ class RepositorioSQLiteEvidencia:
                 ]
             )
 
+    def contar_documentos_raw(self, source: str | None = None) -> int:
+        query = "SELECT COUNT(*) AS total FROM raw_documents"
+        params: list[Any] = []
+        if source:
+            query += " WHERE source = ?"
+            params.append(source)
+        with closing(self._conectar()) as conexion:
+            return int(conexion.execute(query, params).fetchone()["total"])
+
     def listar_lenguaje(
         self,
         source: str | None = None,
@@ -175,6 +242,17 @@ class RepositorioSQLiteEvidencia:
         with closing(self._conectar()) as conexion:
             rows = conexion.execute("SELECT * FROM source_registry ORDER BY id").fetchall()
         return [self._row_to_fuente(row) for row in rows]
+
+    def listar_documentos_raw(self, source: str | None = None) -> list[DocumentoRaw]:
+        query = "SELECT * FROM raw_documents"
+        params: list[Any] = []
+        if source:
+            query += " WHERE source = ?"
+            params.append(source)
+        query += " ORDER BY id"
+        with closing(self._conectar()) as conexion:
+            rows = conexion.execute(query, params).fetchall()
+        return [self._row_to_documento_raw(row) for row in rows]
 
     @staticmethod
     def _row_to_lenguaje(row: sqlite3.Row) -> ConsultaUsuarioRaw:
@@ -204,5 +282,18 @@ class RepositorioSQLiteEvidencia:
                 else None
             ),
             notes=row["notes"] or "",
+            metadata=json.loads(row["metadata_json"]),
+        )
+
+    @staticmethod
+    def _row_to_documento_raw(row: sqlite3.Row) -> DocumentoRaw:
+        return DocumentoRaw(
+            source=row["source"],
+            source_record_id=row["source_record_id"],
+            source_url=row["source_url"],
+            retrieved_at=datetime.fromisoformat(row["retrieved_at"]),
+            content_type=row["content_type"],
+            raw_content=row["raw_content"],
+            content_hash=row["content_hash"],
             metadata=json.loads(row["metadata_json"]),
         )
