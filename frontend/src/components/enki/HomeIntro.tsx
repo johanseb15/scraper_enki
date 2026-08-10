@@ -1,11 +1,12 @@
 export function HomeIntro() {
   return (
-    <div className="max-w-[354px]">
-      <h1 className="text-[32px] font-extrabold leading-[38px]">
-        Entendé antes de decidir.
+    <div className="max-w-2xl">
+      <p className="text-sm font-bold text-[var(--enki-ink-600)]">Hola, Ana</p>
+      <h1 className="mt-3 text-[36px] font-extrabold leading-[42px] tracking-normal text-[var(--enki-ink-900)] sm:text-5xl sm:leading-[56px]">
+        Enki entiende. Vos decidís.
       </h1>
-      <p className="mt-3 text-base leading-6">
-        Traé una cotización. Enki te ayuda a entender qué incluye, qué falta y qué tan comparable es antes de decidir.
+      <p className="mt-4 max-w-xl text-base leading-7 text-[var(--enki-ink-600)] sm:text-lg">
+        Pegá una cotización o describí lo que querés evaluar. Te ayudamos a entender qué incluye, qué falta y qué se puede comparar.
       </p>
     </div>
   );

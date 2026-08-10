@@ -1,8 +1,15 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { Button } from "@/components/ui/button";
+import { Chip } from "@/components/ui/chip";
+import { DecisionState } from "@/components/enki/decision-state";
+import { DimensionList } from "@/components/enki/dimension-list";
+import { EvidenceMeta } from "@/components/enki/evidence-meta";
+import { PriceDisplay } from "@/components/enki/price-display";
 import { decisionIntentLabels } from "@/features/decision/decision-intent";
 import { supportQuoteText } from "@/features/decision/fixtures/support-quote";
+import { QuoteComposer } from "@/features/decision/components/QuoteComposer";
 import {
   createDecisionReadout,
   interpretQuoteForReview,
@@ -26,29 +33,23 @@ export function DecisionReviewFlow({
 }: DecisionReviewFlowProps) {
   const [step, setStep] = useState<FlowStep>("quote");
   const [quoteText, setQuoteText] = useState(initialQuoteText);
-  const [showEmptyMessage, setShowEmptyMessage] = useState(false);
   const interpretation = useMemo(() => interpretQuoteForReview(), []);
   const readout = useMemo(() => createDecisionReadout(), []);
 
-  function analyzeQuote() {
-    if (!quoteText.trim()) {
-      setShowEmptyMessage(true);
-      return;
-    }
-
-    setShowEmptyMessage(false);
+  function analyzeQuote(nextQuoteText: string) {
+    setQuoteText(nextQuoteText);
     setStep("interpretation");
   }
 
   return (
-    <main className="min-h-dvh bg-[var(--enki-page)] text-[var(--enki-ink)]">
-      <section className="mx-auto flex min-h-dvh w-full max-w-[402px] flex-col border-x border-[var(--enki-line)] bg-[var(--enki-bg)] px-6 py-8 sm:my-6 sm:min-h-[874px] sm:rounded-[18px] sm:border">
+    <main className="min-h-dvh bg-[var(--enki-page)] text-[var(--enki-ink-900)]">
+      <section className="mx-auto w-full max-w-6xl px-4 py-5 sm:px-6 sm:py-8">
+        <ReviewHeader intent={initialIntent} />
+
         {step === "quote" ? (
           <QuoteInput
             intent={initialIntent}
             quoteText={quoteText}
-            showEmptyMessage={showEmptyMessage}
-            onQuoteTextChange={setQuoteText}
             onAnalyze={analyzeQuote}
           />
         ) : null}
@@ -69,56 +70,43 @@ export function DecisionReviewFlow({
   );
 }
 
+type ReviewHeaderProps = {
+  intent: DecisionIntent;
+};
+
+function ReviewHeader({ intent }: ReviewHeaderProps) {
+  return (
+    <header className="mb-5 flex flex-col gap-3 rounded-[18px] border border-[var(--enki-line)] bg-[var(--enki-white)] p-4 shadow-[var(--enki-shadow-soft)] sm:flex-row sm:items-center sm:justify-between">
+      <div>
+        <p className="text-xs font-bold uppercase tracking-[0.04em] text-[var(--enki-ink-600)]">Revisión de cotización</p>
+        <h1 className="mt-1 text-2xl font-extrabold text-[var(--enki-ink-900)]">Soporte IT mensual</h1>
+      </div>
+      <Chip tone="neutral">{decisionIntentLabels[intent]}</Chip>
+    </header>
+  );
+}
+
 type QuoteInputProps = {
   intent: DecisionIntent;
   quoteText: string;
-  showEmptyMessage: boolean;
-  onQuoteTextChange: (value: string) => void;
-  onAnalyze: () => void;
+  onAnalyze: (quoteText: string) => void;
 };
 
-function QuoteInput({
-  intent,
-  quoteText,
-  showEmptyMessage,
-  onQuoteTextChange,
-  onAnalyze,
-}: QuoteInputProps) {
+function QuoteInput({ intent, quoteText, onAnalyze }: QuoteInputProps) {
   return (
-    <div className="flex flex-1 flex-col">
-      <p className="font-mono text-xs font-semibold uppercase leading-none">
-        {decisionIntentLabels[intent]}
-      </p>
-      <h1 className="mt-8 text-[32px] font-extrabold leading-[38px]">
-        Pegá la cotización que querés entender.
-      </h1>
-      <p className="mt-3 text-base leading-6 text-[var(--enki-muted)]">
-        Podés editar el texto antes de analizar. Enki va a mostrar qué entiende y qué todavía falta, sin conectar backend en este sprint.
-      </p>
-
-      <label className="mt-8 block text-[15px] font-bold" htmlFor="quote-text">
-        Cotización
-      </label>
-      <textarea
-        className="mt-3 min-h-[220px] w-full resize-none rounded-lg border border-[var(--enki-line)] bg-[var(--enki-input)] p-4 text-base leading-6 outline-none focus-visible:ring-2 focus-visible:ring-[var(--enki-accent)]"
-        id="quote-text"
-        value={quoteText}
-        onChange={(event) => onQuoteTextChange(event.target.value)}
+    <div className="grid gap-5 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
+      <section className="rounded-[18px] border border-[var(--enki-line)] bg-[var(--enki-white)] p-5 shadow-[var(--enki-shadow-soft)]">
+        <Chip tone="new">{decisionIntentLabels[intent]}</Chip>
+        <h2 className="mt-5 text-[32px] font-extrabold leading-[38px]">Pegá la cotización que querés entender.</h2>
+        <p className="mt-3 text-base leading-7 text-[var(--enki-ink-600)]">En este sprint Enki usa un fixture controlado para revisar el flujo. No conectamos backend ni inventamos comparabilidad.</p>
+      </section>
+      <QuoteComposer
+        actionLabel="Analizar"
+        compact
+        emptyMessage="Pegá una cotización para analizarla."
+        initialText={quoteText}
+        onEvaluate={onAnalyze}
       />
-
-      {showEmptyMessage ? (
-        <p className="mt-3 text-sm leading-5 text-[var(--enki-caution)]">
-          Pegá una cotización para analizarla.
-        </p>
-      ) : null}
-
-      <button
-        className="mt-6 min-h-12 rounded-lg bg-[var(--enki-accent)] px-5 text-base font-bold text-white outline-none transition-colors hover:bg-[var(--enki-accent-strong)] focus-visible:ring-2 focus-visible:ring-[var(--enki-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--enki-bg)]"
-        type="button"
-        onClick={onAnalyze}
-      >
-        Analizar
-      </button>
     </div>
   );
 }
@@ -129,47 +117,26 @@ type InterpretationSummaryProps = {
   onCorrect: () => void;
 };
 
-function InterpretationSummary({
-  interpretation,
-  onConfirm,
-  onCorrect,
-}: InterpretationSummaryProps) {
+function InterpretationSummary({ interpretation, onConfirm, onCorrect }: InterpretationSummaryProps) {
   return (
-    <div className="flex flex-1 flex-col">
-      <p className="font-mono text-xs font-semibold uppercase leading-none">
-        Interpretación
-      </p>
-      <h1 className="mt-8 text-[32px] font-extrabold leading-[38px]">
-        Esto es lo que entendimos.
-      </h1>
-      <p className="mt-3 text-base leading-6 text-[var(--enki-muted)]">
-        Confirmalo si representa la cotización. Si algo no está bien, corregí el texto original.
-      </p>
-
-      <section className="mt-8 border-y border-[var(--enki-line)] py-5">
-        <p className="font-mono text-xs font-semibold uppercase">Precio</p>
-        <p className="mt-2 text-2xl font-extrabold">{interpretation.priceLabel}</p>
-      </section>
-
-      <DimensionList title="Qué entendimos" dimensions={interpretation.understood} />
-      <DimensionList title="Qué todavía falta" dimensions={interpretation.missing} muted />
-
-      <div className="mt-auto flex flex-col gap-3 pt-8">
-        <button
-          className="min-h-12 rounded-lg bg-[var(--enki-accent)] px-5 text-base font-bold text-white outline-none hover:bg-[var(--enki-accent-strong)] focus-visible:ring-2 focus-visible:ring-[var(--enki-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--enki-bg)]"
-          type="button"
-          onClick={onConfirm}
-        >
-          Confirmar
-        </button>
-        <button
-          className="min-h-12 rounded-lg border border-[var(--enki-line)] px-5 text-base font-bold outline-none hover:bg-[var(--enki-option-hover)] focus-visible:ring-2 focus-visible:ring-[var(--enki-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--enki-bg)]"
-          type="button"
-          onClick={onCorrect}
-        >
-          Corregir
-        </button>
+    <div className="grid gap-5 lg:grid-cols-[1fr_360px]">
+      <div className="space-y-5">
+        <section className="rounded-[18px] border border-[var(--enki-line)] bg-[var(--enki-white)] p-5 shadow-[var(--enki-shadow-soft)]">
+          <p className="text-xs font-bold uppercase tracking-[0.04em] text-[var(--enki-ink-600)]">Interpretación</p>
+          <h2 className="mt-3 text-[32px] font-extrabold leading-[38px]">Esto es lo que entendimos.</h2>
+          <p className="mt-3 text-base leading-7 text-[var(--enki-ink-600)]">Confirmalo si representa la cotización. Si algo no está bien, corregí el texto original.</p>
+        </section>
+        <DimensionList title="Qué entendimos" dimensions={interpretation.understood} />
+        <DimensionList title="Lo que falta aclarar" dimensions={interpretation.missing} variant="missing" />
       </div>
+      <aside className="space-y-5">
+        <PriceDisplay label={interpretation.priceLabel} />
+        <DecisionState state="indeterminate" />
+        <div className="grid gap-3">
+          <Button onClick={onConfirm}>Confirmar</Button>
+          <Button variant="secondary" onClick={onCorrect}>Corregir</Button>
+        </div>
+      </aside>
     </div>
   );
 }
@@ -181,67 +148,26 @@ type DecisionReadoutProps = {
 
 function DecisionReadout({ readout, onReviewAgain }: DecisionReadoutProps) {
   return (
-    <div className="flex flex-1 flex-col">
-      <p className="font-mono text-xs font-semibold uppercase leading-none">
-        ¿Se puede comparar?
-      </p>
-      <h1 className="mt-8 text-[32px] font-extrabold leading-[38px]">
-        {readout.summary}
-      </h1>
-      <p className="mt-3 text-base leading-6 text-[var(--enki-muted)]">
-        Con lo que sabemos, el precio está identificado. La comparación todavía depende de datos que no aparecen en la cotización.
-      </p>
-
-      <section className="mt-8 border-y border-[var(--enki-line)] py-5">
-        <p className="font-mono text-xs font-semibold uppercase">Precio conocido</p>
-        <p className="mt-2 text-2xl font-extrabold">{readout.priceLabel}</p>
-      </section>
-
-      <DimensionList title="Qué sabemos" dimensions={readout.known} />
-      <DimensionList title="Qué puede cambiar la comparación" dimensions={readout.missing} muted />
-
-      <section className="mt-6 rounded-lg bg-[var(--enki-question)] p-4">
-        <p className="font-mono text-xs font-semibold uppercase">
-          Qué conviene hacer ahora
-        </p>
-        <p className="mt-2 text-sm leading-5">{readout.nextAction}</p>
-      </section>
-
-      <button
-        className="mt-auto min-h-12 rounded-lg border border-[var(--enki-line)] px-5 text-base font-bold outline-none hover:bg-[var(--enki-option-hover)] focus-visible:ring-2 focus-visible:ring-[var(--enki-accent)] focus-visible:ring-offset-2 focus-visible:ring-offset-[var(--enki-bg)]"
-        type="button"
-        onClick={onReviewAgain}
-      >
-        Revisar texto
-      </button>
+    <div className="grid gap-5 lg:grid-cols-[1fr_360px]">
+      <div className="space-y-5">
+        <section className="rounded-[18px] border border-[var(--enki-line)] bg-[var(--enki-white)] p-5 shadow-[var(--enki-shadow-soft)]">
+          <p className="text-xs font-bold uppercase tracking-[0.04em] text-[var(--enki-ink-600)]">¿Se puede comparar?</p>
+          <h2 className="mt-3 text-[32px] font-extrabold leading-[38px]">{readout.summary}</h2>
+          <p className="mt-3 text-base leading-7 text-[var(--enki-ink-600)]">Con lo que sabemos, el precio está identificado. La comparación todavía depende de datos que no aparecen en la cotización.</p>
+        </section>
+        <DimensionList title="Qué sabemos" dimensions={readout.known} />
+        <DimensionList title="Qué puede cambiar la comparación" dimensions={readout.missing} variant="missing" />
+      </div>
+      <aside className="space-y-5">
+        <DecisionState state={readout.state} description="Estado: información insuficiente." />
+        <PriceDisplay eyebrow="Precio conocido" label={readout.priceLabel} />
+        <EvidenceMeta sourceLabel="Sin evidencia externa conectada" freshnessLabel="Fixture local" />
+        <section className="rounded-[14px] border border-[var(--enki-line)] bg-[var(--enki-teal-50)] p-4">
+          <p className="text-xs font-bold uppercase tracking-[0.04em] text-[var(--enki-teal-700)]">Qué conviene hacer ahora</p>
+          <p className="mt-2 text-sm font-semibold leading-6">{readout.nextAction}</p>
+        </section>
+        <Button variant="secondary" onClick={onReviewAgain}>Revisar texto</Button>
+      </aside>
     </div>
-  );
-}
-
-type DimensionListProps = {
-  title: string;
-  dimensions: { label: string }[];
-  muted?: boolean;
-};
-
-function DimensionList({ title, dimensions, muted = false }: DimensionListProps) {
-  return (
-    <section className="mt-6">
-      <h2 className="font-mono text-xs font-semibold uppercase">{title}</h2>
-      <ul className="mt-3 space-y-3">
-        {dimensions.map((dimension) => (
-          <li
-            className={`border-l-2 pl-3 text-[15px] leading-6 ${
-              muted
-                ? "border-[var(--enki-line)] text-[var(--enki-muted)]"
-                : "border-[var(--enki-accent)]"
-            }`}
-            key={dimension.label}
-          >
-            {dimension.label}
-          </li>
-        ))}
-      </ul>
-    </section>
   );
 }

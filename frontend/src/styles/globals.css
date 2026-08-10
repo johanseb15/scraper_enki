@@ -1,20 +1,41 @@
 @import "tailwindcss";
 
 :root {
-  --enki-page: #efe8dc;
-  --enki-bg: #f7f2e9;
-  --enki-surface: #ffffff;
-  --enki-ink: #1f2521;
-  --enki-muted: #636e67;
-  --enki-accent: #1f6b5c;
-  --enki-accent-strong: #18564a;
-  --enki-line: #d3ccc0;
-  --enki-soft-line: #eae6e1;
-  --enki-question: #eff6ff;
+  --enki-teal-700: #08756a;
+  --enki-teal-600: #0e9a8a;
+  --enki-teal-400: #47d7c4;
+  --enki-teal-100: #dff7f1;
+  --enki-teal-50: #eefbf8;
+  --enki-amber-700: #a45d10;
+  --enki-amber-400: #ffc957;
+  --enki-amber-200: #ffe2a3;
+  --enki-amber-100: #fff1d2;
+  --enki-amber-50: #fff8ea;
+  --enki-coral-500: #ff6b6b;
+  --enki-coral-50: #fff0ef;
+  --enki-ink-900: #0f172a;
+  --enki-ink-600: #475569;
+  --enki-ink-500: #64748b;
+  --enki-stone-100: #f3f0ea;
+  --enki-stone-50: #faf7f2;
+  --enki-white: #ffffff;
+  --enki-page: #f7f2e9;
+  --enki-bg: var(--enki-stone-50);
+  --enki-surface: var(--enki-white);
+  --enki-ink: var(--enki-ink-900);
+  --enki-muted: var(--enki-ink-600);
+  --enki-accent: var(--enki-teal-600);
+  --enki-accent-strong: var(--enki-teal-700);
+  --enki-line: #e4ded3;
+  --enki-soft-line: #eee8dd;
+  --enki-question: var(--enki-teal-50);
   --enki-input: #fffaf2;
-  --enki-caution: #8a4f12;
-  --enki-option-hover: #f1eadf;
+  --enki-caution: var(--enki-amber-700);
+  --enki-option-hover: var(--enki-stone-100);
   --enki-home-indicator: #111625;
+  --enki-shadow-soft: 0 10px 28px rgba(15, 23, 42, 0.06);
+  --enki-shadow-composer: 0 18px 48px rgba(15, 23, 42, 0.12);
+  --enki-shadow-action: 0 8px 18px rgba(14, 154, 138, 0.24);
 }
 
 @theme inline {
@@ -22,23 +43,15 @@
   --font-mono: "Geist Mono", "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 }
 
-* {
-  box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 
-html {
-  background: var(--enki-page);
-}
+html { background: var(--enki-page); }
 
 body {
   margin: 0;
   font-family: Manrope, Inter, ui-sans-serif, system-ui, sans-serif;
   background: var(--enki-page);
-  color: var(--enki-ink);
+  color: var(--enki-ink-900);
 }
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
+a { color: inherit; text-decoration: none; }
