@@ -16,6 +16,7 @@ class RepositorioSQLiteOfertas:
         "servicio_raw": "TEXT",
         "modalidad": "TEXT",
         "precio_raw": "TEXT",
+        "periodo": "TEXT",
     }
 
     def __init__(self, *args, **kwargs):
@@ -51,7 +52,8 @@ class RepositorioSQLiteOfertas:
                     fecha_relevamiento TEXT,
                     servicio_raw TEXT,
                     modalidad TEXT,
-                    precio_raw TEXT
+                    precio_raw TEXT,
+                    periodo TEXT
                 )
                 """
             )
@@ -104,9 +106,10 @@ class RepositorioSQLiteOfertas:
                     fecha_relevamiento,
                     servicio_raw,
                     modalidad,
-                    precio_raw
+                    precio_raw,
+                    periodo
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """,
                 (
                     oferta.empresa.nombre,
@@ -120,6 +123,7 @@ class RepositorioSQLiteOfertas:
                     oferta.servicio_raw,
                     oferta.modalidad,
                     oferta.precio_raw,
+                    getattr(oferta.precio, "periodo", None),
                 ),
             )
         return oferta
@@ -145,7 +149,7 @@ class RepositorioSQLiteOfertas:
             fuente=fila["fuente"],
         )
         precio = (
-            PrecioValor(fila["precio"], fila["moneda"])
+            PrecioValor(fila["precio"], fila["moneda"], fila["periodo"])
             if fila["precio"] is not None
             else None
         )
