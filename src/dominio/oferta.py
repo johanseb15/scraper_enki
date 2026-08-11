@@ -18,7 +18,7 @@ class PrecioValor(int):
 class Oferta:
     empresa: Empresa
     servicio: ServicioCanonico
-    precio: int
+    precio: PrecioValor
     moneda: str
     fecha_relevamiento: date
     servicio_raw: str = ""
