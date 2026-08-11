@@ -18,6 +18,20 @@ class RepositorioSQLiteOfertas:
         "precio_raw": "TEXT",
         "periodo": "TEXT",
     }
+    _COLUMNAS_IDENTIDAD = {
+        "empresa",
+        "fuente",
+        "servicio",
+        "precio",
+        "moneda",
+        "provincia",
+        "ciudad",
+        "fecha_relevamiento",
+        "servicio_raw",
+        "modalidad",
+        "precio_raw",
+        "periodo",
+    }
 
     def __init__(self, *args, **kwargs):
         ruta_db = args[0] if args else self._obtener_ruta(kwargs)
@@ -74,6 +88,37 @@ class RepositorioSQLiteOfertas:
                     WHERE fecha_relevamiento IS NULL AND fecha IS NOT NULL
                     """
                 )
+            columnas = {
+                fila["name"]
+                for fila in conexion.execute("PRAGMA table_info(ofertas)")
+            }
+            if self._COLUMNAS_IDENTIDAD.issubset(columnas):
+                conexion.execute(
+                    """
+                    CREATE UNIQUE INDEX IF NOT EXISTS
+                        idx_ofertas_observacion_unica
+                    ON ofertas (
+                        COALESCE(empresa, X'00'),
+                        COALESCE(fuente, X'00'),
+                        COALESCE(provincia, X'00'),
+                        COALESCE(ciudad, X'00'),
+                        COALESCE(
+                            NULLIF(servicio_raw, ''),
+                            servicio,
+                            X'00'
+                        ),
+                        COALESCE(
+                            NULLIF(precio_raw, ''),
+                            precio,
+                            X'00'
+                        ),
+                        COALESCE(moneda, X'00'),
+                        COALESCE(periodo, X'00'),
+                        COALESCE(fecha_relevamiento, X'00'),
+                        COALESCE(modalidad, X'00')
+                    )
+                    """
+                )
 
     def guardar(self, oferta: Oferta) -> Oferta:
         servicio = (
@@ -110,6 +155,7 @@ class RepositorioSQLiteOfertas:
                     periodo
                 )
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                ON CONFLICT DO NOTHING
                 """,
                 (
                     oferta.empresa.nombre,
