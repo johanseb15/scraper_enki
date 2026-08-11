@@ -8,6 +8,7 @@ from src.dominio.evidencia import (
     RegistroContratacionObservado,
     RegistroLineaOrdenCompraMercadoPublicoObservada,
     RegistroOrdenCompraMercadoPublicoObservada,
+    RegistroFilaArgentinaObservada,
 )
 
 
@@ -38,3 +39,11 @@ class RepositorioEvidencia(Protocol):
         lineas: list[RegistroLineaOrdenCompraMercadoPublicoObservada],
     ) -> bool:
         """Guarda una orden observada y sus lineas; devuelve False si ya existia."""
+
+
+    def guardar_fila_argentina(self, fila: RegistroFilaArgentinaObservada) -> bool:
+        """Guarda una fila observada de un CSV oficial argentino; devuelve False si ya existia."""
+
+
+    def guardar_filas_argentina(self, filas: list[RegistroFilaArgentinaObservada]) -> int:
+        """Guarda filas observadas en lote y devuelve cantidad insertada."""

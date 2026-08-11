@@ -12,6 +12,7 @@ from src.dominio.evidencia import (
     RegistroContratacionObservado,
     RegistroLineaOrdenCompraMercadoPublicoObservada,
     RegistroOrdenCompraMercadoPublicoObservada,
+    RegistroFilaArgentinaObservada,
 )
 
 
@@ -231,6 +232,35 @@ class RepositorioSQLiteEvidencia:
                 CREATE INDEX IF NOT EXISTS idx_mercado_publico_lines_status
                 ON mercado_publico_line_item_observations(extractor_version, extraction_status)
             """)
+            conexion.execute("""
+                CREATE TABLE IF NOT EXISTS argentina_procurement_rows (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    raw_document_id INTEGER NOT NULL,
+                    source TEXT NOT NULL,
+                    source_record_id TEXT NOT NULL,
+                    source_url TEXT NOT NULL,
+                    extractor_version TEXT NOT NULL,
+                    extraction_status TEXT NOT NULL,
+                    rejection_reason TEXT,
+                    resource_id TEXT NOT NULL,
+                    resource_name TEXT NOT NULL,
+                    resource_type TEXT NOT NULL,
+                    row_number INTEGER NOT NULL,
+                    stable_id_raw_json TEXT NOT NULL,
+                    row_raw_json TEXT NOT NULL,
+                    metadata_json TEXT NOT NULL DEFAULT '{}',
+                    extracted_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    UNIQUE(raw_document_id, extractor_version, row_number)
+                )
+            """)
+            conexion.execute("""
+                CREATE INDEX IF NOT EXISTS idx_argentina_rows_resource
+                ON argentina_procurement_rows(resource_type, resource_id)
+            """)
+            conexion.execute("""
+                CREATE INDEX IF NOT EXISTS idx_argentina_rows_status
+                ON argentina_procurement_rows(extractor_version, extraction_status)
+            """)
 
     def guardar_lenguaje(self, registro: ConsultaUsuarioRaw) -> bool:
         with closing(self._conectar()) as conexion, conexion:
@@ -327,6 +357,34 @@ class RepositorioSQLiteEvidencia:
                 """, (linea.raw_document_id, order_observation_id, linea.source, linea.source_record_id, linea.source_url, linea.extractor_version, linea.extraction_status, linea.rejection_reason, linea.order_source_record_id, linea.line_index, self._json(linea.item_stable_id_raw), self._json(linea.description_raw), self._json(linea.category_raw), self._json(linea.category_code_raw), self._json(linea.product_code_raw), self._json(linea.quantity_raw), self._json(linea.unit_raw), self._json(linea.net_price_raw), self._json(linea.total_raw), self._json(linea.currency_raw), self._json(linea.metadata)))
             return True
 
+    def guardar_fila_argentina(self, fila: RegistroFilaArgentinaObservada) -> bool:
+        with closing(self._conectar()) as conexion, conexion:
+            cursor = conexion.execute("""
+                INSERT OR IGNORE INTO argentina_procurement_rows (
+                    raw_document_id, source, source_record_id, source_url,
+                    extractor_version, extraction_status, rejection_reason,
+                    resource_id, resource_name, resource_type, row_number,
+                    stable_id_raw_json, row_raw_json, metadata_json
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (fila.raw_document_id, fila.source, fila.source_record_id, fila.source_url, fila.extractor_version, fila.extraction_status, fila.rejection_reason, fila.resource_id, fila.resource_name, fila.resource_type, fila.row_number, self._json(fila.stable_id_raw), self._json(fila.row_raw), self._json(fila.metadata)))
+            return cursor.rowcount == 1
+
+
+    def guardar_filas_argentina(self, filas: list[RegistroFilaArgentinaObservada]) -> int:
+        if not filas:
+            return 0
+        with closing(self._conectar()) as conexion, conexion:
+            before = conexion.total_changes
+            conexion.executemany("""
+                INSERT OR IGNORE INTO argentina_procurement_rows (
+                    raw_document_id, source, source_record_id, source_url,
+                    extractor_version, extraction_status, rejection_reason,
+                    resource_id, resource_name, resource_type, row_number,
+                    stable_id_raw_json, row_raw_json, metadata_json
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, [(fila.raw_document_id, fila.source, fila.source_record_id, fila.source_url, fila.extractor_version, fila.extraction_status, fila.rejection_reason, fila.resource_id, fila.resource_name, fila.resource_type, fila.row_number, self._json(fila.stable_id_raw), self._json(fila.row_raw), self._json(fila.metadata)) for fila in filas])
+            return conexion.total_changes - before
+
     def contar_lenguaje(self, source: str | None = None, language: str | None = None) -> int:
         query = "SELECT COUNT(*) AS total FROM language_evidence"
         params: list[Any] = []
@@ -366,6 +424,24 @@ class RepositorioSQLiteEvidencia:
 
     def contar_observaciones_mercado_publico_lineas(self, extractor_version: str | None = None, extraction_status: str | None = None) -> int:
         return self._contar_observaciones("mercado_publico_line_item_observations", extractor_version, extraction_status)
+
+    def contar_filas_argentina(self, extractor_version: str | None = None, extraction_status: str | None = None, raw_document_id: int | None = None) -> int:
+        query = "SELECT COUNT(*) AS total FROM argentina_procurement_rows"
+        params: list[Any] = []
+        filters = []
+        if extractor_version:
+            filters.append("extractor_version = ?")
+            params.append(extractor_version)
+        if extraction_status:
+            filters.append("extraction_status = ?")
+            params.append(extraction_status)
+        if raw_document_id is not None:
+            filters.append("raw_document_id = ?")
+            params.append(raw_document_id)
+        if filters:
+            query += " WHERE " + " AND ".join(filters)
+        with closing(self._conectar()) as conexion:
+            return int(conexion.execute(query, params).fetchone()["total"])
 
     def _contar_observaciones(self, table: str, extractor_version: str | None, extraction_status: str | None) -> int:
         query = f"SELECT COUNT(*) AS total FROM {table}"
@@ -474,6 +550,20 @@ class RepositorioSQLiteEvidencia:
             rows = conexion.execute(query, params).fetchall()
         return [self._row_to_mercado_publico_linea(row) for row in rows]
 
+    def listar_filas_argentina(self, extractor_version: str | None = None, limit: int | None = None) -> list[RegistroFilaArgentinaObservada]:
+        query = "SELECT * FROM argentina_procurement_rows"
+        params: list[Any] = []
+        if extractor_version:
+            query += " WHERE extractor_version = ?"
+            params.append(extractor_version)
+        query += " ORDER BY id"
+        if limit is not None:
+            query += " LIMIT ?"
+            params.append(limit)
+        with closing(self._conectar()) as conexion:
+            rows = conexion.execute(query, params).fetchall()
+        return [self._row_to_fila_argentina(row) for row in rows]
+
     @staticmethod
     def _row_to_lenguaje(row: sqlite3.Row) -> ConsultaUsuarioRaw:
         return ConsultaUsuarioRaw(source=row["source"], source_id=row["source_id"], source_url=row["source_url"], raw_text=row["raw_text"], language=row["language"], observed_at=datetime.fromisoformat(row["observed_at"]), metadata=json.loads(row["metadata_json"]))
@@ -502,6 +592,11 @@ class RepositorioSQLiteEvidencia:
     @classmethod
     def _row_to_mercado_publico_linea(cls, row: sqlite3.Row) -> RegistroLineaOrdenCompraMercadoPublicoObservada:
         return RegistroLineaOrdenCompraMercadoPublicoObservada(raw_document_id=int(row["raw_document_id"]), source=row["source"], source_record_id=row["source_record_id"], source_url=row["source_url"], extractor_version=row["extractor_version"], extraction_status=row["extraction_status"], rejection_reason=row["rejection_reason"] or "", order_source_record_id=row["order_source_record_id"], order_observation_id=(int(row["order_observation_id"]) if row["order_observation_id"] is not None else None), line_index=int(row["line_index"]), item_stable_id_raw=cls._loads(row["item_stable_id_raw_json"]), description_raw=cls._loads(row["description_raw_json"]), category_raw=cls._loads(row["category_raw_json"]), category_code_raw=cls._loads(row["category_code_raw_json"]), product_code_raw=cls._loads(row["product_code_raw_json"]), quantity_raw=cls._loads(row["quantity_raw_json"]), unit_raw=cls._loads(row["unit_raw_json"]), net_price_raw=cls._loads(row["net_price_raw_json"]), total_raw=cls._loads(row["total_raw_json"]), currency_raw=cls._loads(row["currency_raw_json"]), metadata=cls._loads(row["metadata_json"]), storage_id=int(row["id"]))
+
+
+    @classmethod
+    def _row_to_fila_argentina(cls, row: sqlite3.Row) -> RegistroFilaArgentinaObservada:
+        return RegistroFilaArgentinaObservada(raw_document_id=int(row["raw_document_id"]), source=row["source"], source_record_id=row["source_record_id"], source_url=row["source_url"], extractor_version=row["extractor_version"], extraction_status=row["extraction_status"], rejection_reason=row["rejection_reason"] or "", resource_id=row["resource_id"], resource_name=row["resource_name"], resource_type=row["resource_type"], row_number=int(row["row_number"]), stable_id_raw=cls._loads(row["stable_id_raw_json"]), row_raw=cls._loads(row["row_raw_json"]), metadata=cls._loads(row["metadata_json"]), storage_id=int(row["id"]))
 
     @staticmethod
     def _json(value: Any) -> str:

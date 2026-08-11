@@ -141,3 +141,22 @@ class RegistroLineaOrdenCompraMercadoPublicoObservada:
     metadata: dict[str, Any] = field(default_factory=dict)
     rejection_reason: str = ""
     storage_id: int | None = None
+
+
+@dataclass(frozen=True)
+class RegistroFilaArgentinaObservada:
+    raw_document_id: int
+    source: str
+    source_record_id: str
+    source_url: str
+    extractor_version: str
+    extraction_status: str
+    resource_id: str
+    resource_name: str
+    resource_type: str
+    row_number: int
+    stable_id_raw: Any
+    row_raw: dict[str, Any]
+    metadata: dict[str, Any] = field(default_factory=dict)
+    rejection_reason: str = ""
+    storage_id: int | None = None
