@@ -10,6 +10,8 @@ from src.dominio.evidencia import (
     FuenteCandidata,
     RegistroAwardUSASpendingObservado,
     RegistroContratacionObservado,
+    RegistroLineaOrdenCompraMercadoPublicoObservada,
+    RegistroOrdenCompraMercadoPublicoObservada,
 )
 
 
@@ -159,6 +161,76 @@ class RepositorioSQLiteEvidencia:
                 CREATE INDEX IF NOT EXISTS idx_usaspending_awards_status
                 ON usaspending_award_observations(extractor_version, extraction_status)
             """)
+            conexion.execute("""
+                CREATE TABLE IF NOT EXISTS mercado_publico_order_observations (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    raw_document_id INTEGER NOT NULL,
+                    source TEXT NOT NULL,
+                    source_record_id TEXT NOT NULL,
+                    source_url TEXT NOT NULL,
+                    extractor_version TEXT NOT NULL,
+                    extraction_status TEXT NOT NULL,
+                    rejection_reason TEXT,
+                    order_code_raw_json TEXT NOT NULL,
+                    name_raw_json TEXT NOT NULL,
+                    description_raw_json TEXT NOT NULL,
+                    buyer_raw_json TEXT NOT NULL,
+                    supplier_raw_json TEXT NOT NULL,
+                    status_raw_json TEXT NOT NULL,
+                    date_raw_json TEXT NOT NULL,
+                    currency_raw_json TEXT NOT NULL,
+                    order_total_raw_json TEXT NOT NULL,
+                    location_raw_json TEXT NOT NULL,
+                    items_count_raw_json TEXT NOT NULL,
+                    metadata_json TEXT NOT NULL DEFAULT '{}',
+                    extracted_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    UNIQUE(raw_document_id, extractor_version)
+                )
+            """)
+            conexion.execute("""
+                CREATE INDEX IF NOT EXISTS idx_mercado_publico_orders_source
+                ON mercado_publico_order_observations(source, source_record_id)
+            """)
+            conexion.execute("""
+                CREATE INDEX IF NOT EXISTS idx_mercado_publico_orders_status
+                ON mercado_publico_order_observations(extractor_version, extraction_status)
+            """)
+            conexion.execute("""
+                CREATE TABLE IF NOT EXISTS mercado_publico_line_item_observations (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    raw_document_id INTEGER NOT NULL,
+                    order_observation_id INTEGER,
+                    source TEXT NOT NULL,
+                    source_record_id TEXT NOT NULL,
+                    source_url TEXT NOT NULL,
+                    extractor_version TEXT NOT NULL,
+                    extraction_status TEXT NOT NULL,
+                    rejection_reason TEXT,
+                    order_source_record_id TEXT NOT NULL,
+                    line_index INTEGER NOT NULL,
+                    item_stable_id_raw_json TEXT NOT NULL,
+                    description_raw_json TEXT NOT NULL,
+                    category_raw_json TEXT NOT NULL,
+                    category_code_raw_json TEXT NOT NULL,
+                    product_code_raw_json TEXT NOT NULL,
+                    quantity_raw_json TEXT NOT NULL,
+                    unit_raw_json TEXT NOT NULL,
+                    net_price_raw_json TEXT NOT NULL,
+                    total_raw_json TEXT NOT NULL,
+                    currency_raw_json TEXT NOT NULL,
+                    metadata_json TEXT NOT NULL DEFAULT '{}',
+                    extracted_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    UNIQUE(raw_document_id, extractor_version, line_index)
+                )
+            """)
+            conexion.execute("""
+                CREATE INDEX IF NOT EXISTS idx_mercado_publico_lines_order
+                ON mercado_publico_line_item_observations(order_observation_id)
+            """)
+            conexion.execute("""
+                CREATE INDEX IF NOT EXISTS idx_mercado_publico_lines_status
+                ON mercado_publico_line_item_observations(extractor_version, extraction_status)
+            """)
 
     def guardar_lenguaje(self, registro: ConsultaUsuarioRaw) -> bool:
         with closing(self._conectar()) as conexion, conexion:
@@ -223,6 +295,38 @@ class RepositorioSQLiteEvidencia:
             """, (observacion.raw_document_id, observacion.source, observacion.source_record_id, observacion.source_url, observacion.extractor_version, observacion.extraction_status, observacion.rejection_reason, self._json(observacion.recipient_raw), self._json(observacion.recipient_uei_raw), self._json(observacion.awarding_agency_raw), self._json(observacion.awarding_sub_agency_raw), self._json(observacion.funding_agency_raw), self._json(observacion.funding_sub_agency_raw), self._json(observacion.description_raw), self._json(observacion.award_amount_raw), self._json(observacion.potential_award_amount_raw), self._json(observacion.currency_raw), self._json(observacion.naics_raw), self._json(observacion.psc_raw), self._json(observacion.award_type_raw), self._json(observacion.start_date_raw), self._json(observacion.end_date_raw), self._json(observacion.award_date_raw), self._json(observacion.place_of_performance_raw), self._json(observacion.recipient_location_raw), self._json(observacion.metadata)))
             return cursor.rowcount == 1
 
+    def guardar_observacion_mercado_publico_orden_con_lineas(
+        self,
+        orden: RegistroOrdenCompraMercadoPublicoObservada,
+        lineas: list[RegistroLineaOrdenCompraMercadoPublicoObservada],
+    ) -> bool:
+        with closing(self._conectar()) as conexion, conexion:
+            cursor = conexion.execute("""
+                INSERT OR IGNORE INTO mercado_publico_order_observations (
+                    raw_document_id, source, source_record_id, source_url,
+                    extractor_version, extraction_status, rejection_reason,
+                    order_code_raw_json, name_raw_json, description_raw_json,
+                    buyer_raw_json, supplier_raw_json, status_raw_json, date_raw_json,
+                    currency_raw_json, order_total_raw_json, location_raw_json,
+                    items_count_raw_json, metadata_json
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (orden.raw_document_id, orden.source, orden.source_record_id, orden.source_url, orden.extractor_version, orden.extraction_status, orden.rejection_reason, self._json(orden.order_code_raw), self._json(orden.name_raw), self._json(orden.description_raw), self._json(orden.buyer_raw), self._json(orden.supplier_raw), self._json(orden.status_raw), self._json(orden.date_raw), self._json(orden.currency_raw), self._json(orden.order_total_raw), self._json(orden.location_raw), self._json(orden.items_count_raw), self._json(orden.metadata)))
+            if cursor.rowcount != 1:
+                return False
+            order_observation_id = int(cursor.lastrowid)
+            for linea in lineas:
+                conexion.execute("""
+                    INSERT OR IGNORE INTO mercado_publico_line_item_observations (
+                        raw_document_id, order_observation_id, source, source_record_id,
+                        source_url, extractor_version, extraction_status, rejection_reason,
+                        order_source_record_id, line_index, item_stable_id_raw_json,
+                        description_raw_json, category_raw_json, category_code_raw_json,
+                        product_code_raw_json, quantity_raw_json, unit_raw_json,
+                        net_price_raw_json, total_raw_json, currency_raw_json, metadata_json
+                    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """, (linea.raw_document_id, order_observation_id, linea.source, linea.source_record_id, linea.source_url, linea.extractor_version, linea.extraction_status, linea.rejection_reason, linea.order_source_record_id, linea.line_index, self._json(linea.item_stable_id_raw), self._json(linea.description_raw), self._json(linea.category_raw), self._json(linea.category_code_raw), self._json(linea.product_code_raw), self._json(linea.quantity_raw), self._json(linea.unit_raw), self._json(linea.net_price_raw), self._json(linea.total_raw), self._json(linea.currency_raw), self._json(linea.metadata)))
+            return True
+
     def contar_lenguaje(self, source: str | None = None, language: str | None = None) -> int:
         query = "SELECT COUNT(*) AS total FROM language_evidence"
         params: list[Any] = []
@@ -256,6 +360,12 @@ class RepositorioSQLiteEvidencia:
 
     def contar_observaciones_usaspending_awards(self, extractor_version: str | None = None, extraction_status: str | None = None) -> int:
         return self._contar_observaciones("usaspending_award_observations", extractor_version, extraction_status)
+
+    def contar_observaciones_mercado_publico_ordenes(self, extractor_version: str | None = None, extraction_status: str | None = None) -> int:
+        return self._contar_observaciones("mercado_publico_order_observations", extractor_version, extraction_status)
+
+    def contar_observaciones_mercado_publico_lineas(self, extractor_version: str | None = None, extraction_status: str | None = None) -> int:
+        return self._contar_observaciones("mercado_publico_line_item_observations", extractor_version, extraction_status)
 
     def _contar_observaciones(self, table: str, extractor_version: str | None, extraction_status: str | None) -> int:
         query = f"SELECT COUNT(*) AS total FROM {table}"
@@ -336,6 +446,34 @@ class RepositorioSQLiteEvidencia:
             rows = conexion.execute(query, params).fetchall()
         return [self._row_to_usaspending_award(row) for row in rows]
 
+    def listar_observaciones_mercado_publico_ordenes(self, extractor_version: str | None = None, limit: int | None = None) -> list[RegistroOrdenCompraMercadoPublicoObservada]:
+        query = "SELECT * FROM mercado_publico_order_observations"
+        params: list[Any] = []
+        if extractor_version:
+            query += " WHERE extractor_version = ?"
+            params.append(extractor_version)
+        query += " ORDER BY id"
+        if limit is not None:
+            query += " LIMIT ?"
+            params.append(limit)
+        with closing(self._conectar()) as conexion:
+            rows = conexion.execute(query, params).fetchall()
+        return [self._row_to_mercado_publico_orden(row) for row in rows]
+
+    def listar_observaciones_mercado_publico_lineas(self, extractor_version: str | None = None, limit: int | None = None) -> list[RegistroLineaOrdenCompraMercadoPublicoObservada]:
+        query = "SELECT * FROM mercado_publico_line_item_observations"
+        params: list[Any] = []
+        if extractor_version:
+            query += " WHERE extractor_version = ?"
+            params.append(extractor_version)
+        query += " ORDER BY id"
+        if limit is not None:
+            query += " LIMIT ?"
+            params.append(limit)
+        with closing(self._conectar()) as conexion:
+            rows = conexion.execute(query, params).fetchall()
+        return [self._row_to_mercado_publico_linea(row) for row in rows]
+
     @staticmethod
     def _row_to_lenguaje(row: sqlite3.Row) -> ConsultaUsuarioRaw:
         return ConsultaUsuarioRaw(source=row["source"], source_id=row["source_id"], source_url=row["source_url"], raw_text=row["raw_text"], language=row["language"], observed_at=datetime.fromisoformat(row["observed_at"]), metadata=json.loads(row["metadata_json"]))
@@ -355,6 +493,15 @@ class RepositorioSQLiteEvidencia:
     @classmethod
     def _row_to_usaspending_award(cls, row: sqlite3.Row) -> RegistroAwardUSASpendingObservado:
         return RegistroAwardUSASpendingObservado(raw_document_id=int(row["raw_document_id"]), source=row["source"], source_record_id=row["source_record_id"], source_url=row["source_url"], extractor_version=row["extractor_version"], extraction_status=row["extraction_status"], rejection_reason=row["rejection_reason"] or "", recipient_raw=cls._loads(row["recipient_raw_json"]), recipient_uei_raw=cls._loads(row["recipient_uei_raw_json"]), awarding_agency_raw=cls._loads(row["awarding_agency_raw_json"]), awarding_sub_agency_raw=cls._loads(row["awarding_sub_agency_raw_json"]), funding_agency_raw=cls._loads(row["funding_agency_raw_json"]), funding_sub_agency_raw=cls._loads(row["funding_sub_agency_raw_json"]), description_raw=cls._loads(row["description_raw_json"]), award_amount_raw=cls._loads(row["award_amount_raw_json"]), potential_award_amount_raw=cls._loads(row["potential_award_amount_raw_json"]), currency_raw=cls._loads(row["currency_raw_json"]), naics_raw=cls._loads(row["naics_raw_json"]), psc_raw=cls._loads(row["psc_raw_json"]), award_type_raw=cls._loads(row["award_type_raw_json"]), start_date_raw=cls._loads(row["start_date_raw_json"]), end_date_raw=cls._loads(row["end_date_raw_json"]), award_date_raw=cls._loads(row["award_date_raw_json"]), place_of_performance_raw=cls._loads(row["place_of_performance_raw_json"]), recipient_location_raw=cls._loads(row["recipient_location_raw_json"]), metadata=cls._loads(row["metadata_json"]))
+
+
+    @classmethod
+    def _row_to_mercado_publico_orden(cls, row: sqlite3.Row) -> RegistroOrdenCompraMercadoPublicoObservada:
+        return RegistroOrdenCompraMercadoPublicoObservada(raw_document_id=int(row["raw_document_id"]), source=row["source"], source_record_id=row["source_record_id"], source_url=row["source_url"], extractor_version=row["extractor_version"], extraction_status=row["extraction_status"], rejection_reason=row["rejection_reason"] or "", order_code_raw=cls._loads(row["order_code_raw_json"]), name_raw=cls._loads(row["name_raw_json"]), description_raw=cls._loads(row["description_raw_json"]), buyer_raw=cls._loads(row["buyer_raw_json"]), supplier_raw=cls._loads(row["supplier_raw_json"]), status_raw=cls._loads(row["status_raw_json"]), date_raw=cls._loads(row["date_raw_json"]), currency_raw=cls._loads(row["currency_raw_json"]), order_total_raw=cls._loads(row["order_total_raw_json"]), location_raw=cls._loads(row["location_raw_json"]), items_count_raw=cls._loads(row["items_count_raw_json"]), metadata=cls._loads(row["metadata_json"]), storage_id=int(row["id"]))
+
+    @classmethod
+    def _row_to_mercado_publico_linea(cls, row: sqlite3.Row) -> RegistroLineaOrdenCompraMercadoPublicoObservada:
+        return RegistroLineaOrdenCompraMercadoPublicoObservada(raw_document_id=int(row["raw_document_id"]), source=row["source"], source_record_id=row["source_record_id"], source_url=row["source_url"], extractor_version=row["extractor_version"], extraction_status=row["extraction_status"], rejection_reason=row["rejection_reason"] or "", order_source_record_id=row["order_source_record_id"], order_observation_id=(int(row["order_observation_id"]) if row["order_observation_id"] is not None else None), line_index=int(row["line_index"]), item_stable_id_raw=cls._loads(row["item_stable_id_raw_json"]), description_raw=cls._loads(row["description_raw_json"]), category_raw=cls._loads(row["category_raw_json"]), category_code_raw=cls._loads(row["category_code_raw_json"]), product_code_raw=cls._loads(row["product_code_raw_json"]), quantity_raw=cls._loads(row["quantity_raw_json"]), unit_raw=cls._loads(row["unit_raw_json"]), net_price_raw=cls._loads(row["net_price_raw_json"]), total_raw=cls._loads(row["total_raw_json"]), currency_raw=cls._loads(row["currency_raw_json"]), metadata=cls._loads(row["metadata_json"]), storage_id=int(row["id"]))
 
     @staticmethod
     def _json(value: Any) -> str:

@@ -91,3 +91,53 @@ class RegistroAwardUSASpendingObservado:
     recipient_location_raw: Any
     metadata: dict[str, Any] = field(default_factory=dict)
     rejection_reason: str = ""
+
+
+@dataclass(frozen=True)
+class RegistroOrdenCompraMercadoPublicoObservada:
+    raw_document_id: int
+    source: str
+    source_record_id: str
+    source_url: str
+    extractor_version: str
+    extraction_status: str
+    order_code_raw: Any
+    name_raw: Any
+    description_raw: Any
+    buyer_raw: Any
+    supplier_raw: Any
+    status_raw: Any
+    date_raw: Any
+    currency_raw: Any
+    order_total_raw: Any
+    location_raw: Any
+    items_count_raw: Any
+    metadata: dict[str, Any] = field(default_factory=dict)
+    rejection_reason: str = ""
+    storage_id: int | None = None
+
+
+@dataclass(frozen=True)
+class RegistroLineaOrdenCompraMercadoPublicoObservada:
+    raw_document_id: int
+    source: str
+    source_record_id: str
+    source_url: str
+    extractor_version: str
+    extraction_status: str
+    order_source_record_id: str
+    order_observation_id: int | None
+    line_index: int
+    item_stable_id_raw: Any
+    description_raw: Any
+    category_raw: Any
+    category_code_raw: Any
+    product_code_raw: Any
+    quantity_raw: Any
+    unit_raw: Any
+    net_price_raw: Any
+    total_raw: Any
+    currency_raw: Any
+    metadata: dict[str, Any] = field(default_factory=dict)
+    rejection_reason: str = ""
+    storage_id: int | None = None

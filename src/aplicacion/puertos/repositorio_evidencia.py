@@ -6,6 +6,8 @@ from src.dominio.evidencia import (
     FuenteCandidata,
     RegistroAwardUSASpendingObservado,
     RegistroContratacionObservado,
+    RegistroLineaOrdenCompraMercadoPublicoObservada,
+    RegistroOrdenCompraMercadoPublicoObservada,
 )
 
 
@@ -28,3 +30,11 @@ class RepositorioEvidencia(Protocol):
         self, observacion: RegistroAwardUSASpendingObservado
     ) -> bool:
         """Guarda una observacion USASpending; devuelve False cuando ya existia."""
+
+
+    def guardar_observacion_mercado_publico_orden_con_lineas(
+        self,
+        orden: RegistroOrdenCompraMercadoPublicoObservada,
+        lineas: list[RegistroLineaOrdenCompraMercadoPublicoObservada],
+    ) -> bool:
+        """Guarda una orden observada y sus lineas; devuelve False si ya existia."""
