@@ -13,6 +13,7 @@ from src.dominio.evidencia import (
     RegistroLineaOrdenCompraMercadoPublicoObservada,
     RegistroOrdenCompraMercadoPublicoObservada,
     RegistroFilaArgentinaObservada,
+    RegistroPrecioComercialObservado,
 )
 
 
@@ -261,6 +262,64 @@ class RepositorioSQLiteEvidencia:
                 CREATE INDEX IF NOT EXISTS idx_argentina_rows_status
                 ON argentina_procurement_rows(extractor_version, extraction_status)
             """)
+            conexion.execute("""
+                CREATE TABLE IF NOT EXISTS commercial_price_observations (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    raw_document_id INTEGER NOT NULL,
+                    source TEXT NOT NULL,
+                    source_record_id TEXT NOT NULL,
+                    source_url TEXT NOT NULL,
+                    extractor_version TEXT NOT NULL,
+                    extraction_status TEXT NOT NULL,
+                    rejection_reason TEXT,
+                    provider_raw_json TEXT NOT NULL,
+                    economic_object_raw_json TEXT NOT NULL,
+                    scope_raw_json TEXT NOT NULL,
+                    price_raw_json TEXT NOT NULL,
+                    price_value_json TEXT NOT NULL,
+                    currency_raw_json TEXT NOT NULL,
+                    device_type_raw_json TEXT NOT NULL,
+                    operating_system_raw_json TEXT NOT NULL,
+                    backup_raw_json TEXT NOT NULL,
+                    drivers_raw_json TEXT NOT NULL,
+                    programs_raw_json TEXT NOT NULL,
+                    license_raw_json TEXT NOT NULL,
+                    modality_raw_json TEXT NOT NULL,
+                    comparable_status TEXT NOT NULL,
+                    metadata_json TEXT NOT NULL DEFAULT '{}',
+                    extracted_at TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+                    UNIQUE(raw_document_id, extractor_version, source_record_id)
+                )
+            """)
+            conexion.execute("""
+                CREATE INDEX IF NOT EXISTS idx_commercial_price_observations_source
+                ON commercial_price_observations(source, source_record_id)
+            """)
+            conexion.execute("""
+                CREATE INDEX IF NOT EXISTS idx_commercial_price_observations_status
+                ON commercial_price_observations(extractor_version, extraction_status)
+            """)
+            conexion.execute("""
+                CREATE UNIQUE INDEX IF NOT EXISTS
+                uq_commercial_price_observations_economic_identity
+                ON commercial_price_observations(
+                    source,
+                    source_record_id,
+                    extractor_version,
+                    economic_object_raw_json,
+                    scope_raw_json,
+                    price_value_json,
+                    currency_raw_json,
+                    device_type_raw_json,
+                    operating_system_raw_json,
+                    backup_raw_json,
+                    drivers_raw_json,
+                    programs_raw_json,
+                    license_raw_json,
+                    modality_raw_json,
+                    comparable_status
+                )
+            """)
 
     def guardar_lenguaje(self, registro: ConsultaUsuarioRaw) -> bool:
         with closing(self._conectar()) as conexion, conexion:
@@ -385,6 +444,24 @@ class RepositorioSQLiteEvidencia:
             """, [(fila.raw_document_id, fila.source, fila.source_record_id, fila.source_url, fila.extractor_version, fila.extraction_status, fila.rejection_reason, fila.resource_id, fila.resource_name, fila.resource_type, fila.row_number, self._json(fila.stable_id_raw), self._json(fila.row_raw), self._json(fila.metadata)) for fila in filas])
             return conexion.total_changes - before
 
+    def guardar_observacion_precio_comercial(
+        self, observacion: RegistroPrecioComercialObservado
+    ) -> bool:
+        with closing(self._conectar()) as conexion, conexion:
+            cursor = conexion.execute("""
+                INSERT OR IGNORE INTO commercial_price_observations (
+                    raw_document_id, source, source_record_id, source_url,
+                    extractor_version, extraction_status, rejection_reason,
+                    provider_raw_json, economic_object_raw_json, scope_raw_json,
+                    price_raw_json, price_value_json, currency_raw_json,
+                    device_type_raw_json, operating_system_raw_json,
+                    backup_raw_json, drivers_raw_json, programs_raw_json,
+                    license_raw_json, modality_raw_json, comparable_status,
+                    metadata_json
+                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (observacion.raw_document_id, observacion.source, observacion.source_record_id, observacion.source_url, observacion.extractor_version, observacion.extraction_status, observacion.rejection_reason, self._json(observacion.provider_raw), self._json(observacion.economic_object_raw), self._json(observacion.scope_raw), self._json(observacion.price_raw), self._json(observacion.price_value), self._json(observacion.currency_raw), self._json(observacion.device_type_raw), self._json(observacion.operating_system_raw), self._json(observacion.backup_raw), self._json(observacion.drivers_raw), self._json(observacion.programs_raw), self._json(observacion.license_raw), self._json(observacion.modality_raw), observacion.comparable_status, self._json(observacion.metadata)))
+            return cursor.rowcount == 1
+
     def contar_lenguaje(self, source: str | None = None, language: str | None = None) -> int:
         query = "SELECT COUNT(*) AS total FROM language_evidence"
         params: list[Any] = []
@@ -442,6 +519,9 @@ class RepositorioSQLiteEvidencia:
             query += " WHERE " + " AND ".join(filters)
         with closing(self._conectar()) as conexion:
             return int(conexion.execute(query, params).fetchone()["total"])
+
+    def contar_observaciones_precios_comerciales(self, extractor_version: str | None = None, extraction_status: str | None = None) -> int:
+        return self._contar_observaciones("commercial_price_observations", extractor_version, extraction_status)
 
     def _contar_observaciones(self, table: str, extractor_version: str | None, extraction_status: str | None) -> int:
         query = f"SELECT COUNT(*) AS total FROM {table}"
@@ -564,6 +644,20 @@ class RepositorioSQLiteEvidencia:
             rows = conexion.execute(query, params).fetchall()
         return [self._row_to_fila_argentina(row) for row in rows]
 
+    def listar_observaciones_precios_comerciales(self, extractor_version: str | None = None, limit: int | None = None) -> list[RegistroPrecioComercialObservado]:
+        query = "SELECT * FROM commercial_price_observations"
+        params: list[Any] = []
+        if extractor_version:
+            query += " WHERE extractor_version = ?"
+            params.append(extractor_version)
+        query += " ORDER BY id"
+        if limit is not None:
+            query += " LIMIT ?"
+            params.append(limit)
+        with closing(self._conectar()) as conexion:
+            rows = conexion.execute(query, params).fetchall()
+        return [self._row_to_precio_comercial(row) for row in rows]
+
     @staticmethod
     def _row_to_lenguaje(row: sqlite3.Row) -> ConsultaUsuarioRaw:
         return ConsultaUsuarioRaw(source=row["source"], source_id=row["source_id"], source_url=row["source_url"], raw_text=row["raw_text"], language=row["language"], observed_at=datetime.fromisoformat(row["observed_at"]), metadata=json.loads(row["metadata_json"]))
@@ -597,6 +691,36 @@ class RepositorioSQLiteEvidencia:
     @classmethod
     def _row_to_fila_argentina(cls, row: sqlite3.Row) -> RegistroFilaArgentinaObservada:
         return RegistroFilaArgentinaObservada(raw_document_id=int(row["raw_document_id"]), source=row["source"], source_record_id=row["source_record_id"], source_url=row["source_url"], extractor_version=row["extractor_version"], extraction_status=row["extraction_status"], rejection_reason=row["rejection_reason"] or "", resource_id=row["resource_id"], resource_name=row["resource_name"], resource_type=row["resource_type"], row_number=int(row["row_number"]), stable_id_raw=cls._loads(row["stable_id_raw_json"]), row_raw=cls._loads(row["row_raw_json"]), metadata=cls._loads(row["metadata_json"]), storage_id=int(row["id"]))
+
+    @classmethod
+    def _row_to_precio_comercial(
+        cls, row: sqlite3.Row
+    ) -> RegistroPrecioComercialObservado:
+        return RegistroPrecioComercialObservado(
+            raw_document_id=int(row["raw_document_id"]),
+            source=row["source"],
+            source_record_id=row["source_record_id"],
+            source_url=row["source_url"],
+            extractor_version=row["extractor_version"],
+            extraction_status=row["extraction_status"],
+            provider_raw=cls._loads(row["provider_raw_json"]),
+            economic_object_raw=cls._loads(row["economic_object_raw_json"]),
+            scope_raw=cls._loads(row["scope_raw_json"]),
+            price_raw=cls._loads(row["price_raw_json"]),
+            price_value=cls._loads(row["price_value_json"]),
+            currency_raw=cls._loads(row["currency_raw_json"]),
+            device_type_raw=cls._loads(row["device_type_raw_json"]),
+            operating_system_raw=cls._loads(row["operating_system_raw_json"]),
+            backup_raw=cls._loads(row["backup_raw_json"]),
+            drivers_raw=cls._loads(row["drivers_raw_json"]),
+            programs_raw=cls._loads(row["programs_raw_json"]),
+            license_raw=cls._loads(row["license_raw_json"]),
+            modality_raw=cls._loads(row["modality_raw_json"]),
+            comparable_status=row["comparable_status"],
+            metadata=cls._loads(row["metadata_json"]),
+            rejection_reason=row["rejection_reason"] or "",
+            storage_id=int(row["id"]),
+        )
 
     @staticmethod
     def _json(value: Any) -> str:

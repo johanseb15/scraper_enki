@@ -160,3 +160,30 @@ class RegistroFilaArgentinaObservada:
     metadata: dict[str, Any] = field(default_factory=dict)
     rejection_reason: str = ""
     storage_id: int | None = None
+
+
+@dataclass(frozen=True)
+class RegistroPrecioComercialObservado:
+    raw_document_id: int
+    source: str
+    source_record_id: str
+    source_url: str
+    extractor_version: str
+    extraction_status: str
+    provider_raw: Any
+    economic_object_raw: Any
+    scope_raw: Any
+    price_raw: Any
+    price_value: Any
+    currency_raw: Any
+    device_type_raw: Any
+    operating_system_raw: Any
+    backup_raw: Any
+    drivers_raw: Any
+    programs_raw: Any
+    license_raw: Any
+    modality_raw: Any
+    comparable_status: str
+    metadata: dict[str, Any] = field(default_factory=dict)
+    rejection_reason: str = ""
+    storage_id: int | None = None

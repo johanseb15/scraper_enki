@@ -9,6 +9,7 @@ from src.dominio.evidencia import (
     RegistroLineaOrdenCompraMercadoPublicoObservada,
     RegistroOrdenCompraMercadoPublicoObservada,
     RegistroFilaArgentinaObservada,
+    RegistroPrecioComercialObservado,
 )
 
 
@@ -47,3 +48,8 @@ class RepositorioEvidencia(Protocol):
 
     def guardar_filas_argentina(self, filas: list[RegistroFilaArgentinaObservada]) -> int:
         """Guarda filas observadas en lote y devuelve cantidad insertada."""
+
+    def guardar_observacion_precio_comercial(
+        self, observacion: RegistroPrecioComercialObservado
+    ) -> bool:
+        """Guarda una observacion comercial; devuelve False si ya existia."""
