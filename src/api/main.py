@@ -1,7 +1,6 @@
-import os
-
 from fastapi import FastAPI, Depends, Query
 
+from src.configuracion_runtime import resolver_ruta_db_ofertas
 from src.infraestructura.sqlite.repositorio_sqlite_ofertas import (
     RepositorioSQLiteOfertas,
 )
@@ -16,7 +15,7 @@ app = FastAPI(
 
 def obtener_repositorio() -> RepositorioSQLiteOfertas:
     return RepositorioSQLiteOfertas(
-        ruta_db=os.getenv("ENKI_DB_PATH", "enki.db")
+        ruta_db=resolver_ruta_db_ofertas()
     )
 
 

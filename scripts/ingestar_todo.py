@@ -11,6 +11,7 @@ if str(ROOT_DIR) not in sys.path:
     sys.path.insert(0, str(ROOT_DIR))
 
 from src.infraestructura.scrapers.compragamer_scraper import CompraGamerScraper
+from src.configuracion_runtime import resolver_ruta_db_ofertas
 from src.infraestructura.sqlite.repositorio_sqlite_ofertas import (
     RepositorioSQLiteOfertas,
 )
@@ -22,14 +23,16 @@ logger = logging.getLogger(__name__)
 
 
 def ejecutar_ingesta(
-    db_path: str = "enki.db",
+    db_path: str | None = None,
     scrapers: Sequence[BaseScraper] | None = None,
 ) -> int:
     """Ejecuta el pipeline oficial y devuelve la cantidad de ofertas guardadas."""
     scrapers_seleccionados = (
         list(scrapers) if scrapers is not None else [CompraGamerScraper()]
     )
-    repositorio = RepositorioSQLiteOfertas(ruta_db=db_path)
+    repositorio = RepositorioSQLiteOfertas(
+        ruta_db=resolver_ruta_db_ofertas(db_path)
+    )
     pipeline = PipelineOfertas(
         scrapers=scrapers_seleccionados,
         repositorio=repositorio,

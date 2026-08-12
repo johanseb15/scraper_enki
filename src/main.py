@@ -3,6 +3,7 @@ from typing import Sequence
 
 from src.aplicacion.oferta_factory import OfertaFactory
 from src.aplicacion.procesador_ofertas import ProcesadorOfertas
+from src.configuracion_runtime import resolver_ruta_db_ofertas
 from src.infraestructura.sqlite.repositorio_sqlite_ofertas import (
     RepositorioSQLiteOfertas,
 )
@@ -16,7 +17,7 @@ from src.infraestructura.scrapers.vida_informatica import VidaInformaticaScraper
 
 
 def ejecutar(
-    ruta_db: str = "enki.db",
+    ruta_db: str | None = None,
     scrapers: Sequence[BaseScraper] | None = None,
     servicio_target: str = "Eliminación de malware",
 ) -> ResultadoEjecucion:
@@ -26,7 +27,9 @@ def ejecutar(
         BairesCloudScraper(),
     ]
 
-    repositorio = RepositorioSQLiteOfertas(ruta_db=ruta_db)
+    repositorio = RepositorioSQLiteOfertas(
+        ruta_db=resolver_ruta_db_ofertas(ruta_db)
+    )
     procesador = ProcesadorOfertas(
         factory=OfertaFactory(),
         repositorio=repositorio,

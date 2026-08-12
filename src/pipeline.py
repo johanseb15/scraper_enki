@@ -5,6 +5,7 @@ from src.aplicacion.dto.oferta_dto import OfertaDTO
 from src.aplicacion.oferta_factory import OfertaFactory
 from src.aplicacion.procesador_ofertas import ProcesadorOfertas
 from src.aplicacion.puertos.repositorio_ofertas import RepositorioOfertas
+from src.configuracion_runtime import resolver_ruta_db_ofertas
 from src.dominio.oferta import Oferta
 from src.infraestructura.sqlite.repositorio_sqlite_ofertas import RepositorioSQLiteOfertas
 from src.metricas import MetricasEjecucion
@@ -37,7 +38,9 @@ class PipelineOfertas:
             BairesCloudScraper(),
             VidaInformaticaScraper(),
         ]
-        self.repositorio = repositorio or RepositorioSQLiteOfertas()
+        self.repositorio = repositorio or RepositorioSQLiteOfertas(
+            ruta_db=resolver_ruta_db_ofertas()
+        )
         self.procesador = procesador or ProcesadorOfertas(
             factory=OfertaFactory(),
             repositorio=self.repositorio,
