@@ -48,19 +48,27 @@ class ColectorPreciosOSJadetech:
         parser_observaciones: ParserPrecioComercial,
         reloj: Callable[[], datetime] | None = None,
         source_url: str = URL_JADETECH_SERVICIO_TECNICO,
+        source: str = SOURCE,
+        provider: str = PROVIDER,
+        extractor_version: str = EXTRACTOR_VERSION,
+        source_notes: str = "OS installation/formateo without backup collector source",
     ):
         self.repositorio = repositorio
         self.downloader = downloader
         self.parser_observaciones = parser_observaciones
         self.reloj = reloj or (lambda: datetime.now(timezone.utc))
         self.source_url = source_url
+        self.source = source
+        self.provider = provider
+        self.extractor_version = extractor_version
+        self.source_notes = source_notes
 
     def colectar(self) -> ResultadoColeccionPrecioComercial:
         retrieved_at = self.reloj()
         html = self.downloader.descargar(self.source_url)
         content_hash = hashlib.sha256(html.encode("utf-8")).hexdigest()
         documento = DocumentoRaw(
-            source=SOURCE,
+            source=self.source,
             source_record_id=self.source_url,
             source_url=self.source_url,
             retrieved_at=retrieved_at,
@@ -68,12 +76,12 @@ class ColectorPreciosOSJadetech:
             raw_content=html,
             content_hash=content_hash,
             metadata={
-                "provider_name": PROVIDER,
-                "extractor_version": EXTRACTOR_VERSION,
+                "provider_name": self.provider,
+                "extractor_version": self.extractor_version,
             },
         )
         raw_inserted = self.repositorio.guardar_documento_raw(documento)
-        raw_docs = self.repositorio.listar_documentos_raw(source=SOURCE)
+        raw_docs = self.repositorio.listar_documentos_raw(source=self.source)
         raw_document = next(
             doc
             for doc in raw_docs
@@ -96,7 +104,7 @@ class ColectorPreciosOSJadetech:
                 duplicates += 1
         self.repositorio.guardar_fuente(
             FuenteCandidata(
-                name=PROVIDER,
+                name=self.provider,
                 url=self.source_url,
                 source_type="commercial_price_page",
                 country="AR",
@@ -104,8 +112,8 @@ class ColectorPreciosOSJadetech:
                 acquisition_method="http_html",
                 status="ACTIVE",
                 last_checked_at=retrieved_at,
-                notes="OS installation/formateo without backup collector source",
-                metadata={"extractor_version": EXTRACTOR_VERSION},
+                notes=self.source_notes,
+                metadata={"extractor_version": self.extractor_version},
             )
         )
         return ResultadoColeccionPrecioComercial(
@@ -121,5 +129,5 @@ class ColectorPreciosOSJadetech:
                 1 for obs in observaciones if obs.comparable_status == "INDETERMINATE"
             ),
             rejected=0,
-            providers=(PROVIDER,),
+            providers=(self.provider,),
         )
