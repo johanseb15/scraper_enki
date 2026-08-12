@@ -7,6 +7,7 @@ from src.dominio.oferta import Oferta, PrecioValor
 from src.dominio.servicios import ServicioCanonico
 from src.infraestructura.sqlite.repositorio_sqlite_ofertas import (
     RepositorioSQLiteOfertas,
+    SchemaOfertasIncompatibleError,
 )
 
 
@@ -27,6 +28,22 @@ def _crear_observacion(**cambios) -> Oferta:
         precio_raw="$50.000",
     )
     return replace(oferta, **cambios)
+
+
+def _schema_y_columnas(ruta_db):
+    with sqlite3.connect(ruta_db) as conexion:
+        schema = conexion.execute(
+            """
+            SELECT sql
+            FROM sqlite_master
+            WHERE type = 'table' AND name = 'ofertas'
+            """
+        ).fetchone()[0]
+        columnas = tuple(
+            fila[1]
+            for fila in conexion.execute("PRAGMA table_info(ofertas)")
+        )
+    return schema, columnas
 
 
 def test_repositorio_guarda_oferta_con_empresa_y_servicio(tmp_path):
@@ -189,3 +206,42 @@ def test_repositorio_migra_tabla_legacy_sin_inventar_periodo(tmp_path):
     repo.guardar(recuperada)
 
     assert len(repo.obtener_todas()) == 1
+
+
+def test_repositorio_rechaza_schema_legacy_sin_modificarlo(tmp_path):
+    db_file = tmp_path / "schema_legacy_incompatible.db"
+    with sqlite3.connect(db_file) as conexion:
+        conexion.execute(
+            """
+            CREATE TABLE ofertas (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                titulo TEXT,
+                precio REAL,
+                moneda TEXT,
+                servicio TEXT,
+                proveedor TEXT,
+                url TEXT,
+                provincia TEXT,
+                ciudad TEXT,
+                fecha_relevamiento TEXT
+            )
+            """
+        )
+    schema_antes, columnas_antes = _schema_y_columnas(db_file)
+    error = None
+
+    try:
+        RepositorioSQLiteOfertas(ruta_db=str(db_file))
+    except RuntimeError as excepcion:
+        error = excepcion
+
+    schema_despues, columnas_despues = _schema_y_columnas(db_file)
+
+    assert columnas_despues == columnas_antes
+    assert schema_despues == schema_antes
+    assert isinstance(error, SchemaOfertasIncompatibleError)
+    mensaje = str(error).lower()
+    assert "ofertas" in mensaje
+    assert "schema incompatible" in mensaje
+    assert "no fue modificada" in mensaje
+    assert "nueva base" in mensaje

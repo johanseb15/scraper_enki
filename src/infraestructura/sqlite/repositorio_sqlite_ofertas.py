@@ -7,6 +7,10 @@ from src.dominio.oferta import Oferta, PrecioValor
 from src.dominio.servicios import ServicioCanonico
 
 
+class SchemaOfertasIncompatibleError(RuntimeError):
+    """La tabla ofertas existente no pertenece al contrato actual."""
+
+
 class RepositorioSQLiteOfertas:
     """Persistencia SQLite de la entidad oficial Oferta."""
 
@@ -18,6 +22,15 @@ class RepositorioSQLiteOfertas:
         "precio_raw": "TEXT",
         "periodo": "TEXT",
     }
+    _COLUMNAS_BASE_ACTUALES = {
+        "empresa",
+        "fuente",
+        "servicio",
+        "precio",
+        "moneda",
+        "provincia",
+    }
+    _COLUMNAS_LEGACY = {"titulo", "proveedor", "url"}
     _COLUMNAS_IDENTIDAD = {
         "empresa",
         "fuente",
@@ -50,31 +63,63 @@ class RepositorioSQLiteOfertas:
         conexion.row_factory = sqlite3.Row
         return conexion
 
+    @staticmethod
+    def _tabla_ofertas_existe(conexion: sqlite3.Connection) -> bool:
+        return conexion.execute(
+            """
+            SELECT 1
+            FROM sqlite_master
+            WHERE type = 'table' AND name = 'ofertas'
+            """
+        ).fetchone() is not None
+
+    @classmethod
+    def _validar_schema_existente(cls, columnas: set[str]) -> None:
+        if cls._COLUMNAS_BASE_ACTUALES.issubset(columnas):
+            return
+
+        faltantes = sorted(cls._COLUMNAS_BASE_ACTUALES - columnas)
+        legacy = sorted(cls._COLUMNAS_LEGACY & columnas)
+        raise SchemaOfertasIncompatibleError(
+            "Schema incompatible detectado para la tabla ofertas "
+            f"(faltan columnas base: {', '.join(faltantes)}; "
+            f"columnas legacy: {', '.join(legacy) or 'ninguna'}). "
+            "La base no fue modificada. Use una nueva base runtime o "
+            "migre los datos legacy de forma explicita."
+        )
+
     def _crear_o_migrar_tabla(self) -> None:
         with closing(self._conectar()) as conexion, conexion:
-            conexion.execute(
-                """
-                CREATE TABLE IF NOT EXISTS ofertas (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    empresa TEXT,
-                    fuente TEXT,
-                    servicio TEXT,
-                    precio REAL,
-                    moneda TEXT,
-                    provincia TEXT,
-                    ciudad TEXT,
-                    fecha_relevamiento TEXT,
-                    servicio_raw TEXT,
-                    modalidad TEXT,
-                    precio_raw TEXT,
-                    periodo TEXT
+            if self._tabla_ofertas_existe(conexion):
+                columnas = {
+                    fila["name"]
+                    for fila in conexion.execute("PRAGMA table_info(ofertas)")
+                }
+                self._validar_schema_existente(columnas)
+            else:
+                conexion.execute(
+                    """
+                    CREATE TABLE ofertas (
+                        id INTEGER PRIMARY KEY AUTOINCREMENT,
+                        empresa TEXT,
+                        fuente TEXT,
+                        servicio TEXT,
+                        precio REAL,
+                        moneda TEXT,
+                        provincia TEXT,
+                        ciudad TEXT,
+                        fecha_relevamiento TEXT,
+                        servicio_raw TEXT,
+                        modalidad TEXT,
+                        precio_raw TEXT,
+                        periodo TEXT
+                    )
+                    """
                 )
-                """
-            )
-            columnas = {
-                fila["name"]
-                for fila in conexion.execute("PRAGMA table_info(ofertas)")
-            }
+                columnas = {
+                    fila["name"]
+                    for fila in conexion.execute("PRAGMA table_info(ofertas)")
+                }
             for nombre, tipo in self._COLUMNAS_TRAZABLES.items():
                 if nombre not in columnas:
                     conexion.execute(
