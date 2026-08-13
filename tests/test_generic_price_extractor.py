@@ -235,3 +235,11 @@ def test_contexto_no_es_toda_la_pagina():
     assert "Eliminación de malware" not in (
         primera.economic_object_raw
     )
+
+def test_no_acepta_precio_partido_por_markup_como_escalar_menor():
+    html = '<div class="servicio"><h3>Mantenimiento preventivo</h3><div class="precio"><strong>$45</strong><span>.000</span></div></div>'
+
+    observaciones = _extraer(html)
+
+    assert observaciones == []
+

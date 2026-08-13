@@ -10,7 +10,7 @@ from src.dominio.evidencia import (
 )
 
 
-EXTRACTOR_VERSION = "generic_price_extractor_v2"
+EXTRACTOR_VERSION = "generic_price_extractor_v3"
 
 
 _PRICE_RE = re.compile(
@@ -315,6 +315,36 @@ def _elementos_precio_hoja(
     return candidatos
 
 
+def _es_fragmento_precio_html(
+    elemento: Tag,
+    price_raw: str,
+) -> bool:
+    parent = elemento.parent
+
+    if not isinstance(parent, Tag):
+        return False
+
+    raw_compacto = re.sub(r"\s+", "", price_raw)
+
+    if not raw_compacto:
+        return False
+
+    parent_compacto = re.sub(
+        r"\s+",
+        "",
+        parent.get_text("", strip=True),
+    )
+
+    inicio = parent_compacto.find(raw_compacto)
+
+    if inicio < 0:
+        return False
+
+    resto = parent_compacto[inicio + len(raw_compacto):]
+
+    return bool(re.match(r"^[.,]\d{2,3}(?!\d)", resto))
+
+
 def _source_record_id(
     index: int,
     economic_object_raw: str,
@@ -376,6 +406,12 @@ def extraer_observaciones_precio_genericas(
             continue
 
         price_raw, price_value, currency = parsed
+
+        if _es_fragmento_precio_html(
+            elemento,
+            price_raw,
+        ):
+            continue
 
         economic_object_raw = (
             _contexto_para_precio(

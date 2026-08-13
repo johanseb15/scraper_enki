@@ -42,7 +42,7 @@ class FuentePricing:
     url: str
     province: str
     city: str
-    extractor_version: str = "generic_price_extractor_v2"
+    extractor_version: str = "generic_price_extractor_v3"
 
 
 @dataclass(frozen=True)

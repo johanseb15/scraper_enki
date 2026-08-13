@@ -1,8 +1,44 @@
-source,provider,url,province,city,discovery_status,price_visibility,source_kind,notes
-jadetech_generic,Jadetech,https://jadetech.com.ar/categoria/servicio-tecnico/,Buenos Aires,Buenos Aires,VERIFIED,PRICE_VISIBLE,PROVIDER,Fuente piloto validada en smoke live
-bitz_generic,Bitz,https://bitz.com.ar/tarifas-de-servicio-tecnico,Córdoba,Córdoba,VERIFIED,PRICE_VISIBLE,PROVIDER,Fuente piloto validada en smoke live
-bairescloud_generic,BairesCloud,https://bairescloud.ar/servicio-tecnico.php,Buenos Aires,Buenos Aires,VERIFIED,PRICE_VISIBLE,PROVIDER,Fuente piloto validada en smoke live
-vida_informatica_generic,Vida Informatica,https://vidainformatica.com.ar/listado-de-precios-zona-1/,Córdoba,Córdoba,VERIFIED,PRICE_VISIBLE,PROVIDER,RAW adquirido; extracción genérica puede requerir fallback
-reed_generic,REED Technology,https://www.reed.ar/servicio-tecnico/7137-reparacion-de-pc.html,Córdoba,Córdoba,VERIFIED,PRICE_VISIBLE,PROVIDER,RAW adquirido; extracción genérica puede requerir fallback
-cirowhite_generic,CiroWhite Informática,https://cirowhiteinformatica.com.ar/landing/,Tucumán,San Miguel de Tucumán,VERIFIED,PRICE_VISIBLE,PROVIDER,Fuente piloto validada en smoke live
-dmr_generic,DMR,https://dmrwebdesign.com.ar/mantenimiento.html,Mendoza,Mendoza,VERIFIED,PRICE_VISIBLE,PROVIDER,Fuente piloto validada en smoke live
+﻿source,provider,url,province,city,discovery_status,price_visibility,source_kind,notes
+jadetech_generic,Jadetech,https://jadetech.com.ar/categoria/servicio-tecnico/,CABA,CABA,VERIFIED,PRICE_VISIBLE,PROVIDER,Piloto existente. Geografía corregida a CABA; precios públicos visibles.
+bitz_generic,Bitz,https://bitz.com.ar/tarifas-de-servicio-tecnico,Córdoba,Córdoba,VERIFIED,PRICE_VISIBLE,PROVIDER,Piloto existente; tarifario público.
+bairescloud_generic,BairesCloud,https://bairescloud.ar/servicio-tecnico.php,Buenos Aires,Buenos Aires,VERIFIED,PRICE_VISIBLE,PROVIDER,Piloto existente; conservar hasta auditoría geográfica más granular.
+vida_informatica_generic,Vida Informatica,https://vidainformatica.com.ar/listado-de-precios-zona-1/,Córdoba,Córdoba,VERIFIED,PRICE_VISIBLE,REFERENCE,"Guía de precios, no proveedor independiente. Se conserva pero no entra al batch de proveedores."
+reed_generic,REED Technology,https://www.reed.ar/servicio-tecnico/7137-reparacion-de-pc.html,Córdoba,Córdoba,VERIFIED,PRICE_VISIBLE,PROVIDER,Piloto existente; tarifario público.
+cirowhite_generic,CiroWhite Informática,https://cirowhiteinformatica.com.ar/landing/,Tucumán,San Miguel de Tucumán,VERIFIED,PRICE_VISIBLE,PROVIDER,Piloto existente.
+dmr_generic,DMR,https://dmrwebdesign.com.ar/mantenimiento.html,Mendoza,Mendoza,VERIFIED,PRICE_VISIBLE,PROVIDER,Piloto existente.
+masterfix_caba,MasterFix PC,https://tecnosoluciones.uno/,CABA,CABA,VERIFIED,PRICE_VISIBLE,PROVIDER,"Precios de referencia visibles para diagnóstico, limpieza, formateo y combo."
+reparacionespc_caba,Reparaciones PC,https://www.reparacionespc.com.ar/blog-cuanto-cuesta-reparar.html,CABA,CABA,VERIFIED,PRICE_VISIBLE,PROVIDER,Precios orientativos julio 2026 visibles.
+cyclon_hardin_caba,Cyclon Hardin,https://cyclonhardin.com.ar/servicios,CABA,CABA,VERIFIED,PRICE_VISIBLE,PROVIDER,Catálogo con precios desde; Microcentro CABA.
+pclaf_caba,PCLAF,https://www.pclaf.com.ar/,CABA,CABA,VERIFIED,PRICE_VISIBLE,PROVIDER,Servicios con precios desde; Floresta/Flores.
+mb_soluciones_caba,MB Soluciones,https://www.mataderosbarrial.com.ar/mb-soluciones.php,CABA,Mataderos,VERIFIED,PRICE_VISIBLE,PROVIDER,Precios orientativos visibles para informática.
+pcdoctor_caba,PC Doctor,https://pcdoctor.com.ar/precios/,CABA,CABA,VERIFIED,PRICE_VISIBLE,PROVIDER,Lista de precios visible; Fragata P. Sarmiento 1682.
+teracomp_caba,TeraComp,https://www.teracomp.com.ar/index.php/reparaciones_tarifas,CABA,Villa Urquiza,VERIFIED,PRICE_VISIBLE,PROVIDER,Tarifas públicas de reparación y reinstalación de SO.
+taja_service_caba,Taja Service,https://www.reparacionesdecomputadoras.com.ar/,CABA,CABA,VERIFIED,PRICE_VISIBLE,PROVIDER,Precio desde visible; revisar frescura antes de comparabilidad.
+beyond_caba,Beyond,https://www.beyond.com.ar/,CABA,Villa Urquiza,VERIFIED,NO_PRICE_VISIBLE,PROVIDER,Proveedor real verificado; la página indexada anuncia opciones/precios pero no expone importe en texto adquirido.
+mariopc_ba,Mario PC,https://www.mariopc.com.ar/,Buenos Aires,Olivos,VERIFIED,PRICE_VISIBLE,PROVIDER,Precios desde visibles; Olivos/La Lucila/Vicente López.
+informatica_del_plata_ba,Informática del Plata,https://informaticadelplata.com.ar/,Buenos Aires,La Plata,VERIFIED,PRICE_VISIBLE,PROVIDER,Tarifario público en ARS; La Plata.
+obelisco_digital_ba,Obelisco Digital,https://obeliscodigital.com.ar/obelisco/servicio-tecnico/,Buenos Aires,La Plata,VERIFIED,PRICE_VISIBLE,PROVIDER,Lista de precios visible pero declara validez hasta 30/08/2025; conservar con alerta de frescura.
+pcserviciotecnico_bahia_ba,PC Servicio Técnico,https://www.pcserviciotecnico.com/precios,Buenos Aires,Bahía Blanca,VERIFIED,PRICE_VISIBLE,PROVIDER,Precios visibles de mantenimiento/reinstalación.
+servipc_bahia_ba,ServiPC Bahía,https://www.servipc.com.ar/,Buenos Aires,Bahía Blanca,VERIFIED,PRICE_VISIBLE,PROVIDER,Tickets de soporte con ARS/USD publicados.
+bbrdigital_bahia_ba,BBR Digital,https://bbrdigital.com.ar/servicio-tecnico-notebooks/,Buenos Aires,Bahía Blanca,VERIFIED,NO_PRICE_VISIBLE,PROVIDER,Servicio real y ubicación verificada; presupuesto previo sin importe público en página.
+emilioinformatica_laplata_ba,Emilio Informática,https://emilioinformatica.com.ar/,Buenos Aires,La Plata,VERIFIED,NO_PRICE_VISIBLE,PROVIDER,Servicio técnico real; sin importe público observado.
+computallerpc_ba,CompuTallerPC,https://computallerpc.com.ar/,Buenos Aires,Vicente López,VERIFIED,NO_PRICE_VISIBLE,PROVIDER,Proveedor real Zona Norte/CABA; paquetes visibles sin importes en texto indexado.
+mobo_mdp_ba,Mobo MDP,https://mobo.com.ar/,Buenos Aires,Mar del Plata,VERIFIED,PRICE_VISIBLE,PROVIDER,Hardware/PCs armadas con precio público; servicio técnico también ofrecido. Útil para rama hardware.
+newcomputers_bahia_ba,NewComputers,https://web.newcomputers.com.ar/servicios/servicio-tecnico-x-hora-id-6363,Buenos Aires,Bahía Blanca,VERIFIED,PRICE_VISIBLE,PROVIDER,Página de servicio visible; precio principal $0/agotado y relacionados con importes. Requiere quality flag.
+cisled_cordoba,CISLED Computación,https://cisled.online/,Córdoba,Córdoba,VERIFIED,PRICE_VISIBLE,PROVIDER,"Precios referenciales visibles para SO, mantenimiento y upgrade."
+tecnico_eliseo_cordoba,Servicio Técnico Informático Eliseo Fernández,https://tecnicoeliseo.webnode.com.ar/tarifas/,Córdoba,Córdoba,VERIFIED,PRICE_VISIBLE,PROVIDER,Tarifario público desde noviembre 2025.
+miservice_cordoba,MiService,https://www.miservicear.com/tabla-de-precios-1,Córdoba,Córdoba,VERIFIED,PRICE_VISIBLE,PROVIDER,Tabla pública de formateo/backup/optimización.
+gorilagames_cordoba,Gorila Games,https://gorilagames.com/164894-servicio-de-limpieza-pc,Córdoba,Córdoba,VERIFIED,PRICE_VISIBLE,PROVIDER,"Servicios de limpieza, SO, armado, BIOS y diagnóstico con precios."
+spacegamer_cordoba,Space Gamer,https://spacegamer.com.ar/437066-service-y-mantenimiento-y-limpieza-de-pc,Córdoba,Córdoba,VERIFIED,PRICE_VISIBLE,PROVIDER,Servicios de mantenimiento/armado con precios visibles.
+tecnicopc_alta_cordoba,técnicoPC Alta Córdoba,https://tecnicopc.site123.me/,Córdoba,Córdoba,VERIFIED,PRICE_VISIBLE,PROVIDER,Precios orientativos visibles; Alta Córdoba/Cofico.
+redmatica_cordoba,Red-Matica,https://red-matica.com/,Córdoba,Córdoba,VERIFIED,PRICE_VISIBLE,PROVIDER,Servicio a domicilio/reparación con precios desde.
+compustark_santafe,Compustark,https://www.compustark.com.ar/,Santa Fe,Santa Fe,VERIFIED,PRICE_VISIBLE,PROVIDER,"Tarifas públicas de limpieza, reinstalación y reparación."
+hashtech_roldan_sf,HashTech.arg,https://hashtecharg.wordpress.com/,Santa Fe,Roldán,VERIFIED,PRICE_VISIBLE,PROVIDER,Planes de soporte con precio por cantidad de equipos.
+rey_clon_casilda_sf,Rey Clon Computadoras,https://reyclon.com.ar/index.php?pagina=lista&sec=28,Santa Fe,Casilda,VERIFIED,PRICE_VISIBLE,PROVIDER,Listado público de servicios y precios.
+canjepc_rosario_sf,Canje PC,https://canjepc2.mitiendanube.com/,Santa Fe,Rosario,VERIFIED,PRICE_VISIBLE,PROVIDER,Formateo publicado a precio visible; también hardware.
+serviceinformatico_rosario_sf,ServiceInformatico,https://serviceinformatico.com/producto/windows-10-11-pro/,Santa Fe,Rosario,VERIFIED,PRICE_VISIBLE,PROVIDER,Servicios/software con precios publicados; revisar frescura y naturaleza licencia+instalación.
+xtcomputacion_rosario_sf,XT Computación,https://xtcomputacion.com/,Santa Fe,Rosario,VERIFIED,NO_PRICE_VISIBLE,PROVIDER,Servicios reales; precios figuran como Consultar.
+rampc_rosario_sf,RAMPC Rosario,https://rampcrosario.com/servicios/,Santa Fe,Rosario,VERIFIED,NO_PRICE_VISIBLE,PROVIDER,Servicios reales; sin importe público observado.
+serfatytech_santafe,SerfatyTech,https://serfatytech.vercel.app/,Santa Fe,Santa Fe,VERIFIED,NO_PRICE_VISIBLE,PROVIDER,Servicio real; sin importe público observado en página indexada.
+solutech_santafe,Solutech Santa Fe,https://www.solutech.com.ar/servicio-tecnico,Santa Fe,Santa Fe,VERIFIED,NO_PRICE_VISIBLE,PROVIDER,Servicio técnico real; sin tarifa pública observada.
+clustertechnology_villaconstitucion_sf,Cluster Technology,https://www.clustertechnology.com.ar/,Santa Fe,Villa Constitución,VERIFIED,NO_PRICE_VISIBLE,PROVIDER,Servicio técnico real; sin importe público observado.
