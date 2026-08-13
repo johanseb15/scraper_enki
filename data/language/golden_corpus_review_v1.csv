@@ -1,0 +1,41 @@
+﻿id,review_status,review_notes
+g001,EXPECTED_CORRECT,Core local BUY evaluation; currency/province/service are explicit or safely derived.
+g002,EXPECTED_CORRECT,Same canonical maintenance family; province is correctly required before local pricing.
+g003,NEEDS_IMPROVEMENT,'cuanto se esta cobrando la hora' should resolve MARKET_REFERENCE; current intent grammar is too narrow.
+g004,EXPECTED_CORRECT,BUY + explicit price is enough for EVALUATE even if colloquial judgment phrase is unsupported.
+g005,EXPECTED_CORRECT,Repair action dominates hardware-product reading; Rosario→Santa Fe inference is valid.
+g006,EXPECTED_CORRECT,SELL suggestion + WEB_LANDING + remote-national is target behavior.
+g007,NEEDS_IMPROVEMENT,'me dijeron ... te parece bien' should resolve BUY/EVALUATE; current BUY/EVAL phrase coverage is incomplete.
+g008,NEEDS_IMPROVEMENT,'cuanto estan cobrando' should resolve MARKET_REFERENCE; current tense variation is unsupported.
+g009,EXPECTED_CORRECT,Transportable SSD query belongs GOODS; used condition should be preserved.
+g010,NEEDS_IMPROVEMENT,'cambiar un teclado' should resolve REPARACION_HARDWARE and parts-scope clarification.
+g011,NEEDS_IMPROVEMENT,Wi-Fi repair/configuration needs a connectivity/network canonical family or explicit UNKNOWN-with-domain classification.
+g012,KNOWN_LIMITATION,Structured cabling/network installation is outside current canonical dictionary; keep UNKNOWN until taxonomy decision.
+g013,NEEDS_IMPROVEMENT,Router configuration + 'ir a mi casa' should resolve network service and ONSITE modality.
+g014,NEEDS_IMPROVEMENT,'quiero vender' should set SELL side and likely SUGGEST/MARKET_REFERENCE semantics for hardware.
+g015,KNOWN_LIMITATION,WhatsApp Web/email setup is not represented in current canonical service dictionary.
+g016,NEEDS_IMPROVEMENT,A quoted complete PC should classify as HARDWARE/GOODS even without new/used keywords.
+g017,NEEDS_IMPROVEMENT,'hora de desarrollo Fullstack Node/React' should resolve DESARROLLO_SOFTWARE_HORA.
+g018,EXPECTED_CORRECT,Landing page maps cleanly to remote-national digital service.
+g019,EXPECTED_CORRECT,Camera installation maps to local CCTV labor family.
+g020,NEEDS_IMPROVEMENT,Critical: '45 días' must NOT be parsed as a price. Naked-number extraction needs context guards.
+g021,NEEDS_IMPROVEMENT,Argentine 'capital' is commonly CABA in this context but should be an alias with explicit inference provenance.
+g022,EXPECTED_CORRECT,Remote monthly support should preserve PER_MONTH and ARS.
+g023,EXPECTED_CORRECT,Range + recovery-data semantics are structurally correct.
+g024,EXPECTED_CORRECT,1.2 palos normalization and NEW hardware are correct.
+g025,NEEDS_IMPROVEMENT,'cambio de fuente' should resolve hardware repair/replacement and ask whether part is included.
+g026,EXPECTED_CORRECT,"Explicit domicilio + Zona Oeste correctly imply ONSITE, Buenos Aires local market."
+g027,NEEDS_IMPROVEMENT,USD amount with 'mensual' must be PER_MONTH; cadence extraction currently depends on ARS branch.
+g028,EXPECTED_CORRECT,Bare 'service' must remain ambiguous and require clarification.
+g029,EXPECTED_CORRECT,Formateo + Mendoza is a clean local reference query.
+g030,EXPECTED_CORRECT,Naked 80 preserves UNKNOWN currency and requires clarification.
+g031,EXPECTED_CORRECT,Backup is distinct from data recovery; bundle must remain composite.
+g032,EXPECTED_CORRECT,Screen replacement requires parts-scope clarification.
+g033,EXPECTED_CORRECT,Explicit labor-only scope must suppress parts inclusion ambiguity.
+g034,EXPECTED_CORRECT,"New RTX 4060 is GOODS, not province-bound service."
+g035,EXPECTED_CORRECT,Explicit workshop modality is preserved.
+g036,NEEDS_IMPROVEMENT,"VISITA_TECNICA_DOMICILIO should behave as modality/scope when another concrete service exists, not create a bundle."
+g037,EXPECTED_CORRECT,No modality language means modality UNKNOWN.
+g038,EXPECTED_CORRECT,Remote support + per-hour cadence is target behavior.
+g039,EXPECTED_CORRECT,Bare 'service' stays UNKNOWN even with province present.
+g040,EXPECTED_CORRECT,Repastear is a valid alias for LIMPIEZA_MANTENIMIENTO.
