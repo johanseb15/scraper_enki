@@ -1,0 +1,40 @@
+{"id": "g001", "query_raw": "me quieren cobrar 80 lucas por formatear la notebook en Córdoba, está bien?", "language_evidence_type": "SYNTHETIC_DEEPSEEK"}
+{"id": "g002", "query_raw": "quiero cobrar 60 lucas por limpiar notebook y cambiar pasta, está bien o me bajo?", "language_evidence_type": "SYNTHETIC_GROK"}
+{"id": "g003", "query_raw": "soporte remoto cuanto se esta cobrando la hora", "language_evidence_type": "SYNTHETIC_GROK"}
+{"id": "g004", "query_raw": "me quieren cobrar un palo por recuperar datos de un ssd, me estan cagando?", "language_evidence_type": "SYNTHETIC_GROK"}
+{"id": "g005", "query_raw": "en rosario cuanto sale reparar una placa de video", "language_evidence_type": "SYNTHETIC_GROK"}
+{"id": "g006", "query_raw": "cuanto deberia cobrar por hacer una landing page simple", "language_evidence_type": "SYNTHETIC_GROK"}
+{"id": "g007", "query_raw": "me dijeron 110 lucas por un formateo con backup, te parece bien?", "language_evidence_type": "SYNTHETIC_GROK"}
+{"id": "g008", "query_raw": "en la plata cuanto estan cobrando el formateo de notebook", "language_evidence_type": "SYNTHETIC_GROK"}
+{"id": "g009", "query_raw": "cuanto sale mas o menos un ssd 1tb usado", "language_evidence_type": "SYNTHETIC_GROK"}
+{"id": "g010", "query_raw": "me quieren cobrar 50 lucas por cambiar un teclado de notebook, está bien?", "language_evidence_type": "SYNTHETIC_GROK"}
+{"id": "g011", "query_raw": "me quieren cobrar $60.000 por arreglar el Wi-Fi de mi notebook", "language_evidence_type": "SYNTHETIC_GEMINI"}
+{"id": "g012", "query_raw": "cuánto cuesta aproximadamente hacer el cableado estructurado Cat6 para 15 puestos", "language_evidence_type": "SYNTHETIC_GEMINI"}
+{"id": "g013", "query_raw": "me piden $40.000 por ir a mi casa a configurarme el router", "language_evidence_type": "SYNTHETIC_GEMINI"}
+{"id": "g014", "query_raw": "quiero vender mi notebook usada", "language_evidence_type": "SYNTHETIC_GEMINI"}
+{"id": "g015", "query_raw": "me cobran $25.000 por reinstalar el WhatsApp Web y configurar el correo en mi compu", "language_evidence_type": "SYNTHETIC_GEMINI"}
+{"id": "g016", "query_raw": "me cotizaron $950.000 una PC para diseño gráfico", "language_evidence_type": "SYNTHETIC_GEMINI"}
+{"id": "g017", "query_raw": "cuánto se está cobrando la hora de desarrollo Fullstack Node/React?", "language_evidence_type": "SYNTHETIC_GEMINI"}
+{"id": "g018", "query_raw": "me piden hacer una Landing Page sencilla en Next.js", "language_evidence_type": "SYNTHETIC_GEMINI"}
+{"id": "g019", "query_raw": "me piden 150.000 por instalar 4 cámaras IP", "language_evidence_type": "SYNTHETIC_GEMINI"}
+{"id": "g020", "query_raw": "tengo un precio de un disco SSD de hace 45 días", "language_evidence_type": "SYNTHETIC_GEMINI"}
+{"id": "g021", "query_raw": "20k por limpieza de pc en capital, es mucho?", "language_evidence_type": "SYNTHETIC_DEEPSEEK"}
+{"id": "g022", "query_raw": "me ofrecieron soporte remoto por 50 lucas al mes", "language_evidence_type": "SYNTHETIC_DEEPSEEK"}
+{"id": "g023", "query_raw": "entre 150 y 200 mil por recuperar datos de un disco", "language_evidence_type": "SYNTHETIC_DEEPSEEK"}
+{"id": "g024", "query_raw": "1.2 palos por la notebook nueva con 32gb", "language_evidence_type": "SYNTHETIC_DEEPSEEK"}
+{"id": "g025", "query_raw": "60k por el cambio de fuente, está bien?", "language_evidence_type": "SYNTHETIC_DEEPSEEK"}
+{"id": "g026", "query_raw": "cuánto cobra un técnico por ir a domicilio en zona oeste?", "language_evidence_type": "SYNTHETIC_DEEPSEEK"}
+{"id": "g027", "query_raw": "80 dólares por el soporte remoto mensual, es lógico?", "language_evidence_type": "SYNTHETIC_DEEPSEEK"}
+{"id": "g028", "query_raw": "service de notebook en Moreno, cuánto cobran?", "language_evidence_type": "SYNTHETIC_DEEPSEEK"}
+{"id": "g029", "query_raw": "cuánto sale formatear una notebook en Mendoza?", "language_evidence_type": "SYNTHETIC_DEEPSEEK"}
+{"id": "g030", "query_raw": "80 por formatear en Córdoba está bien?", "language_evidence_type": "CURATED_ENKI"}
+{"id": "g031", "query_raw": "formateo con respaldo en Córdoba", "language_evidence_type": "CURATED_ENKI"}
+{"id": "g032", "query_raw": "me cobran 95 lucas por cambio de pantalla en CABA", "language_evidence_type": "CURATED_ENKI"}
+{"id": "g033", "query_raw": "me cobran 50 lucas solo mano de obra por cambio de pantalla en CABA", "language_evidence_type": "CURATED_ENKI"}
+{"id": "g034", "query_raw": "cuánto sale una RTX 4060 nueva?", "language_evidence_type": "CURATED_ENKI"}
+{"id": "g035", "query_raw": "cuánto sale formatear en taller en Córdoba?", "language_evidence_type": "CURATED_ENKI"}
+{"id": "g036", "query_raw": "cuánto sale formatear a domicilio en Córdoba?", "language_evidence_type": "CURATED_ENKI"}
+{"id": "g037", "query_raw": "cuánto sale formatear en Córdoba?", "language_evidence_type": "CURATED_ENKI"}
+{"id": "g038", "query_raw": "35 lucas por hora de soporte remoto", "language_evidence_type": "CURATED_ENKI"}
+{"id": "g039", "query_raw": "cuánto sale el service en CABA?", "language_evidence_type": "RESEARCH_CANDIDATE"}
+{"id": "g040", "query_raw": "cuánto sale repastear una notebook en CABA?", "language_evidence_type": "RESEARCH_CANDIDATE"}
