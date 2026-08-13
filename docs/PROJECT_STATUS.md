@@ -1,51 +1,256 @@
 # Enki Project Status
 
-Este documento captura el estado estable del proyecto despues de la reorganizacion Sprint 0. La fuente estrategica superior sigue siendo `README.md`; este archivo resume conocimiento operativo y de research que no debe depender de `.tmp_analysis/`.
+Este documento captura el estado operativo actual de Enki antes de iniciar la expansión nacional de fuentes comerciales. `README.md` sigue siendo la fuente estratégica superior; este archivo resume el baseline técnico, las capacidades validadas, los activos de datos y el punto exacto del MVP.
 
-## 1. Donde esta el proyecto hoy
+## 1. Producto y norte
 
-Enki esta enfocado en reducir incertidumbre economica al comprar, vender o contratar tecnologia. El producto principal es **Enki Decision**: ayudar a responder cuanto cobrar o pagar por trabajos tecnologicos, servicios, productos y hardware.
+Enki reduce la incertidumbre económica al comprar, vender o contratar tecnología.
 
-El cuello de botella actual es **Economic Evidence Acquisition**: encontrar observaciones economicas reales, trazables y comparables. El corpus de procurement sirve para lenguaje, demanda y contexto, pero no reemplaza evidencia comercial comparable.
+Producto principal:
 
-## 2. Baseline tecnico validado
+> **Enki Decision** — responder: “Voy a cobrar/pagar X por Y. ¿Está bajo, razonable o alto?”
+
+Jerarquía:
+
+1. Enki Decision — prioridad del MVP.
+2. Enki Market — inteligencia de mercado sobre el mismo corpus.
+3. Enki Data — posible API/datasets/integraciones futuras.
+
+Pregunta de control de cada sprint:
+
+> **¿Este trabajo aumenta nuestra capacidad de decir cuánto cobrar o cuánto pagar por algo tecnológico real?**
+
+## 2. Punto actual del MVP
+
+Estimación funcional de producto:
+
+```text
+Producto / norte             100%
+Arquitectura                  90%
+Persistencia / raw            90%
+Adquisición                   80%
+Cobertura de fuentes          20%
+Normalización                 40%
+Comparabilidad                30%
+Pricing engine                20%
+API Decision                  10%
+UX final                      10%
+
+MVP funcional aproximado: 50–55%
+```
+
+La estimación mide capacidad de entregar valor al usuario, no cantidad de código.
+
+## 3. Baseline técnico validado
 
 FACT:
 
 ```text
 branch: main
-baseline reorganizacion: 4f648323d15b0e3a7a840a16548668fa350f15de
-backend: 252 tests GREEN
-frontend: lint GREEN
-frontend: 9 tests GREEN
-frontend: build GREEN
+HEAD: 3b127d40a08f627aa25883bc4fc388b150427ed5
+commit: feat(pricing): add generic batch acquisition engine
+backend: 288 tests GREEN
+warnings: 1 StarletteDeprecationWarning
+failures: 0
 ```
 
-## 3. Capacidades validadas
+## 4. Arquitectura activa
 
-FACT:
+### A. Commercial Pricing Pipeline
 
-- Pipeline comercial con `Scraper -> Parser -> OfertaDTO -> Procesador -> Normalizadores -> OfertaFactory -> Dominio -> Repositorio -> SQLite`.
-- Persistencia comercial idempotente.
-- `PrecioValor` preserva valor, moneda y periodo.
-- `Oferta.precio` usa el contrato de dominio economico correcto.
-- Repositorios SQLite rechazan schemas legacy incompatibles antes de mutar datos.
-- Pipeline de raw/evidence preserva documentos y observaciones tipadas sin convertir todo en `Oferta`.
-- Frontend actual valida el flujo modular de decision con 9 tests.
+```text
+Scraper -> Parser -> OfertaDTO -> Procesador -> Normalizadores -> OfertaFactory -> Dominio -> Repositorio -> SQLite
+```
 
-## 4. Dataset local disponible
+### B. Raw / Evidence Pipeline
 
-FACT:
+```text
+Fuente -> Documento RAW -> Hash / provenance -> Extracción -> Observación tipada -> SQLite
+```
 
-El principal data asset local es:
+> **RAW = verdad original. Extracción = interpretación.**
+
+### C. Procurement / Market Intelligence
+
+```text
+Datasets / documentos públicos -> RAW -> observaciones de mercado -> análisis
+```
+
+Procurement se usa para lenguaje, demanda, proveedores y contexto. No se convierte automáticamente en precio comercial comparable.
+
+> **Not everything is an Oferta.**
+
+## 5. Motor de adquisición masiva
+
+Estado: VALIDADO EN INTERNET REAL.
+
+Componentes actuales:
+
+```text
+data/pricing_sources.csv
+scripts/collect_pricing_sources.py
+src/aplicacion/colector_precios_batch.py
+src/aplicacion/pricing_source_registry.py
+src/infraestructura/scrapers/generic_price_extractor.py
+```
+
+Flujo:
+
+```text
+Source Registry
+-> Batch Collector
+-> Downloader HTTP
+-> RAW preservation
+-> Generic Price Extractor v2
+-> Commercial Price Observation
+-> SQLite
+```
+
+Regla de escala: no escribir un scraper específico por cada fuente.
+
+## 6. Smoke real del Generic Extractor v2
+
+Primera ejecución:
+
+```text
+Sources attempted:       7
+Sources succeeded:       7
+Sources failed:          0
+Raw docs acquired:       7
+Raw docs duplicate:      0
+Observations extracted:  112
+Observations duplicate:  0
+Exact prices detected:   112
+```
+
+Segunda ejecución:
+
+```text
+Sources attempted:       7
+Sources succeeded:       7
+Sources failed:          0
+Raw docs acquired:       1
+Raw docs duplicate:      6
+Observations extracted:  0
+Observations duplicate:  112
+Exact prices detected:   112
+```
+
+Interpretación:
+
+- adquisición HTTP funcional;
+- cambios web generan RAW nuevo;
+- no se fabrican nuevas observaciones económicas si la economía no cambia;
+- idempotencia económica verificada en condiciones reales.
+
+## 7. Source Registry actual
+
+Fuentes iniciales:
+
+```text
+Jadetech
+Bitz
+BairesCloud
+Vida Informatica
+REED Technology
+CiroWhite Informatica
+DMR
+```
+
+Cobertura inicial:
+
+```text
+Buenos Aires
+Córdoba
+Tucumán
+Mendoza
+```
+
+Objetivo:
+
+```text
+24 jurisdicciones argentinas
+x
+mínimo 10 candidatos por jurisdicción
+=
+>= 240 fuentes candidatas
+```
+
+Los 240 son candidatos de discovery/acquisition; no se asume que todos tengan precio público ni que todos sean comparables.
+
+## 8. Embudo de adquisición
+
+```text
+DISCOVERED
+-> VERIFIED
+-> ACQUISITION_ATTEMPTED
+-> RAW_ACQUIRED
+-> PRICE_DETECTED
+-> ECONOMIC_OBSERVATION
+-> QUALITY_ACCEPTED
+-> COMPARABLE
+```
+
+No fijar por anticipado una tasa esperada de conversión.
+
+> **If it is not exported, traceable and importable, it does not count.**
+
+## 9. Generic Price Extractor v2
+
+Responsabilidad actual:
+
+```text
+source
+provider_raw
+source_url
+retrieved_at
+economic_object_raw
+price_raw
+price_value
+currency_raw
+raw_document_id
+extractor_version
+```
+
+No debe inventar semántica.
+
+Ejemplos reales:
+
+```text
+$ 42.120,00 -> 42120 ARS
+$40,000     -> 40000 ARS
+$110,000    -> 110000 ARS
+```
+
+Valores sospechosos publicados por la fuente se preservan; quality/outlier detection pertenece a una capa posterior.
+
+## 10. Scrapers específicos existentes
+
+Se preserva trabajo anterior sobre:
+
+```text
+Jadetech
+Bitz
+BairesCloud
+Vida Informatica
+CiroWhite
+DMR
+REED
+Venex
+CompraGamer
+```
+
+Rol futuro: fallback/override cuando la extracción genérica no alcance.
+
+## 11. Dataset Argentina Procurement
+
+Activo local reproducible:
 
 ```text
 enki_argentina_procurement_sprint4.db
 ```
 
-No se versiona en Git y debe preservarse como activo local reproducible desde fuentes oficiales.
-
-Counts validados:
+Counts históricos validados:
 
 | Recurso | Filas aceptadas |
 |---|---:|
@@ -55,133 +260,279 @@ Counts validados:
 | SIPRO | 73785 |
 | **Total** | **620777** |
 
-Ademas:
+Además:
 
 - 621462 filas examinadas.
-- 685 filas SIPRO rechazadas por falta de identidad estable.
-- 4 raw documents oficiales preservados.
+- 685 SIPRO rechazadas por falta de identidad estable.
+- 4 documentos raw oficiales preservados.
 - 181568107 bytes raw.
-- Integridad de hashes raw sin mismatches en la reconstruccion validada.
+- 14941 adjudicaciones con `INFORMATICA;`.
+- 5190 procesos únicos.
+- join Adjudicaciones -> Convocatorias: 14941/14941.
 
-## 5. Universo tecnologico Argentina procurement
+## 12. Rol actual de Procurement
 
-FACT:
+Sirve para lenguaje, vocabulario, demanda, categorías, proveedores y contexto contractual.
 
-- 14941 adjudicaciones contienen el token exacto `INFORMATICA;`.
-- Esas adjudicaciones corresponden a 5190 procesos unicos.
-- El join deterministico `Adjudicaciones.Numero_Proceso` con `Convocatorias.Numero_Proceso` cubrio 14941/14941 casos.
-- `Nombre_del_Proceso` estuvo presente en 14941 casos.
-- `Objeto_del_Proceso` estuvo presente en 14940 casos.
+No ha demostrado ser fuente suficiente de precios comparables de servicios.
 
-## 6. Que aprendimos
+> **El corpus enseña el lenguaje; la evidencia comparable enseña el precio.**
 
-FACT:
+## 13. Human Language Evidence
 
-El corpus tecnologico de procurement es util para:
+Research paralelo útil para normalización futura, vocabulario espontáneo, intención de compra/venta y scopes.
 
-- lenguaje de mercado;
-- vocabulario real;
-- demanda observada;
-- compradores y proveedores;
-- contexto contractual;
-- descubrimiento de objetos economicos candidatos.
+No bloquea Mass Acquisition.
 
-FACT:
+Cualquier dataset debe ser exportable, traceable e importable antes de contarse como activo.
 
-La shortlist observada de lenguaje pricing-first fue:
+## 14. Normalización
 
-Servicios:
+Hay normalizadores existentes para servicios, precios, empresas y ubicaciones.
 
-- Instalacion
-- Configuracion
-- Reparacion
-- Soporte tecnico
-
-Productos:
-
-- Monitores
-- Notebooks
-- Impresoras
-- Cartuchos de toner
-- Switches
-- Routers
-
-FACT:
-
-El analisis temporal de observaciones con formas explicitas de instalacion uso 276 registros y produjo esta distribucion:
-
-| Clasificacion analitica | Registros |
-|---|---:|
-| PRODUCT_PLUS_INSTALLATION | 159 |
-| PROJECT_OR_SOLUTION | 81 |
-| UNKNOWN | 29 |
-| LABOR_DOMINANT | 7 |
-
-FACT:
-
-Bajo ese analisis, `instalacion` aparece mayormente como componente de compras con bienes/materiales o proyectos mas amplios, no como servicio laboral puro.
-
-ANALYTIC_INFERENCE:
-
-Procurement probablemente no sea suficiente como fuente primaria para pricing comparable de servicios. Puede orientar lenguaje y targets, pero la evidencia de precios debe buscarse en fuentes comerciales reales.
-
-ANALYTIC_INFERENCE:
-
-Seguir clasificando procurement no es la prioridad inmediata si la pregunta de producto es cuanto cobrar o pagar. La siguiente incertidumbre debe reducir el riesgo de adquisicion economica comparable.
-
-## 7. Que no esta resuelto todavia
-
-FACT:
-
-No existe todavia un pipeline productivo completo de pricing internacional.
-
-FACT:
-
-No existe todavia un pricing engine final que produzca rangos confiables para usuarios finales.
-
-FACT:
-
-No existe todavia una taxonomia productiva definitiva para todos los servicios y productos tecnologicos.
-
-FACT:
-
-No se valido aun que los primeros objetos candidatos tengan suficiente precio publico comercial comparable.
-
-TEMPORARY_HYPOTHESIS:
-
-Algunos targets derivados de procurement, como instalacion de UPS, camaras de seguridad, red WiFi, switches o telefonos IP, pueden servir como candidatos para investigacion comercial. Esa hipotesis requiere validacion con fuentes comerciales reales antes de convertirse en producto.
-
-## 8. Cuello de botella actual
-
-FACT:
-
-El cuello de botella actual es **Economic Evidence Acquisition**.
-
-El problema no es acumular mas scraping ni mas filas. El problema es conseguir observaciones con:
+No representan todavía la taxonomía definitiva de Enki.
 
 ```text
-source_url
-provider
-retrieved_at
-economic_object
-price_raw
-currency
-pricing_unit
-scope
-location
+adquirir corpus real
+-> observar lenguaje de mercado
+-> derivar objetos canónicos
+-> conservar raw + canonical
+```
+
+## 15. Comparabilidad
+
+Estado: PARCIAL / NO CERRADO.
+
+La comparabilidad futura debe considerar dimensiones como:
+
+```text
+objeto
+dispositivo
+sistema operativo
+backup
+drivers
+programas
+licencia
+modalidad
+ubicación
 included/excluded semantics
 ```
 
-## 9. Siguiente incertidumbre de producto
+## 16. Pricing Engine
 
-La siguiente incertidumbre debe ser:
+Estado: NO CERRADO PARA MVP.
 
-> Que objeto economico tecnologico tiene suficiente evidencia comercial publica, trazable y comparable para sostener una primera respuesta de Enki Decision?
+Debe producir:
 
-La investigacion debe medir evidencia adquirible, no intuicion de categoria ni frecuencia en procurement.
+```text
+rango observado
+mediana
+dispersión
+N observaciones
+N proveedores
+geografía
+frescura
+fuentes
+confidence
+```
 
-## 10. Estado de research temporal
+y finalmente clasificar:
 
-`.tmp_analysis/` fue usado como scratchpad local para radiografias, JSONL y rankings. Los hallazgos estables fueron promovidos aqui de forma resumida y rotulada como FACT, ANALYTIC_INFERENCE o TEMPORARY_HYPOTHESIS.
+```text
+LOW
+REASONABLE
+HIGH
+```
 
-Los JSONL, rankings largos y reportes intermedios no son producto ni fuente operacional. Deben regenerarse cuando haga falta desde DBs y scripts/metodologia vigentes, no depender de ellos como documentacion estable.
+## 17. API Decision
+
+Todavía no existe el endpoint final.
+
+Objetivo conceptual:
+
+```text
+POST /decision
+```
+
+Entrada: descripción, precio, moneda, ubicación.
+
+Salida: decisión, rango, mediana, muestra, proveedores, confidence, fuentes y explicación.
+
+## 18. Frontend
+
+Existe frontend modular, pero no es cuello de botella actual.
+
+La UX MVP debe ser simple:
+
+```text
+describir qué se quiere evaluar
++ precio
++ ubicación
+-> analizar
+-> resultado
+-> evidencia
+```
+
+## 19. Testing
+
+Baseline:
+
+```text
+288 passed
+1 warning
+0 failed
+```
+
+Metodología:
+
+> **RED -> GREEN -> REFACTOR**
+
+## 20. Guardarrails activos
+
+> DATA FIRST.
+
+> Raw first.
+
+> The source is truth; extraction is interpretation.
+
+> Preserve provenance.
+
+> Evidence types stay separate.
+
+> Imports must be idempotent.
+
+> Data quality > volume.
+
+> Comparability > scraping.
+
+> Preserve raw + canonical.
+
+> No semantic invention.
+
+Adquisición:
+
+```text
+official API
+-> official feed/dataset
+-> HTTP
+-> structured page
+-> browser
+-> BLOCKED
+```
+
+Nunca anti-bot bypass, CAPTCHA solving, stealth evasion, proxies para eludir protecciones ni datos inventados.
+
+## 21. Roadmap congelado hacia MVP
+
+```text
+FASE 1 — MASS ACQUISITION
+  >=240 candidatos
+  24 jurisdicciones
+  corpus nacional
+
+FASE 2 — CORPUS AUDIT
+  fuentes
+  proveedores
+  objetos
+  precios
+  ruido
+  calidad
+
+FASE 3 — LANGUAGE NORMALIZATION
+  raw -> canonical
+
+FASE 4 — COMPARABILITY
+  scopes comparables
+  cohortes
+
+FASE 5 — PRICING ENGINE
+  rango
+  mediana
+  muestra
+  confidence
+
+FASE 6 — ENKI DECISION
+  X por Y -> LOW / REASONABLE / HIGH
+
+FASE 7 — MVP UI
+  input simple
+  resultado
+  evidencia
+```
+
+## 22. No prioridad antes del MVP
+
+```text
+PostgreSQL
+Kafka
+Redis
+microservices
+Kubernetes
+embeddings
+vector DB
+AI classification productiva
+provider graph complejo
+dashboard avanzado
+app mobile
+pricing internacional completo
+taxonomía exhaustiva
+refactors cosméticos
+```
+
+SQLite continúa hasta un cuello de botella demostrado.
+
+## 23. Sprint activo
+
+### Sprint 2.0C — Mass Acquisition / Argentina Source Discovery
+
+Objetivo:
+
+> construir una red nacional de fuentes candidatas de precios tecnológicos y medir empíricamente la densidad de evidencia económica pública adquirible.
+
+Primera tanda:
+
+```text
+CABA
+Buenos Aires
+Córdoba
+Santa Fe
+```
+
+Objetivo por jurisdicción:
+
+```text
+>=10 candidatos reales y verificables
+```
+
+Después:
+
+```text
+Source Registry v2
+-> discovery
+-> acquisition
+-> raw preservation
+-> price extraction
+-> funnel measurement
+```
+
+## 24. Punto de control
+
+```text
+MVP funcional estimado: 50–55%
+
+Motor de adquisición base: READY
+Generic Extractor v2: READY
+SQLite/provenance: READY
+Idempotencia live: VERIFIED
+Suite: 288 GREEN
+Cobertura nacional: NOT YET
+Normalización final: NOT YET
+Comparabilidad final: NOT YET
+Pricing Engine: NOT YET
+Decision API: NOT YET
+MVP UI: NOT YET
+```
+
+Cuello de botella inmediato:
+
+> **Cobertura y densidad de evidencia económica comercial real.**
