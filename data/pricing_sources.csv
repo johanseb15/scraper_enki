@@ -1,8 +1,8 @@
-source,provider,url,province,city
-jadetech_generic,Jadetech,https://jadetech.com.ar/categoria/servicio-tecnico/,Buenos Aires,Buenos Aires
-bitz_generic,Bitz,https://bitz.com.ar/tarifas-de-servicio-tecnico,Córdoba,Córdoba
-bairescloud_generic,BairesCloud,https://bairescloud.ar/servicio-tecnico.php,Buenos Aires,Buenos Aires
-vida_informatica_generic,Vida Informatica,https://vidainformatica.com.ar/listado-de-precios-zona-1/,Córdoba,Córdoba
-reed_generic,REED Technology,https://www.reed.ar/servicio-tecnico/7137-reparacion-de-pc.html,Córdoba,Córdoba
-cirowhite_generic,CiroWhite Informática,https://cirowhiteinformatica.com.ar/landing/,Tucumán,San Miguel de Tucumán
-dmr_generic,DMR,https://dmrwebdesign.com.ar/mantenimiento.html,Mendoza,Mendoza
+source,provider,url,province,city,discovery_status,price_visibility,source_kind,notes
+jadetech_generic,Jadetech,https://jadetech.com.ar/categoria/servicio-tecnico/,Buenos Aires,Buenos Aires,VERIFIED,PRICE_VISIBLE,PROVIDER,Fuente piloto validada en smoke live
+bitz_generic,Bitz,https://bitz.com.ar/tarifas-de-servicio-tecnico,Córdoba,Córdoba,VERIFIED,PRICE_VISIBLE,PROVIDER,Fuente piloto validada en smoke live
+bairescloud_generic,BairesCloud,https://bairescloud.ar/servicio-tecnico.php,Buenos Aires,Buenos Aires,VERIFIED,PRICE_VISIBLE,PROVIDER,Fuente piloto validada en smoke live
+vida_informatica_generic,Vida Informatica,https://vidainformatica.com.ar/listado-de-precios-zona-1/,Córdoba,Córdoba,VERIFIED,PRICE_VISIBLE,PROVIDER,RAW adquirido; extracción genérica puede requerir fallback
+reed_generic,REED Technology,https://www.reed.ar/servicio-tecnico/7137-reparacion-de-pc.html,Córdoba,Córdoba,VERIFIED,PRICE_VISIBLE,PROVIDER,RAW adquirido; extracción genérica puede requerir fallback
+cirowhite_generic,CiroWhite Informática,https://cirowhiteinformatica.com.ar/landing/,Tucumán,San Miguel de Tucumán,VERIFIED,PRICE_VISIBLE,PROVIDER,Fuente piloto validada en smoke live
+dmr_generic,DMR,https://dmrwebdesign.com.ar/mantenimiento.html,Mendoza,Mendoza,VERIFIED,PRICE_VISIBLE,PROVIDER,Fuente piloto validada en smoke live
