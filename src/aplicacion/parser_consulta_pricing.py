@@ -35,7 +35,11 @@ RULES=[
 ("WEB_MANTENIMIENTO",(r"\bmantenimiento (?:de )?(?:web|wordpress)\b",)),
 ("HOSTING_ADMINISTRADO",(r"\bhosting\b",)),
 ("VPS_ADMINISTRADO",(r"\bvps\b",)),
-("DESARROLLO_SOFTWARE_HORA",(r"\bprogramacion\b",r"\bdesarrollo (?:web|de software)\b")),
+("DESARROLLO_SOFTWARE_HORA",(
+    r"\bprogramacion\b",
+    r"\bdesarrollo (?:web|de software)\b",
+    r"\bdesarrollo (?:full ?stack|frontend|backend)\b",
+)),
 ]
 REMOTE={"SOPORTE_REMOTO","WEB_LANDING","WEB_SITIO_INSTITUCIONAL","WEB_ECOMMERCE","WEB_MANTENIMIENTO","HOSTING_ADMINISTRADO","VPS_ADMINISTRADO","DESARROLLO_SOFTWARE_HORA"}
 PROV={"caba":"CABA","capital federal":"CABA","buenos aires":"Buenos Aires","bs as":"Buenos Aires","cordoba":"Córdoba","santa fe":"Santa Fe","mendoza":"Mendoza","tucuman":"Tucumán","salta":"Salta","jujuy":"Jujuy","chaco":"Chaco","corrientes":"Corrientes","entre rios":"Entre Ríos","neuquen":"Neuquén","rio negro":"Río Negro","chubut":"Chubut","santa cruz":"Santa Cruz","tierra del fuego":"Tierra del Fuego","la pampa":"La Pampa","san juan":"San Juan","san luis":"San Luis","la rioja":"La Rioja","catamarca":"Catamarca","formosa":"Formosa","misiones":"Misiones","santiago del estero":"Santiago del Estero"}
