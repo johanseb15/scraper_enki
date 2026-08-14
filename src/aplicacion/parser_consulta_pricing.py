@@ -67,7 +67,9 @@ def price(t):
         return PriceMention(pt,v,currency="ARS",raw_expression=m.group(0),is_approximate=approx)
     if re.search(r"\bun palo\b",x): return PriceMention(PriceType.EXACT,1_000_000,currency="ARS",raw_expression="un palo")
     m=re.search(r"\b([\d.,]+)\s*(usd|u\$s|d[oó]lares?)\b",x)
-    if m: return PriceMention(PriceType.EXACT,num(m.group(1)),currency="USD",raw_expression=m.group(0))
+    if m:
+        pt=PriceType.PER_HOUR if re.search(r"\bpor hora\b|\bla hora\b",x) else PriceType.PER_MONTH if re.search(r"\bpor mes\b|\bal mes\b|\bmensual\b",x) else PriceType.PER_VISIT if re.search(r"\bpor visita\b",x) else PriceType.PER_UNIT if re.search(r"\bpor (?:equipo|unidad|pc)\b",x) else PriceType.EXACT
+        return PriceMention(pt,num(m.group(1)),currency="USD",raw_expression=m.group(0))
     m=re.search(r"(?<!\w)\$\s*([\d.]+(?:,\d+)?)",x)
     if m: return PriceMention(PriceType.EXACT,num(m.group(1)),currency="ARS",raw_expression=m.group(0))
     m=re.search(r"(?<![\w$])(\d{2,}(?:[.,]\d+)?)\b",x)
