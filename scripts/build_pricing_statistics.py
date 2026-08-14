@@ -90,7 +90,7 @@ def _build(rows: list[dict[str, str]], *, market_scope: str) -> list[dict[str, o
     return result
 
 
-def _write(path: str, rows: list[dict[str, object]]) -> None:
+def _write(path: str | Path, rows: list[dict[str, object]]) -> None:
     fields = [
         "market", "canonical_service", "observations_n", "providers_n",
         "min_ars", "q1_ars", "median_ars", "q3_ars", "max_ars",
@@ -104,6 +104,27 @@ def _write(path: str, rows: list[dict[str, object]]) -> None:
         w.writerows(rows)
 
 
+def build_pricing_statistics(
+    normalization_path: str | Path,
+    *,
+    local_out_path: str | Path,
+    remote_out_path: str | Path,
+) -> tuple[list[dict[str, object]], list[dict[str, object]]]:
+    """Build local and remote pricing cohorts from semantic normalization CSV."""
+    with Path(normalization_path).open(
+        "r",
+        encoding="utf-8-sig",
+        newline="",
+    ) as f:
+        rows = list(csv.DictReader(f))
+
+    local = _build(rows, market_scope="LOCAL_SERVICE")
+    remote = _build(rows, market_scope="REMOTE_NATIONAL_SERVICE")
+    _write(local_out_path, local)
+    _write(remote_out_path, remote)
+    return local, remote
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--normalization", default="data/semantic_normalization_v4.csv")
@@ -112,13 +133,11 @@ def main() -> None:
     ap.add_argument("--top", type=int, default=40)
     args = ap.parse_args()
 
-    with Path(args.normalization).open("r", encoding="utf-8-sig", newline="") as f:
-        rows = list(csv.DictReader(f))
-
-    local = _build(rows, market_scope="LOCAL_SERVICE")
-    remote = _build(rows, market_scope="REMOTE_NATIONAL_SERVICE")
-    _write(args.local_out, local)
-    _write(args.remote_out, remote)
+    local, remote = build_pricing_statistics(
+        args.normalization,
+        local_out_path=args.local_out,
+        remote_out_path=args.remote_out,
+    )
 
     print("ENKI PRICING STATISTICS v1")
     print("==========================")
