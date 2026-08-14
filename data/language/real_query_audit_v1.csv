@@ -1,0 +1,51 @@
+﻿id,provenance,query_raw,actual_status,audit_outcome,errors
+rq001,CURATED_ENKI,"me quieren cobrar 35 lucas por soporte remoto, está bien?",CLARIFICATION_REQUIRED,CLARIFICATION_CORRECT,
+rq002,CURATED_ENKI,"me pasaron 48 mil por soporte remoto, es caro?",CLARIFICATION_REQUIRED,CLARIFICATION_CORRECT,
+rq003,CURATED_ENKI,"quiero cobrar 30 lucas la hora de soporte remoto, me quedo corto?",RANGE_READY,PARSE_CORRECT,
+rq004,CURATED_ENKI,"60 lucas por soporte remoto me parece una banda, está bien ese precio?",CLARIFICATION_REQUIRED,CLARIFICATION_CORRECT,
+rq005,CURATED_ENKI,"me presupuestaron 55 mil para formatear la notebook en Córdoba, está bien?",INSUFFICIENT_EVIDENCE,PARSE_CORRECT,
+rq006,CURATED_ENKI,"quiero cobrar 50 lucas por formatear una pc en Córdoba, es razonable?",INSUFFICIENT_EVIDENCE,PARSE_CORRECT,
+rq007,CURATED_ENKI,cuanto se esta cobrando un formateo en Córdoba?,INSUFFICIENT_EVIDENCE,PARSE_CORRECT,
+rq008,CURATED_ENKI,cuánto debería cobrar por soporte remoto?,CLARIFICATION_REQUIRED,CLARIFICATION_CORRECT,
+rq009,CURATED_ENKI,cuanto están cobrando por limpiar una notebook y cambiar pasta térmica en CABA?,INSUFFICIENT_EVIDENCE,PARSE_CORRECT,
+rq010,CURATED_ENKI,cuánto se cobra una visita técnica a domicilio en Buenos Aires?,CLARIFICATION_REQUIRED,CLARIFICATION_CORRECT,
+rq011,CURATED_ENKI,cuánto se está cobrando por instalar Windows en Rosario?,INSUFFICIENT_EVIDENCE,WRONG_INTERPRETATION,"expected NO_EVIDENCE, got INSUFFICIENT_EVIDENCE"
+rq012,CURATED_ENKI,cuánto cobrar por hacer una landing page?,INSUFFICIENT_EVIDENCE,PARSE_CORRECT,
+rq013,CURATED_ENKI,"hice backup de 70gb, cambié el disco, instalé windows y después llevé la pc a la casa del cliente, cuanto le cobro?",CLARIFICATION_REQUIRED,WRONG_INTERPRETATION,"expected UNSUPPORTED_QUERY, got CLARIFICATION_REQUIRED"
+rq014,CURATED_ENKI,"me cobran 110 lucas por formateo, backup e instalación de office en Córdoba, está bien?",UNSUPPORTED_QUERY,SAFE_UNSUPPORTED,
+rq015,CURATED_ENKI,"cuanto cobrar por limpiar la máquina, sacarle virus, instalar windows y todos los programas?",CLARIFICATION_REQUIRED,WRONG_INTERPRETATION,"expected UNSUPPORTED_QUERY, got CLARIFICATION_REQUIRED"
+rq016,CURATED_ENKI,"me pasaron 80 mil por cambio de disco y clonado, está bien?",CLARIFICATION_REQUIRED,CLARIFICATION_CORRECT,
+rq017,CURATED_ENKI,"quiero cobrar instalación de ssd más clonado más limpieza, cuánto tendría que pedir?",CLARIFICATION_REQUIRED,WRONG_INTERPRETATION,"expected UNSUPPORTED_QUERY, got CLARIFICATION_REQUIRED"
+rq018,CURATED_ENKI,me cobran 95 lucas por cambiar la pantalla de la notebook en CABA,CLARIFICATION_REQUIRED,CLARIFICATION_CORRECT,
+rq019,CURATED_ENKI,"60 lucas solamente de mano de obra para cambiar una fuente, está bien?",CLARIFICATION_REQUIRED,WRONG_INTERPRETATION,parts_scope: expected='LABOR_ONLY' actual='UNKNOWN'
+rq020,CURATED_ENKI,"el cliente ya compró el ssd, cuánto le cobro por instalarlo y clonar?",UNSUPPORTED_QUERY,WRONG_INTERPRETATION,"expected CLARIFICATION_REQUIRED, got UNSUPPORTED_QUERY"
+rq021,CURATED_ENKI,"me piden 150 lucas por cambiar teclado de notebook, incluye el repuesto",CLARIFICATION_REQUIRED,WRONG_INTERPRETATION,intent_action: expected='EVALUATE_PRICE' actual='UNKNOWN'
+rq022,CURATED_ENKI,cuánto sale arreglar el wifi de una notebook?,CLARIFICATION_REQUIRED,CLARIFICATION_CORRECT,
+rq023,CURATED_ENKI,cuánto cobrar por formatear una notebook?,CLARIFICATION_REQUIRED,CLARIFICATION_CORRECT,
+rq024,CURATED_ENKI,"formateo a domicilio 70 lucas en Córdoba, es mucho?",INSUFFICIENT_EVIDENCE,PARSE_CORRECT,
+rq025,CURATED_ENKI,en taller me cobran 45 mil por instalar windows en Córdoba,INSUFFICIENT_EVIDENCE,PARSE_CORRECT,
+rq026,CURATED_ENKI,"soy de zona oeste, cuanto puedo cobrar una visita técnica?",CLARIFICATION_REQUIRED,WRONG_INTERPRETATION,intent_action: expected='SUGGEST_PRICE' actual='UNKNOWN' | intent_side: expected='SELL' actual='UNKNOWN'
+rq027,CURATED_ENKI,"tengo que hacer backup de 70 GB y cambiar el disco, cuánto cobro?",CLARIFICATION_REQUIRED,WRONG_INTERPRETATION,"expected UNSUPPORTED_QUERY, got CLARIFICATION_REQUIRED"
+rq028,CURATED_ENKI,cuanto cobrar instalación de 15 puestos de red cat6?,CLARIFICATION_REQUIRED,CLARIFICATION_CORRECT,
+rq029,CURATED_ENKI,"me ofrecieron una RTX 4060 usada, cuánto debería pagar?",UNSUPPORTED_QUERY,WRONG_INTERPRETATION,intent_action: expected='SUGGEST_PRICE' actual='UNKNOWN'
+rq030,CURATED_ENKI,"arreglé una pc hace 45 días y ahora volvió con el mismo problema, le tendría que cobrar otra vez?",CLARIFICATION_REQUIRED,CLARIFICATION_CORRECT,
+rq031,CURATED_ENKI,80 por soporte remoto está bien?,CLARIFICATION_REQUIRED,CLARIFICATION_CORRECT,
+rq032,CURATED_ENKI,"me quieren cobrar 35 lucas la hora por soporte remoto, está bien?",RANGE_READY,PARSE_CORRECT,
+rq033,CURATED_ENKI,"me quieren cobrar 80 USD al mes por soporte remoto, está bien?",UNSUPPORTED_QUERY,SAFE_UNSUPPORTED,
+rq034,SYNTHETIC_GEMINI,me cobran 15 lucas de viático más 20k por hora de soporte,CLARIFICATION_REQUIRED,CLARIFICATION_CORRECT,
+rq035,SYNTHETIC_GEMINI,"me ofrecen una notebook nueva a 1.5 palos, conviene?",UNSUPPORTED_QUERY,WRONG_INTERPRETATION,intent_action: expected='EVALUATE_PRICE' actual='UNKNOWN'
+rq036,SYNTHETIC_GEMINI,"Ryzen 5600X RTX 3060 32GB, cuánto debería pagar?",UNSUPPORTED_QUERY,SAFE_UNSUPPORTED,
+rq037,SYNTHETIC_GROK,"backup de 500GB, cada 100GB extras 38k, cuánto cobro?",CLARIFICATION_REQUIRED,WRONG_INTERPRETATION,intent_action: expected='SUGGEST_PRICE' actual='UNKNOWN' | intent_side: expected='SELL' actual='UNKNOWN' | price_scope: expected='PER_UNIT' actual='UNKNOWN'
+rq038,SYNTHETIC_GROK,cobrar 5% del valor de los componentes por armar la pc está bien?,CLARIFICATION_REQUIRED,WRONG_INTERPRETATION,canonical_services: expected=['ARMADO_PC'] actual=[]
+rq039,SYNTHETIC_GROK,me quieren cobrar 200 USDT por soporte remoto,CLARIFICATION_REQUIRED,WRONG_INTERPRETATION,"expected UNSUPPORTED_QUERY, got CLARIFICATION_REQUIRED"
+rq040,SYNTHETIC_DEEPSEEK,me cobran 50K la jornada más 10 USD por hora de soporte remoto,RANGE_READY,WRONG_INTERPRETATION,"expected CLARIFICATION_REQUIRED, got RANGE_READY"
+rq041,SYNTHETIC_DEEPSEEK,en CABA,CLARIFICATION_REQUIRED,CLARIFICATION_CORRECT,
+rq042,SYNTHETIC_DEEPSEEK,a domicilio,CLARIFICATION_REQUIRED,CLARIFICATION_CORRECT,
+rq043,SYNTHETIC_DEEPSEEK,remoto por TeamViewer,CLARIFICATION_REQUIRED,WRONG_INTERPRETATION,"expected UNSUPPORTED_QUERY, got CLARIFICATION_REQUIRED"
+rq044,CURATED_ENKI,service notebook Moreno,CLARIFICATION_REQUIRED,CLARIFICATION_CORRECT,
+rq045,SYNTHETIC_GROK,"la pc vale más de 1 millón, me quieren cobrar entre 80 y 90k por armarla y tardan 4 horas",CLARIFICATION_REQUIRED,WRONG_INTERPRETATION,canonical_services: expected=['ARMADO_PC'] actual=[]
+rq046,SYNTHETIC_GROK,"estoy cobrando 40k de mano de obra por poner el SSD, el disco va aparte",UNSUPPORTED_QUERY,WRONG_INTERPRETATION,"expected CLARIFICATION_REQUIRED, got UNSUPPORTED_QUERY"
+rq047,SYNTHETIC_DEEPSEEK,precio final $10.000 más impuestos por el servicio,CLARIFICATION_REQUIRED,CLARIFICATION_CORRECT,
+rq048,CURATED_ENKI,me cobran 35 lucas al mes por mantenimiento web,INSUFFICIENT_EVIDENCE,PARSE_CORRECT,
+rq049,CURATED_ENKI,hace 45 días pagué 60 lucas por un arreglo y volvió a fallar,CLARIFICATION_REQUIRED,CLARIFICATION_CORRECT,
+rq050,CURATED_ENKI,cuánto cobran por armar pc?,CLARIFICATION_REQUIRED,WRONG_INTERPRETATION,intent_action: expected='MARKET_REFERENCE' actual='UNKNOWN'
