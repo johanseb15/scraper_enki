@@ -49,30 +49,55 @@ def fold(t):
     x=unicodedata.normalize("NFD",t.lower()); x="".join(c for c in x if unicodedata.category(c)!="Mn")
     return re.sub(r"\s+"," ",x).strip()
 def has(t,ps): return any(re.search(p,fold(t),re.I) for p in ps)
-def num(s):
+def scalar_num(s):
+    """Parse a scalar used with magnitude words such as lucas/mil/palos."""
     s=s.strip().lower().replace(" ","").replace(",",".")
-    if s.count(".")>1: s=s.replace(".","")
+    if s.count(".")>1:
+        head,*tail=s.split(".")
+        s=head+"."+"".join(tail)
+    return float(s)
+
+def money_num(s):
+    """Parse a complete monetary amount without losing Argentine thousands separators."""
+    s=s.strip().lower().replace(" ","")
+    if not s:
+        raise ValueError("empty money number")
+    if "." in s and "," in s:
+        if s.rfind(",") > s.rfind("."):
+            return float(s.replace(".","").replace(",","."))
+        return float(s.replace(",",""))
+    if "." in s:
+        if re.fullmatch(r"\d{1,3}(?:\.\d{3})+", s):
+            return float(s.replace(".",""))
+        return float(s)
+    if "," in s:
+        if re.fullmatch(r"\d{1,3}(?:,\d{3})+", s):
+            return float(s.replace(",",""))
+        return float(s.replace(",","."))
     return float(s)
 def price(t):
     x=t.lower()
     m=re.search(r"\bentre\s+([\d.,]+)\s+y\s+([\d.,]+)\s*(lucas?|mil|k|palos?|usd|d[oó]lares?)\b",x)
     if m:
-        a,b,u=m.groups(); a=num(a); b=num(b); cur="USD" if u in {"usd","dolares","dólares"} else "ARS"
+        a,b,u=m.groups(); a=scalar_num(a); b=scalar_num(b); cur="USD" if u in {"usd","dolares","dólares"} else "ARS"
         mult=1_000_000 if u.startswith("palo") else (1000 if u in {"k","mil","luca","lucas"} else 1)
         return PriceMention(PriceType.RANGE,min=a*mult,max=b*mult,currency=cur,raw_expression=m.group(0))
     m=re.search(r"\b(casi|aprox(?:imadamente)?|alrededor de)?\s*([\d.,]+)\s*(lucas?|mil|k|palos?)\b",x)
     if m:
-        approx=bool(m.group(1)); v=num(m.group(2)); u=m.group(3); v*=1_000_000 if u.startswith("palo") else 1000
+        approx=bool(m.group(1)); v=scalar_num(m.group(2)); u=m.group(3); v*=1_000_000 if u.startswith("palo") else 1000
         pt=PriceType.PER_HOUR if re.search(r"\bpor hora\b|\bla hora\b",x) else PriceType.PER_MONTH if re.search(r"\bpor mes\b|\bal mes\b|\bmensual\b",x) else PriceType.PER_VISIT if re.search(r"\bpor visita\b",x) else PriceType.PER_UNIT if re.search(r"\bpor (?:equipo|unidad|pc)\b",x) else PriceType.EXACT
         return PriceMention(pt,v,currency="ARS",raw_expression=m.group(0),is_approximate=approx)
     if re.search(r"\bun palo\b",x): return PriceMention(PriceType.EXACT,1_000_000,currency="ARS",raw_expression="un palo")
     m=re.search(r"\b([\d.,]+)\s*(usd|u\$s|d[oó]lares?)\b",x)
     if m:
         pt=PriceType.PER_HOUR if re.search(r"\bpor hora\b|\bla hora\b",x) else PriceType.PER_MONTH if re.search(r"\bpor mes\b|\bal mes\b|\bmensual\b",x) else PriceType.PER_VISIT if re.search(r"\bpor visita\b",x) else PriceType.PER_UNIT if re.search(r"\bpor (?:equipo|unidad|pc)\b",x) else PriceType.EXACT
-        return PriceMention(pt,num(m.group(1)),currency="USD",raw_expression=m.group(0))
+        return PriceMention(pt,money_num(m.group(1)),currency="USD",raw_expression=m.group(0))
     m=re.search(r"(?<!\w)\$\s*([\d.]+(?:,\d+)?)",x)
-    if m: return PriceMention(PriceType.EXACT,num(m.group(1)),currency="ARS",raw_expression=m.group(0))
-    m=re.search(r"(?<![\w$])(\d{2,}(?:[.,]\d+)?)\b",x)
+    if m: return PriceMention(PriceType.EXACT,money_num(m.group(1)),currency="ARS",raw_expression=m.group(0))
+    m=re.search(
+        r"(?<![\w$])(\d{1,3}(?:[.,]\d{3})+(?:,\d{1,2})?|\d{2,}(?:[.,]\d+)?)\b",
+        x,
+    )
     if m:
         # Guardrail: a naked number followed by a temporal unit is context, not money.
         # Examples: "hace 45 días", "hace 30 horas", "hace 12 meses".
@@ -82,7 +107,7 @@ def price(t):
         tail=fold(x[m.end():])
         if re.match(r"\s*(?:dias?|horas?|semanas?|mes(?:es)?|anos?|minutos?)\b",tail):
             return PriceMention()
-        return PriceMention(PriceType.EXACT,num(m.group(1)),currency="UNKNOWN",raw_expression=m.group(0))
+        return PriceMention(PriceType.EXACT,money_num(m.group(1)),currency="UNKNOWN",raw_expression=m.group(0))
     return PriceMention()
 def geo(t):
     x=fold(t)
