@@ -43,7 +43,7 @@ CITIES={"rosario":("Santa Fe","Rosario"),"la plata":("Buenos Aires","La Plata"),
 BUY=(r"\bme quieren cobrar\b",r"\bme cobran\b",r"\bme cobraron\b",r"\bme pasaron\b",r"\bme presupuestaron\b",r"\bme cotizaron\b",r"\bme dijeron\b",r"\bpagar\b",r"\bme ofrecieron\b")
 SELL=(r"\bquiero cobrar\b",r"\bcuanto cobrar\b",r"\ble puedo cobrar\b",r"\bdeberia cobrar\b",r"\bcuanto pedir\b")
 EVAL=(r"\besta bien\b",r"\bte parece bien\b",r"\bes mucho\b",r"\bes caro\b",r"\besta caro\b",r"\bes barato\b",r"\bme estan matando\b",r"\bme estan afanando\b",r"\bme quedo corto\b",r"\bme estoy pasando\b",r"\brazonable\b")
-HW=(r"\b(?:rtx|gtx|rx)\s?\d{3,4}\b",r"\bryzen\s+[3579]\b",r"\bcore\s+i[3579]\b",r"\bi[3579]\b",r"\bssd\b",r"\bnvme\b",r"\bmemoria ram\b",r"\bnotebook\b.*\b(?:nueva|usada|precio|sale)\b",r"\bpc armada\b")
+HW=(r"\b(?:rtx|gtx|rx)\s?\d{3,4}\b",r"\bryzen\s+[3579]\b",r"\bcore\s+i[3579]\b",r"\bi[3579]\b",r"\bssd\b",r"\bnvme\b",r"\bmemoria ram\b",r"\bnotebook\b.*\b(?:nueva|usada|precio|sale)\b",r"\bpc armada\b",r"\b(?:una|la) pc\s+(?:para|con)\b")
 
 def fold(t):
     x=unicodedata.normalize("NFD",t.lower()); x="".join(c for c in x if unicodedata.category(c)!="Mn")
