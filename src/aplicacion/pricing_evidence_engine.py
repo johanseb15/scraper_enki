@@ -20,6 +20,8 @@ class CohortePricing:
     evidence_confidence: str
     decision_ready: bool
     range_ready: bool
+    price_scope: str = "UNKNOWN"
+    commercial_context: str = "STANDARD"
 
 
 @dataclass(frozen=True)
@@ -37,6 +39,8 @@ class ResultadoEvidenciaPrecio:
     evidence_confidence: str = "NONE"
     price_position: str | None = None
     decision_label: str | None = None
+    price_scope: str = "UNKNOWN"
+    commercial_context: str = "STANDARD"
 
 
 def evaluar_precio(
@@ -45,12 +49,16 @@ def evaluar_precio(
     market: str,
     canonical_service: str,
     proposed_price_ars: Decimal | None = None,
+    price_scope: str = "UNKNOWN",
+    commercial_context: str = "STANDARD",
 ) -> ResultadoEvidenciaPrecio:
     cohort = next(
         (
             c for c in cohortes
             if c.market == market
             and c.canonical_service == canonical_service
+            and c.price_scope == price_scope
+            and c.commercial_context == commercial_context
         ),
         None,
     )
@@ -60,6 +68,8 @@ def evaluar_precio(
             status="NO_EVIDENCE",
             market=market,
             canonical_service=canonical_service,
+            price_scope=price_scope,
+            commercial_context=commercial_context,
         )
 
     common = dict(
@@ -73,13 +83,12 @@ def evaluar_precio(
         q3_ars=cohort.q3_ars,
         max_ars=cohort.max_ars,
         evidence_confidence=cohort.evidence_confidence,
+        price_scope=cohort.price_scope,
+        commercial_context=cohort.commercial_context,
     )
 
     if not cohort.range_ready:
-        return ResultadoEvidenciaPrecio(
-            status="INSUFFICIENT_EVIDENCE",
-            **common,
-        )
+        return ResultadoEvidenciaPrecio(status="INSUFFICIENT_EVIDENCE", **common)
 
     price_position = None
     if proposed_price_ars is not None:
@@ -90,8 +99,6 @@ def evaluar_precio(
         else:
             price_position = "WITHIN_OBSERVED_RANGE"
 
-    # Critical guardrail:
-    # LOW-confidence cohorts may show range but may NOT emit BAJO/RAZONABLE/ALTO.
     if not cohort.decision_ready or proposed_price_ars is None:
         return ResultadoEvidenciaPrecio(
             status="RANGE_READY",

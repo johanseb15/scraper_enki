@@ -3,7 +3,9 @@ from __future__ import annotations
 import argparse
 import csv
 import math
+import re
 import statistics
+import unicodedata
 from collections import defaultdict
 from pathlib import Path
 
@@ -24,9 +26,71 @@ def _quantile_linear(values: list[float], q: float) -> float:
     return xs[lo] * (1 - weight) + xs[hi] * weight
 
 
+def _fold(text: str) -> str:
+    normalized = unicodedata.normalize("NFKD", text or "")
+    return "".join(
+        ch for ch in normalized if not unicodedata.combining(ch)
+    ).lower()
+
+
+def infer_price_scope(economic_object_raw: str) -> str:
+    """Infer only explicit economic cadence from preserved source text.
+
+    Conservative rule: if cadence is not explicit, return UNKNOWN.
+    Technical quantities/specifications such as 100GB or Windows 11 do not
+    create cadence by themselves.
+    """
+    x = _fold(economic_object_raw)
+
+    if re.search(
+        r"\bx\s*1\s*(?:hs?|hora)\b"
+        r"|\bpor\s+hora\b"
+        r"|\bla\s+hora\b"
+        r"|\bhora\s+(?:inicial|adicional|servicio|tecnica|tecnico)\b"
+        r"|\bhora(?:s)?\s+de\s+(?:servicio|soporte|trabajo)\b",
+        x,
+    ):
+        return "PER_HOUR"
+
+    if re.search(
+        r"\bpor\s+mes\b"
+        r"|\bal\s+mes\b"
+        r"|\bmensual(?:mente)?\b"
+        r"|\babono\s+mensual\b",
+        x,
+    ):
+        return "PER_MONTH"
+
+    if re.search(r"\bpor\s+visita\b|\bcada\s+visita\b", x):
+        return "PER_VISIT"
+
+    if re.search(
+        r"\bpor\s+(?:equipo|unidad|pc|notebook|camara)\b"
+        r"|\bcada\s+\d+(?:[.,]\d+)?\s*(?:gb|tb)\b",
+        x,
+    ):
+        return "PER_UNIT"
+
+    return "UNKNOWN"
+
+
+def infer_commercial_context(economic_object_raw: str) -> str:
+    """Identify only explicit exceptional commercial conditions."""
+    x = _fold(economic_object_raw)
+    if re.search(
+        r"\burgenc(?:ia|ias)\b"
+        r"|\bfuera\s+de\s+horario\b"
+        r"|\bfin(?:es)?\s+de\s+semana\b"
+        r"|\bferiado(?:s)?\b",
+        x,
+    ):
+        return "URGENCY"
+    return "STANDARD"
+
+
 def _build(rows: list[dict[str, str]], *, market_scope: str) -> list[dict[str, object]]:
-    prices: dict[tuple[str, str], list[float]] = defaultdict(list)
-    sources: dict[tuple[str, str], set[str]] = defaultdict(set)
+    prices: dict[tuple[str, str, str, str], list[float]] = defaultdict(list)
+    sources: dict[tuple[str, str, str, str], set[str]] = defaultdict(set)
 
     for row in rows:
         if row["semantic_role"] != "SINGLE_SERVICE":
@@ -46,15 +110,19 @@ def _build(rows: list[dict[str, str]], *, market_scope: str) -> list[dict[str, o
         except (TypeError, ValueError):
             continue
 
-        key = (market, canonical)
+        economic_object_raw = row.get("economic_object_raw", "")
+        price_scope = infer_price_scope(economic_object_raw)
+        commercial_context = infer_commercial_context(economic_object_raw)
+
+        key = (market, canonical, price_scope, commercial_context)
         prices[key].append(price)
         sources[key].add(row["source"])
 
     result = []
-    for (market, service), vals in prices.items():
+    for (market, service, price_scope, commercial_context), vals in prices.items():
         vals = sorted(vals)
         n = len(vals)
-        providers_n = len(sources[(market, service)])
+        providers_n = len(sources[(market, service, price_scope, commercial_context)])
         q1 = _quantile_linear(vals, 0.25)
         median = statistics.median(vals)
         q3 = _quantile_linear(vals, 0.75)
@@ -70,6 +138,8 @@ def _build(rows: list[dict[str, str]], *, market_scope: str) -> list[dict[str, o
         result.append({
             "market": market,
             "canonical_service": service,
+            "price_scope": price_scope,
+            "commercial_context": commercial_context,
             "observations_n": n,
             "providers_n": providers_n,
             "min_ars": min(vals),
@@ -92,7 +162,8 @@ def _build(rows: list[dict[str, str]], *, market_scope: str) -> list[dict[str, o
 
 def _write(path: str | Path, rows: list[dict[str, object]]) -> None:
     fields = [
-        "market", "canonical_service", "observations_n", "providers_n",
+        "market", "canonical_service", "price_scope", "commercial_context",
+        "observations_n", "providers_n",
         "min_ars", "q1_ars", "median_ars", "q3_ars", "max_ars",
         "spread_ratio", "evidence_confidence", "decision_ready", "range_ready",
     ]
@@ -149,7 +220,8 @@ def main() -> None:
     print("-----")
     for c in local[:args.top]:
         print(
-            f'{c["market"]} :: {c["canonical_service"]} | '
+            f'{c["market"]} :: {c["canonical_service"]} :: '
+            f'{c["price_scope"]} :: {c["commercial_context"]} | '
             f'n={c["observations_n"]} providers={c["providers_n"]} | '
             f'min={c["min_ars"]:.0f} q1={c["q1_ars"]:.0f} '
             f'median={c["median_ars"]:.0f} q3={c["q3_ars"]:.0f} '
@@ -162,7 +234,8 @@ def main() -> None:
     print("------")
     for c in remote[:args.top]:
         print(
-            f'{c["market"]} :: {c["canonical_service"]} | '
+            f'{c["market"]} :: {c["canonical_service"]} :: '
+            f'{c["price_scope"]} :: {c["commercial_context"]} | '
             f'n={c["observations_n"]} providers={c["providers_n"]} | '
             f'min={c["min_ars"]:.0f} q1={c["q1_ars"]:.0f} '
             f'median={c["median_ars"]:.0f} q3={c["q3_ars"]:.0f} '
