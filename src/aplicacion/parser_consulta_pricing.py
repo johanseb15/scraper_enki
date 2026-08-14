@@ -95,7 +95,13 @@ def services(t):
     x=fold(t); out=[]
     for c,ps in RULES:
         if any(re.search(p,x,re.I) for p in ps): out.append(c)
-    return tuple(dict.fromkeys(out))
+    out=list(dict.fromkeys(out))
+    # A domicile visit is a standalone service only when it is the economic
+    # object itself. When another concrete local service is present, domicilio
+    # is delivery/modality scope, not a second priced service.
+    if "VISITA_TECNICA_DOMICILIO" in out and len(out)>1:
+        out=[c for c in out if c!="VISITA_TECNICA_DOMICILIO"]
+    return tuple(out)
 def device(t):
     x=fold(t)
     for d,ps in [("NOTEBOOK",(r"\bnotebook\b",r"\blaptop\b",r"\bnote\b")),("PC",(r"\bpc\b",r"\bcompu\b",r"\bcomputadora\b")),("CELULAR",(r"\bcelular\b",r"\bcelu\b")),("IMPRESORA",(r"\bimpresora\b",)),("GPU",(r"\bplaca de video\b",r"\bgpu\b",r"\b(?:rtx|gtx|rx)\s?\d{3,4}\b")),("STORAGE",(r"\bssd\b",r"\bnvme\b",r"\bdisco\b",r"\bpendrive\b"))]:
