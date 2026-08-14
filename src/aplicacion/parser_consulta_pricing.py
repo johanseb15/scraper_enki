@@ -60,7 +60,16 @@ def price(t):
     m=re.search(r"(?<!\w)\$\s*([\d.]+(?:,\d+)?)",x)
     if m: return PriceMention(PriceType.EXACT,num(m.group(1)),currency="ARS",raw_expression=m.group(0))
     m=re.search(r"(?<![\w$])(\d{2,}(?:[.,]\d+)?)\b",x)
-    if m: return PriceMention(PriceType.EXACT,num(m.group(1)),currency="UNKNOWN",raw_expression=m.group(0))
+    if m:
+        # Guardrail: a naked number followed by a temporal unit is context, not money.
+        # Examples: "hace 45 días", "hace 30 horas", "hace 12 meses".
+        # `x` is lower-cased but still preserves accents. Normalize the tail
+        # before matching temporal units so "días"/"años" behave like
+        # "dias"/"anos".
+        tail=fold(x[m.end():])
+        if re.match(r"\s*(?:dias?|horas?|semanas?|mes(?:es)?|anos?|minutos?)\b",tail):
+            return PriceMention()
+        return PriceMention(PriceType.EXACT,num(m.group(1)),currency="UNKNOWN",raw_expression=m.group(0))
     return PriceMention()
 def geo(t):
     x=fold(t)
