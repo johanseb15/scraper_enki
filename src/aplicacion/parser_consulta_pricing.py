@@ -110,7 +110,12 @@ def parse_pricing_query(raw_text:str,*,language_evidence_type:str="UNKNOWN")->Pa
     if has(raw_text,EVAL) and has_price: action=IntentAction.EVALUATE_PRICE
     elif side==IntentSide.SELL and not has_price: action=IntentAction.SUGGEST_PRICE
     elif re.search(r"\bcompar",x): action=IntentAction.COMPARE
-    elif re.search(r"\bcuanto (?:sale|cuesta|se cobra|esta)\b|\bprecio de referencia\b|\bprecio de\b",x): action=IntentAction.MARKET_REFERENCE
+    elif re.search(
+        r"\bcuanto (?:(?:sale|cuesta|esta)|(?:se )?esta cobrando|estan cobrando|se cobra)\b"
+        r"|\bprecio de referencia\b|\bprecio de\b",
+        x,
+    ):
+        action=IntentAction.MARKET_REFERENCE
     elif has_price and side in {IntentSide.BUY,IntentSide.SELL}: action=IntentAction.EVALUATE_PRICE
     else: action=IntentAction.UNKNOWN
     hardware=has(raw_text,HW) and not sv
