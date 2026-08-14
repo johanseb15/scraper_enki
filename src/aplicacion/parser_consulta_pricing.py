@@ -79,6 +79,25 @@ def money_num(s):
             return float(s.replace(",",""))
         return float(s.replace(",","."))
     return float(s)
+def _naked_number_is_non_price_context(x:str,m:re.Match)->bool:
+    """Reject strong quantity/spec/model contexts for otherwise naked numbers."""
+    before=fold(x[max(0,m.start()-24):m.start()])
+    after=fold(x[m.end():m.end()+32])
+
+    # Hardware model identifiers: RTX 4060, GTX 1660, RX 7600.
+    if re.search(r"\b(?:rtx|gtx|rx)\s*$",before):
+        return True
+
+    # Quantities and technical specifications are not monetary amounts.
+    if re.match(
+        r"\s*(?:puestos?|camaras?|equipos?|unidades?|usuarios?|licencias?|"
+        r"gb|tb|mb|mhz|ghz|hz|w|watts?|pulgadas?|inch(?:es)?)\b",
+        after,
+    ):
+        return True
+
+    return False
+
 def price(t):
     x=t.lower()
     m=re.search(r"\bentre\s+([\d.,]+)\s+y\s+([\d.,]+)\s*(lucas?|mil|k|palos?|usd|d[oó]lares?)\b",x)
@@ -110,6 +129,8 @@ def price(t):
         # "dias"/"anos".
         tail=fold(x[m.end():])
         if re.match(r"\s*(?:dias?|horas?|semanas?|mes(?:es)?|anos?|minutos?)\b",tail):
+            return PriceMention()
+        if _naked_number_is_non_price_context(x,m):
             return PriceMention()
         return PriceMention(PriceType.EXACT,money_num(m.group(1)),currency="UNKNOWN",raw_expression=m.group(0))
     return PriceMention()
