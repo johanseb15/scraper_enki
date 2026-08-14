@@ -14,7 +14,18 @@ RULES=[
 ("ARMADO_PC",(r"\barmado de pc\b",r"\barmar una pc\b",r"\barmar pc\b",r"\bensambl")),
 ("UPGRADE_HARDWARE",(r"\bupgrade\b",r"\bmejorar la compu\b",r"\bcambio de hdd por ssd\b",r"\bampliacion de memoria\b")),
 ("DIAGNOSTICO_REVISION",(r"\bdiagnostico\b",r"\brevision\b")),
-("REPARACION_HARDWARE",(r"\breparar\b",r"\breparacion\b",r"\bcambio de pantalla\b",r"\bcambio de teclado\b",r"\bbisagra\b",r"\bconector de carga\b")),
+("REPARACION_HARDWARE",(
+    r"\breparar\b",
+    r"\breparacion\b",
+    r"\bcambio de pantalla\b",
+    r"\bcambiar (?:un |el |la )?pantalla\b",
+    r"\bcambio de teclado\b",
+    r"\bcambiar (?:un |el |la )?teclado\b",
+    r"\bcambio de fuente\b",
+    r"\bcambiar (?:una |la )?fuente\b",
+    r"\bbisagra\b",
+    r"\bconector de carga\b",
+)),
 ("VISITA_TECNICA_DOMICILIO",(r"\ba domicilio\b",r"\btecnico a casa\b",r"\ben el domicilio\b",r"\bvisita tecnica\b")),
 ("SERVICIO_IMPRESORAS",(r"\bimpresora",)),
 ("CCTV_INSTALACION_MANO_OBRA",(r"\bcamaras? (?:de seguridad|ip)\b",r"\bcctv\b",r"\bdvr\b")),
@@ -132,7 +143,7 @@ def parse_pricing_query(raw_text:str,*,language_evidence_type:str="UNKNOWN")->Pa
     if kind==EconomicObjectKind.UNKNOWN: reasons+=["UNKNOWN_ECONOMIC_OBJECT"]; question=question or "¿Qué servicio o producto tecnológico querés evaluar?"
     if p.currency=="UNKNOWN" and has_price: reasons+=["UNKNOWN_CURRENCY"]; question=question or "¿Ese monto está expresado en pesos argentinos o en otra moneda?"
     if kind==EconomicObjectKind.BUNDLE: reasons+=["BUNDLE_REQUIRES_COMPARABLE_SCOPE"]
-    if re.search(r"\b(?:cambio de pantalla|cambio de teclado|cambio de fuente|cambio de ssd|cambio de disco)\b",x) and ps==PartsScope.UNKNOWN:
+    if re.search(r"\b(?:(?:cambio de )|(?:cambiar (?:un |una |el |la )?))(?:pantalla|teclado|fuente|ssd|disco)\b",x) and ps==PartsScope.UNKNOWN:
         reasons+=["UNKNOWN_PARTS_SCOPE"]; question=question or "¿El precio incluye el repuesto o es sólo mano de obra?"
     blocking={"MISSING_PROVINCE","UNKNOWN_ECONOMIC_OBJECT","UNKNOWN_CURRENCY","UNKNOWN_PARTS_SCOPE"}
     clar=bool(blocking & set(reasons)); conf=max(0.0,round(.95-(.25 if clar else 0)-(.15 if action==IntentAction.UNKNOWN else 0)-(.20 if kind==EconomicObjectKind.UNKNOWN else 0),2))
