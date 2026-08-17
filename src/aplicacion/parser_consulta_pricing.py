@@ -98,6 +98,32 @@ def _naked_number_is_non_price_context(x:str,m:re.Match)->bool:
 
     return False
 
+def _has_multiple_monetary_mentions(t:str)->bool:
+    x=t.lower()
+
+    # A true range is one economic price expression, not two independent prices.
+    range_pattern=(
+        r"\bentre\s+[\d.,]+\s+y\s+[\d.,]+\s*"
+        r"(?:lucas?|mil|k|palos?|usd|u\$s|d[oó]lares?)\b"
+    )
+    x=re.sub(range_pattern," RANGE_PRICE ",x)
+
+    patterns=(
+        r"\b[\d.,]+\s*(?:lucas?|mil|k|palos?)\b",
+        r"\b[\d.,]+\s*(?:usd|u\$s|d[oó]lares?)\b",
+        r"(?<!\w)\$\s*[\d.]+(?:,\d+)?",
+        r"\bun palo\b",
+    )
+
+    spans=[]
+    for pattern in patterns:
+        for m in re.finditer(pattern,x,re.I):
+            span=m.span()
+            if not any(span[0] < other[1] and other[0] < span[1] for other in spans):
+                spans.append(span)
+
+    return len(spans) > 1
+
 def price(t):
     x=t.lower()
     m=re.search(r"\bentre\s+([\d.,]+)\s+y\s+([\d.,]+)\s*(lucas?|mil|k|palos?|usd|d[oó]lares?)\b",x)
@@ -197,12 +223,15 @@ def parse_pricing_query(raw_text:str,*,language_evidence_type:str="UNKNOWN")->Pa
         if mod!=ServiceModality.UNKNOWN: explicit.append("modality")
     else: market=MarketScope.UNKNOWN; mod=ServiceModality.UNKNOWN
     reasons=[]; question=None
-    if market==MarketScope.LOCAL and not g.province: reasons+=["MISSING_PROVINCE"]; question="¿En qué provincia se realiza el servicio?"
+    if _has_multiple_monetary_mentions(raw_text):
+        reasons+=["MULTIPLE_MONETARY_MENTIONS"]
+        question="Detecté más de un monto en la consulta. ¿Qué importe querés evaluar y a qué unidad de cobro corresponde?"
+    if market==MarketScope.LOCAL and not g.province: reasons+=["MISSING_PROVINCE"]; question=question or "¿En qué provincia se realiza el servicio?"
     if kind==EconomicObjectKind.UNKNOWN: reasons+=["UNKNOWN_ECONOMIC_OBJECT"]; question=question or "¿Qué servicio o producto tecnológico querés evaluar?"
     if p.currency=="UNKNOWN" and has_price: reasons+=["UNKNOWN_CURRENCY"]; question=question or "¿Ese monto está expresado en pesos argentinos o en otra moneda?"
     if kind==EconomicObjectKind.BUNDLE: reasons+=["BUNDLE_REQUIRES_COMPARABLE_SCOPE"]
     if re.search(r"\b(?:(?:cambio de )|(?:cambiar (?:un |una |el |la )?))(?:pantalla|teclado|fuente|ssd|disco)\b",x) and ps==PartsScope.UNKNOWN:
         reasons+=["UNKNOWN_PARTS_SCOPE"]; question=question or "¿El precio incluye el repuesto o es sólo mano de obra?"
-    blocking={"MISSING_PROVINCE","UNKNOWN_ECONOMIC_OBJECT","UNKNOWN_CURRENCY","UNKNOWN_PARTS_SCOPE"}
+    blocking={"MISSING_PROVINCE","UNKNOWN_ECONOMIC_OBJECT","UNKNOWN_CURRENCY","UNKNOWN_PARTS_SCOPE","MULTIPLE_MONETARY_MENTIONS"}
     clar=bool(blocking & set(reasons)); conf=max(0.0,round(.95-(.25 if clar else 0)-(.15 if action==IntentAction.UNKNOWN else 0)-(.20 if kind==EconomicObjectKind.UNKNOWN else 0),2))
     return ParsedPricingQuery(raw_text,x,action,side,kind,sv,market,mod,p,g,dev,"USED" if re.search(r"\busad[oa]\b",x) else "NEW" if re.search(r"\bnuev[oa]\b",x) else "UNKNOWN",kind==EconomicObjectKind.BUNDLE,CommercialContext(parts_scope=ps),ParseMetadata(conf,clar,"|".join(reasons) if reasons else None,question,tuple(dict.fromkeys(explicit)),tuple(dict.fromkeys(inferred)),tuple(dict.fromkeys(derived))),language_evidence_type)
