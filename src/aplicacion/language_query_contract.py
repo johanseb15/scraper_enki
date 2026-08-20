@@ -2,6 +2,8 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from enum import Enum
 
+class QueryKind(str, Enum):
+    ECONOMIC_QUERY="ECONOMIC_QUERY"; TECHNICAL_NEED="TECHNICAL_NEED"; UNKNOWN="UNKNOWN"
 class IntentAction(str, Enum):
     EVALUATE_PRICE="EVALUATE_PRICE"; SUGGEST_PRICE="SUGGEST_PRICE"; MARKET_REFERENCE="MARKET_REFERENCE"; COMPARE="COMPARE"; UNKNOWN="UNKNOWN"
 class IntentSide(str, Enum):
@@ -52,6 +54,15 @@ class ParseMetadata:
     derived_fields: tuple[str,...]=()
 
 @dataclass(frozen=True)
+class TechnicalNeed:
+    domain: str="UNKNOWN"
+    technical_problem: str="UNKNOWN"
+    economic_intent_explicit: bool=False
+    candidate_routes: tuple[str,...]=()
+    product_purchase_recommendation: str="NONE_YET"
+    clarification_required: bool=True
+
+@dataclass(frozen=True)
 class ParsedPricingQuery:
     raw_text: str
     normalized_text: str
@@ -69,3 +80,5 @@ class ParsedPricingQuery:
     commercial_context: CommercialContext=field(default_factory=CommercialContext)
     metadata: ParseMetadata=field(default_factory=lambda: ParseMetadata(0.0, True))
     language_evidence_type: str="UNKNOWN"
+    query_kind: QueryKind=QueryKind.ECONOMIC_QUERY
+    technical_need: TechnicalNeed|None=None

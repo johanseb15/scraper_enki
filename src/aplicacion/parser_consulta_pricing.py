@@ -190,8 +190,68 @@ def parts(t):
     if re.search(r"\bya (?:tengo|compre) (?:el |la )?(?:repuesto|ssd|fuente|teclado|pantalla)\b",x): return PartsScope.USER_PROVIDED
     return PartsScope.UNKNOWN
 
+
+
+def _has_explicit_economic_intent(t:str)->bool:
+    x=fold(t)
+    return has(t,BUY) or has(t,SELL) or has(t,EVAL) or bool(re.search(
+        r"\bcuanto\b|\bprecio\b|\bcobrar\b|\bpagar\b|\$|\b(?:lucas?|mil|k|palos?|usd|u\$s|d[oó]lares?)\b",
+        x,
+    ))
+
+def _technical_need(t:str)->TechnicalNeed|None:
+    x=fold(t)
+    windows_installation=bool(re.search(r"\b(?:instalando|instalar|instalacion de)\s+windows\b|\bwindows\s+\d+\b",x))
+    blocked_progress=bool(re.search(r"\b(?:se queda|queda|quedo|se quedo|se congela|congelado|clavado|trabado|colgado)\b",x))
+    progress_marker=bool(re.search(r"\b\d{1,3}\s*%\b|\bpor ciento\b",x))
+    asks_cause=bool(re.search(r"\bque puede estar pasando\b|\bque pasa\b|\bpor que\b|\bcual puede ser\b",x))
+    if windows_installation and blocked_progress and (progress_marker or asks_cause):
+        return TechnicalNeed(
+            domain="PC",
+            technical_problem="OS_INSTALLATION_FAILURE",
+            economic_intent_explicit=_has_explicit_economic_intent(t),
+            candidate_routes=(
+                "DIAGNOSTIC_SERVICE",
+                "OS_INSTALLATION_SERVICE",
+                "HARDWARE_DIAGNOSTIC",
+            ),
+            product_purchase_recommendation="NONE_YET",
+            clarification_required=True,
+        )
+    return None
+
 def parse_pricing_query(raw_text:str,*,language_evidence_type:str="UNKNOWN")->ParsedPricingQuery:
-    x=fold(raw_text); p=price(raw_text); g=geo(raw_text); sv=services(raw_text); dev=device(raw_text); ps=parts(raw_text)
+    x=fold(raw_text)
+    tech=_technical_need(raw_text)
+    if tech is not None and not tech.economic_intent_explicit:
+        return ParsedPricingQuery(
+            raw_text,
+            x,
+            IntentAction.UNKNOWN,
+            IntentSide.UNKNOWN,
+            EconomicObjectKind.UNKNOWN,
+            (),
+            MarketScope.UNKNOWN,
+            ServiceModality.UNKNOWN,
+            PriceMention(),
+            Geography(),
+            "PC",
+            "UNKNOWN",
+            False,
+            CommercialContext(),
+            ParseMetadata(
+                0.8,
+                True,
+                "TECHNICAL_NEED_CLARIFICATION_REQUIRED",
+                "Necesito confirmar contexto técnico antes de convertir esto en una decisión económica.",
+                explicit_fields=("technical_need.raw_problem",),
+                derived_fields=("technical_need.candidate_routes",),
+            ),
+            language_evidence_type,
+            query_kind=QueryKind.TECHNICAL_NEED,
+            technical_need=tech,
+        )
+    p=price(raw_text); g=geo(raw_text); sv=services(raw_text); dev=device(raw_text); ps=parts(raw_text)
     explicit=[]; inferred=[]; derived=[]
     has_price=p.value is not None or p.min is not None
     if has_price: explicit.append("price")
