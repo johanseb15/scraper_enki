@@ -42,6 +42,20 @@ class PriceContextUnderstandingStatus(Enum):
     PARTIAL = "PRICE_CONTEXT_PARTIAL"
     UNKNOWN = "PRICE_CONTEXT_UNKNOWN"
 
+
+class ScopeMeaningKind(Enum):
+    DEVICE_PROFILE = "DEVICE_PROFILE"
+    TIER_ONLY = "TIER_ONLY"
+    DATA_CAPACITY_BAND = "DATA_CAPACITY_BAND"
+    PROVIDER_DELIVERY_CONTEXT = "PROVIDER_DELIVERY_CONTEXT"
+    UNKNOWN = "UNKNOWN"
+
+
+class ScopeUnderstandingStatus(Enum):
+    UNDERSTOOD = "SCOPE_UNDERSTOOD"
+    PARTIAL = "SCOPE_PARTIAL"
+    UNKNOWN = "SCOPE_UNKNOWN"
+
 @dataclass(frozen=True)
 class SemanticObservation:
     observation_id: str
@@ -107,3 +121,40 @@ class PriceContextMeaning:
         if self.price_scope == "UNKNOWN":
             return PriceContextUnderstandingStatus.PARTIAL
         return PriceContextUnderstandingStatus.UNDERSTOOD
+
+@dataclass(frozen=True)
+class ScopeMeaning:
+    source_expression: str
+    meaning_kind: ScopeMeaningKind
+    provenance: KnowledgeProvenance
+    device_types: tuple[str, ...] = ()
+    tiers: tuple[str, ...] = ()
+    capacity_max_value: float | None = None
+    capacity_unit: str | None = None
+    delivery_modes: tuple[str, ...] = ()
+
+    def __post_init__(self) -> None:
+        if not self.source_expression or not self.source_expression.strip():
+            raise ValueError("ScopeMeaning requires source_expression.")
+        if self.provenance is None:
+            raise ValueError("ScopeMeaning requires provenance.")
+        if self.capacity_max_value is not None and self.capacity_max_value <= 0:
+            raise ValueError("ScopeMeaning capacity_max_value must be positive.")
+        if self.capacity_max_value is not None and not self.capacity_unit:
+            raise ValueError("ScopeMeaning capacity requires capacity_unit.")
+        if self.capacity_unit and self.capacity_max_value is None:
+            raise ValueError("ScopeMeaning capacity_unit requires capacity_max_value.")
+
+    @property
+    def understanding_status(self) -> ScopeUnderstandingStatus:
+        if self.meaning_kind is ScopeMeaningKind.UNKNOWN:
+            return ScopeUnderstandingStatus.UNKNOWN
+        if self.meaning_kind is ScopeMeaningKind.DEVICE_PROFILE:
+            return ScopeUnderstandingStatus.UNDERSTOOD if self.device_types else ScopeUnderstandingStatus.PARTIAL
+        if self.meaning_kind is ScopeMeaningKind.TIER_ONLY:
+            return ScopeUnderstandingStatus.UNDERSTOOD if self.tiers else ScopeUnderstandingStatus.PARTIAL
+        if self.meaning_kind is ScopeMeaningKind.DATA_CAPACITY_BAND:
+            return ScopeUnderstandingStatus.UNDERSTOOD if self.capacity_max_value is not None and self.capacity_unit else ScopeUnderstandingStatus.PARTIAL
+        if self.meaning_kind is ScopeMeaningKind.PROVIDER_DELIVERY_CONTEXT:
+            return ScopeUnderstandingStatus.UNDERSTOOD if self.delivery_modes else ScopeUnderstandingStatus.PARTIAL
+        return ScopeUnderstandingStatus.PARTIAL
