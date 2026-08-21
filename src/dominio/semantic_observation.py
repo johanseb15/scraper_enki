@@ -26,6 +26,22 @@ class ObservationUnderstandingStatus(Enum):
     UNREPRESENTED = "UNREPRESENTED"
 
 
+class PriceContextKind(Enum):
+    TICKET_TIER = "TICKET_TIER"
+    PRICE_CHANGE = "PRICE_CHANGE"
+    ADDITIONAL_CHARGE = "ADDITIONAL_CHARGE"
+    PAYMENT_DISCOUNT = "PAYMENT_DISCOUNT"
+    PAYMENT_SPECIFIC_PRICE = "PAYMENT_SPECIFIC_PRICE"
+    QUANTITY_PRICE_TABLE = "QUANTITY_PRICE_TABLE"
+    TURNAROUND_TIME = "TURNAROUND_TIME"
+    UNKNOWN = "UNKNOWN"
+
+
+class PriceContextUnderstandingStatus(Enum):
+    UNDERSTOOD = "PRICE_CONTEXT_UNDERSTOOD"
+    PARTIAL = "PRICE_CONTEXT_PARTIAL"
+    UNKNOWN = "PRICE_CONTEXT_UNKNOWN"
+
 @dataclass(frozen=True)
 class SemanticObservation:
     observation_id: str
@@ -66,3 +82,28 @@ class SemanticObservation:
                 return ObservationUnderstandingStatus.PARTIALLY_UNDERSTOOD
             return ObservationUnderstandingStatus.CLASSIFIED_ONLY
         return ObservationUnderstandingStatus.CLASSIFIED_ONLY
+
+@dataclass(frozen=True)
+class PriceContextMeaning:
+    source_expression: str
+    context_kind: PriceContextKind
+    provenance: KnowledgeProvenance
+    price_scope: str = "UNKNOWN"
+    published_currency: str = "UNKNOWN"
+    raw_currency_markers: tuple[str, ...] = ()
+    percent_value: float | None = None
+    quantity_unit: str | None = None
+
+    def __post_init__(self) -> None:
+        if not self.source_expression or not self.source_expression.strip():
+            raise ValueError("PriceContextMeaning requires source_expression.")
+        if self.provenance is None:
+            raise ValueError("PriceContextMeaning requires provenance.")
+
+    @property
+    def understanding_status(self) -> PriceContextUnderstandingStatus:
+        if self.context_kind is PriceContextKind.UNKNOWN and self.price_scope == "UNKNOWN":
+            return PriceContextUnderstandingStatus.UNKNOWN
+        if self.price_scope == "UNKNOWN":
+            return PriceContextUnderstandingStatus.PARTIAL
+        return PriceContextUnderstandingStatus.UNDERSTOOD
