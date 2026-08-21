@@ -56,6 +56,20 @@ class ScopeUnderstandingStatus(Enum):
     PARTIAL = "SCOPE_PARTIAL"
     UNKNOWN = "SCOPE_UNKNOWN"
 
+
+class HardwareMeaningKind(Enum):
+    SINGLE_COMPONENT_FAMILY = "SINGLE_COMPONENT_FAMILY"
+    MULTI_COMPONENT_SYSTEM = "MULTI_COMPONENT_SYSTEM"
+    SERVICE_LIKE_CONFLICT = "SERVICE_LIKE_CONFLICT"
+    UNKNOWN = "UNKNOWN"
+
+
+class HardwareUnderstandingStatus(Enum):
+    UNDERSTOOD = "HARDWARE_UNDERSTOOD"
+    PARTIAL = "HARDWARE_PARTIAL"
+    AMBIGUOUS = "HARDWARE_AMBIGUOUS"
+    UNKNOWN = "HARDWARE_UNKNOWN"
+
 @dataclass(frozen=True)
 class SemanticObservation:
     observation_id: str
@@ -158,3 +172,39 @@ class ScopeMeaning:
         if self.meaning_kind is ScopeMeaningKind.PROVIDER_DELIVERY_CONTEXT:
             return ScopeUnderstandingStatus.UNDERSTOOD if self.delivery_modes else ScopeUnderstandingStatus.PARTIAL
         return ScopeUnderstandingStatus.PARTIAL
+
+@dataclass(frozen=True)
+class HardwareMeaning:
+    source_expression: str
+    meaning_kind: HardwareMeaningKind
+    provenance: KnowledgeProvenance
+    families: tuple[str, ...] = ()
+    brand_signals: tuple[str, ...] = ()
+    variant_signals: tuple[str, ...] = ()
+    spec_signals: tuple[str, ...] = ()
+
+    def __post_init__(self) -> None:
+        if not self.source_expression or not self.source_expression.strip():
+            raise ValueError("HardwareMeaning requires source_expression.")
+        if self.provenance is None:
+            raise ValueError("HardwareMeaning requires provenance.")
+
+    @property
+    def understanding_status(self) -> HardwareUnderstandingStatus:
+        if self.meaning_kind is HardwareMeaningKind.UNKNOWN:
+            return HardwareUnderstandingStatus.UNKNOWN
+        if self.meaning_kind is HardwareMeaningKind.SERVICE_LIKE_CONFLICT:
+            return HardwareUnderstandingStatus.AMBIGUOUS
+        if self.meaning_kind is HardwareMeaningKind.SINGLE_COMPONENT_FAMILY:
+            return (
+                HardwareUnderstandingStatus.UNDERSTOOD
+                if len(self.families) == 1
+                else HardwareUnderstandingStatus.PARTIAL
+            )
+        if self.meaning_kind is HardwareMeaningKind.MULTI_COMPONENT_SYSTEM:
+            return (
+                HardwareUnderstandingStatus.UNDERSTOOD
+                if len(self.families) >= 2
+                else HardwareUnderstandingStatus.PARTIAL
+            )
+        return HardwareUnderstandingStatus.PARTIAL
