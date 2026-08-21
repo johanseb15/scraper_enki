@@ -37,6 +37,76 @@ def obtener_cohortes_pricing() -> tuple[list[CohortePricing], list[CohortePricin
     return cargar_cohortes_pricing_runtime()
 
 
+def _serialize_market_resolution(market_resolution):
+    if market_resolution is None:
+        return None
+    return {
+        "clarification_required": market_resolution.clarification_required,
+        "clarification_reason": market_resolution.clarification_reason,
+        "clarification_question": market_resolution.clarification_question,
+        "resolutions": [
+            {
+                "route": item.route,
+                "status": item.status,
+                "canonical_service": item.canonical_service,
+                "economic_object_kind": item.economic_object_kind,
+                "market_scope": item.market_scope,
+                "market": item.market,
+                "market_key": item.market_key,
+                "market_status": item.market_status,
+                "resolution_reason": item.resolution_reason,
+            }
+            for item in market_resolution.resolutions
+        ],
+    }
+
+
+def _serialize_pricing_readiness(pricing_readiness):
+    if pricing_readiness is None:
+        return None
+
+    def serialize_route(item):
+        return {
+            "route": item.route,
+            "status": item.status,
+            "ready": item.ready,
+            "canonical_service": item.canonical_service,
+            "market_scope": item.market_scope,
+            "market": item.market,
+            "market_key": item.market_key,
+            "reason": item.reason,
+            "pricing_status": item.pricing_status,
+        }
+
+    return {
+        "routes": [serialize_route(item) for item in pricing_readiness.routes],
+        "ready_routes": [serialize_route(item) for item in pricing_readiness.ready_routes],
+        "blocked_routes": [serialize_route(item) for item in pricing_readiness.blocked_routes],
+    }
+
+
+def _serialize_evidence_probe(evidence_probe):
+    if evidence_probe is None:
+        return None
+    return {
+        "probes": [
+            {
+                "route": item.route,
+                "status": item.status,
+                "market": item.market,
+                "canonical_service": item.canonical_service,
+                "observations_n": item.observations_n,
+                "providers_n": item.providers_n,
+                "evidence_confidence": item.evidence_confidence,
+                "observed_min": item.observed_min,
+                "observed_max": item.observed_max,
+                "median": item.median,
+                "reason": item.reason,
+            }
+            for item in evidence_probe.probes
+        ],
+    }
+
 def _serialize_decision_result(result):
     parsed = result.parsed
     response = presentar_resultado_pricing(result)
@@ -51,7 +121,11 @@ def _serialize_decision_result(result):
         "clarification_reason": result.clarification_reason,
         "clarification_question": result.clarification_question,
         "unsupported_reason": result.unsupported_reason,
+        "market_resolution": _serialize_market_resolution(result.market_resolution),
+        "pricing_readiness": _serialize_pricing_readiness(result.pricing_readiness),
+        "evidence_probe": _serialize_evidence_probe(result.evidence_probe),
         "parsed": {
+            "query_kind": parsed.query_kind.value,
             "intent_action": parsed.intent_action.value,
             "intent_side": parsed.intent_side.value,
             "economic_object_kind": parsed.economic_object_kind.value,
@@ -77,6 +151,14 @@ def _serialize_decision_result(result):
             "clarification_required": parsed.metadata.clarification_required,
             "clarification_reason": parsed.metadata.clarification_reason,
             "clarification_question": parsed.metadata.clarification_question,
+            "technical_need": None if parsed.technical_need is None else {
+                "domain": parsed.technical_need.domain,
+                "technical_problem": parsed.technical_need.technical_problem,
+                "economic_intent_explicit": parsed.technical_need.economic_intent_explicit,
+                "candidate_routes": list(parsed.technical_need.candidate_routes),
+                "product_purchase_recommendation": parsed.technical_need.product_purchase_recommendation,
+                "clarification_required": parsed.technical_need.clarification_required,
+            },
         },
         "evidence": None if evidence is None else {
             "market": evidence.market,

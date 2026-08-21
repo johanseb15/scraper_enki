@@ -11,6 +11,7 @@ from src.aplicacion.language_query_contract import (
     IntentAction,
     MarketScope,
     ParsedPricingQuery,
+    QueryKind,
     PriceType,
 )
 from src.aplicacion.parser_consulta_pricing import parse_pricing_query
@@ -18,6 +19,16 @@ from src.aplicacion.pricing_evidence_engine import (
     CohortePricing,
     ResultadoEvidenciaPrecio,
     evaluar_precio,
+)
+from src.aplicacion.technical_need_evidence_probe import (
+    TechnicalNeedEvidenceProbe,
+    probe_technical_need_evidence,
+)
+from src.aplicacion.technical_need_market_resolution import (
+    TechnicalNeedMarketResolution,
+    TechnicalNeedPricingReadiness,
+    evaluate_technical_need_pricing_readiness,
+    resolve_technical_need_market,
 )
 
 
@@ -29,6 +40,9 @@ class EnkiPricingQueryResult:
     clarification_reason: str | None = None
     clarification_question: str | None = None
     unsupported_reason: str | None = None
+    market_resolution: TechnicalNeedMarketResolution | None = None
+    pricing_readiness: TechnicalNeedPricingReadiness | None = None
+    evidence_probe: TechnicalNeedEvidenceProbe | None = None
 
     @property
     def decision_label(self) -> str | None:
@@ -89,6 +103,27 @@ def resolver_consulta_pricing(
     language_evidence_type: str = "OBSERVED_USER",
 ) -> EnkiPricingQueryResult:
     parsed = parse_pricing_query(texto, language_evidence_type=language_evidence_type)
+
+    if parsed.query_kind == QueryKind.TECHNICAL_NEED:
+        market_resolution = resolve_technical_need_market(
+            parsed.technical_need,
+            geography=parsed.geography,
+        )
+        pricing_readiness = evaluate_technical_need_pricing_readiness(market_resolution)
+        evidence_probe = probe_technical_need_evidence(
+            pricing_readiness,
+            local_cohortes=local_cohortes,
+            remote_cohortes=remote_cohortes,
+        )
+        return EnkiPricingQueryResult(
+            status="TECHNICAL_NEED_ROUTED",
+            parsed=parsed,
+            clarification_reason=market_resolution.clarification_reason or parsed.metadata.clarification_reason,
+            clarification_question=market_resolution.clarification_question or parsed.metadata.clarification_question,
+            market_resolution=market_resolution,
+            pricing_readiness=pricing_readiness,
+            evidence_probe=evidence_probe,
+        )
 
     if parsed.metadata.clarification_required:
         return _clarification(parsed)
