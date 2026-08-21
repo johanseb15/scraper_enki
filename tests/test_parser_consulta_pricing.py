@@ -1,4 +1,4 @@
-from src.aplicacion.language_query_contract import EconomicObjectKind,IntentAction,IntentSide,MarketScope,PartsScope,ServiceModality
+from src.aplicacion.language_query_contract import EconomicObjectKind,IntentAction,IntentSide,MarketScope,PartsScope,QueryKind,ServiceModality
 from src.aplicacion.parser_consulta_pricing import parse_pricing_query
 
 def test_evaluate_buy_local():
@@ -63,3 +63,19 @@ def test_provenance():
 def test_service_word_ambiguous():
     r=parse_pricing_query("cuánto sale el service en CABA?")
     assert r.economic_object_kind==EconomicObjectKind.UNKNOWN and r.metadata.clarification_required
+
+def test_windows_installation_failure_is_technical_need_not_pricing():
+    r=parse_pricing_query("Estoy instalando Windows 11 y se queda congelado en 10%. ¿Qué puede estar pasando?")
+    assert r.query_kind==QueryKind.TECHNICAL_NEED
+    assert r.technical_need is not None
+    assert r.technical_need.domain=="PC"
+    assert r.technical_need.technical_problem=="OS_INSTALLATION_FAILURE"
+    assert r.technical_need.economic_intent_explicit is False
+    assert r.technical_need.candidate_routes==(
+        "DIAGNOSTIC_SERVICE",
+        "OS_INSTALLATION_SERVICE",
+        "HARDWARE_DIAGNOSTIC",
+    )
+    assert r.technical_need.product_purchase_recommendation=="NONE_YET"
+    assert r.technical_need.clarification_required is True
+    assert r.price.value is None

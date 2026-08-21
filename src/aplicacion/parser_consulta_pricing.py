@@ -224,6 +224,7 @@ def parse_pricing_query(raw_text:str,*,language_evidence_type:str="UNKNOWN")->Pa
     x=fold(raw_text)
     tech=_technical_need(raw_text)
     if tech is not None and not tech.economic_intent_explicit:
+        g=geo(raw_text)
         return ParsedPricingQuery(
             raw_text,
             x,
@@ -234,7 +235,7 @@ def parse_pricing_query(raw_text:str,*,language_evidence_type:str="UNKNOWN")->Pa
             MarketScope.UNKNOWN,
             ServiceModality.UNKNOWN,
             PriceMention(),
-            Geography(),
+            g,
             "PC",
             "UNKNOWN",
             False,
