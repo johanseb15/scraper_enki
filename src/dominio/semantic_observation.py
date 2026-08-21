@@ -85,6 +85,20 @@ class NonObjectUnderstandingStatus(Enum):
     UNDERSTOOD = "NON_OBJECT_UNDERSTOOD"
     UNKNOWN = "NON_OBJECT_UNKNOWN"
 
+
+class LogisticsMeaningKind(Enum):
+    LOCAL_COURIER_DELIVERY = "LOCAL_COURIER_DELIVERY"
+    HOME_DELIVERY = "HOME_DELIVERY"
+    BRANCH_DELIVERY = "BRANCH_DELIVERY"
+    PICKUP_POINT = "PICKUP_POINT"
+    UNKNOWN = "UNKNOWN"
+
+
+class LogisticsUnderstandingStatus(Enum):
+    UNDERSTOOD = "LOGISTICS_UNDERSTOOD"
+    PARTIAL = "LOGISTICS_PARTIAL"
+    UNKNOWN = "LOGISTICS_UNKNOWN"
+
 @dataclass(frozen=True)
 class SemanticObservation:
     observation_id: str
@@ -242,3 +256,27 @@ class NonObjectMeaning:
         if self.meaning_kind is NonObjectMeaningKind.UNKNOWN:
             return NonObjectUnderstandingStatus.UNKNOWN
         return NonObjectUnderstandingStatus.UNDERSTOOD
+
+@dataclass(frozen=True)
+class LogisticsMeaning:
+    source_expression: str
+    meaning_kind: LogisticsMeaningKind
+    provenance: KnowledgeProvenance
+    channels: tuple[str, ...] = ()
+    destinations: tuple[str, ...] = ()
+    carriers: tuple[str, ...] = ()
+    coverage_signals: tuple[str, ...] = ()
+
+    def __post_init__(self) -> None:
+        if not self.source_expression or not self.source_expression.strip():
+            raise ValueError("LogisticsMeaning requires source_expression.")
+        if self.provenance is None:
+            raise ValueError("LogisticsMeaning requires provenance.")
+
+    @property
+    def understanding_status(self) -> LogisticsUnderstandingStatus:
+        if self.meaning_kind is LogisticsMeaningKind.UNKNOWN:
+            return LogisticsUnderstandingStatus.UNKNOWN
+        if self.channels or self.destinations or self.carriers or self.coverage_signals:
+            return LogisticsUnderstandingStatus.UNDERSTOOD
+        return LogisticsUnderstandingStatus.PARTIAL
