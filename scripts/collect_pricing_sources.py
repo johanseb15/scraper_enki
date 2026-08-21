@@ -12,6 +12,9 @@ from src.aplicacion.pricing_source_registry import (
 from src.infraestructura.downloader import (
     descargar_html,
 )
+from src.infraestructura.http_tls import (
+    crear_session_system_trust,
+)
 from src.infraestructura.scrapers.generic_price_extractor import (
     extraer_observaciones_precio_genericas,
 )
@@ -23,11 +26,13 @@ from src.infraestructura.sqlite.repositorio_sqlite_evidencia import (
 class DownloaderHTTP:
     def __init__(self, timeout: int = 15):
         self.timeout = timeout
+        self.session = crear_session_system_trust()
 
     def descargar(self, url: str) -> str:
         return descargar_html(
             url,
             timeout=self.timeout,
+            session=self.session,
         )
 
 
@@ -128,7 +133,7 @@ def main() -> None:
 
         for failure in resultado.failures:
             print(
-                f"{failure.source}: "
+                f"{failure.source} [{failure.error_type}]: "
                 f"{failure.error}"
             )
 

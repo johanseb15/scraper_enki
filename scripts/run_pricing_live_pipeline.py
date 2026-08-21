@@ -7,6 +7,7 @@ from pathlib import Path
 from scripts.build_pricing_statistics import build_pricing_statistics
 from src.aplicacion.pricing_live_pipeline import ejecutar_pipeline_pricing_live
 from src.infraestructura.downloader import descargar_html
+from src.infraestructura.http_tls import crear_session_system_trust
 from src.infraestructura.scrapers.generic_price_extractor import (
     extraer_observaciones_precio_genericas,
 )
@@ -18,9 +19,10 @@ from src.infraestructura.sqlite.repositorio_sqlite_evidencia import (
 class DownloaderHTTP:
     def __init__(self, timeout: int = 20):
         self.timeout = timeout
+        self.session = crear_session_system_trust()
 
     def descargar(self, url: str) -> str:
-        return descargar_html(url, timeout=self.timeout)
+        return descargar_html(url, timeout=self.timeout, session=self.session)
 
 
 def main() -> None:
@@ -96,7 +98,7 @@ def main() -> None:
         print("SOURCE FAILURES")
         print("---------------")
         for failure in a.failures:
-            print(f"{failure.source}: {failure.error}")
+            print(f"{failure.source} [{failure.error_type}]: {failure.error}")
 
 
 if __name__ == "__main__":

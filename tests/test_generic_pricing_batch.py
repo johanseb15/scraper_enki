@@ -1,5 +1,7 @@
 from datetime import datetime, timezone
 
+import requests
+
 from src.aplicacion.colector_precios_batch import (
     FuentePricing,
     colectar_fuentes_pricing,
@@ -252,3 +254,68 @@ def test_batch_es_idempotente(tmp_path):
 
     assert resultado.observations_extracted == 0
     assert resultado.observations_duplicate == 2
+
+def test_batch_clasifica_fallo_tls_sin_ocultarlo(tmp_path):
+    repo = RepositorioSQLiteEvidencia(str(tmp_path / "evidence.db"))
+    fuente = FuentePricing(
+        source="tls_fail",
+        provider="TLS Fail",
+        url="https://tls.example/precios",
+        province="Córdoba",
+        city="Córdoba",
+    )
+    downloader = DownloaderPorURLFake(
+        {fuente.url: requests.exceptions.SSLError("certificate verify failed")}
+    )
+
+    resultado = colectar_fuentes_pricing(
+        [fuente],
+        repositorio=repo,
+        downloader=downloader,
+        extractor=extraer_observaciones_precio_genericas,
+        reloj=lambda: WHEN,
+    )
+
+    assert resultado.sources_failed == 1
+    assert resultado.failures[0].error_type == "TLS_CERTIFICATE_ERROR"
+    assert "certificate verify failed" in resultado.failures[0].error
+
+
+def test_batch_clasifica_dns_y_timeout_separados_de_tls(tmp_path):
+    repo = RepositorioSQLiteEvidencia(str(tmp_path / "evidence.db"))
+    fuentes = [
+        FuentePricing(
+            source="dns_fail",
+            provider="DNS Fail",
+            url="https://dns.example/precios",
+            province="Córdoba",
+            city="Córdoba",
+        ),
+        FuentePricing(
+            source="timeout_fail",
+            provider="Timeout Fail",
+            url="https://timeout.example/precios",
+            province="Córdoba",
+            city="Córdoba",
+        ),
+    ]
+    downloader = DownloaderPorURLFake(
+        {
+            fuentes[0].url: requests.exceptions.ConnectionError(
+                "NameResolutionError: Failed to resolve"
+            ),
+            fuentes[1].url: requests.exceptions.Timeout("timed out"),
+        }
+    )
+
+    resultado = colectar_fuentes_pricing(
+        fuentes,
+        repositorio=repo,
+        downloader=downloader,
+        extractor=extraer_observaciones_precio_genericas,
+        reloj=lambda: WHEN,
+    )
+
+    by_source = {failure.source: failure for failure in resultado.failures}
+    assert by_source["dns_fail"].error_type == "DNS_ERROR"
+    assert by_source["timeout_fail"].error_type == "TIMEOUT"

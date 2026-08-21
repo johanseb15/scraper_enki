@@ -5,6 +5,8 @@ from datetime import datetime, timezone
 import hashlib
 from typing import Callable, Protocol
 
+import requests
+
 from src.aplicacion.puertos.repositorio_evidencia import (
     RepositorioEvidencia,
 )
@@ -51,6 +53,27 @@ class FalloFuentePricing:
     provider: str
     url: str
     error: str
+    error_type: str = "CONNECTION_ERROR"
+
+
+def clasificar_fallo_adquisicion(exc: Exception) -> str:
+    if isinstance(exc, requests.exceptions.SSLError):
+        return "TLS_CERTIFICATE_ERROR"
+    if isinstance(exc, requests.exceptions.Timeout):
+        return "TIMEOUT"
+    if isinstance(exc, requests.exceptions.HTTPError):
+        return "HTTP_ERROR"
+    if isinstance(exc, requests.exceptions.ConnectionError):
+        text = repr(exc).lower()
+        if (
+            "nameresolutionerror" in text
+            or "failed to resolve" in text
+            or "getaddrinfo failed" in text
+            or "name or service not known" in text
+        ):
+            return "DNS_ERROR"
+        return "CONNECTION_ERROR"
+    return "CONNECTION_ERROR"
 
 
 @dataclass(frozen=True)
@@ -237,6 +260,7 @@ def colectar_fuentes_pricing(
                     provider=fuente.provider,
                     url=fuente.url,
                     error=str(exc),
+                    error_type=clasificar_fallo_adquisicion(exc),
                 )
             )
 
