@@ -70,6 +70,21 @@ class HardwareUnderstandingStatus(Enum):
     AMBIGUOUS = "HARDWARE_AMBIGUOUS"
     UNKNOWN = "HARDWARE_UNKNOWN"
 
+
+class NonObjectMeaningKind(Enum):
+    PRICE_LABEL = "PRICE_LABEL"
+    PRICING_LOWER_BOUND = "PRICING_LOWER_BOUND"
+    ZERO_VALUE_PLACEHOLDER = "ZERO_VALUE_PLACEHOLDER"
+    AVAILABILITY_STATUS = "AVAILABILITY_STATUS"
+    GENERIC_SERVICE_HEADING = "GENERIC_SERVICE_HEADING"
+    MARKETING_SERVICE_COPY = "MARKETING_SERVICE_COPY"
+    UNKNOWN = "UNKNOWN"
+
+
+class NonObjectUnderstandingStatus(Enum):
+    UNDERSTOOD = "NON_OBJECT_UNDERSTOOD"
+    UNKNOWN = "NON_OBJECT_UNKNOWN"
+
 @dataclass(frozen=True)
 class SemanticObservation:
     observation_id: str
@@ -208,3 +223,22 @@ class HardwareMeaning:
                 else HardwareUnderstandingStatus.PARTIAL
             )
         return HardwareUnderstandingStatus.PARTIAL
+
+@dataclass(frozen=True)
+class NonObjectMeaning:
+    source_expression: str
+    meaning_kind: NonObjectMeaningKind
+    provenance: KnowledgeProvenance
+    signals: tuple[str, ...] = ()
+
+    def __post_init__(self) -> None:
+        if self.source_expression is None:
+            raise ValueError("NonObjectMeaning requires source_expression.")
+        if self.provenance is None:
+            raise ValueError("NonObjectMeaning requires provenance.")
+
+    @property
+    def understanding_status(self) -> NonObjectUnderstandingStatus:
+        if self.meaning_kind is NonObjectMeaningKind.UNKNOWN:
+            return NonObjectUnderstandingStatus.UNKNOWN
+        return NonObjectUnderstandingStatus.UNDERSTOOD
