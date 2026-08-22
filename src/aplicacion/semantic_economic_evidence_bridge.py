@@ -5,6 +5,7 @@ from typing import Iterable
 
 from src.dominio.economic_evidence import (
     EconomicEvidenceContext,
+    EconomicEvidenceDimensionsV2,
     EconomicEvidenceRecord,
     EconomicObjectKind,
     EconomicReadiness,
@@ -131,7 +132,7 @@ class SemanticEconomicEvidenceBridge:
             evidence_count=len(comparable),
             independent_provider_count=providers,
             geography_scope=(
-                _dimension_value(anchor, "market_scope")
+                _geography_scope(anchor)
                 if anchor else observation.market_scope
             ) or "UNKNOWN",
             price_scope=(
@@ -252,7 +253,16 @@ class SemanticEconomicEvidenceBridge:
                 missing.append("PRICE_SCOPE")
             if _dimension_value(anchor, "currency") in {None, "UNKNOWN"}:
                 missing.append("CURRENCY")
-            if _dimension_value(anchor, "market_scope") == "LOCAL_SERVICE" and not _province(anchor):
+            if isinstance(anchor.dimensions, EconomicEvidenceDimensionsV2):
+                if _dimension_value(anchor, "delivery_mode") is None:
+                    missing.append("DELIVERY_MODE")
+                if _dimension_value(anchor, "geographic_reach") is None:
+                    missing.append("GEOGRAPHIC_REACH")
+                if _dimension_value(anchor, "commercial_context") is None:
+                    missing.append("COMMERCIAL_CONTEXT")
+                if _dimension_value(anchor, "delivery_mode") == "ONSITE" and not _province(anchor):
+                    missing.append("LOCATION")
+            elif _dimension_value(anchor, "market_scope") == "LOCAL_SERVICE" and not _province(anchor):
                 missing.append("GEOGRAPHY")
             for name in _conflicted_dimensions(anchor):
                 missing.append(f"CONFLICTED_{name.upper()}")
@@ -290,7 +300,10 @@ class SemanticEconomicEvidenceBridge:
                 return EconomicReadiness.AMBIGUOUS
             if meaning.meaning_kind is HardwareMeaningKind.MULTI_COMPONENT_SYSTEM:
                 return EconomicReadiness.INSUFFICIENT
-        if any(name in missing for name in ("SOURCE_EVIDENCE_ROW", "PRICE_SCOPE", "CURRENCY", "GEOGRAPHY")):
+        if any(name in missing for name in (
+            "SOURCE_EVIDENCE_ROW", "PRICE_SCOPE", "CURRENCY", "GEOGRAPHY",
+            "DELIVERY_MODE", "GEOGRAPHIC_REACH", "COMMERCIAL_CONTEXT", "LOCATION",
+        )):
             return EconomicReadiness.INSUFFICIENT
         prices = [item.price_value for item in comparable if item.price_value is not None and item.price_value > 0]
         providers = len({value for item in comparable if (value := _provider_identity(item))})
@@ -310,6 +323,10 @@ def _shared_dimension_reasons(
 ) -> list[EvidenceExclusionReason]:
     if anchor is None:
         return [EvidenceExclusionReason.INSUFFICIENT_SCOPE]
+    if isinstance(anchor.dimensions, EconomicEvidenceDimensionsV2):
+        if not isinstance(item.dimensions, EconomicEvidenceDimensionsV2):
+            return [EvidenceExclusionReason.INSUFFICIENT_SCOPE]
+        return _v2_shared_dimension_reasons(anchor, item)
     reasons: list[EvidenceExclusionReason] = []
     anchor_market = _dimension_value(anchor, "market_scope")
     item_market = _dimension_value(item, "market_scope")
@@ -374,6 +391,59 @@ def _shared_dimension_reasons(
     return reasons
 
 
+def _v2_shared_dimension_reasons(
+    anchor: EconomicEvidenceRecord,
+    item: EconomicEvidenceRecord,
+) -> list[EvidenceExclusionReason]:
+    reasons: list[EvidenceExclusionReason] = []
+    for name, mismatch_reason in (
+        ("currency", EvidenceExclusionReason.CURRENCY_MISMATCH),
+        ("price_scope", EvidenceExclusionReason.CADENCE_MISMATCH),
+        ("delivery_mode", EvidenceExclusionReason.DELIVERY_MODE_MISMATCH),
+        ("geographic_reach", EvidenceExclusionReason.GEOGRAPHIC_REACH_MISMATCH),
+        ("commercial_context", EvidenceExclusionReason.COMMERCIAL_CONTEXT_MISMATCH),
+    ):
+        left = _dimension_value(anchor, name)
+        right = _dimension_value(item, name)
+        if left is None or right is None:
+            reasons.append(EvidenceExclusionReason.INSUFFICIENT_SCOPE)
+        elif left != right:
+            reasons.append(mismatch_reason)
+
+    if _dimension_value(anchor, "delivery_mode") == _dimension_value(item, "delivery_mode") == "ONSITE":
+        left_location = _dimension_value(anchor, "location")
+        right_location = _dimension_value(item, "location")
+        if left_location is None or right_location is None:
+            reasons.append(EvidenceExclusionReason.INSUFFICIENT_SCOPE)
+        elif left_location != right_location:
+            reasons.append(EvidenceExclusionReason.LOCATION_MISMATCH)
+
+    anchor_bundle = _dimension_value(anchor, "bundle_status")
+    item_bundle = _dimension_value(item, "bundle_status")
+    if anchor_bundle == "COMPOSITE" or item_bundle == "COMPOSITE":
+        reasons.append(EvidenceExclusionReason.BUNDLE_NOT_COMPARABLE)
+    elif anchor_bundle is None or item_bundle is None:
+        reasons.append(EvidenceExclusionReason.INSUFFICIENT_SCOPE)
+    elif anchor_bundle != item_bundle:
+        reasons.append(EvidenceExclusionReason.BUNDLE_NOT_COMPARABLE)
+
+    _compare_optional_dimension(
+        reasons, anchor, item, "device_scope",
+        EvidenceExclusionReason.DEVICE_SCOPE_MISMATCH,
+    )
+    _compare_optional_dimension(
+        reasons, anchor, item, "hardware_included",
+        EvidenceExclusionReason.HARDWARE_INCLUDED_MISMATCH,
+    )
+    _compare_optional_dimension(
+        reasons, anchor, item, "materials_included",
+        EvidenceExclusionReason.MATERIALS_INCLUDED_MISMATCH,
+    )
+    if item.price_value is None or item.price_value <= 0:
+        reasons.append(EvidenceExclusionReason.INVALID_PRICE)
+    return reasons
+
+
 def _compare_optional_dimension(
     reasons: list[EvidenceExclusionReason],
     anchor: EconomicEvidenceRecord,
@@ -391,7 +461,9 @@ def _compare_optional_dimension(
 
 def _dimension_value(item: EconomicEvidenceRecord, name: str):
     if item.dimensions is not None:
-        dimension = item.dimensions.all_dimensions()[name]
+        dimension = item.dimensions.all_dimensions().get(name)
+        if dimension is None:
+            return None
         return dimension.value if dimension.is_usable else None
     legacy = {
         "market_scope": item.market_scope,
@@ -405,9 +477,10 @@ def _dimension_value(item: EconomicEvidenceRecord, name: str):
 
 def _province(item: EconomicEvidenceRecord) -> str | None:
     if item.dimensions is not None:
-        geography = item.dimensions.geography
-        if geography.is_usable and geography.value is not None:
-            return geography.value.province
+        dimensions = item.dimensions.all_dimensions()
+        location = dimensions.get("location") or dimensions.get("geography")
+        if location is not None and location.is_usable and location.value is not None:
+            return location.value.province
         return None
     return item.province
 
@@ -419,6 +492,12 @@ def _provider_identity(item: EconomicEvidenceRecord) -> str | None:
             return provider.value.provider_id
         return None
     return item.provider.strip() or None
+
+
+def _geography_scope(item: EconomicEvidenceRecord) -> str | None:
+    if isinstance(item.dimensions, EconomicEvidenceDimensionsV2):
+        return _dimension_value(item, "geographic_reach")
+    return _dimension_value(item, "market_scope")
 
 
 def _conflicted_dimensions(item: EconomicEvidenceRecord | None) -> tuple[str, ...]:

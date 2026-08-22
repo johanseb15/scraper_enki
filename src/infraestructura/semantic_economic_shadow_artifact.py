@@ -128,6 +128,8 @@ def _jsonable(value: Any) -> Any:
         return value.value
     if isinstance(value, Decimal):
         return str(value)
+    if isinstance(value, frozenset):
+        return sorted(_jsonable(item) for item in value)
     if is_dataclass(value):
         return {key: _jsonable(item) for key, item in asdict(value).items()}
     if isinstance(value, dict):
