@@ -169,6 +169,10 @@ class EvidenceExclusionReason(Enum):
     LOGISTICS_ONLY = "LOGISTICS_ONLY"
     PRICE_CONTEXT_ONLY = "PRICE_CONTEXT_ONLY"
     SCOPE_ONLY = "SCOPE_ONLY"
+    DIMENSION_CONFLICT = "DIMENSION_CONFLICT"
+    DEVICE_SCOPE_MISMATCH = "DEVICE_SCOPE_MISMATCH"
+    HARDWARE_INCLUDED_MISMATCH = "HARDWARE_INCLUDED_MISMATCH"
+    MATERIALS_INCLUDED_MISMATCH = "MATERIALS_INCLUDED_MISMATCH"
 
 
 @dataclass(frozen=True)
@@ -188,6 +192,7 @@ class EconomicEvidenceRecord:
     commercial_context: str
     provenance: KnowledgeProvenance
     meaning: object | None = None
+    dimensions: EconomicEvidenceDimensions | None = None
 
     def __post_init__(self) -> None:
         if not self.evidence_id.strip():
@@ -225,6 +230,7 @@ class EconomicEvidenceContext:
     price_scope: str
     provenance: tuple[KnowledgeProvenance, ...]
     uncertainty: tuple[str, ...] = ()
+    conflicted_dimensions: tuple[str, ...] = ()
 
     @property
     def exclusion_reasons(self) -> tuple[EvidenceExclusionReason, ...]:

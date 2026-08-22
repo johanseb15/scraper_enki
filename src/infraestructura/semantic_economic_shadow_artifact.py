@@ -94,6 +94,7 @@ def _context_payload(context: EconomicEvidenceContext, *, version: str) -> dict[
         "price_scope": context.price_scope,
         "missing_dimensions": list(context.missing_dimensions),
         "uncertainty": list(context.uncertainty),
+        "conflicted_dimensions": list(context.conflicted_dimensions),
         "candidate_evidence_ids": [item.evidence_id for item in context.candidate_evidence],
         "comparable_evidence": [_evidence_payload(item) for item in context.comparable_evidence],
         "excluded_evidence": [
@@ -118,6 +119,7 @@ def _evidence_payload(value) -> dict[str, Any]:
         "market_scope": value.market_scope,
         "province": value.province,
         "provenance": _jsonable(value.provenance),
+        "dimensions": _jsonable(value.dimensions),
     }
 
 

@@ -12,6 +12,10 @@ from src.aplicacion.semantic_economic_evidence_bridge import (
 from src.infraestructura.semantic_economic_evidence_adapter import (
     compose_economic_evidence_records,
 )
+from src.infraestructura.economic_dimensions_artifact import (
+    build_dimension_metrics,
+    load_economic_dimensions_sidecar,
+)
 from src.infraestructura.semantic_economic_shadow_artifact import (
     build_shadow_metrics,
     write_semantic_economic_shadow_jsonl,
@@ -27,6 +31,7 @@ def build_semantic_economic_shadow(
     output_jsonl: str | Path,
     *,
     version: str = "semantic-economic-bridge-v1",
+    dimensions_path: str | Path | None = None,
 ) -> dict[str, Any]:
     input_path = Path(input_csv)
     output_path = Path(output_jsonl)
@@ -44,7 +49,21 @@ def build_semantic_economic_shadow(
     if len(ids) != len(set(ids)):
         raise ValueError("Duplicate observation_id values in shadow input.")
 
-    evidence = compose_economic_evidence_records(rows, envelopes)
+    dimensions = (
+        load_economic_dimensions_sidecar(dimensions_path)
+        if dimensions_path is not None else {}
+    )
+    if dimensions and set(dimensions) != set(ids):
+        missing = sorted(set(ids) - set(dimensions))
+        extra = sorted(set(dimensions) - set(ids))
+        raise ValueError(
+            f"Dimension sidecar observation_id mismatch: missing={missing} extra={extra}"
+        )
+    evidence = compose_economic_evidence_records(
+        rows,
+        envelopes,
+        dimensions_by_observation_id=dimensions,
+    )
     bridge = SemanticEconomicEvidenceBridge(evidence)
     contexts = tuple(bridge.resolve(envelope) for envelope in envelopes)
     if len(contexts) != len(envelopes):
@@ -52,6 +71,9 @@ def build_semantic_economic_shadow(
 
     write_semantic_economic_shadow_jsonl(contexts, output_path, version=version)
     metrics = build_shadow_metrics(contexts)
+    metrics.update(bridge.candidate_generation_metrics)
+    if dimensions:
+        metrics.update(build_dimension_metrics(dimensions.values()))
     summary_path = output_path.with_suffix(".summary.json")
     write_shadow_summary(metrics, summary_path, version=version)
 
@@ -71,8 +93,14 @@ def main() -> None:
     parser.add_argument("input_csv")
     parser.add_argument("output_jsonl")
     parser.add_argument("--version", default="semantic-economic-bridge-v1")
+    parser.add_argument("--dimensions")
     args = parser.parse_args()
-    build_semantic_economic_shadow(args.input_csv, args.output_jsonl, version=args.version)
+    build_semantic_economic_shadow(
+        args.input_csv,
+        args.output_jsonl,
+        version=args.version,
+        dimensions_path=args.dimensions,
+    )
 
 
 if __name__ == "__main__":

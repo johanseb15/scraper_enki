@@ -8,6 +8,7 @@ from src.dominio.economic_evidence import (
     EconomicEvidenceRecord,
     EconomicObjectKind,
     EconomicReadiness,
+    DimensionStatus,
     EvidenceExclusionReason,
     ExcludedEconomicEvidence,
 )
@@ -37,21 +38,53 @@ class SemanticEconomicEvidenceBridge:
         ids = [item.evidence_id for item in self._evidence]
         if len(ids) != len(set(ids)):
             raise ValueError("Economic evidence ids must be unique.")
+        self._evidence_by_id = {item.evidence_id: item for item in self._evidence}
+        role_groups = {
+            role: tuple(item for item in self._evidence if item.semantic_role is role)
+            for role in SemanticObservationRole
+        }
+        economic_roles = {
+            SemanticObservationRole.SINGLE_SERVICE,
+            SemanticObservationRole.COMPOSITE_SERVICE,
+            SemanticObservationRole.HARDWARE_PRODUCT,
+        }
+        economic_pool = tuple(
+            item for item in self._evidence if item.semantic_role in economic_roles
+        )
+        self._candidate_pools = {
+            role: (economic_pool if role in economic_roles else role_groups[role])
+            for role in SemanticObservationRole
+        }
+        self._candidate_pairs_before = 0
+        self._candidate_pairs_after = 0
+        self._candidate_results = 0
+
+    @property
+    def candidate_generation_metrics(self) -> dict[str, int]:
+        return {
+            "CANDIDATE_PAIRS_BEFORE_INDEX": self._candidate_pairs_before,
+            "CANDIDATE_PAIRS_AFTER_INDEX": self._candidate_pairs_after,
+            "CANDIDATE_RESULTS": self._candidate_results,
+        }
 
     def resolve(self, envelope: SemanticUnderstandingEnvelope) -> EconomicEvidenceContext:
         observation = envelope.observation
-        anchor = next(
-            (item for item in self._evidence if item.evidence_id == observation.observation_id),
-            None,
-        )
+        anchor = self._evidence_by_id.get(observation.observation_id)
+        if observation.semantic_role in _CONTEXT_REASON:
+            pool = (anchor,) if anchor is not None else ()
+        else:
+            pool = self._candidate_pools[observation.semantic_role]
+        self._candidate_pairs_before += len(self._evidence)
+        self._candidate_pairs_after += len(pool)
         candidates = tuple(
-            item for item in self._evidence
+            item for item in pool
             if self._is_candidate(
                 observation.semantic_role,
                 observation.observation_id,
                 item,
             )
         )
+        self._candidate_results += len(candidates)
         excluded: list[ExcludedEconomicEvidence] = []
         comparable: list[EconomicEvidenceRecord] = []
         for item in candidates:
@@ -71,7 +104,8 @@ class SemanticEconomicEvidenceBridge:
 
         missing = self._missing_dimensions(envelope, anchor, comparable)
         readiness = self._readiness(envelope, comparable, missing)
-        providers = len({item.provider for item in comparable if item.provider.strip()})
+        providers = len({value for item in comparable if (value := _provider_identity(item))})
+        conflicted_dimensions = _conflicted_dimensions(anchor)
         uncertainty = tuple(
             value for value in (
                 envelope.status.value if envelope.status in {
@@ -96,10 +130,17 @@ class SemanticEconomicEvidenceBridge:
             readiness=readiness,
             evidence_count=len(comparable),
             independent_provider_count=providers,
-            geography_scope=(anchor.market_scope if anchor else observation.market_scope),
-            price_scope=(anchor.price_scope if anchor else "UNKNOWN"),
+            geography_scope=(
+                _dimension_value(anchor, "market_scope")
+                if anchor else observation.market_scope
+            ) or "UNKNOWN",
+            price_scope=(
+                _dimension_value(anchor, "price_scope")
+                if anchor else None
+            ) or "UNKNOWN",
             provenance=(observation.observation_provenance, observation.interpretation_provenance),
             uncertainty=uncertainty,
+            conflicted_dimensions=conflicted_dimensions,
         )
 
     @staticmethod
@@ -131,17 +172,20 @@ class SemanticEconomicEvidenceBridge:
         item: EconomicEvidenceRecord,
     ) -> tuple[EvidenceExclusionReason, ...]:
         role = envelope.observation.semantic_role
+        conflict_reasons = []
+        if _conflicted_dimensions(anchor) or _conflicted_dimensions(item):
+            conflict_reasons.append(EvidenceExclusionReason.DIMENSION_CONFLICT)
         if envelope.status is ObservationUnderstandingStatus.UNKNOWN:
-            return (EvidenceExclusionReason.UNKNOWN_SEMANTICS,)
+            return _unique([*conflict_reasons, EvidenceExclusionReason.UNKNOWN_SEMANTICS])
         if envelope.status is ObservationUnderstandingStatus.AMBIGUOUS:
-            return (EvidenceExclusionReason.AMBIGUOUS_OBJECT,)
+            return _unique([*conflict_reasons, EvidenceExclusionReason.AMBIGUOUS_OBJECT])
         if role in _CONTEXT_REASON:
-            return (_CONTEXT_REASON[role],)
+            return _unique([*conflict_reasons, _CONTEXT_REASON[role]])
         if role is SemanticObservationRole.COMPOSITE_SERVICE:
-            return (EvidenceExclusionReason.BUNDLE_NOT_COMPARABLE,)
+            return _unique([*conflict_reasons, EvidenceExclusionReason.BUNDLE_NOT_COMPARABLE])
         if role is SemanticObservationRole.HARDWARE_PRODUCT:
-            return self._hardware_reasons(envelope.meaning, anchor, item)
-        return self._service_reasons(envelope, anchor, item)
+            return _unique([*conflict_reasons, *self._hardware_reasons(envelope.meaning, anchor, item)])
+        return _unique([*conflict_reasons, *self._service_reasons(envelope, anchor, item)])
 
     @staticmethod
     def _service_reasons(
@@ -153,6 +197,8 @@ class SemanticEconomicEvidenceBridge:
         if item.semantic_role is SemanticObservationRole.HARDWARE_PRODUCT:
             return (EvidenceExclusionReason.HARDWARE_SERVICE_BOUNDARY,)
         if item.semantic_role is SemanticObservationRole.COMPOSITE_SERVICE:
+            return (EvidenceExclusionReason.BUNDLE_NOT_COMPARABLE,)
+        if _dimension_value(item, "bundle_status") == "COMPOSITE":
             return (EvidenceExclusionReason.BUNDLE_NOT_COMPARABLE,)
         if item.understanding_status in {
             ObservationUnderstandingStatus.UNKNOWN,
@@ -202,12 +248,14 @@ class SemanticEconomicEvidenceBridge:
         if anchor is None:
             missing.append("SOURCE_EVIDENCE_ROW")
         else:
-            if anchor.price_scope == "UNKNOWN":
+            if _dimension_value(anchor, "price_scope") in {None, "UNKNOWN"}:
                 missing.append("PRICE_SCOPE")
-            if not anchor.currency or anchor.currency == "UNKNOWN":
+            if _dimension_value(anchor, "currency") in {None, "UNKNOWN"}:
                 missing.append("CURRENCY")
-            if anchor.market_scope == "LOCAL_SERVICE" and not anchor.province:
+            if _dimension_value(anchor, "market_scope") == "LOCAL_SERVICE" and not _province(anchor):
                 missing.append("GEOGRAPHY")
+            for name in _conflicted_dimensions(anchor):
+                missing.append(f"CONFLICTED_{name.upper()}")
         if role is SemanticObservationRole.COMPOSITE_SERVICE:
             missing.append("BUNDLE_DEFINITION")
         if role is SemanticObservationRole.HARDWARE_PRODUCT:
@@ -230,6 +278,8 @@ class SemanticEconomicEvidenceBridge:
             return EconomicReadiness.UNKNOWN
         if envelope.status is ObservationUnderstandingStatus.AMBIGUOUS:
             return EconomicReadiness.AMBIGUOUS
+        if any(name.startswith("CONFLICTED_") for name in missing):
+            return EconomicReadiness.AMBIGUOUS
         if envelope.observation.semantic_role in _CONTEXT_REASON:
             return EconomicReadiness.INSUFFICIENT
         if envelope.observation.semantic_role is SemanticObservationRole.COMPOSITE_SERVICE:
@@ -243,7 +293,7 @@ class SemanticEconomicEvidenceBridge:
         if any(name in missing for name in ("SOURCE_EVIDENCE_ROW", "PRICE_SCOPE", "CURRENCY", "GEOGRAPHY")):
             return EconomicReadiness.INSUFFICIENT
         prices = [item.price_value for item in comparable if item.price_value is not None and item.price_value > 0]
-        providers = len({item.provider for item in comparable if item.provider.strip()})
+        providers = len({value for item in comparable if (value := _provider_identity(item))})
         spread = (max(prices) / min(prices)) if prices else Decimal("Infinity")
         if len(comparable) >= 5 and providers >= 3 and spread <= Decimal("2.5"):
             return EconomicReadiness.READY
@@ -261,26 +311,124 @@ def _shared_dimension_reasons(
     if anchor is None:
         return [EvidenceExclusionReason.INSUFFICIENT_SCOPE]
     reasons: list[EvidenceExclusionReason] = []
-    if anchor.market_scope != item.market_scope:
+    anchor_market = _dimension_value(anchor, "market_scope")
+    item_market = _dimension_value(item, "market_scope")
+    if not anchor_market or not item_market:
+        reasons.append(EvidenceExclusionReason.INSUFFICIENT_SCOPE)
+    elif anchor_market != item_market:
         reasons.append(EvidenceExclusionReason.MARKET_SCOPE_MISMATCH)
-    elif require_geography and anchor.market_scope == "LOCAL_SERVICE":
-        if not anchor.province or not item.province:
+    elif require_geography and anchor_market == "LOCAL_SERVICE":
+        anchor_province = _province(anchor)
+        item_province = _province(item)
+        if not anchor_province or not item_province:
             reasons.append(EvidenceExclusionReason.INSUFFICIENT_SCOPE)
-        elif anchor.province != item.province:
+        elif anchor_province != item_province:
             reasons.append(EvidenceExclusionReason.GEOGRAPHY_MISMATCH)
-    if not anchor.currency or anchor.currency == "UNKNOWN" or not item.currency or item.currency == "UNKNOWN":
+    anchor_currency = _dimension_value(anchor, "currency")
+    item_currency = _dimension_value(item, "currency")
+    if not anchor_currency or not item_currency:
         reasons.append(EvidenceExclusionReason.INSUFFICIENT_SCOPE)
-    elif anchor.currency != item.currency:
+    elif anchor_currency != item_currency:
         reasons.append(EvidenceExclusionReason.CURRENCY_MISMATCH)
-    if anchor.price_scope == "UNKNOWN" or item.price_scope == "UNKNOWN":
+    anchor_price_scope = _dimension_value(anchor, "price_scope")
+    item_price_scope = _dimension_value(item, "price_scope")
+    if not anchor_price_scope or not item_price_scope:
         reasons.append(EvidenceExclusionReason.INSUFFICIENT_SCOPE)
-    elif anchor.price_scope != item.price_scope:
+    elif anchor_price_scope != item_price_scope:
         reasons.append(EvidenceExclusionReason.CADENCE_MISMATCH)
-    if anchor.commercial_context != item.commercial_context:
+    anchor_context = _dimension_value(anchor, "commercial_context")
+    item_context = _dimension_value(item, "commercial_context")
+    if (anchor_context is None) != (item_context is None):
+        reasons.append(EvidenceExclusionReason.INSUFFICIENT_SCOPE)
+    elif anchor_context is not None and anchor_context != item_context:
         reasons.append(EvidenceExclusionReason.COMMERCIAL_CONTEXT_MISMATCH)
+    anchor_bundle = _dimension_value(anchor, "bundle_status")
+    item_bundle = _dimension_value(item, "bundle_status")
+    if item_bundle == "COMPOSITE" or anchor_bundle == "COMPOSITE":
+        reasons.append(EvidenceExclusionReason.BUNDLE_NOT_COMPARABLE)
+    elif (anchor_bundle is None) != (item_bundle is None):
+        reasons.append(EvidenceExclusionReason.INSUFFICIENT_SCOPE)
+    _compare_optional_dimension(
+        reasons,
+        anchor,
+        item,
+        "device_scope",
+        EvidenceExclusionReason.DEVICE_SCOPE_MISMATCH,
+    )
+    _compare_optional_dimension(
+        reasons,
+        anchor,
+        item,
+        "hardware_included",
+        EvidenceExclusionReason.HARDWARE_INCLUDED_MISMATCH,
+    )
+    _compare_optional_dimension(
+        reasons,
+        anchor,
+        item,
+        "materials_included",
+        EvidenceExclusionReason.MATERIALS_INCLUDED_MISMATCH,
+    )
     if item.price_value is None or item.price_value <= 0:
         reasons.append(EvidenceExclusionReason.INVALID_PRICE)
     return reasons
+
+
+def _compare_optional_dimension(
+    reasons: list[EvidenceExclusionReason],
+    anchor: EconomicEvidenceRecord,
+    item: EconomicEvidenceRecord,
+    name: str,
+    mismatch: EvidenceExclusionReason,
+) -> None:
+    anchor_value = _dimension_value(anchor, name)
+    item_value = _dimension_value(item, name)
+    if anchor_value is not None and item_value is not None and anchor_value != item_value:
+        reasons.append(mismatch)
+    elif (anchor_value is None) != (item_value is None):
+        reasons.append(EvidenceExclusionReason.INSUFFICIENT_SCOPE)
+
+
+def _dimension_value(item: EconomicEvidenceRecord, name: str):
+    if item.dimensions is not None:
+        dimension = item.dimensions.all_dimensions()[name]
+        return dimension.value if dimension.is_usable else None
+    legacy = {
+        "market_scope": item.market_scope,
+        "currency": item.currency,
+        "price_scope": item.price_scope,
+        "commercial_context": item.commercial_context,
+    }
+    value = legacy.get(name)
+    return None if value in {None, "", "UNKNOWN"} else value
+
+
+def _province(item: EconomicEvidenceRecord) -> str | None:
+    if item.dimensions is not None:
+        geography = item.dimensions.geography
+        if geography.is_usable and geography.value is not None:
+            return geography.value.province
+        return None
+    return item.province
+
+
+def _provider_identity(item: EconomicEvidenceRecord) -> str | None:
+    if item.dimensions is not None:
+        provider = item.dimensions.provider_identity
+        if provider.is_usable and provider.value is not None:
+            return provider.value.provider_id
+        return None
+    return item.provider.strip() or None
+
+
+def _conflicted_dimensions(item: EconomicEvidenceRecord | None) -> tuple[str, ...]:
+    if item is None or item.dimensions is None:
+        return ()
+    return tuple(
+        name
+        for name, value in item.dimensions.all_dimensions().items()
+        if value.status in {DimensionStatus.CONFLICTED, DimensionStatus.AMBIGUOUS}
+    )
 
 
 def _unique(reasons: list[EvidenceExclusionReason]) -> tuple[EvidenceExclusionReason, ...]:

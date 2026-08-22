@@ -7,13 +7,15 @@ from src.aplicacion.pricing_dimensions import (
     infer_commercial_context,
     infer_price_scope,
 )
-from src.dominio.economic_evidence import EconomicEvidenceRecord
+from src.dominio.economic_evidence import EconomicEvidenceDimensions, EconomicEvidenceRecord
 from src.dominio.semantic_understanding import SemanticUnderstandingEnvelope
 
 
 def compose_economic_evidence_records(
     rows: Iterable[Mapping[str, str]],
     envelopes: Iterable[SemanticUnderstandingEnvelope],
+    *,
+    dimensions_by_observation_id: Mapping[str, EconomicEvidenceDimensions] | None = None,
 ) -> tuple[EconomicEvidenceRecord, ...]:
     row_items = tuple(rows)
     envelope_items = tuple(envelopes)
@@ -45,6 +47,7 @@ def compose_economic_evidence_records(
                 commercial_context=infer_commercial_context(raw_expression),
                 provenance=observation.observation_provenance,
                 meaning=envelope.meaning,
+                dimensions=(dimensions_by_observation_id or {}).get(observation.observation_id),
             )
         )
     return tuple(records)
