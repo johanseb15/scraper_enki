@@ -1,0 +1,1428 @@
+{
+  "metrics": {
+    "BLOCKERS": {
+      "CONFLICTED_CURRENCY": 3,
+      "MISSING_BUNDLE_INFO": 127,
+      "MISSING_COMMERCIAL_CONTEXT": 266,
+      "MISSING_DELIVERY_MODE": 257,
+      "MISSING_DEVICE_SCOPE": 198,
+      "MISSING_HARDWARE_INFO": 248,
+      "MISSING_MATERIALS_INFO": 273,
+      "MISSING_PRICE_SCOPE": 253,
+      "MISSING_REACH": 273
+    },
+    "GAPS_BY_COHORT": {
+      "canonical_service": {
+        "ARMADO_PC": {
+          "MISSING_COMMERCIAL_CONTEXT": 3,
+          "MISSING_DELIVERY_MODE": 3,
+          "MISSING_HARDWARE_INFO": 3,
+          "MISSING_MATERIALS_INFO": 3,
+          "MISSING_PRICE_SCOPE": 3,
+          "MISSING_REACH": 3
+        },
+        "BACKUP_DATOS": {
+          "MISSING_COMMERCIAL_CONTEXT": 4,
+          "MISSING_DELIVERY_MODE": 4,
+          "MISSING_DEVICE_SCOPE": 3,
+          "MISSING_HARDWARE_INFO": 4,
+          "MISSING_MATERIALS_INFO": 4,
+          "MISSING_PRICE_SCOPE": 2,
+          "MISSING_REACH": 4
+        },
+        "CCTV_INSTALACION_MANO_OBRA": {
+          "MISSING_COMMERCIAL_CONTEXT": 3,
+          "MISSING_DELIVERY_MODE": 3,
+          "MISSING_HARDWARE_INFO": 3,
+          "MISSING_MATERIALS_INFO": 3,
+          "MISSING_PRICE_SCOPE": 2,
+          "MISSING_REACH": 3
+        },
+        "CLONADO_DISCO": {
+          "MISSING_COMMERCIAL_CONTEXT": 2,
+          "MISSING_DELIVERY_MODE": 2,
+          "MISSING_HARDWARE_INFO": 2,
+          "MISSING_MATERIALS_INFO": 2,
+          "MISSING_PRICE_SCOPE": 2,
+          "MISSING_REACH": 2
+        },
+        "CONFIGURACION_EQUIPO": {
+          "MISSING_COMMERCIAL_CONTEXT": 1,
+          "MISSING_DELIVERY_MODE": 1,
+          "MISSING_HARDWARE_INFO": 1,
+          "MISSING_MATERIALS_INFO": 1,
+          "MISSING_PRICE_SCOPE": 1,
+          "MISSING_REACH": 1
+        },
+        "DESARROLLO_SOFTWARE_HORA": {
+          "MISSING_COMMERCIAL_CONTEXT": 1,
+          "MISSING_DELIVERY_MODE": 1,
+          "MISSING_DEVICE_SCOPE": 1,
+          "MISSING_HARDWARE_INFO": 1,
+          "MISSING_MATERIALS_INFO": 1,
+          "MISSING_PRICE_SCOPE": 1,
+          "MISSING_REACH": 1
+        },
+        "DIAGNOSTICO_REVISION": {
+          "MISSING_COMMERCIAL_CONTEXT": 5,
+          "MISSING_DELIVERY_MODE": 5,
+          "MISSING_DEVICE_SCOPE": 4,
+          "MISSING_HARDWARE_INFO": 5,
+          "MISSING_MATERIALS_INFO": 5,
+          "MISSING_PRICE_SCOPE": 5,
+          "MISSING_REACH": 5
+        },
+        "ELIMINACION_MALWARE": {
+          "MISSING_COMMERCIAL_CONTEXT": 5,
+          "MISSING_DELIVERY_MODE": 5,
+          "MISSING_DEVICE_SCOPE": 4,
+          "MISSING_HARDWARE_INFO": 5,
+          "MISSING_MATERIALS_INFO": 5,
+          "MISSING_PRICE_SCOPE": 5,
+          "MISSING_REACH": 5
+        },
+        "FORMATEO_INSTALACION_SO": {
+          "MISSING_COMMERCIAL_CONTEXT": 4,
+          "MISSING_DELIVERY_MODE": 4,
+          "MISSING_DEVICE_SCOPE": 2,
+          "MISSING_HARDWARE_INFO": 4,
+          "MISSING_MATERIALS_INFO": 4,
+          "MISSING_PRICE_SCOPE": 4,
+          "MISSING_REACH": 4
+        },
+        "HARD_RESET": {
+          "MISSING_COMMERCIAL_CONTEXT": 2,
+          "MISSING_DELIVERY_MODE": 2,
+          "MISSING_DEVICE_SCOPE": 2,
+          "MISSING_HARDWARE_INFO": 2,
+          "MISSING_MATERIALS_INFO": 2,
+          "MISSING_PRICE_SCOPE": 2,
+          "MISSING_REACH": 2
+        },
+        "HOSTING_ADMINISTRADO": {
+          "MISSING_COMMERCIAL_CONTEXT": 2,
+          "MISSING_DELIVERY_MODE": 2,
+          "MISSING_DEVICE_SCOPE": 2,
+          "MISSING_HARDWARE_INFO": 2,
+          "MISSING_MATERIALS_INFO": 2,
+          "MISSING_PRICE_SCOPE": 2,
+          "MISSING_REACH": 2
+        },
+        "INSTALACION_DRIVERS": {
+          "MISSING_COMMERCIAL_CONTEXT": 2,
+          "MISSING_DELIVERY_MODE": 2,
+          "MISSING_DEVICE_SCOPE": 1,
+          "MISSING_HARDWARE_INFO": 2,
+          "MISSING_MATERIALS_INFO": 2,
+          "MISSING_PRICE_SCOPE": 2,
+          "MISSING_REACH": 2
+        },
+        "INSTALACION_PROGRAMAS": {
+          "MISSING_COMMERCIAL_CONTEXT": 8,
+          "MISSING_DELIVERY_MODE": 8,
+          "MISSING_DEVICE_SCOPE": 6,
+          "MISSING_HARDWARE_INFO": 8,
+          "MISSING_MATERIALS_INFO": 8,
+          "MISSING_PRICE_SCOPE": 8,
+          "MISSING_REACH": 8
+        },
+        "LIMPIEZA_MANTENIMIENTO": {
+          "MISSING_COMMERCIAL_CONTEXT": 12,
+          "MISSING_DELIVERY_MODE": 12,
+          "MISSING_DEVICE_SCOPE": 6,
+          "MISSING_HARDWARE_INFO": 12,
+          "MISSING_MATERIALS_INFO": 12,
+          "MISSING_PRICE_SCOPE": 12,
+          "MISSING_REACH": 12
+        },
+        "RECUPERACION_DATOS": {
+          "MISSING_COMMERCIAL_CONTEXT": 1,
+          "MISSING_DELIVERY_MODE": 1,
+          "MISSING_DEVICE_SCOPE": 1,
+          "MISSING_HARDWARE_INFO": 1,
+          "MISSING_MATERIALS_INFO": 1,
+          "MISSING_PRICE_SCOPE": 1,
+          "MISSING_REACH": 1
+        },
+        "REPARACION_HARDWARE": {
+          "MISSING_COMMERCIAL_CONTEXT": 7,
+          "MISSING_DELIVERY_MODE": 7,
+          "MISSING_DEVICE_SCOPE": 2,
+          "MISSING_HARDWARE_INFO": 7,
+          "MISSING_MATERIALS_INFO": 7,
+          "MISSING_PRICE_SCOPE": 7,
+          "MISSING_REACH": 7
+        },
+        "REPARACION_INICIO_WINDOWS": {
+          "MISSING_COMMERCIAL_CONTEXT": 2,
+          "MISSING_DELIVERY_MODE": 2,
+          "MISSING_DEVICE_SCOPE": 1,
+          "MISSING_HARDWARE_INFO": 2,
+          "MISSING_MATERIALS_INFO": 2,
+          "MISSING_PRICE_SCOPE": 2,
+          "MISSING_REACH": 2
+        },
+        "SOPORTE_REMOTO": {
+          "MISSING_COMMERCIAL_CONTEXT": 4,
+          "MISSING_DEVICE_SCOPE": 4,
+          "MISSING_HARDWARE_INFO": 5,
+          "MISSING_MATERIALS_INFO": 5,
+          "MISSING_PRICE_SCOPE": 1,
+          "MISSING_REACH": 5
+        },
+        "UNKNOWN": {
+          "CONFLICTED_CURRENCY": 3,
+          "MISSING_BUNDLE_INFO": 127,
+          "MISSING_COMMERCIAL_CONTEXT": 185,
+          "MISSING_DELIVERY_MODE": 184,
+          "MISSING_DEVICE_SCOPE": 148,
+          "MISSING_HARDWARE_INFO": 164,
+          "MISSING_MATERIALS_INFO": 189,
+          "MISSING_PRICE_SCOPE": 182,
+          "MISSING_REACH": 189
+        },
+        "UPGRADE_HARDWARE": {
+          "MISSING_COMMERCIAL_CONTEXT": 2,
+          "MISSING_DELIVERY_MODE": 2,
+          "MISSING_DEVICE_SCOPE": 1,
+          "MISSING_HARDWARE_INFO": 2,
+          "MISSING_MATERIALS_INFO": 2,
+          "MISSING_PRICE_SCOPE": 2,
+          "MISSING_REACH": 2
+        },
+        "VISITA_TECNICA_DOMICILIO": {
+          "MISSING_COMMERCIAL_CONTEXT": 6,
+          "MISSING_DELIVERY_MODE": 2,
+          "MISSING_DEVICE_SCOPE": 5,
+          "MISSING_HARDWARE_INFO": 8,
+          "MISSING_MATERIALS_INFO": 8,
+          "MISSING_PRICE_SCOPE": 3,
+          "MISSING_REACH": 8
+        },
+        "VPS_ADMINISTRADO": {
+          "MISSING_COMMERCIAL_CONTEXT": 1,
+          "MISSING_DELIVERY_MODE": 1,
+          "MISSING_DEVICE_SCOPE": 1,
+          "MISSING_HARDWARE_INFO": 1,
+          "MISSING_MATERIALS_INFO": 1,
+          "MISSING_PRICE_SCOPE": 1,
+          "MISSING_REACH": 1
+        },
+        "WEB_ECOMMERCE": {
+          "MISSING_COMMERCIAL_CONTEXT": 1,
+          "MISSING_DELIVERY_MODE": 1,
+          "MISSING_DEVICE_SCOPE": 1,
+          "MISSING_HARDWARE_INFO": 1,
+          "MISSING_MATERIALS_INFO": 1,
+          "MISSING_PRICE_SCOPE": 1,
+          "MISSING_REACH": 1
+        },
+        "WEB_LANDING": {
+          "MISSING_COMMERCIAL_CONTEXT": 1,
+          "MISSING_DELIVERY_MODE": 1,
+          "MISSING_DEVICE_SCOPE": 1,
+          "MISSING_HARDWARE_INFO": 1,
+          "MISSING_MATERIALS_INFO": 1,
+          "MISSING_PRICE_SCOPE": 1,
+          "MISSING_REACH": 1
+        },
+        "WEB_MANTENIMIENTO": {
+          "MISSING_COMMERCIAL_CONTEXT": 1,
+          "MISSING_DELIVERY_MODE": 1,
+          "MISSING_DEVICE_SCOPE": 1,
+          "MISSING_HARDWARE_INFO": 1,
+          "MISSING_MATERIALS_INFO": 1,
+          "MISSING_REACH": 1
+        },
+        "WEB_SITIO_INSTITUCIONAL": {
+          "MISSING_COMMERCIAL_CONTEXT": 1,
+          "MISSING_DELIVERY_MODE": 1,
+          "MISSING_DEVICE_SCOPE": 1,
+          "MISSING_HARDWARE_INFO": 1,
+          "MISSING_MATERIALS_INFO": 1,
+          "MISSING_PRICE_SCOPE": 1,
+          "MISSING_REACH": 1
+        }
+      },
+      "provider": {
+        "BH Systems": {
+          "MISSING_COMMERCIAL_CONTEXT": 1,
+          "MISSING_DELIVERY_MODE": 1,
+          "MISSING_DEVICE_SCOPE": 1,
+          "MISSING_HARDWARE_INFO": 1,
+          "MISSING_MATERIALS_INFO": 1,
+          "MISSING_PRICE_SCOPE": 1,
+          "MISSING_REACH": 1
+        },
+        "BairesCloud": {
+          "MISSING_COMMERCIAL_CONTEXT": 26,
+          "MISSING_DELIVERY_MODE": 24,
+          "MISSING_DEVICE_SCOPE": 3,
+          "MISSING_HARDWARE_INFO": 27,
+          "MISSING_MATERIALS_INFO": 27,
+          "MISSING_PRICE_SCOPE": 23,
+          "MISSING_REACH": 27
+        },
+        "Bitz": {
+          "MISSING_BUNDLE_INFO": 41,
+          "MISSING_COMMERCIAL_CONTEXT": 46,
+          "MISSING_DELIVERY_MODE": 45,
+          "MISSING_DEVICE_SCOPE": 21,
+          "MISSING_HARDWARE_INFO": 46,
+          "MISSING_MATERIALS_INFO": 46,
+          "MISSING_PRICE_SCOPE": 46,
+          "MISSING_REACH": 46
+        },
+        "CISLED Computación": {
+          "MISSING_COMMERCIAL_CONTEXT": 3,
+          "MISSING_DELIVERY_MODE": 3,
+          "MISSING_DEVICE_SCOPE": 3,
+          "MISSING_HARDWARE_INFO": 3,
+          "MISSING_MATERIALS_INFO": 3,
+          "MISSING_PRICE_SCOPE": 3,
+          "MISSING_REACH": 3
+        },
+        "Canje PC": {
+          "MISSING_BUNDLE_INFO": 6,
+          "MISSING_COMMERCIAL_CONTEXT": 6,
+          "MISSING_DELIVERY_MODE": 6,
+          "MISSING_DEVICE_SCOPE": 6,
+          "MISSING_HARDWARE_INFO": 6,
+          "MISSING_MATERIALS_INFO": 6,
+          "MISSING_PRICE_SCOPE": 6,
+          "MISSING_REACH": 6
+        },
+        "CiroWhite Informática": {
+          "MISSING_COMMERCIAL_CONTEXT": 13,
+          "MISSING_DELIVERY_MODE": 13,
+          "MISSING_DEVICE_SCOPE": 9,
+          "MISSING_HARDWARE_INFO": 13,
+          "MISSING_MATERIALS_INFO": 13,
+          "MISSING_PRICE_SCOPE": 13,
+          "MISSING_REACH": 13
+        },
+        "Compustark": {
+          "MISSING_COMMERCIAL_CONTEXT": 3,
+          "MISSING_DELIVERY_MODE": 3,
+          "MISSING_HARDWARE_INFO": 3,
+          "MISSING_MATERIALS_INFO": 3,
+          "MISSING_PRICE_SCOPE": 3,
+          "MISSING_REACH": 3
+        },
+        "Cósmica": {
+          "MISSING_BUNDLE_INFO": 1,
+          "MISSING_COMMERCIAL_CONTEXT": 1,
+          "MISSING_DELIVERY_MODE": 1,
+          "MISSING_DEVICE_SCOPE": 1,
+          "MISSING_HARDWARE_INFO": 1,
+          "MISSING_MATERIALS_INFO": 1,
+          "MISSING_PRICE_SCOPE": 1,
+          "MISSING_REACH": 1
+        },
+        "DMR": {
+          "MISSING_BUNDLE_INFO": 14,
+          "MISSING_COMMERCIAL_CONTEXT": 14,
+          "MISSING_DELIVERY_MODE": 11,
+          "MISSING_DEVICE_SCOPE": 14,
+          "MISSING_HARDWARE_INFO": 14,
+          "MISSING_MATERIALS_INFO": 14,
+          "MISSING_PRICE_SCOPE": 14,
+          "MISSING_REACH": 14
+        },
+        "Gorila Games": {
+          "MISSING_BUNDLE_INFO": 7,
+          "MISSING_COMMERCIAL_CONTEXT": 3,
+          "MISSING_DELIVERY_MODE": 6,
+          "MISSING_DEVICE_SCOPE": 7,
+          "MISSING_HARDWARE_INFO": 7,
+          "MISSING_MATERIALS_INFO": 7,
+          "MISSING_PRICE_SCOPE": 7,
+          "MISSING_REACH": 7
+        },
+        "HashTech.arg": {
+          "MISSING_BUNDLE_INFO": 3,
+          "MISSING_COMMERCIAL_CONTEXT": 3,
+          "MISSING_DELIVERY_MODE": 3,
+          "MISSING_DEVICE_SCOPE": 3,
+          "MISSING_HARDWARE_INFO": 3,
+          "MISSING_MATERIALS_INFO": 3,
+          "MISSING_PRICE_SCOPE": 3,
+          "MISSING_REACH": 3
+        },
+        "Informática del Plata": {
+          "MISSING_COMMERCIAL_CONTEXT": 13,
+          "MISSING_DELIVERY_MODE": 11,
+          "MISSING_DEVICE_SCOPE": 12,
+          "MISSING_HARDWARE_INFO": 15,
+          "MISSING_MATERIALS_INFO": 15,
+          "MISSING_PRICE_SCOPE": 11,
+          "MISSING_REACH": 15
+        },
+        "Jadetech": {
+          "MISSING_COMMERCIAL_CONTEXT": 11,
+          "MISSING_DELIVERY_MODE": 11,
+          "MISSING_DEVICE_SCOPE": 8,
+          "MISSING_HARDWARE_INFO": 10,
+          "MISSING_MATERIALS_INFO": 11,
+          "MISSING_PRICE_SCOPE": 10,
+          "MISSING_REACH": 11
+        },
+        "MB Soluciones": {
+          "MISSING_COMMERCIAL_CONTEXT": 15,
+          "MISSING_DELIVERY_MODE": 15,
+          "MISSING_DEVICE_SCOPE": 11,
+          "MISSING_HARDWARE_INFO": 15,
+          "MISSING_MATERIALS_INFO": 15,
+          "MISSING_PRICE_SCOPE": 13,
+          "MISSING_REACH": 15
+        },
+        "Mario PC": {
+          "MISSING_BUNDLE_INFO": 6,
+          "MISSING_COMMERCIAL_CONTEXT": 6,
+          "MISSING_DELIVERY_MODE": 6,
+          "MISSING_DEVICE_SCOPE": 6,
+          "MISSING_HARDWARE_INFO": 6,
+          "MISSING_MATERIALS_INFO": 6,
+          "MISSING_REACH": 6
+        },
+        "MasterFix PC": {
+          "MISSING_COMMERCIAL_CONTEXT": 4,
+          "MISSING_DELIVERY_MODE": 4,
+          "MISSING_DEVICE_SCOPE": 4,
+          "MISSING_HARDWARE_INFO": 4,
+          "MISSING_MATERIALS_INFO": 4,
+          "MISSING_PRICE_SCOPE": 4,
+          "MISSING_REACH": 4
+        },
+        "MiService": {
+          "MISSING_COMMERCIAL_CONTEXT": 3,
+          "MISSING_DELIVERY_MODE": 3,
+          "MISSING_DEVICE_SCOPE": 1,
+          "MISSING_HARDWARE_INFO": 3,
+          "MISSING_MATERIALS_INFO": 3,
+          "MISSING_PRICE_SCOPE": 3,
+          "MISSING_REACH": 3
+        },
+        "Mobo MDP": {
+          "MISSING_BUNDLE_INFO": 12,
+          "MISSING_COMMERCIAL_CONTEXT": 35,
+          "MISSING_DELIVERY_MODE": 35,
+          "MISSING_DEVICE_SCOPE": 35,
+          "MISSING_HARDWARE_INFO": 12,
+          "MISSING_MATERIALS_INFO": 35,
+          "MISSING_PRICE_SCOPE": 35,
+          "MISSING_REACH": 35
+        },
+        "Neutro Hardware": {
+          "MISSING_BUNDLE_INFO": 3,
+          "MISSING_COMMERCIAL_CONTEXT": 4,
+          "MISSING_DELIVERY_MODE": 4,
+          "MISSING_DEVICE_SCOPE": 4,
+          "MISSING_HARDWARE_INFO": 4,
+          "MISSING_MATERIALS_INFO": 4,
+          "MISSING_PRICE_SCOPE": 4,
+          "MISSING_REACH": 4
+        },
+        "PC Doctor": {
+          "MISSING_COMMERCIAL_CONTEXT": 1,
+          "MISSING_DELIVERY_MODE": 1,
+          "MISSING_DEVICE_SCOPE": 1,
+          "MISSING_HARDWARE_INFO": 1,
+          "MISSING_MATERIALS_INFO": 1,
+          "MISSING_PRICE_SCOPE": 1,
+          "MISSING_REACH": 1
+        },
+        "PCLAF": {
+          "MISSING_BUNDLE_INFO": 1,
+          "MISSING_COMMERCIAL_CONTEXT": 4,
+          "MISSING_DELIVERY_MODE": 4,
+          "MISSING_DEVICE_SCOPE": 3,
+          "MISSING_HARDWARE_INFO": 4,
+          "MISSING_MATERIALS_INFO": 4,
+          "MISSING_PRICE_SCOPE": 4,
+          "MISSING_REACH": 4
+        },
+        "Red-Matica": {
+          "MISSING_COMMERCIAL_CONTEXT": 2,
+          "MISSING_DELIVERY_MODE": 1,
+          "MISSING_HARDWARE_INFO": 2,
+          "MISSING_MATERIALS_INFO": 2,
+          "MISSING_REACH": 2
+        },
+        "Reparaciones PC": {
+          "MISSING_COMMERCIAL_CONTEXT": 1,
+          "MISSING_DELIVERY_MODE": 1,
+          "MISSING_MATERIALS_INFO": 1,
+          "MISSING_PRICE_SCOPE": 1,
+          "MISSING_REACH": 1
+        },
+        "Rey Clon Computadoras": {
+          "MISSING_BUNDLE_INFO": 5,
+          "MISSING_COMMERCIAL_CONTEXT": 5,
+          "MISSING_DELIVERY_MODE": 5,
+          "MISSING_DEVICE_SCOPE": 5,
+          "MISSING_HARDWARE_INFO": 5,
+          "MISSING_MATERIALS_INFO": 5,
+          "MISSING_PRICE_SCOPE": 5,
+          "MISSING_REACH": 5
+        },
+        "ServiPC Bahía": {
+          "CONFLICTED_CURRENCY": 3,
+          "MISSING_BUNDLE_INFO": 3,
+          "MISSING_COMMERCIAL_CONTEXT": 3,
+          "MISSING_DELIVERY_MODE": 3,
+          "MISSING_DEVICE_SCOPE": 3,
+          "MISSING_HARDWARE_INFO": 3,
+          "MISSING_MATERIALS_INFO": 3,
+          "MISSING_PRICE_SCOPE": 3,
+          "MISSING_REACH": 3
+        },
+        "Servicio Técnico Informático Eliseo Fernández": {
+          "MISSING_BUNDLE_INFO": 2,
+          "MISSING_COMMERCIAL_CONTEXT": 14,
+          "MISSING_DELIVERY_MODE": 13,
+          "MISSING_DEVICE_SCOPE": 11,
+          "MISSING_HARDWARE_INFO": 14,
+          "MISSING_MATERIALS_INFO": 14,
+          "MISSING_PRICE_SCOPE": 13,
+          "MISSING_REACH": 14
+        },
+        "Space Gamer": {
+          "MISSING_BUNDLE_INFO": 10,
+          "MISSING_COMMERCIAL_CONTEXT": 10,
+          "MISSING_DELIVERY_MODE": 9,
+          "MISSING_DEVICE_SCOPE": 10,
+          "MISSING_HARDWARE_INFO": 10,
+          "MISSING_MATERIALS_INFO": 10,
+          "MISSING_PRICE_SCOPE": 10,
+          "MISSING_REACH": 10
+        },
+        "Taja Service": {
+          "MISSING_COMMERCIAL_CONTEXT": 1,
+          "MISSING_DEVICE_SCOPE": 1,
+          "MISSING_HARDWARE_INFO": 1,
+          "MISSING_MATERIALS_INFO": 1,
+          "MISSING_PRICE_SCOPE": 1,
+          "MISSING_REACH": 1
+        },
+        "Viciadero": {
+          "MISSING_BUNDLE_INFO": 13,
+          "MISSING_COMMERCIAL_CONTEXT": 15,
+          "MISSING_DELIVERY_MODE": 15,
+          "MISSING_DEVICE_SCOPE": 15,
+          "MISSING_HARDWARE_INFO": 15,
+          "MISSING_MATERIALS_INFO": 15,
+          "MISSING_PRICE_SCOPE": 15,
+          "MISSING_REACH": 15
+        }
+      },
+      "province": {
+        "Buenos Aires": {
+          "CONFLICTED_CURRENCY": 3,
+          "MISSING_BUNDLE_INFO": 21,
+          "MISSING_COMMERCIAL_CONTEXT": 83,
+          "MISSING_DELIVERY_MODE": 79,
+          "MISSING_DEVICE_SCOPE": 59,
+          "MISSING_HARDWARE_INFO": 63,
+          "MISSING_MATERIALS_INFO": 86,
+          "MISSING_PRICE_SCOPE": 72,
+          "MISSING_REACH": 86
+        },
+        "CABA": {
+          "MISSING_BUNDLE_INFO": 1,
+          "MISSING_COMMERCIAL_CONTEXT": 37,
+          "MISSING_DELIVERY_MODE": 36,
+          "MISSING_DEVICE_SCOPE": 28,
+          "MISSING_HARDWARE_INFO": 35,
+          "MISSING_MATERIALS_INFO": 37,
+          "MISSING_PRICE_SCOPE": 34,
+          "MISSING_REACH": 37
+        },
+        "Chubut": {
+          "MISSING_BUNDLE_INFO": 1,
+          "MISSING_COMMERCIAL_CONTEXT": 1,
+          "MISSING_DELIVERY_MODE": 1,
+          "MISSING_DEVICE_SCOPE": 1,
+          "MISSING_HARDWARE_INFO": 1,
+          "MISSING_MATERIALS_INFO": 1,
+          "MISSING_PRICE_SCOPE": 1,
+          "MISSING_REACH": 1
+        },
+        "Córdoba": {
+          "MISSING_BUNDLE_INFO": 60,
+          "MISSING_COMMERCIAL_CONTEXT": 81,
+          "MISSING_DELIVERY_MODE": 80,
+          "MISSING_DEVICE_SCOPE": 53,
+          "MISSING_HARDWARE_INFO": 85,
+          "MISSING_MATERIALS_INFO": 85,
+          "MISSING_PRICE_SCOPE": 82,
+          "MISSING_REACH": 85
+        },
+        "La Rioja": {
+          "MISSING_COMMERCIAL_CONTEXT": 1,
+          "MISSING_DELIVERY_MODE": 1,
+          "MISSING_DEVICE_SCOPE": 1,
+          "MISSING_HARDWARE_INFO": 1,
+          "MISSING_MATERIALS_INFO": 1,
+          "MISSING_PRICE_SCOPE": 1,
+          "MISSING_REACH": 1
+        },
+        "Mendoza": {
+          "MISSING_BUNDLE_INFO": 14,
+          "MISSING_COMMERCIAL_CONTEXT": 14,
+          "MISSING_DELIVERY_MODE": 11,
+          "MISSING_DEVICE_SCOPE": 14,
+          "MISSING_HARDWARE_INFO": 14,
+          "MISSING_MATERIALS_INFO": 14,
+          "MISSING_PRICE_SCOPE": 14,
+          "MISSING_REACH": 14
+        },
+        "Santa Fe": {
+          "MISSING_BUNDLE_INFO": 14,
+          "MISSING_COMMERCIAL_CONTEXT": 17,
+          "MISSING_DELIVERY_MODE": 17,
+          "MISSING_DEVICE_SCOPE": 14,
+          "MISSING_HARDWARE_INFO": 17,
+          "MISSING_MATERIALS_INFO": 17,
+          "MISSING_PRICE_SCOPE": 17,
+          "MISSING_REACH": 17
+        },
+        "Tierra del Fuego": {
+          "MISSING_BUNDLE_INFO": 3,
+          "MISSING_COMMERCIAL_CONTEXT": 4,
+          "MISSING_DELIVERY_MODE": 4,
+          "MISSING_DEVICE_SCOPE": 4,
+          "MISSING_HARDWARE_INFO": 4,
+          "MISSING_MATERIALS_INFO": 4,
+          "MISSING_PRICE_SCOPE": 4,
+          "MISSING_REACH": 4
+        },
+        "Tucumán": {
+          "MISSING_BUNDLE_INFO": 13,
+          "MISSING_COMMERCIAL_CONTEXT": 28,
+          "MISSING_DELIVERY_MODE": 28,
+          "MISSING_DEVICE_SCOPE": 24,
+          "MISSING_HARDWARE_INFO": 28,
+          "MISSING_MATERIALS_INFO": 28,
+          "MISSING_PRICE_SCOPE": 28,
+          "MISSING_REACH": 28
+        }
+      },
+      "semantic_role": {
+        "COMPOSITE_SERVICE": {
+          "MISSING_COMMERCIAL_CONTEXT": 39,
+          "MISSING_DELIVERY_MODE": 39,
+          "MISSING_DEVICE_SCOPE": 23,
+          "MISSING_HARDWARE_INFO": 37,
+          "MISSING_MATERIALS_INFO": 39,
+          "MISSING_PRICE_SCOPE": 38,
+          "MISSING_REACH": 39
+        },
+        "HARDWARE_PRODUCT": {
+          "MISSING_COMMERCIAL_CONTEXT": 23,
+          "MISSING_DELIVERY_MODE": 23,
+          "MISSING_DEVICE_SCOPE": 23,
+          "MISSING_MATERIALS_INFO": 23,
+          "MISSING_PRICE_SCOPE": 23,
+          "MISSING_REACH": 23
+        },
+        "LOGISTICS_CONTEXT": {
+          "MISSING_BUNDLE_INFO": 5,
+          "MISSING_COMMERCIAL_CONTEXT": 5,
+          "MISSING_DELIVERY_MODE": 3,
+          "MISSING_DEVICE_SCOPE": 5,
+          "MISSING_HARDWARE_INFO": 5,
+          "MISSING_MATERIALS_INFO": 5,
+          "MISSING_PRICE_SCOPE": 5,
+          "MISSING_REACH": 5
+        },
+        "NON_OBJECT": {
+          "MISSING_BUNDLE_INFO": 24,
+          "MISSING_COMMERCIAL_CONTEXT": 24,
+          "MISSING_DELIVERY_MODE": 24,
+          "MISSING_DEVICE_SCOPE": 24,
+          "MISSING_HARDWARE_INFO": 24,
+          "MISSING_MATERIALS_INFO": 24,
+          "MISSING_PRICE_SCOPE": 18,
+          "MISSING_REACH": 24
+        },
+        "PRICE_CONTEXT": {
+          "CONFLICTED_CURRENCY": 3,
+          "MISSING_BUNDLE_INFO": 34,
+          "MISSING_COMMERCIAL_CONTEXT": 30,
+          "MISSING_DELIVERY_MODE": 34,
+          "MISSING_DEVICE_SCOPE": 34,
+          "MISSING_HARDWARE_INFO": 34,
+          "MISSING_MATERIALS_INFO": 34,
+          "MISSING_PRICE_SCOPE": 34,
+          "MISSING_REACH": 34
+        },
+        "SCOPE_DEVICE": {
+          "MISSING_BUNDLE_INFO": 62,
+          "MISSING_COMMERCIAL_CONTEXT": 62,
+          "MISSING_DELIVERY_MODE": 59,
+          "MISSING_DEVICE_SCOPE": 37,
+          "MISSING_HARDWARE_INFO": 62,
+          "MISSING_MATERIALS_INFO": 62,
+          "MISSING_PRICE_SCOPE": 62,
+          "MISSING_REACH": 62
+        },
+        "SINGLE_SERVICE": {
+          "MISSING_COMMERCIAL_CONTEXT": 81,
+          "MISSING_DELIVERY_MODE": 73,
+          "MISSING_DEVICE_SCOPE": 50,
+          "MISSING_HARDWARE_INFO": 84,
+          "MISSING_MATERIALS_INFO": 84,
+          "MISSING_PRICE_SCOPE": 71,
+          "MISSING_REACH": 84
+        },
+        "UNMAPPED": {
+          "MISSING_BUNDLE_INFO": 2,
+          "MISSING_COMMERCIAL_CONTEXT": 2,
+          "MISSING_DELIVERY_MODE": 2,
+          "MISSING_DEVICE_SCOPE": 2,
+          "MISSING_HARDWARE_INFO": 2,
+          "MISSING_MATERIALS_INFO": 2,
+          "MISSING_PRICE_SCOPE": 2,
+          "MISSING_REACH": 2
+        }
+      },
+      "source": {
+        "bairescloud_generic": {
+          "MISSING_COMMERCIAL_CONTEXT": 26,
+          "MISSING_DELIVERY_MODE": 24,
+          "MISSING_DEVICE_SCOPE": 3,
+          "MISSING_HARDWARE_INFO": 27,
+          "MISSING_MATERIALS_INFO": 27,
+          "MISSING_PRICE_SCOPE": 23,
+          "MISSING_REACH": 27
+        },
+        "bh_systems_larioja": {
+          "MISSING_COMMERCIAL_CONTEXT": 1,
+          "MISSING_DELIVERY_MODE": 1,
+          "MISSING_DEVICE_SCOPE": 1,
+          "MISSING_HARDWARE_INFO": 1,
+          "MISSING_MATERIALS_INFO": 1,
+          "MISSING_PRICE_SCOPE": 1,
+          "MISSING_REACH": 1
+        },
+        "bitz_generic": {
+          "MISSING_BUNDLE_INFO": 41,
+          "MISSING_COMMERCIAL_CONTEXT": 46,
+          "MISSING_DELIVERY_MODE": 45,
+          "MISSING_DEVICE_SCOPE": 21,
+          "MISSING_HARDWARE_INFO": 46,
+          "MISSING_MATERIALS_INFO": 46,
+          "MISSING_PRICE_SCOPE": 46,
+          "MISSING_REACH": 46
+        },
+        "canjepc_rosario_sf": {
+          "MISSING_BUNDLE_INFO": 6,
+          "MISSING_COMMERCIAL_CONTEXT": 6,
+          "MISSING_DELIVERY_MODE": 6,
+          "MISSING_DEVICE_SCOPE": 6,
+          "MISSING_HARDWARE_INFO": 6,
+          "MISSING_MATERIALS_INFO": 6,
+          "MISSING_PRICE_SCOPE": 6,
+          "MISSING_REACH": 6
+        },
+        "cirowhite_generic": {
+          "MISSING_COMMERCIAL_CONTEXT": 13,
+          "MISSING_DELIVERY_MODE": 13,
+          "MISSING_DEVICE_SCOPE": 9,
+          "MISSING_HARDWARE_INFO": 13,
+          "MISSING_MATERIALS_INFO": 13,
+          "MISSING_PRICE_SCOPE": 13,
+          "MISSING_REACH": 13
+        },
+        "cisled_cordoba": {
+          "MISSING_COMMERCIAL_CONTEXT": 3,
+          "MISSING_DELIVERY_MODE": 3,
+          "MISSING_DEVICE_SCOPE": 3,
+          "MISSING_HARDWARE_INFO": 3,
+          "MISSING_MATERIALS_INFO": 3,
+          "MISSING_PRICE_SCOPE": 3,
+          "MISSING_REACH": 3
+        },
+        "compustark_santafe": {
+          "MISSING_COMMERCIAL_CONTEXT": 3,
+          "MISSING_DELIVERY_MODE": 3,
+          "MISSING_HARDWARE_INFO": 3,
+          "MISSING_MATERIALS_INFO": 3,
+          "MISSING_PRICE_SCOPE": 3,
+          "MISSING_REACH": 3
+        },
+        "cosmica_chubut": {
+          "MISSING_BUNDLE_INFO": 1,
+          "MISSING_COMMERCIAL_CONTEXT": 1,
+          "MISSING_DELIVERY_MODE": 1,
+          "MISSING_DEVICE_SCOPE": 1,
+          "MISSING_HARDWARE_INFO": 1,
+          "MISSING_MATERIALS_INFO": 1,
+          "MISSING_PRICE_SCOPE": 1,
+          "MISSING_REACH": 1
+        },
+        "dmr_generic": {
+          "MISSING_BUNDLE_INFO": 14,
+          "MISSING_COMMERCIAL_CONTEXT": 14,
+          "MISSING_DELIVERY_MODE": 11,
+          "MISSING_DEVICE_SCOPE": 14,
+          "MISSING_HARDWARE_INFO": 14,
+          "MISSING_MATERIALS_INFO": 14,
+          "MISSING_PRICE_SCOPE": 14,
+          "MISSING_REACH": 14
+        },
+        "gorilagames_cordoba": {
+          "MISSING_BUNDLE_INFO": 7,
+          "MISSING_COMMERCIAL_CONTEXT": 3,
+          "MISSING_DELIVERY_MODE": 6,
+          "MISSING_DEVICE_SCOPE": 7,
+          "MISSING_HARDWARE_INFO": 7,
+          "MISSING_MATERIALS_INFO": 7,
+          "MISSING_PRICE_SCOPE": 7,
+          "MISSING_REACH": 7
+        },
+        "hashtech_roldan_sf": {
+          "MISSING_BUNDLE_INFO": 3,
+          "MISSING_COMMERCIAL_CONTEXT": 3,
+          "MISSING_DELIVERY_MODE": 3,
+          "MISSING_DEVICE_SCOPE": 3,
+          "MISSING_HARDWARE_INFO": 3,
+          "MISSING_MATERIALS_INFO": 3,
+          "MISSING_PRICE_SCOPE": 3,
+          "MISSING_REACH": 3
+        },
+        "informatica_del_plata_ba": {
+          "MISSING_COMMERCIAL_CONTEXT": 13,
+          "MISSING_DELIVERY_MODE": 11,
+          "MISSING_DEVICE_SCOPE": 12,
+          "MISSING_HARDWARE_INFO": 15,
+          "MISSING_MATERIALS_INFO": 15,
+          "MISSING_PRICE_SCOPE": 11,
+          "MISSING_REACH": 15
+        },
+        "jadetech_generic": {
+          "MISSING_COMMERCIAL_CONTEXT": 11,
+          "MISSING_DELIVERY_MODE": 11,
+          "MISSING_DEVICE_SCOPE": 8,
+          "MISSING_HARDWARE_INFO": 10,
+          "MISSING_MATERIALS_INFO": 11,
+          "MISSING_PRICE_SCOPE": 10,
+          "MISSING_REACH": 11
+        },
+        "mariopc_ba": {
+          "MISSING_BUNDLE_INFO": 6,
+          "MISSING_COMMERCIAL_CONTEXT": 6,
+          "MISSING_DELIVERY_MODE": 6,
+          "MISSING_DEVICE_SCOPE": 6,
+          "MISSING_HARDWARE_INFO": 6,
+          "MISSING_MATERIALS_INFO": 6,
+          "MISSING_REACH": 6
+        },
+        "masterfix_caba": {
+          "MISSING_COMMERCIAL_CONTEXT": 4,
+          "MISSING_DELIVERY_MODE": 4,
+          "MISSING_DEVICE_SCOPE": 4,
+          "MISSING_HARDWARE_INFO": 4,
+          "MISSING_MATERIALS_INFO": 4,
+          "MISSING_PRICE_SCOPE": 4,
+          "MISSING_REACH": 4
+        },
+        "mb_soluciones_caba": {
+          "MISSING_COMMERCIAL_CONTEXT": 15,
+          "MISSING_DELIVERY_MODE": 15,
+          "MISSING_DEVICE_SCOPE": 11,
+          "MISSING_HARDWARE_INFO": 15,
+          "MISSING_MATERIALS_INFO": 15,
+          "MISSING_PRICE_SCOPE": 13,
+          "MISSING_REACH": 15
+        },
+        "miservice_cordoba": {
+          "MISSING_COMMERCIAL_CONTEXT": 3,
+          "MISSING_DELIVERY_MODE": 3,
+          "MISSING_DEVICE_SCOPE": 1,
+          "MISSING_HARDWARE_INFO": 3,
+          "MISSING_MATERIALS_INFO": 3,
+          "MISSING_PRICE_SCOPE": 3,
+          "MISSING_REACH": 3
+        },
+        "mobo_mdp_ba": {
+          "MISSING_BUNDLE_INFO": 12,
+          "MISSING_COMMERCIAL_CONTEXT": 35,
+          "MISSING_DELIVERY_MODE": 35,
+          "MISSING_DEVICE_SCOPE": 35,
+          "MISSING_HARDWARE_INFO": 12,
+          "MISSING_MATERIALS_INFO": 35,
+          "MISSING_PRICE_SCOPE": 35,
+          "MISSING_REACH": 35
+        },
+        "neutro_riogrande_tdf": {
+          "MISSING_BUNDLE_INFO": 3,
+          "MISSING_COMMERCIAL_CONTEXT": 4,
+          "MISSING_DELIVERY_MODE": 4,
+          "MISSING_DEVICE_SCOPE": 4,
+          "MISSING_HARDWARE_INFO": 4,
+          "MISSING_MATERIALS_INFO": 4,
+          "MISSING_PRICE_SCOPE": 4,
+          "MISSING_REACH": 4
+        },
+        "pcdoctor_caba": {
+          "MISSING_COMMERCIAL_CONTEXT": 1,
+          "MISSING_DELIVERY_MODE": 1,
+          "MISSING_DEVICE_SCOPE": 1,
+          "MISSING_HARDWARE_INFO": 1,
+          "MISSING_MATERIALS_INFO": 1,
+          "MISSING_PRICE_SCOPE": 1,
+          "MISSING_REACH": 1
+        },
+        "pclaf_caba": {
+          "MISSING_BUNDLE_INFO": 1,
+          "MISSING_COMMERCIAL_CONTEXT": 4,
+          "MISSING_DELIVERY_MODE": 4,
+          "MISSING_DEVICE_SCOPE": 3,
+          "MISSING_HARDWARE_INFO": 4,
+          "MISSING_MATERIALS_INFO": 4,
+          "MISSING_PRICE_SCOPE": 4,
+          "MISSING_REACH": 4
+        },
+        "redmatica_cordoba": {
+          "MISSING_COMMERCIAL_CONTEXT": 2,
+          "MISSING_DELIVERY_MODE": 1,
+          "MISSING_HARDWARE_INFO": 2,
+          "MISSING_MATERIALS_INFO": 2,
+          "MISSING_REACH": 2
+        },
+        "reparacionespc_caba": {
+          "MISSING_COMMERCIAL_CONTEXT": 1,
+          "MISSING_DELIVERY_MODE": 1,
+          "MISSING_MATERIALS_INFO": 1,
+          "MISSING_PRICE_SCOPE": 1,
+          "MISSING_REACH": 1
+        },
+        "rey_clon_casilda_sf": {
+          "MISSING_BUNDLE_INFO": 5,
+          "MISSING_COMMERCIAL_CONTEXT": 5,
+          "MISSING_DELIVERY_MODE": 5,
+          "MISSING_DEVICE_SCOPE": 5,
+          "MISSING_HARDWARE_INFO": 5,
+          "MISSING_MATERIALS_INFO": 5,
+          "MISSING_PRICE_SCOPE": 5,
+          "MISSING_REACH": 5
+        },
+        "servipc_bahia_ba": {
+          "CONFLICTED_CURRENCY": 3,
+          "MISSING_BUNDLE_INFO": 3,
+          "MISSING_COMMERCIAL_CONTEXT": 3,
+          "MISSING_DELIVERY_MODE": 3,
+          "MISSING_DEVICE_SCOPE": 3,
+          "MISSING_HARDWARE_INFO": 3,
+          "MISSING_MATERIALS_INFO": 3,
+          "MISSING_PRICE_SCOPE": 3,
+          "MISSING_REACH": 3
+        },
+        "spacegamer_cordoba": {
+          "MISSING_BUNDLE_INFO": 10,
+          "MISSING_COMMERCIAL_CONTEXT": 10,
+          "MISSING_DELIVERY_MODE": 9,
+          "MISSING_DEVICE_SCOPE": 10,
+          "MISSING_HARDWARE_INFO": 10,
+          "MISSING_MATERIALS_INFO": 10,
+          "MISSING_PRICE_SCOPE": 10,
+          "MISSING_REACH": 10
+        },
+        "taja_service_caba": {
+          "MISSING_COMMERCIAL_CONTEXT": 1,
+          "MISSING_DEVICE_SCOPE": 1,
+          "MISSING_HARDWARE_INFO": 1,
+          "MISSING_MATERIALS_INFO": 1,
+          "MISSING_PRICE_SCOPE": 1,
+          "MISSING_REACH": 1
+        },
+        "tecnico_eliseo_cordoba": {
+          "MISSING_BUNDLE_INFO": 2,
+          "MISSING_COMMERCIAL_CONTEXT": 14,
+          "MISSING_DELIVERY_MODE": 13,
+          "MISSING_DEVICE_SCOPE": 11,
+          "MISSING_HARDWARE_INFO": 14,
+          "MISSING_MATERIALS_INFO": 14,
+          "MISSING_PRICE_SCOPE": 13,
+          "MISSING_REACH": 14
+        },
+        "viciadero_tucuman": {
+          "MISSING_BUNDLE_INFO": 13,
+          "MISSING_COMMERCIAL_CONTEXT": 15,
+          "MISSING_DELIVERY_MODE": 15,
+          "MISSING_DEVICE_SCOPE": 15,
+          "MISSING_HARDWARE_INFO": 15,
+          "MISSING_MATERIALS_INFO": 15,
+          "MISSING_PRICE_SCOPE": 15,
+          "MISSING_REACH": 15
+        }
+      }
+    },
+    "NEAR_COMPARABLE_OBSERVATIONS": 5,
+    "PRIORITY_FORMULA": {
+      "ECONOMICALLY_USEFUL_ROLE": 2,
+      "HAS_POTENTIAL_SIMILAR_CANDIDATES": 2,
+      "HAS_PRICE": 2,
+      "KNOWN_CANONICAL_SERVICE": 2,
+      "KNOWN_PROVIDER": 1,
+      "ONE_OR_TWO_CORE_GAPS": 3
+    },
+    "TOP_ACQUISITION_PRIORITIES": [
+      {
+        "acquisition_priority": 12,
+        "blockers": [
+          "MISSING_COMMERCIAL_CONTEXT",
+          "MISSING_HARDWARE_INFO",
+          "MISSING_MATERIALS_INFO",
+          "MISSING_REACH"
+        ],
+        "canonical_service": "VISITA_TECNICA_DOMICILIO",
+        "core_gap_count": 2,
+        "observation_id": "69",
+        "potential_similar_candidates": 5,
+        "priority_reasons": [
+          "HAS_PRICE",
+          "ECONOMICALLY_USEFUL_ROLE",
+          "KNOWN_CANONICAL_SERVICE",
+          "KNOWN_PROVIDER",
+          "ONE_OR_TWO_CORE_GAPS",
+          "HAS_POTENTIAL_SIMILAR_CANDIDATES"
+        ],
+        "source": "bairescloud_generic"
+      },
+      {
+        "acquisition_priority": 12,
+        "blockers": [
+          "MISSING_HARDWARE_INFO",
+          "MISSING_MATERIALS_INFO",
+          "MISSING_REACH"
+        ],
+        "canonical_service": "VISITA_TECNICA_DOMICILIO",
+        "core_gap_count": 2,
+        "observation_id": "70",
+        "potential_similar_candidates": 5,
+        "priority_reasons": [
+          "HAS_PRICE",
+          "ECONOMICALLY_USEFUL_ROLE",
+          "KNOWN_CANONICAL_SERVICE",
+          "KNOWN_PROVIDER",
+          "ONE_OR_TWO_CORE_GAPS",
+          "HAS_POTENTIAL_SIMILAR_CANDIDATES"
+        ],
+        "source": "bairescloud_generic"
+      },
+      {
+        "acquisition_priority": 12,
+        "blockers": [
+          "MISSING_COMMERCIAL_CONTEXT",
+          "MISSING_HARDWARE_INFO",
+          "MISSING_MATERIALS_INFO",
+          "MISSING_REACH"
+        ],
+        "canonical_service": "VISITA_TECNICA_DOMICILIO",
+        "core_gap_count": 2,
+        "observation_id": "234",
+        "potential_similar_candidates": 5,
+        "priority_reasons": [
+          "HAS_PRICE",
+          "ECONOMICALLY_USEFUL_ROLE",
+          "KNOWN_CANONICAL_SERVICE",
+          "KNOWN_PROVIDER",
+          "ONE_OR_TWO_CORE_GAPS",
+          "HAS_POTENTIAL_SIMILAR_CANDIDATES"
+        ],
+        "source": "redmatica_cordoba"
+      },
+      {
+        "acquisition_priority": 12,
+        "blockers": [
+          "MISSING_COMMERCIAL_CONTEXT",
+          "MISSING_HARDWARE_INFO",
+          "MISSING_MATERIALS_INFO",
+          "MISSING_REACH"
+        ],
+        "canonical_service": "SOPORTE_REMOTO",
+        "core_gap_count": 2,
+        "observation_id": "68",
+        "potential_similar_candidates": 4,
+        "priority_reasons": [
+          "HAS_PRICE",
+          "ECONOMICALLY_USEFUL_ROLE",
+          "KNOWN_CANONICAL_SERVICE",
+          "KNOWN_PROVIDER",
+          "ONE_OR_TWO_CORE_GAPS",
+          "HAS_POTENTIAL_SIMILAR_CANDIDATES"
+        ],
+        "source": "bairescloud_generic"
+      },
+      {
+        "acquisition_priority": 12,
+        "blockers": [
+          "MISSING_COMMERCIAL_CONTEXT",
+          "MISSING_DELIVERY_MODE",
+          "MISSING_HARDWARE_INFO",
+          "MISSING_MATERIALS_INFO",
+          "MISSING_REACH"
+        ],
+        "canonical_service": "BACKUP_DATOS",
+        "core_gap_count": 2,
+        "observation_id": "62",
+        "potential_similar_candidates": 3,
+        "priority_reasons": [
+          "HAS_PRICE",
+          "ECONOMICALLY_USEFUL_ROLE",
+          "KNOWN_CANONICAL_SERVICE",
+          "KNOWN_PROVIDER",
+          "ONE_OR_TWO_CORE_GAPS",
+          "HAS_POTENTIAL_SIMILAR_CANDIDATES"
+        ],
+        "source": "bairescloud_generic"
+      },
+      {
+        "acquisition_priority": 10,
+        "blockers": [
+          "MISSING_COMMERCIAL_CONTEXT",
+          "MISSING_DELIVERY_MODE",
+          "MISSING_HARDWARE_INFO",
+          "MISSING_MATERIALS_INFO",
+          "MISSING_REACH"
+        ],
+        "canonical_service": "CCTV_INSTALACION_MANO_OBRA",
+        "core_gap_count": 2,
+        "observation_id": "127",
+        "potential_similar_candidates": 0,
+        "priority_reasons": [
+          "HAS_PRICE",
+          "ECONOMICALLY_USEFUL_ROLE",
+          "KNOWN_CANONICAL_SERVICE",
+          "KNOWN_PROVIDER",
+          "ONE_OR_TWO_CORE_GAPS"
+        ],
+        "source": "mb_soluciones_caba"
+      },
+      {
+        "acquisition_priority": 9,
+        "blockers": [
+          "MISSING_COMMERCIAL_CONTEXT",
+          "MISSING_DELIVERY_MODE",
+          "MISSING_HARDWARE_INFO",
+          "MISSING_MATERIALS_INFO",
+          "MISSING_PRICE_SCOPE",
+          "MISSING_REACH"
+        ],
+        "canonical_service": "LIMPIEZA_MANTENIMIENTO",
+        "core_gap_count": 3,
+        "observation_id": "9",
+        "potential_similar_candidates": 8,
+        "priority_reasons": [
+          "HAS_PRICE",
+          "ECONOMICALLY_USEFUL_ROLE",
+          "KNOWN_CANONICAL_SERVICE",
+          "KNOWN_PROVIDER",
+          "HAS_POTENTIAL_SIMILAR_CANDIDATES"
+        ],
+        "source": "jadetech_generic"
+      },
+      {
+        "acquisition_priority": 9,
+        "blockers": [
+          "MISSING_COMMERCIAL_CONTEXT",
+          "MISSING_DELIVERY_MODE",
+          "MISSING_HARDWARE_INFO",
+          "MISSING_MATERIALS_INFO",
+          "MISSING_PRICE_SCOPE",
+          "MISSING_REACH"
+        ],
+        "canonical_service": "LIMPIEZA_MANTENIMIENTO",
+        "core_gap_count": 3,
+        "observation_id": "78",
+        "potential_similar_candidates": 8,
+        "priority_reasons": [
+          "HAS_PRICE",
+          "ECONOMICALLY_USEFUL_ROLE",
+          "KNOWN_CANONICAL_SERVICE",
+          "KNOWN_PROVIDER",
+          "HAS_POTENTIAL_SIMILAR_CANDIDATES"
+        ],
+        "source": "bairescloud_generic"
+      },
+      {
+        "acquisition_priority": 9,
+        "blockers": [
+          "MISSING_COMMERCIAL_CONTEXT",
+          "MISSING_DELIVERY_MODE",
+          "MISSING_HARDWARE_INFO",
+          "MISSING_MATERIALS_INFO",
+          "MISSING_PRICE_SCOPE",
+          "MISSING_REACH"
+        ],
+        "canonical_service": "LIMPIEZA_MANTENIMIENTO",
+        "core_gap_count": 3,
+        "observation_id": "236",
+        "potential_similar_candidates": 8,
+        "priority_reasons": [
+          "HAS_PRICE",
+          "ECONOMICALLY_USEFUL_ROLE",
+          "KNOWN_CANONICAL_SERVICE",
+          "KNOWN_PROVIDER",
+          "HAS_POTENTIAL_SIMILAR_CANDIDATES"
+        ],
+        "source": "compustark_santafe"
+      },
+      {
+        "acquisition_priority": 9,
+        "blockers": [
+          "MISSING_COMMERCIAL_CONTEXT",
+          "MISSING_DELIVERY_MODE",
+          "MISSING_HARDWARE_INFO",
+          "MISSING_MATERIALS_INFO",
+          "MISSING_PRICE_SCOPE",
+          "MISSING_REACH"
+        ],
+        "canonical_service": "LIMPIEZA_MANTENIMIENTO",
+        "core_gap_count": 3,
+        "observation_id": "10",
+        "potential_similar_candidates": 7,
+        "priority_reasons": [
+          "HAS_PRICE",
+          "ECONOMICALLY_USEFUL_ROLE",
+          "KNOWN_CANONICAL_SERVICE",
+          "KNOWN_PROVIDER",
+          "HAS_POTENTIAL_SIMILAR_CANDIDATES"
+        ],
+        "source": "jadetech_generic"
+      },
+      {
+        "acquisition_priority": 9,
+        "blockers": [
+          "MISSING_COMMERCIAL_CONTEXT",
+          "MISSING_DELIVERY_MODE",
+          "MISSING_HARDWARE_INFO",
+          "MISSING_MATERIALS_INFO",
+          "MISSING_PRICE_SCOPE",
+          "MISSING_REACH"
+        ],
+        "canonical_service": "LIMPIEZA_MANTENIMIENTO",
+        "core_gap_count": 3,
+        "observation_id": "77",
+        "potential_similar_candidates": 7,
+        "priority_reasons": [
+          "HAS_PRICE",
+          "ECONOMICALLY_USEFUL_ROLE",
+          "KNOWN_CANONICAL_SERVICE",
+          "KNOWN_PROVIDER",
+          "HAS_POTENTIAL_SIMILAR_CANDIDATES"
+        ],
+        "source": "bairescloud_generic"
+      },
+      {
+        "acquisition_priority": 9,
+        "blockers": [
+          "MISSING_COMMERCIAL_CONTEXT",
+          "MISSING_DELIVERY_MODE",
+          "MISSING_HARDWARE_INFO",
+          "MISSING_MATERIALS_INFO",
+          "MISSING_PRICE_SCOPE",
+          "MISSING_REACH"
+        ],
+        "canonical_service": "LIMPIEZA_MANTENIMIENTO",
+        "core_gap_count": 3,
+        "observation_id": "60",
+        "potential_similar_candidates": 6,
+        "priority_reasons": [
+          "HAS_PRICE",
+          "ECONOMICALLY_USEFUL_ROLE",
+          "KNOWN_CANONICAL_SERVICE",
+          "KNOWN_PROVIDER",
+          "HAS_POTENTIAL_SIMILAR_CANDIDATES"
+        ],
+        "source": "bairescloud_generic"
+      },
+      {
+        "acquisition_priority": 9,
+        "blockers": [
+          "MISSING_COMMERCIAL_CONTEXT",
+          "MISSING_DELIVERY_MODE",
+          "MISSING_HARDWARE_INFO",
+          "MISSING_MATERIALS_INFO",
+          "MISSING_PRICE_SCOPE",
+          "MISSING_REACH"
+        ],
+        "canonical_service": "INSTALACION_PROGRAMAS",
+        "core_gap_count": 3,
+        "observation_id": "64",
+        "potential_similar_candidates": 6,
+        "priority_reasons": [
+          "HAS_PRICE",
+          "ECONOMICALLY_USEFUL_ROLE",
+          "KNOWN_CANONICAL_SERVICE",
+          "KNOWN_PROVIDER",
+          "HAS_POTENTIAL_SIMILAR_CANDIDATES"
+        ],
+        "source": "bairescloud_generic"
+      },
+      {
+        "acquisition_priority": 9,
+        "blockers": [
+          "MISSING_COMMERCIAL_CONTEXT",
+          "MISSING_DELIVERY_MODE",
+          "MISSING_HARDWARE_INFO",
+          "MISSING_MATERIALS_INFO",
+          "MISSING_PRICE_SCOPE",
+          "MISSING_REACH"
+        ],
+        "canonical_service": "INSTALACION_PROGRAMAS",
+        "core_gap_count": 3,
+        "observation_id": "65",
+        "potential_similar_candidates": 6,
+        "priority_reasons": [
+          "HAS_PRICE",
+          "ECONOMICALLY_USEFUL_ROLE",
+          "KNOWN_CANONICAL_SERVICE",
+          "KNOWN_PROVIDER",
+          "HAS_POTENTIAL_SIMILAR_CANDIDATES"
+        ],
+        "source": "bairescloud_generic"
+      },
+      {
+        "acquisition_priority": 9,
+        "blockers": [
+          "MISSING_COMMERCIAL_CONTEXT",
+          "MISSING_DEVICE_SCOPE",
+          "MISSING_HARDWARE_INFO",
+          "MISSING_MATERIALS_INFO",
+          "MISSING_REACH"
+        ],
+        "canonical_service": "VISITA_TECNICA_DOMICILIO",
+        "core_gap_count": 3,
+        "observation_id": "145",
+        "potential_similar_candidates": 6,
+        "priority_reasons": [
+          "HAS_PRICE",
+          "ECONOMICALLY_USEFUL_ROLE",
+          "KNOWN_CANONICAL_SERVICE",
+          "KNOWN_PROVIDER",
+          "HAS_POTENTIAL_SIMILAR_CANDIDATES"
+        ],
+        "source": "informatica_del_plata_ba"
+      },
+      {
+        "acquisition_priority": 9,
+        "blockers": [
+          "MISSING_DEVICE_SCOPE",
+          "MISSING_HARDWARE_INFO",
+          "MISSING_MATERIALS_INFO",
+          "MISSING_REACH"
+        ],
+        "canonical_service": "VISITA_TECNICA_DOMICILIO",
+        "core_gap_count": 3,
+        "observation_id": "146",
+        "potential_similar_candidates": 6,
+        "priority_reasons": [
+          "HAS_PRICE",
+          "ECONOMICALLY_USEFUL_ROLE",
+          "KNOWN_CANONICAL_SERVICE",
+          "KNOWN_PROVIDER",
+          "HAS_POTENTIAL_SIMILAR_CANDIDATES"
+        ],
+        "source": "informatica_del_plata_ba"
+      },
+      {
+        "acquisition_priority": 9,
+        "blockers": [
+          "MISSING_COMMERCIAL_CONTEXT",
+          "MISSING_DELIVERY_MODE",
+          "MISSING_HARDWARE_INFO",
+          "MISSING_MATERIALS_INFO",
+          "MISSING_PRICE_SCOPE",
+          "MISSING_REACH"
+        ],
+        "canonical_service": "REPARACION_HARDWARE",
+        "core_gap_count": 3,
+        "observation_id": "238",
+        "potential_similar_candidates": 5,
+        "priority_reasons": [
+          "HAS_PRICE",
+          "ECONOMICALLY_USEFUL_ROLE",
+          "KNOWN_CANONICAL_SERVICE",
+          "KNOWN_PROVIDER",
+          "HAS_POTENTIAL_SIMILAR_CANDIDATES"
+        ],
+        "source": "compustark_santafe"
+      },
+      {
+        "acquisition_priority": 9,
+        "blockers": [
+          "MISSING_COMMERCIAL_CONTEXT",
+          "MISSING_DELIVERY_MODE",
+          "MISSING_HARDWARE_INFO",
+          "MISSING_MATERIALS_INFO",
+          "MISSING_PRICE_SCOPE",
+          "MISSING_REACH"
+        ],
+        "canonical_service": "DIAGNOSTICO_REVISION",
+        "core_gap_count": 3,
+        "observation_id": "58",
+        "potential_similar_candidates": 4,
+        "priority_reasons": [
+          "HAS_PRICE",
+          "ECONOMICALLY_USEFUL_ROLE",
+          "KNOWN_CANONICAL_SERVICE",
+          "KNOWN_PROVIDER",
+          "HAS_POTENTIAL_SIMILAR_CANDIDATES"
+        ],
+        "source": "bairescloud_generic"
+      },
+      {
+        "acquisition_priority": 9,
+        "blockers": [
+          "MISSING_COMMERCIAL_CONTEXT",
+          "MISSING_DELIVERY_MODE",
+          "MISSING_HARDWARE_INFO",
+          "MISSING_MATERIALS_INFO",
+          "MISSING_PRICE_SCOPE",
+          "MISSING_REACH"
+        ],
+        "canonical_service": "ELIMINACION_MALWARE",
+        "core_gap_count": 3,
+        "observation_id": "67",
+        "potential_similar_candidates": 4,
+        "priority_reasons": [
+          "HAS_PRICE",
+          "ECONOMICALLY_USEFUL_ROLE",
+          "KNOWN_CANONICAL_SERVICE",
+          "KNOWN_PROVIDER",
+          "HAS_POTENTIAL_SIMILAR_CANDIDATES"
+        ],
+        "source": "bairescloud_generic"
+      },
+      {
+        "acquisition_priority": 9,
+        "blockers": [
+          "MISSING_COMMERCIAL_CONTEXT",
+          "MISSING_DEVICE_SCOPE",
+          "MISSING_HARDWARE_INFO",
+          "MISSING_MATERIALS_INFO",
+          "MISSING_REACH"
+        ],
+        "canonical_service": "SOPORTE_REMOTO",
+        "core_gap_count": 3,
+        "observation_id": "213",
+        "potential_similar_candidates": 4,
+        "priority_reasons": [
+          "HAS_PRICE",
+          "ECONOMICALLY_USEFUL_ROLE",
+          "KNOWN_CANONICAL_SERVICE",
+          "KNOWN_PROVIDER",
+          "HAS_POTENTIAL_SIMILAR_CANDIDATES"
+        ],
+        "source": "tecnico_eliseo_cordoba"
+      }
+    ],
+    "TOTAL_OBSERVATIONS": 273
+  },
+  "schema_version": "economic-evidence-gap-register-v1",
+  "version": "economic-evidence-gap-register-v1"
+}
