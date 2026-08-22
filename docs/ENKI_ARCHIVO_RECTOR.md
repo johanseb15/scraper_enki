@@ -145,6 +145,41 @@ No province defaults.
 El corpus enseña el lenguaje;
 la evidencia comparable enseña el precio.
 
+## Conexión semántico-económica shadow
+
+Una conexión semántico-económica significa que una observación ya entendida
+queda vinculada, de forma read-only, con filas de evidencia económica y que
+cada vínculo declara si la evidencia es comparable o por qué fue excluida.
+No significa que el significado semántico sea evidencia de precio, ni que el
+puente recomiende un precio, promocione conocimiento o cambie las respuestas
+públicas de pricing/API.
+
+La comparabilidad se calcula conservadoramente sobre la evidencia observada.
+Para servicios exige el mismo servicio canónico, alcance de mercado y
+geografía compatibles, moneda publicada idéntica, cadencia explícita idéntica
+y contexto comercial compatible. Para hardware exige permanecer dentro de la
+frontera de hardware y de la misma familia; un sistema multicomponente no se
+compara con un componente. Bundles no se descomponen. La fila objetivo se
+preserva como candidata excluida, pero no cuenta como evidencia independiente
+de sí misma.
+
+La readiness económica del shadow no reutiliza `READY_FOR_PRICING`: esa señal
+sólo indica que una ruta y su mercado permiten hacer una consulta. `READY`,
+`PARTIAL` e `INSUFFICIENT` se calculan después del filtrado de comparabilidad y
+consideran cantidad de filas, providers independientes y dispersión. Los
+estados semánticos `AMBIGUOUS` y `UNKNOWN` permanecen explícitos y prevalecen;
+tres precios no comparables no producen readiness.
+
+La evidencia excluida es dato. El artefacto conserva evidence id, provider,
+reasons, dimensiones faltantes, incertidumbre y ambos canales de provenance.
+Esto permite que futuros ciclos de aprendizaje apunten a gaps reales sin
+reescribir la fuente ni convertir ausencia de conocimiento en certeza.
+
+Shadow precede a runtime porque primero deben observarse distribuciones,
+conflictos y gaps sobre evidencia real. Sólo una validación posterior puede
+autorizar que este contexto influya en decisiones públicas; el bridge actual
+no tiene superficie de persistencia ni integración con el pricing público.
+
 ## Acquisition
 
 Preferencia:
