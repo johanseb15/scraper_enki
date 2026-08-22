@@ -25,6 +25,7 @@ from src.infraestructura.economic_dimensions_v2_adapter import (
     DIMENSIONS_V2_VERSION,
     derive_economic_dimensions_v2,
 )
+from src.infraestructura.offer_evidence_artifact import load_offer_evidence_sidecar
 
 
 SIDECAR_V2_SCHEMA_VERSION = "economic-evidence-dimensions-v2"
@@ -41,6 +42,7 @@ def build_economic_dimensions_v2_sidecar(
     *,
     version: str = DIMENSIONS_V2_VERSION,
     previous_dimensions_path: str | Path | None = None,
+    offer_evidence_path: str | Path | None = None,
 ) -> dict[str, Any]:
     normalization = Path(normalization_path)
     with normalization.open("r", encoding="utf-8-sig", newline="") as handle:
@@ -58,7 +60,21 @@ def build_economic_dimensions_v2_sidecar(
     if len(ids) != len(set(ids)):
         raise ValueError("Duplicate observation_id values in v2 dimension input.")
 
-    dimensions = [derive_economic_dimensions_v2(row, registry) for row in rows]
+    offer_evidence = (
+        load_offer_evidence_sidecar(offer_evidence_path)
+        if offer_evidence_path is not None else {}
+    )
+    if offer_evidence and set(offer_evidence) != set(ids):
+        raise ValueError("Offer evidence observation ids do not match v2 input.")
+    dimensions = [
+        derive_economic_dimensions_v2(
+            row,
+            registry,
+            offer_evidence.get(row["observation_id"], None).claims
+            if row["observation_id"] in offer_evidence else (),
+        )
+        for row in rows
+    ]
     output = Path(output_path)
     output.parent.mkdir(parents=True, exist_ok=True)
     with output.open("w", encoding="utf-8", newline="\n") as handle:
@@ -85,6 +101,20 @@ def build_economic_dimensions_v2_sidecar(
         })
     metrics["TOTAL_OBSERVATIONS"] = len(rows)
     metrics["OUTPUT_ROWS"] = len(dimensions)
+    metrics.update({
+        "SOURCE_EXPLICIT_REACH": sum(
+            claim.dimension == "geographic_reach"
+            for item in offer_evidence.values() for claim in item.claims
+        ),
+        "SOURCE_EXPLICIT_SCOPE": sum(
+            claim.dimension == "charged_unit"
+            for item in offer_evidence.values() for claim in item.claims
+        ),
+        "SOURCE_EXPLICIT_DELIVERY_MODE": sum(
+            claim.dimension == "delivery_mode"
+            for item in offer_evidence.values() for claim in item.claims
+        ),
+    })
     output.with_suffix(".summary.json").write_text(
         json.dumps(
             {

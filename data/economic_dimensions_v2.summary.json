@@ -114,7 +114,7 @@
     "MULTIVALUE_CONTEXTS": 3,
     "OBSERVED_DIMENSIONS": {
       "commercial_context": 7,
-      "delivery_mode": 13,
+      "delivery_mode": 16,
       "device_scope": 75,
       "hardware_included": 2,
       "price_scope": 20
@@ -122,11 +122,14 @@
     "ORTHOGONAL_DIMENSION_SPLITS": 11,
     "OUTPUT_ROWS": 273,
     "REAL_CONFLICTS_PRESERVED": 3,
+    "SOURCE_EXPLICIT_DELIVERY_MODE": 7,
+    "SOURCE_EXPLICIT_REACH": 0,
+    "SOURCE_EXPLICIT_SCOPE": 3,
     "TOTAL_OBSERVATIONS": 273,
     "UNKNOWN_DIMENSIONS": {
       "bundle_status": 127,
       "commercial_context": 266,
-      "delivery_mode": 260,
+      "delivery_mode": 257,
       "device_scope": 198,
       "geographic_reach": 273,
       "hardware_included": 248,

@@ -16,6 +16,7 @@ from src.dominio.economic_evidence import (
     resolve_set_dimension,
 )
 from src.dominio.semantic_knowledge import KnowledgeProvenance
+from src.dominio.offer_evidence import SourceEconomicClaim
 
 
 DIMENSIONS_V2_VERSION = "economic-evidence-dimensions-v2"
@@ -24,6 +25,7 @@ DIMENSIONS_V2_VERSION = "economic-evidence-dimensions-v2"
 def derive_economic_dimensions_v2(
     row: Mapping[str, object],
     source_registry: Mapping[str, Mapping[str, object]],
+    source_claims: tuple[SourceEconomicClaim, ...] = (),
 ) -> EconomicEvidenceDimensionsV2:
     observation_id = _clean(row.get("observation_id")) or "UNKNOWN"
     source = _clean(row.get("source"))
@@ -72,6 +74,11 @@ def derive_economic_dimensions_v2(
         ))
 
     price_scope_claims = []
+    price_scope_claims.extend(
+        _dimension_claim_from_source(claim, _charged_unit_to_scope(claim.value))
+        for claim in source_claims
+        if claim.dimension == "charged_unit" and _charged_unit_to_scope(claim.value)
+    )
     explicit_scope = _explicit_price_scope(folded)
     if explicit_scope:
         price_scope_claims.append(DimensionClaim(
@@ -107,6 +114,11 @@ def derive_economic_dimensions_v2(
         ))
 
     delivery_claims = []
+    delivery_claims.extend(
+        _dimension_claim_from_source(claim, claim.value)
+        for claim in source_claims
+        if claim.dimension == "delivery_mode"
+    )
     for mode in _explicit_delivery_modes(folded):
         delivery_claims.append(DimensionClaim(
             mode,
@@ -116,6 +128,11 @@ def derive_economic_dimensions_v2(
         ))
 
     reach_claims = []
+    reach_claims.extend(
+        _dimension_claim_from_source(claim, claim.value)
+        for claim in source_claims
+        if claim.dimension == "geographic_reach"
+    )
     for reach in _explicit_geographic_reach(folded):
         reach_claims.append(DimensionClaim(
             reach,
@@ -222,6 +239,30 @@ def derive_economic_dimensions_v2(
         materials_included=resolve_scalar_dimension(*materials_claims),
         device_scope=resolve_set_dimension(*device_claims),
     )
+
+
+def _dimension_claim_from_source(claim: SourceEconomicClaim, value: str) -> DimensionClaim[str]:
+    return DimensionClaim(
+        value,
+        DimensionOrigin.RAW_SOURCE_OBSERVATION,
+        KnowledgeProvenance(
+            claim.extraction_method.value,
+            f"raw_document_id={claim.raw_document_id};provenance={claim.provenance}",
+            claim.version,
+        ),
+        claim.raw_basis,
+    )
+
+
+def _charged_unit_to_scope(value: str) -> str | None:
+    return {
+        "HOUR": "PER_HOUR",
+        "VISIT": "PER_VISIT",
+        "UNIT": "PER_UNIT",
+        "MONTH": "PER_MONTH",
+        "PROJECT": "PER_PROJECT",
+        "TOTAL": "TOTAL",
+    }.get(value)
 
 
 def _explicit_delivery_modes(text: str) -> tuple[str, ...]:
