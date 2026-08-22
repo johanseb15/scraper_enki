@@ -116,7 +116,8 @@
       "commercial_context": 7,
       "delivery_mode": 16,
       "device_scope": 75,
-      "hardware_included": 2,
+      "geographic_reach": 1,
+      "hardware_included": 3,
       "price_scope": 20
     },
     "ORTHOGONAL_DIMENSION_SPLITS": 11,
@@ -125,14 +126,15 @@
     "SOURCE_EXPLICIT_DELIVERY_MODE": 7,
     "SOURCE_EXPLICIT_REACH": 0,
     "SOURCE_EXPLICIT_SCOPE": 3,
+    "TARGETED_SOURCE_CLAIMS": 1,
     "TOTAL_OBSERVATIONS": 273,
     "UNKNOWN_DIMENSIONS": {
       "bundle_status": 127,
       "commercial_context": 266,
       "delivery_mode": 257,
       "device_scope": 198,
-      "geographic_reach": 273,
-      "hardware_included": 248,
+      "geographic_reach": 272,
+      "hardware_included": 247,
       "materials_included": 273,
       "price_scope": 253
     }

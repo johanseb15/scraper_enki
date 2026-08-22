@@ -1,0 +1,39 @@
+{
+  "metrics": {
+    "AMBIGUOUS_CLAIMS": 0,
+    "BLOCKED_COUNT": 0,
+    "CLAIMS_BY_DIMENSION": {
+      "charged_unit": 3,
+      "delivery_mode": 7,
+      "hardware_included": 1
+    },
+    "CLAIMS_BY_PROVENANCE": {
+      "DERIVED_FROM_SOURCE_TEXT": 11
+    },
+    "CONFLICTING_CLAIMS": 0,
+    "EXTRACTED_CHARGED_SCOPE": 3,
+    "EXTRACTED_DELIVERY_MODE": 7,
+    "EXTRACTED_REACH": 0,
+    "EXTRACTED_TRAVEL_RESTRICTIONS": 0,
+    "EXTRACTION_YIELD": 0.102564,
+    "LINEAGE_COVERAGE": 0.285714,
+    "NETWORK_REACQUIRE_COUNT": 0,
+    "NO_LINKAGE_REASONS": {
+      "OBSERVATION_NOT_REPRODUCED_FROM_SNAPSHOT": 20,
+      "SOURCE_RAW_NOT_AVAILABLE": 175
+    },
+    "NO_REACH_EVIDENCE": 273,
+    "NO_SCOPE_EVIDENCE": 270,
+    "RAW_DOCUMENTS_USED": 4,
+    "RAW_LINKAGE_YIELD": 0.795918,
+    "RAW_REPROCESS_COUNT": 4,
+    "TOTAL_OBSERVATIONS": 273,
+    "TRACEABLE_RAW": 78,
+    "WITHOUT_TRACEABLE_RAW": 195,
+    "WITH_RAW_DOCUMENT": 98,
+    "WITH_SOURCE_URL": 273,
+    "WITH_TRACEABLE_RAW": 78
+  },
+  "schema_version": "offer-reach-charged-scope-evidence-v1",
+  "version": "offer-reach-charged-scope-evidence-v1"
+}

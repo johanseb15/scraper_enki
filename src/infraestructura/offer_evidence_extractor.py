@@ -106,6 +106,15 @@ def extract_claims_from_explicit_basis(
     for qualifier in qualifiers:
         add("travel_restriction", qualifier)
 
+    if re.search(r"\b(?:no incluye|sin incluir|sin)\s+(?:repuestos?|hardware|dispositivo|componentes?)\b", text):
+        add("hardware_included", "false")
+    elif re.search(r"\bincluye\s+(?:repuestos?|hardware|dispositivo|componentes?)\b", text):
+        add("hardware_included", "true")
+    if re.search(r"\b(?:no incluye|sin incluir|sin)\s+material(?:es)?\b|\bmateriales? (?:aparte|no incluidos?)\b", text):
+        add("materials_included", "false")
+    elif re.search(r"\bincluye\s+material(?:es)?\b|\bmateriales? incluidos?\b", text):
+        add("materials_included", "true")
+
     return _deduplicate(claims)
 
 

@@ -26,6 +26,7 @@ from src.infraestructura.economic_dimensions_v2_adapter import (
     derive_economic_dimensions_v2,
 )
 from src.infraestructura.offer_evidence_artifact import load_offer_evidence_sidecar
+from src.infraestructura.targeted_claims_artifact import load_targeted_source_claims
 
 
 SIDECAR_V2_SCHEMA_VERSION = "economic-evidence-dimensions-v2"
@@ -43,6 +44,7 @@ def build_economic_dimensions_v2_sidecar(
     version: str = DIMENSIONS_V2_VERSION,
     previous_dimensions_path: str | Path | None = None,
     offer_evidence_path: str | Path | None = None,
+    targeted_claims_path: str | Path | None = None,
 ) -> dict[str, Any]:
     normalization = Path(normalization_path)
     with normalization.open("r", encoding="utf-8-sig", newline="") as handle:
@@ -64,14 +66,20 @@ def build_economic_dimensions_v2_sidecar(
         load_offer_evidence_sidecar(offer_evidence_path)
         if offer_evidence_path is not None else {}
     )
+    targeted_claims = (
+        load_targeted_source_claims(targeted_claims_path)
+        if targeted_claims_path is not None and Path(targeted_claims_path).exists() else {}
+    )
     if offer_evidence and set(offer_evidence) != set(ids):
         raise ValueError("Offer evidence observation ids do not match v2 input.")
     dimensions = [
         derive_economic_dimensions_v2(
             row,
             registry,
-            offer_evidence.get(row["observation_id"], None).claims
-            if row["observation_id"] in offer_evidence else (),
+            (
+                offer_evidence.get(row["observation_id"], None).claims
+                if row["observation_id"] in offer_evidence else ()
+            ) + targeted_claims.get(row["observation_id"], ()),
         )
         for row in rows
     ]
@@ -114,6 +122,7 @@ def build_economic_dimensions_v2_sidecar(
             claim.dimension == "delivery_mode"
             for item in offer_evidence.values() for claim in item.claims
         ),
+        "TARGETED_SOURCE_CLAIMS": sum(len(value) for value in targeted_claims.values()),
     })
     output.with_suffix(".summary.json").write_text(
         json.dumps(

@@ -87,6 +87,12 @@ def test_travel_is_a_qualifier_not_a_service_or_charged_unit():
     assert not {c for c in claims if c.dimension == "charged_unit"}
 
 
+def test_hardware_inclusion_and_materials_exclusion_are_explicit():
+    claims = extract("Incluye repuesto; materiales no incluidos")
+    assert values("Incluye repuesto", "hardware_included") == {"true"}
+    assert values("Materiales no incluidos", "materials_included") == {"false"}
+
+
 def test_raw_basis_and_raw_provenance_are_preserved():
     claim = extract("Conexión Remota x 1 HS")[0]
     assert claim.raw_basis == "Conexión Remota x 1 HS"

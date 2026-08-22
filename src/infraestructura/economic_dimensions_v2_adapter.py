@@ -183,6 +183,11 @@ def derive_economic_dimensions_v2(
         ))
 
     hardware_claims = []
+    hardware_claims.extend(
+        _dimension_claim_from_source(claim, claim.value.casefold() == "true")
+        for claim in source_claims
+        if claim.dimension == "hardware_included" and claim.value.casefold() in {"true", "false"}
+    )
     if role == "HARDWARE_PRODUCT":
         hardware_claims.append(DimensionClaim(
             True, DimensionOrigin.DERIVED_CLAIM, derived_provenance,
@@ -198,6 +203,11 @@ def derive_economic_dimensions_v2(
         ))
 
     materials_claims = []
+    materials_claims.extend(
+        _dimension_claim_from_source(claim, claim.value.casefold() == "true")
+        for claim in source_claims
+        if claim.dimension == "materials_included" and claim.value.casefold() in {"true", "false"}
+    )
     if re.search(r"\b(?:incluye|con)\s+material(?:es)?\b|\bmateriales? incluidos?\b", folded):
         materials_claims.append(DimensionClaim(
             True, DimensionOrigin.RAW_SOURCE_OBSERVATION, raw_provenance, raw
@@ -241,7 +251,7 @@ def derive_economic_dimensions_v2(
     )
 
 
-def _dimension_claim_from_source(claim: SourceEconomicClaim, value: str) -> DimensionClaim[str]:
+def _dimension_claim_from_source(claim: SourceEconomicClaim, value) -> DimensionClaim:
     return DimensionClaim(
         value,
         DimensionOrigin.RAW_SOURCE_OBSERVATION,
