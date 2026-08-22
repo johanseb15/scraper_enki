@@ -232,6 +232,18 @@ no demuestra cobertura nacional; moneda no se convierte; bundles, hardware y
 materiales no se estiman ni descomponen. Sólo una evaluación posterior puede
 autorizar influencia sobre runtime o API pública.
 
+La ubicación del provider no es el alcance del servicio. La modalidad remota
+no es cobertura nacional. La unidad cobrada debe estar evidenciada por texto o
+campo estructurado de la fuente y nunca inferirse sólo porque existe un precio.
+Los claims extraídos conservan raw basis, documento, método y versión: incluso
+cuando el texto fuente es explícito, el parser sigue siendo una interpretación
+auditable y puede entrar en conflicto con otros claims sin borrarlos.
+
+Antes de adquirir otra vez una fuente se reprocesa la evidencia raw existente.
+Una URL sin documento reproducible no constituye lineage raw; permanece
+`UNKNOWN` con razón de no linkage. La reacquisition es selectiva y posterior al
+gap register, no un scraping indiscriminado para fabricar cobertura.
+
 ## Acquisition
 
 Preferencia:

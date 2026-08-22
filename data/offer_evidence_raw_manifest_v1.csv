@@ -1,0 +1,5 @@
+source,raw_path,source_url,acquired_at
+jadetech_generic,tests/fixtures/jadetech_servicio_tecnico.html,https://jadetech.com.ar/categoria/servicio-tecnico/,
+bitz_generic,tests/fixtures/bitz_tarifas_servicio_tecnico.html,https://bitz.com.ar/tarifas-de-servicio-tecnico,
+bairescloud_generic,tests/fixtures/bairescloud.html,https://bairescloud.ar/servicio-tecnico.php,
+dmr_generic,tests/fixtures/dmr_mantenimiento.html,https://dmrwebdesign.com.ar/mantenimiento.html,
