@@ -1,9 +1,11 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
+import hashlib
 import re
 import unicodedata
 
+from src.aplicacion.pricing_dimensions import infer_price_scope
 from src.dominio.economic_evidence import (
     DimensionClaim,
     DimensionOrigin,
@@ -43,11 +45,7 @@ def derive_economic_dimensions(
         provider_name = _clean(registry_row.get("provider"))
         if provider_name:
             provider_claims.append(DimensionClaim(
-                ProviderIdentity(
-                    provider_id=f"provider:{_slug(provider_name)}",
-                    provider_name=provider_name,
-                    source=source,
-                ),
+                _provider_identity(provider_name, source),
                 DimensionOrigin.INFERRED,
                 KnowledgeProvenance(
                     "PROVIDER_SOURCE_REGISTRY",
@@ -56,6 +54,14 @@ def derive_economic_dimensions(
                 ),
                 f"registry source={source!r} provider={provider_name!r}",
             ))
+    observed_provider = _clean(row.get("provider")) or _clean(row.get("provider_name"))
+    if observed_provider:
+        provider_claims.append(DimensionClaim(
+            _provider_identity(observed_provider, source),
+            DimensionOrigin.OBSERVED,
+            observed_provenance,
+            f"provider={observed_provider!r}",
+        ))
 
     price_scope_claims = []
     explicit_scope = _explicit_price_scope(folded)
@@ -115,8 +121,7 @@ def derive_economic_dimensions(
         ))
 
     context_claims = []
-    commercial_context = _explicit_commercial_context(folded)
-    if commercial_context:
+    for commercial_context in _explicit_commercial_contexts(folded):
         context_claims.append(DimensionClaim(
             commercial_context, DimensionOrigin.OBSERVED, observed_provenance, raw
         ))
@@ -198,14 +203,9 @@ def derive_economic_dimensions(
 
 
 def _explicit_price_scope(text: str) -> str | None:
-    if re.search(r"\bpor hora\b|\bla hora\b|\bhora(?:s)? de (?:servicio|soporte|trabajo)\b", text):
-        return "PER_HOUR"
-    if re.search(r"\bpor mes\b|\bal mes\b|\bmensual(?:mente)?\b|\babono mensual\b", text):
-        return "PER_MONTH"
-    if re.search(r"\bpor visita\b|\bcada visita\b", text):
-        return "PER_VISIT"
-    if re.search(r"\bpor (?:equipo|unidad|pc|notebook|camara)\b", text):
-        return "PER_UNIT"
+    existing = infer_price_scope(text)
+    if existing != "UNKNOWN":
+        return existing
     if re.search(r"\bdesde\b|\ba partir de\b", text):
         return "LOWER_BOUND"
     if re.search(r"\bprecio total\b|\btotal(?: final)?\b", text):
@@ -213,34 +213,37 @@ def _explicit_price_scope(text: str) -> str | None:
     return None
 
 
-def _explicit_commercial_context(text: str) -> str | None:
-    if re.search(r"\burgenc(?:ia|ias)\b|\burgente\b", text):
-        return "URGENCY"
-    if re.search(r"\bfuera de horario\b|\bafter hours?\b", text):
-        return "AFTER_HOURS"
-    if re.search(r"\bfin(?:es)? de semana\b|\bferiado(?:s)?\b", text):
-        return "WEEKEND_HOLIDAY"
-    if re.search(r"\bpromocion\b|\bpromo\b", text):
-        return "PROMOTION"
-    if re.search(r"\bdescuento\b|\boff\b", text):
-        return "DISCOUNT"
-    if re.search(r"\bprecio (?:regular|estandar)\b|\btarifa estandar\b", text):
-        return "STANDARD"
-    return None
+def _explicit_commercial_contexts(text: str) -> tuple[str, ...]:
+    contexts = []
+    for pattern, value in (
+        (r"\burgenc(?:ia|ias)\b|\burgente\b|\bemergenc(?:ia|ias)\b", "URGENCY"),
+        (r"\bfuera de (?:horario|hs)\b|\bafter hours?\b", "AFTER_HOURS"),
+        (r"\bfin(?:es)? de semana\b|\bferiado(?:s)?\b", "WEEKEND_HOLIDAY"),
+        (r"\bpromocion\b|\bpromo\b", "PROMOTION"),
+        (r"\bdescuento\b|\boff\b", "DISCOUNT"),
+        (r"\bprecio (?:regular|estandar)\b|\btarifa estandar\b", "STANDARD"),
+    ):
+        if re.search(pattern, text):
+            contexts.append(value)
+    return tuple(contexts)
 
 
 def _explicit_device_scope(text: str) -> str | None:
-    for pattern, value in (
-        (r"\bnotebooks?\b", "NOTEBOOK"),
-        (r"\bpc gamer\b", "PC_GAMER"),
-        (r"\b(?:pc|computadora)(?:s)?\b", "PC"),
-        (r"\bservidores?\b", "SERVER"),
-        (r"\bcamaras?\b", "CAMERA"),
-        (r"\bimpresoras?\b", "PRINTER"),
-    ):
-        if re.search(pattern, text):
-            return value
-    return None
+    matches = [
+        value
+        for pattern, value in (
+            (r"\bnotebooks?\b", "NOTEBOOK"),
+            (r"\bpc gamer\b", "PC_GAMER"),
+            (r"\b(?:pc|computadora)(?:s)?\b", "PC"),
+            (r"\bservidores?\b", "SERVER"),
+            (r"\bcamaras?\b", "CAMERA"),
+            (r"\bimpresoras?\b", "PRINTER"),
+        )
+        if re.search(pattern, text)
+    ]
+    if len(matches) > 1:
+        return "MULTI_DEVICE:" + "+".join(sorted(matches))
+    return matches[0] if matches else None
 
 
 def _explicit_currencies(text: str) -> tuple[str, ...]:
@@ -263,6 +266,18 @@ def _fold(value: str) -> str:
 
 def _slug(value: str) -> str:
     return re.sub(r"[^a-z0-9]+", "-", _fold(value)).strip("-")
+
+
+def _provider_identity(provider_name: str, source: str) -> ProviderIdentity:
+    identity_basis = " ".join(
+        unicodedata.normalize("NFKC", provider_name).casefold().split()
+    )
+    digest = hashlib.sha256(identity_basis.encode("utf-8")).hexdigest()[:12]
+    return ProviderIdentity(
+        provider_id=f"provider:{_slug(provider_name)}:{digest}",
+        provider_name=provider_name,
+        source=source,
+    )
 
 
 def _known(value: str) -> str | None:

@@ -1,0 +1,38 @@
+{
+  "metrics": {
+    "AMBIGUOUS_DIMENSIONS": {},
+    "CONFLICTED_DIMENSIONS": {
+      "commercial_context": 3,
+      "currency": 3,
+      "market_scope": 5
+    },
+    "INFERRED_DIMENSIONS": {
+      "bundle_status": 146,
+      "hardware_included": 23,
+      "market_scope": 135,
+      "provider_identity": 273
+    },
+    "OBSERVED_DIMENSIONS": {
+      "commercial_context": 4,
+      "currency": 270,
+      "device_scope": 75,
+      "geography": 273,
+      "hardware_included": 2,
+      "market_scope": 8,
+      "price_scope": 20
+    },
+    "OUTPUT_ROWS": 273,
+    "TOTAL_OBSERVATIONS": 273,
+    "UNKNOWN_DIMENSIONS": {
+      "bundle_status": 127,
+      "commercial_context": 266,
+      "device_scope": 198,
+      "hardware_included": 248,
+      "market_scope": 125,
+      "materials_included": 273,
+      "price_scope": 253
+    }
+  },
+  "schema_version": "economic-evidence-dimensions-v1",
+  "version": "economic-evidence-dimensions-v1"
+}

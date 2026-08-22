@@ -33,8 +33,25 @@ def test_provider_identity_is_deterministic_across_runs_and_source_url_independe
     second = derive_economic_dimensions(row(), registry())
 
     assert first.provider_identity == second.provider_identity
-    assert first.provider_identity.value.provider_id == "provider:provider-a"
+    assert first.provider_identity.value.provider_id.startswith("provider:provider-a:")
     assert first.provider_identity.status is DimensionStatus.INFERRED
+
+
+def test_provider_registry_and_observed_identity_conflict_is_not_silently_merged():
+    dimensions = derive_economic_dimensions(row(provider="Provider B"), registry("Provider A"))
+
+    assert dimensions.provider_identity.status is DimensionStatus.CONFLICTED
+    assert {claim.value.provider_name for claim in dimensions.provider_identity.claims} == {
+        "Provider A",
+        "Provider B",
+    }
+
+
+def test_provider_ids_do_not_merge_names_that_only_share_a_weak_slug():
+    first = derive_economic_dimensions(row(), registry("Provider.A"))
+    second = derive_economic_dimensions(row(), registry("Provider A"))
+
+    assert first.provider_identity.value.provider_id != second.provider_identity.value.provider_id
 
 
 def test_unknown_provider_is_not_fabricated():
@@ -53,6 +70,22 @@ def test_explicit_hour_month_and_absent_cadence_are_distinguished():
     assert hourly.price_scope.status is DimensionStatus.OBSERVED
     assert monthly.price_scope.value == "PER_MONTH"
     assert absent.price_scope.status is DimensionStatus.UNKNOWN
+
+
+def test_source_explicit_hour_abbreviation_and_after_hours_are_observed():
+    dimensions = derive_economic_dimensions(
+        row(economic_object_raw="Visita a domicilio x 1 HS (Emergencia fuera de HS) PC-Notebook-AIO"),
+        registry(),
+    )
+
+    assert dimensions.price_scope.value == "PER_HOUR"
+    assert dimensions.price_scope.status is DimensionStatus.OBSERVED
+    assert dimensions.commercial_context.status is DimensionStatus.CONFLICTED
+    assert {claim.value for claim in dimensions.commercial_context.claims} == {
+        "URGENCY",
+        "AFTER_HOURS",
+    }
+    assert dimensions.device_scope.value == "MULTI_DEVICE:NOTEBOOK+PC"
 
 
 def test_explicit_price_scope_conflicting_with_normalized_column_is_preserved():
