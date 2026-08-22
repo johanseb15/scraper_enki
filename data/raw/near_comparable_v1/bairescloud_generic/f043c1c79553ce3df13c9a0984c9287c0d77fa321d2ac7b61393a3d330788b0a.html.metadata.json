@@ -1,0 +1,14 @@
+{
+  "acquired_at": "2026-08-22T21:25:53.358653+00:00",
+  "change_status": "CHANGED",
+  "content_hash": "f043c1c79553ce3df13c9a0984c9287c0d77fa321d2ac7b61393a3d330788b0a",
+  "content_length": 22310,
+  "content_type": "text/html; charset=UTF-8",
+  "etag": null,
+  "extractor_version": "selective-near-comparable-acquisition-v1",
+  "http_status": 200,
+  "last_modified": null,
+  "schema_version": "targeted-raw-acquisition-v1",
+  "source": "bairescloud_generic",
+  "source_url": "https://bairescloud.ar/servicio-tecnico.php"
+}

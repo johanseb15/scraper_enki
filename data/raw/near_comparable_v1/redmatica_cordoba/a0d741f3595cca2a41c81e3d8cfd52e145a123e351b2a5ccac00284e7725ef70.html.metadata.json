@@ -1,0 +1,14 @@
+{
+  "acquired_at": "2026-08-22T21:25:53.526029+00:00",
+  "change_status": "NEW",
+  "content_hash": "a0d741f3595cca2a41c81e3d8cfd52e145a123e351b2a5ccac00284e7725ef70",
+  "content_length": 156001,
+  "content_type": "text/html; charset=UTF-8",
+  "etag": null,
+  "extractor_version": "selective-near-comparable-acquisition-v1",
+  "http_status": 200,
+  "last_modified": null,
+  "schema_version": "targeted-raw-acquisition-v1",
+  "source": "redmatica_cordoba",
+  "source_url": "https://red-matica.com/"
+}

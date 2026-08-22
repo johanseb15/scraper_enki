@@ -1,0 +1,2 @@
+data/raw/near_comparable_v1/** -text -diff
+data/raw/near_comparable_v1/**/*.metadata.json text diff
