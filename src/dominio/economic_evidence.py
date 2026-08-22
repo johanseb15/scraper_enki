@@ -1,14 +1,135 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from decimal import Decimal
 from enum import Enum
+from typing import Generic, TypeVar
 
 from src.dominio.semantic_knowledge import KnowledgeProvenance
 from src.dominio.semantic_observation import (
     ObservationUnderstandingStatus,
     SemanticObservationRole,
 )
+
+
+T = TypeVar("T")
+
+
+class DimensionOrigin(Enum):
+    OBSERVED = "OBSERVED"
+    INFERRED = "INFERRED"
+
+
+class DimensionStatus(Enum):
+    OBSERVED = "OBSERVED"
+    INFERRED = "INFERRED"
+    UNKNOWN = "UNKNOWN"
+    CONFLICTED = "CONFLICTED"
+    AMBIGUOUS = "AMBIGUOUS"
+
+
+@dataclass(frozen=True)
+class DimensionClaim(Generic[T]):
+    value: T
+    origin: DimensionOrigin
+    provenance: KnowledgeProvenance
+    raw_basis: str
+
+    def __post_init__(self) -> None:
+        if self.value is None:
+            raise ValueError("DimensionClaim requires a value.")
+        if self.provenance is None:
+            raise ValueError("DimensionClaim requires provenance.")
+        if not self.raw_basis or not self.raw_basis.strip():
+            raise ValueError("DimensionClaim requires raw_basis.")
+
+
+@dataclass(frozen=True)
+class DimensionValue(Generic[T]):
+    value: T | None
+    status: DimensionStatus
+    claims: tuple[DimensionClaim[T], ...] = ()
+
+    def __post_init__(self) -> None:
+        if self.status is DimensionStatus.UNKNOWN:
+            if self.value is not None or self.claims:
+                raise ValueError("UNKNOWN dimensions cannot carry a value or claims.")
+        elif self.status in {DimensionStatus.CONFLICTED, DimensionStatus.AMBIGUOUS}:
+            if self.value is not None or not self.claims:
+                raise ValueError("Unresolved dimensions require claims and no selected value.")
+        elif self.value is None or not self.claims:
+            raise ValueError("Resolved dimensions require value and claims.")
+
+    @property
+    def is_usable(self) -> bool:
+        return self.status in {DimensionStatus.OBSERVED, DimensionStatus.INFERRED}
+
+
+def unknown_dimension() -> DimensionValue[object]:
+    return DimensionValue(value=None, status=DimensionStatus.UNKNOWN)
+
+
+def resolve_dimension(*claims: DimensionClaim[T]) -> DimensionValue[T]:
+    if not claims:
+        return DimensionValue(value=None, status=DimensionStatus.UNKNOWN)
+    distinct_values = []
+    for claim in claims:
+        if claim.value not in distinct_values:
+            distinct_values.append(claim.value)
+    if len(distinct_values) > 1:
+        return DimensionValue(
+            value=None,
+            status=DimensionStatus.CONFLICTED,
+            claims=tuple(claims),
+        )
+    observed = any(claim.origin is DimensionOrigin.OBSERVED for claim in claims)
+    return DimensionValue(
+        value=distinct_values[0],
+        status=DimensionStatus.OBSERVED if observed else DimensionStatus.INFERRED,
+        claims=tuple(claims),
+    )
+
+
+@dataclass(frozen=True)
+class ProviderIdentity:
+    provider_id: str
+    provider_name: str
+    source: str
+
+
+@dataclass(frozen=True)
+class GeographyDimension:
+    province: str | None = None
+    city: str | None = None
+    coverage: str | None = None
+
+
+@dataclass(frozen=True)
+class EconomicEvidenceDimensions:
+    provider_identity: DimensionValue[ProviderIdentity] = field(default_factory=unknown_dimension)
+    price_scope: DimensionValue[str] = field(default_factory=unknown_dimension)
+    geography: DimensionValue[GeographyDimension] = field(default_factory=unknown_dimension)
+    market_scope: DimensionValue[str] = field(default_factory=unknown_dimension)
+    commercial_context: DimensionValue[str] = field(default_factory=unknown_dimension)
+    bundle_status: DimensionValue[str] = field(default_factory=unknown_dimension)
+    hardware_included: DimensionValue[bool] = field(default_factory=unknown_dimension)
+    materials_included: DimensionValue[bool] = field(default_factory=unknown_dimension)
+    device_scope: DimensionValue[str] = field(default_factory=unknown_dimension)
+    currency: DimensionValue[str] = field(default_factory=unknown_dimension)
+
+    def all_dimensions(self) -> dict[str, DimensionValue[object]]:
+        return {
+            "provider_identity": self.provider_identity,
+            "price_scope": self.price_scope,
+            "geography": self.geography,
+            "market_scope": self.market_scope,
+            "commercial_context": self.commercial_context,
+            "bundle_status": self.bundle_status,
+            "hardware_included": self.hardware_included,
+            "materials_included": self.materials_included,
+            "device_scope": self.device_scope,
+            "currency": self.currency,
+        }
 
 
 class EconomicObjectKind(Enum):
