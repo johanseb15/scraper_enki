@@ -171,7 +171,7 @@ def test_real_scalar_ambiguity_is_not_treated_as_multivalue():
     assert EvidenceExclusionReason.DIMENSION_CONFLICT in context.exclusion_reasons
 
 
-def test_location_is_required_for_onsite_but_not_used_as_remote_reach():
+def test_provider_location_is_not_service_reach_for_onsite_or_remote():
     cordoba = LocationDimension(province="Córdoba", city="Córdoba")
     mendoza = LocationDimension(province="Mendoza", city="Mendoza")
     onsite = resolve(
@@ -182,8 +182,20 @@ def test_location_is_required_for_onsite_but_not_used_as_remote_reach():
         dimensions("provider:a", location=cordoba),
         dimensions("provider:b", location=mendoza),
     )
-    assert EvidenceExclusionReason.LOCATION_MISMATCH in onsite.exclusion_reasons
+    assert EvidenceExclusionReason.LOCATION_MISMATCH not in onsite.exclusion_reasons
+    assert [item.evidence_id for item in onsite.comparable_evidence] == ["candidate"]
     assert [item.evidence_id for item in remote.comparable_evidence] == ["candidate"]
+
+
+def test_onsite_unknown_reach_is_insufficient_separately_from_provider_location():
+    cordoba = LocationDimension(province="Córdoba", city="Córdoba")
+    mendoza = LocationDimension(province="Mendoza", city="Mendoza")
+    context = resolve(
+        dimensions("provider:a", delivery_mode="ONSITE", geographic_reach=None, location=cordoba),
+        dimensions("provider:b", delivery_mode="ONSITE", geographic_reach=None, location=mendoza),
+    )
+    assert EvidenceExclusionReason.INSUFFICIENT_SCOPE in context.exclusion_reasons
+    assert EvidenceExclusionReason.LOCATION_MISMATCH not in context.exclusion_reasons
 
 
 def test_provider_independence_uses_stable_identity_in_v2():

@@ -410,14 +410,6 @@ def _v2_shared_dimension_reasons(
         elif left != right:
             reasons.append(mismatch_reason)
 
-    if _dimension_value(anchor, "delivery_mode") == _dimension_value(item, "delivery_mode") == "ONSITE":
-        left_location = _dimension_value(anchor, "location")
-        right_location = _dimension_value(item, "location")
-        if left_location is None or right_location is None:
-            reasons.append(EvidenceExclusionReason.INSUFFICIENT_SCOPE)
-        elif left_location != right_location:
-            reasons.append(EvidenceExclusionReason.LOCATION_MISMATCH)
-
     anchor_bundle = _dimension_value(anchor, "bundle_status")
     item_bundle = _dimension_value(item, "bundle_status")
     if anchor_bundle == "COMPOSITE" or item_bundle == "COMPOSITE":

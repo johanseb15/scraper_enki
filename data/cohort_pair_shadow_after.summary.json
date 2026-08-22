@@ -1,0 +1,167 @@
+{
+  "metrics": {
+    "AMBIGUITIES_BY_DIMENSION": {},
+    "AMBIGUITY_AUDIT": {},
+    "AMBIGUOUS": 3,
+    "AMBIGUOUS_DIMENSIONS": {},
+    "CANDIDATE_PAIRS_AFTER_INDEX": 21443,
+    "CANDIDATE_PAIRS_BEFORE_INDEX": 74529,
+    "CANDIDATE_RESULTS": 21443,
+    "CONFLICTED_DIMENSIONS": {
+      "currency": 3
+    },
+    "CONFLICTS_BY_DIMENSION": {
+      "currency": 3
+    },
+    "CONFLICT_AUDIT": {
+      "currency": [
+        {
+          "claims": [
+            {
+              "origin": "NORMALIZED_FIELD",
+              "provenance": {
+                "origin_reference": "source=servipc_bahia_ba;observation_id=159;artifact=semantic_normalization_v4",
+                "origin_type": "SEMANTIC_NORMALIZATION_FIELD",
+                "origin_version": "semantic-normalization-v4"
+              },
+              "raw_basis": "normalized currency=ARS",
+              "value": "ARS"
+            },
+            {
+              "origin": "RAW_SOURCE_OBSERVATION",
+              "provenance": {
+                "origin_reference": "source=servipc_bahia_ba;observation_id=159;field=economic_object_raw",
+                "origin_type": "RAW_SOURCE_EXPRESSION",
+                "origin_version": "generic_price_extractor_v3"
+              },
+              "raw_basis": "Ticket Básico u$s 12,-",
+              "value": "USD"
+            }
+          ],
+          "observation_id": "159",
+          "raw_expression": "Ticket Básico u$s 12,-",
+          "values": [
+            "ARS",
+            "USD"
+          ]
+        },
+        {
+          "claims": [
+            {
+              "origin": "NORMALIZED_FIELD",
+              "provenance": {
+                "origin_reference": "source=servipc_bahia_ba;observation_id=160;artifact=semantic_normalization_v4",
+                "origin_type": "SEMANTIC_NORMALIZATION_FIELD",
+                "origin_version": "semantic-normalization-v4"
+              },
+              "raw_basis": "normalized currency=ARS",
+              "value": "ARS"
+            },
+            {
+              "origin": "RAW_SOURCE_OBSERVATION",
+              "provenance": {
+                "origin_reference": "source=servipc_bahia_ba;observation_id=160;field=economic_object_raw",
+                "origin_type": "RAW_SOURCE_EXPRESSION",
+                "origin_version": "generic_price_extractor_v3"
+              },
+              "raw_basis": "Ticket Medio u$s 20,-",
+              "value": "USD"
+            }
+          ],
+          "observation_id": "160",
+          "raw_expression": "Ticket Medio u$s 20,-",
+          "values": [
+            "ARS",
+            "USD"
+          ]
+        },
+        {
+          "claims": [
+            {
+              "origin": "NORMALIZED_FIELD",
+              "provenance": {
+                "origin_reference": "source=servipc_bahia_ba;observation_id=161;artifact=semantic_normalization_v4",
+                "origin_type": "SEMANTIC_NORMALIZATION_FIELD",
+                "origin_version": "semantic-normalization-v4"
+              },
+              "raw_basis": "normalized currency=ARS",
+              "value": "ARS"
+            },
+            {
+              "origin": "RAW_SOURCE_OBSERVATION",
+              "provenance": {
+                "origin_reference": "source=servipc_bahia_ba;observation_id=161;field=economic_object_raw",
+                "origin_type": "RAW_SOURCE_EXPRESSION",
+                "origin_version": "generic_price_extractor_v3"
+              },
+              "raw_basis": "Ticket Avanzado u$s 28,-",
+              "value": "USD"
+            }
+          ],
+          "observation_id": "161",
+          "raw_expression": "Ticket Avanzado u$s 28,-",
+          "values": [
+            "ARS",
+            "USD"
+          ]
+        }
+      ]
+    },
+    "EVIDENCE_RESOLVED": 0,
+    "EXCLUSION_REASONS": {
+      "BUNDLE_NOT_COMPARABLE": 9435,
+      "CADENCE_MISMATCH": 94,
+      "CANONICAL_SERVICE_MISMATCH": 6578,
+      "COMMERCIAL_CONTEXT_MISMATCH": 4,
+      "DELIVERY_MODE_MISMATCH": 60,
+      "DEVICE_SCOPE_MISMATCH": 808,
+      "DIMENSION_CONFLICT": 3,
+      "HARDWARE_SERVICE_BOUNDARY": 4761,
+      "INSUFFICIENT_SCOPE": 7120,
+      "LOGISTICS_ONLY": 5,
+      "NON_ECONOMIC_OBJECT": 21,
+      "PRICE_CONTEXT_ONLY": 34,
+      "SCOPE_ONLY": 62,
+      "SELF_OBSERVATION_NOT_INDEPENDENT": 146,
+      "UNKNOWN_SEMANTICS": 5
+    },
+    "INFERRED_DIMENSIONS": {
+      "bundle_status": 146,
+      "currency": 270,
+      "hardware_included": 23,
+      "location": 273,
+      "provider_identity": 273
+    },
+    "INSUFFICIENT": 265,
+    "MULTIVALUE_CONTEXTS": 3,
+    "NO_EVIDENCE": 273,
+    "OBSERVED_DIMENSIONS": {
+      "commercial_context": 7,
+      "delivery_mode": 16,
+      "device_scope": 75,
+      "geographic_reach": 1,
+      "hardware_included": 3,
+      "price_scope": 20
+    },
+    "ORTHOGONAL_DIMENSION_SPLITS": 11,
+    "PARTIAL": 0,
+    "READY": 0,
+    "TOTAL_CANDIDATE_EVIDENCE": 21443,
+    "TOTAL_COMPARABLE_EVIDENCE": 0,
+    "TOTAL_EXCLUDED_EVIDENCE": 21443,
+    "TOTAL_OBSERVATIONS": 273,
+    "UNKNOWN": 5,
+    "UNKNOWN_DIMENSIONS": {
+      "bundle_status": 127,
+      "commercial_context": 266,
+      "delivery_mode": 257,
+      "device_scope": 198,
+      "geographic_reach": 272,
+      "hardware_included": 247,
+      "materials_included": 273,
+      "price_scope": 253
+    }
+  },
+  "schema_version": "semantic-economic-shadow-v1",
+  "version": "semantic-economic-bridge-v1"
+}
