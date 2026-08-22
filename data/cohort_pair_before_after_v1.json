@@ -1,0 +1,3449 @@
+{
+  "claims_found": 0,
+  "claims_rejected": 0,
+  "cohort": "VISITA_TECNICA_DOMICILIO",
+  "cohort_metrics_after": {
+    "COMPARABLE_PAIRS": 0,
+    "CURRENT_PROVIDER_COVERAGE": 0,
+    "CURRENT_READINESS": "INSUFFICIENT",
+    "MAX_COUNTERFACTUAL_READINESS": "READY",
+    "MAX_PROVIDER_COVERAGE_IF_TOP_ACTIONS_SUCCEED": 6,
+    "OBSERVATIONS": 8,
+    "PAIRS": 28,
+    "POTENTIALLY_UNLOCKABLE_PAIRS": 21,
+    "PROVIDERS": 6
+  },
+  "cohort_metrics_before": {
+    "COMPARABLE_PAIRS": 0,
+    "CURRENT_PROVIDER_COVERAGE": 0,
+    "CURRENT_READINESS": "INSUFFICIENT",
+    "MAX_COUNTERFACTUAL_READINESS": "READY",
+    "MAX_PROVIDER_COVERAGE_IF_TOP_ACTIONS_SUCCEED": 6,
+    "OBSERVATIONS": 8,
+    "PAIRS": 28,
+    "POTENTIALLY_UNLOCKABLE_PAIRS": 21,
+    "PROVIDERS": 6
+  },
+  "dimensions_changed": false,
+  "exclusion_reason_delta": {
+    "BUNDLE_NOT_COMPARABLE": 0,
+    "CADENCE_MISMATCH": 0,
+    "CANONICAL_SERVICE_MISMATCH": 0,
+    "COMMERCIAL_CONTEXT_MISMATCH": 0,
+    "DELIVERY_MODE_MISMATCH": 0,
+    "DEVICE_SCOPE_MISMATCH": 0,
+    "DIMENSION_CONFLICT": 0,
+    "HARDWARE_SERVICE_BOUNDARY": 0,
+    "INSUFFICIENT_SCOPE": 0,
+    "LOCATION_MISMATCH": -26,
+    "LOGISTICS_ONLY": 0,
+    "NON_ECONOMIC_OBJECT": 0,
+    "PRICE_CONTEXT_ONLY": 0,
+    "SCOPE_ONLY": 0,
+    "SELF_OBSERVATION_NOT_INDEPENDENT": 0,
+    "UNKNOWN_SEMANTICS": 0
+  },
+  "gap_register_changed": false,
+  "global_shadow_after": {
+    "AMBIGUOUS": 3,
+    "EVIDENCE_RESOLVED": 0,
+    "INSUFFICIENT": 265,
+    "NO_EVIDENCE": 273,
+    "PARTIAL": 0,
+    "READY": 0,
+    "TOTAL_COMPARABLE_EVIDENCE": 0,
+    "TOTAL_EXCLUDED_EVIDENCE": 21443,
+    "TOTAL_OBSERVATIONS": 273,
+    "UNKNOWN": 5
+  },
+  "global_shadow_before": {
+    "AMBIGUOUS": 3,
+    "EVIDENCE_RESOLVED": 0,
+    "INSUFFICIENT": 265,
+    "NO_EVIDENCE": 273,
+    "PARTIAL": 0,
+    "READY": 0,
+    "TOTAL_COMPARABLE_EVIDENCE": 0,
+    "TOTAL_EXCLUDED_EVIDENCE": 21443,
+    "TOTAL_OBSERVATIONS": 273,
+    "UNKNOWN": 5
+  },
+  "global_shadow_delta": {
+    "AMBIGUOUS": 0,
+    "EVIDENCE_RESOLVED": 0,
+    "INSUFFICIENT": 0,
+    "NO_EVIDENCE": 0,
+    "PARTIAL": 0,
+    "READY": 0,
+    "TOTAL_COMPARABLE_EVIDENCE": 0,
+    "TOTAL_EXCLUDED_EVIDENCE": 0,
+    "TOTAL_OBSERVATIONS": 0,
+    "UNKNOWN": 0
+  },
+  "information_gain_outcomes": [
+    {
+      "action_id": "pair-acq:bairescloud_generic",
+      "actual_pair_unlock": 0,
+      "actual_provider_gain": 0,
+      "actual_readiness_gain": "NONE",
+      "expected_pair_unlock": 0,
+      "expected_provider_gain": 0,
+      "expected_readiness_gain": "NONE",
+      "reason": "No network: action cannot complete any bilateral minimal unlock set by itself.",
+      "schema_version": "cohort-pair-acquisition-outcome-v1",
+      "source": "bairescloud_generic",
+      "status": "SKIPPED_ZERO_COUNTERFACTUAL_VALUE"
+    },
+    {
+      "action_id": "pair-acq:informatica_del_plata_ba",
+      "actual_pair_unlock": 0,
+      "actual_provider_gain": 0,
+      "actual_readiness_gain": "NONE",
+      "expected_pair_unlock": 0,
+      "expected_provider_gain": 0,
+      "expected_readiness_gain": "NONE",
+      "reason": "No network: action cannot complete any bilateral minimal unlock set by itself.",
+      "schema_version": "cohort-pair-acquisition-outcome-v1",
+      "source": "informatica_del_plata_ba",
+      "status": "SKIPPED_ZERO_COUNTERFACTUAL_VALUE"
+    },
+    {
+      "action_id": "pair-acq:redmatica_cordoba",
+      "actual_pair_unlock": 0,
+      "actual_provider_gain": 0,
+      "actual_readiness_gain": "NONE",
+      "expected_pair_unlock": 0,
+      "expected_provider_gain": 0,
+      "expected_readiness_gain": "NONE",
+      "reason": "No network: action cannot complete any bilateral minimal unlock set by itself.",
+      "schema_version": "cohort-pair-acquisition-outcome-v1",
+      "source": "redmatica_cordoba",
+      "status": "SKIPPED_ZERO_COUNTERFACTUAL_VALUE"
+    },
+    {
+      "action_id": "pair-acq:mb_soluciones_caba",
+      "actual_pair_unlock": 0,
+      "actual_provider_gain": 0,
+      "actual_readiness_gain": "NONE",
+      "expected_pair_unlock": 0,
+      "expected_provider_gain": 0,
+      "expected_readiness_gain": "NONE",
+      "reason": "No network: action cannot complete any bilateral minimal unlock set by itself.",
+      "schema_version": "cohort-pair-acquisition-outcome-v1",
+      "source": "mb_soluciones_caba",
+      "status": "SKIPPED_ZERO_COUNTERFACTUAL_VALUE"
+    },
+    {
+      "action_id": "pair-acq:pcdoctor_caba",
+      "actual_pair_unlock": 0,
+      "actual_provider_gain": 0,
+      "actual_readiness_gain": "NONE",
+      "expected_pair_unlock": 0,
+      "expected_provider_gain": 0,
+      "expected_readiness_gain": "NONE",
+      "reason": "No network: action cannot complete any bilateral minimal unlock set by itself.",
+      "schema_version": "cohort-pair-acquisition-outcome-v1",
+      "source": "pcdoctor_caba",
+      "status": "SKIPPED_ZERO_COUNTERFACTUAL_VALUE"
+    },
+    {
+      "action_id": "pair-acq:taja_service_caba",
+      "actual_pair_unlock": 0,
+      "actual_provider_gain": 0,
+      "actual_readiness_gain": "NONE",
+      "expected_pair_unlock": 0,
+      "expected_provider_gain": 0,
+      "expected_readiness_gain": "NONE",
+      "reason": "No network: action cannot complete any bilateral minimal unlock set by itself.",
+      "schema_version": "cohort-pair-acquisition-outcome-v1",
+      "source": "taja_service_caba",
+      "status": "SKIPPED_ZERO_COUNTERFACTUAL_VALUE"
+    }
+  ],
+  "new_comparable_pairs": 0,
+  "new_independent_providers": 0,
+  "new_raw_snapshots": 0,
+  "pair_blockers_after": [
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [
+        "SAME_PROVIDER_NOT_INDEPENDENT"
+      ],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "69",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "69",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "69",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "69",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "70",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "70",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "70",
+          "side": "B"
+        }
+      ],
+      "pair_id": "pair:69:70",
+      "state": "HARD_BLOCKED"
+    },
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "126",
+          "side": "B"
+        },
+        {
+          "dimension": "delivery_mode",
+          "observation_id": "126",
+          "side": "B"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "126",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "126",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "126",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "126",
+          "side": "B"
+        },
+        {
+          "dimension": "price_scope",
+          "observation_id": "126",
+          "side": "B"
+        },
+        {
+          "dimension": "commercial_context",
+          "observation_id": "69",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "69",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "69",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "69",
+          "side": "A"
+        }
+      ],
+      "pair_id": "pair:69:126",
+      "state": "MISSING_EVIDENCE"
+    },
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "136",
+          "side": "B"
+        },
+        {
+          "dimension": "delivery_mode",
+          "observation_id": "136",
+          "side": "B"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "136",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "136",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "136",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "136",
+          "side": "B"
+        },
+        {
+          "dimension": "price_scope",
+          "observation_id": "136",
+          "side": "B"
+        },
+        {
+          "dimension": "commercial_context",
+          "observation_id": "69",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "69",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "69",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "69",
+          "side": "A"
+        }
+      ],
+      "pair_id": "pair:69:136",
+      "state": "MISSING_EVIDENCE"
+    },
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "137",
+          "side": "B"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "137",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "137",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "137",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "137",
+          "side": "B"
+        },
+        {
+          "dimension": "price_scope",
+          "observation_id": "137",
+          "side": "B"
+        },
+        {
+          "dimension": "commercial_context",
+          "observation_id": "69",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "69",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "69",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "69",
+          "side": "A"
+        }
+      ],
+      "pair_id": "pair:69:137",
+      "state": "MISSING_EVIDENCE"
+    },
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "145",
+          "side": "B"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "145",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "145",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "145",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "145",
+          "side": "B"
+        },
+        {
+          "dimension": "commercial_context",
+          "observation_id": "69",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "69",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "69",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "69",
+          "side": "A"
+        }
+      ],
+      "pair_id": "pair:69:145",
+      "state": "MISSING_EVIDENCE"
+    },
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "device_scope",
+          "observation_id": "146",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "146",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "146",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "146",
+          "side": "B"
+        },
+        {
+          "dimension": "commercial_context",
+          "observation_id": "69",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "69",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "69",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "69",
+          "side": "A"
+        }
+      ],
+      "pair_id": "pair:69:146",
+      "state": "MISSING_EVIDENCE"
+    },
+    {
+      "explicit_mismatches": [
+        "DEVICE_SCOPE_MISMATCH",
+        "PRICE_SCOPE_MISMATCH"
+      ],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "234",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "234",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "234",
+          "side": "B"
+        },
+        {
+          "dimension": "commercial_context",
+          "observation_id": "69",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "69",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "69",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "69",
+          "side": "A"
+        }
+      ],
+      "pair_id": "pair:69:234",
+      "state": "EXPLICIT_MISMATCH"
+    },
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "126",
+          "side": "B"
+        },
+        {
+          "dimension": "delivery_mode",
+          "observation_id": "126",
+          "side": "B"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "126",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "126",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "126",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "126",
+          "side": "B"
+        },
+        {
+          "dimension": "price_scope",
+          "observation_id": "126",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "70",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "70",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "70",
+          "side": "A"
+        }
+      ],
+      "pair_id": "pair:70:126",
+      "state": "MISSING_EVIDENCE"
+    },
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "136",
+          "side": "B"
+        },
+        {
+          "dimension": "delivery_mode",
+          "observation_id": "136",
+          "side": "B"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "136",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "136",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "136",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "136",
+          "side": "B"
+        },
+        {
+          "dimension": "price_scope",
+          "observation_id": "136",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "70",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "70",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "70",
+          "side": "A"
+        }
+      ],
+      "pair_id": "pair:70:136",
+      "state": "MISSING_EVIDENCE"
+    },
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "137",
+          "side": "B"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "137",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "137",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "137",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "137",
+          "side": "B"
+        },
+        {
+          "dimension": "price_scope",
+          "observation_id": "137",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "70",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "70",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "70",
+          "side": "A"
+        }
+      ],
+      "pair_id": "pair:70:137",
+      "state": "MISSING_EVIDENCE"
+    },
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "145",
+          "side": "B"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "145",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "145",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "145",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "145",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "70",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "70",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "70",
+          "side": "A"
+        }
+      ],
+      "pair_id": "pair:70:145",
+      "state": "MISSING_EVIDENCE"
+    },
+    {
+      "explicit_mismatches": [
+        "COMMERCIAL_CONTEXT_MISMATCH"
+      ],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "device_scope",
+          "observation_id": "146",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "146",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "146",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "146",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "70",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "70",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "70",
+          "side": "A"
+        }
+      ],
+      "pair_id": "pair:70:146",
+      "state": "EXPLICIT_MISMATCH"
+    },
+    {
+      "explicit_mismatches": [
+        "DEVICE_SCOPE_MISMATCH",
+        "PRICE_SCOPE_MISMATCH"
+      ],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "234",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "234",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "234",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "70",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "70",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "70",
+          "side": "A"
+        }
+      ],
+      "pair_id": "pair:70:234",
+      "state": "EXPLICIT_MISMATCH"
+    },
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "delivery_mode",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "price_scope",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "commercial_context",
+          "observation_id": "136",
+          "side": "B"
+        },
+        {
+          "dimension": "delivery_mode",
+          "observation_id": "136",
+          "side": "B"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "136",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "136",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "136",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "136",
+          "side": "B"
+        },
+        {
+          "dimension": "price_scope",
+          "observation_id": "136",
+          "side": "B"
+        }
+      ],
+      "pair_id": "pair:126:136",
+      "state": "MISSING_EVIDENCE"
+    },
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "delivery_mode",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "price_scope",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "commercial_context",
+          "observation_id": "137",
+          "side": "B"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "137",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "137",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "137",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "137",
+          "side": "B"
+        },
+        {
+          "dimension": "price_scope",
+          "observation_id": "137",
+          "side": "B"
+        }
+      ],
+      "pair_id": "pair:126:137",
+      "state": "MISSING_EVIDENCE"
+    },
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "delivery_mode",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "price_scope",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "commercial_context",
+          "observation_id": "145",
+          "side": "B"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "145",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "145",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "145",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "145",
+          "side": "B"
+        }
+      ],
+      "pair_id": "pair:126:145",
+      "state": "MISSING_EVIDENCE"
+    },
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "delivery_mode",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "price_scope",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "146",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "146",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "146",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "146",
+          "side": "B"
+        }
+      ],
+      "pair_id": "pair:126:146",
+      "state": "MISSING_EVIDENCE"
+    },
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "delivery_mode",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "price_scope",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "commercial_context",
+          "observation_id": "234",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "234",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "234",
+          "side": "B"
+        }
+      ],
+      "pair_id": "pair:126:234",
+      "state": "MISSING_EVIDENCE"
+    },
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "delivery_mode",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "price_scope",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "commercial_context",
+          "observation_id": "137",
+          "side": "B"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "137",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "137",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "137",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "137",
+          "side": "B"
+        },
+        {
+          "dimension": "price_scope",
+          "observation_id": "137",
+          "side": "B"
+        }
+      ],
+      "pair_id": "pair:136:137",
+      "state": "MISSING_EVIDENCE"
+    },
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "delivery_mode",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "price_scope",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "commercial_context",
+          "observation_id": "145",
+          "side": "B"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "145",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "145",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "145",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "145",
+          "side": "B"
+        }
+      ],
+      "pair_id": "pair:136:145",
+      "state": "MISSING_EVIDENCE"
+    },
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "delivery_mode",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "price_scope",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "146",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "146",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "146",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "146",
+          "side": "B"
+        }
+      ],
+      "pair_id": "pair:136:146",
+      "state": "MISSING_EVIDENCE"
+    },
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "delivery_mode",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "price_scope",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "commercial_context",
+          "observation_id": "234",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "234",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "234",
+          "side": "B"
+        }
+      ],
+      "pair_id": "pair:136:234",
+      "state": "MISSING_EVIDENCE"
+    },
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "137",
+          "side": "A"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "137",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "137",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "137",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "137",
+          "side": "A"
+        },
+        {
+          "dimension": "price_scope",
+          "observation_id": "137",
+          "side": "A"
+        },
+        {
+          "dimension": "commercial_context",
+          "observation_id": "145",
+          "side": "B"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "145",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "145",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "145",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "145",
+          "side": "B"
+        }
+      ],
+      "pair_id": "pair:137:145",
+      "state": "MISSING_EVIDENCE"
+    },
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "137",
+          "side": "A"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "137",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "137",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "137",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "137",
+          "side": "A"
+        },
+        {
+          "dimension": "price_scope",
+          "observation_id": "137",
+          "side": "A"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "146",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "146",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "146",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "146",
+          "side": "B"
+        }
+      ],
+      "pair_id": "pair:137:146",
+      "state": "MISSING_EVIDENCE"
+    },
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "137",
+          "side": "A"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "137",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "137",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "137",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "137",
+          "side": "A"
+        },
+        {
+          "dimension": "price_scope",
+          "observation_id": "137",
+          "side": "A"
+        },
+        {
+          "dimension": "commercial_context",
+          "observation_id": "234",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "234",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "234",
+          "side": "B"
+        }
+      ],
+      "pair_id": "pair:137:234",
+      "state": "MISSING_EVIDENCE"
+    },
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [
+        "SAME_PROVIDER_NOT_INDEPENDENT"
+      ],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "145",
+          "side": "A"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "145",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "145",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "145",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "145",
+          "side": "A"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "146",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "146",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "146",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "146",
+          "side": "B"
+        }
+      ],
+      "pair_id": "pair:145:146",
+      "state": "HARD_BLOCKED"
+    },
+    {
+      "explicit_mismatches": [
+        "PRICE_SCOPE_MISMATCH"
+      ],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "145",
+          "side": "A"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "145",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "145",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "145",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "145",
+          "side": "A"
+        },
+        {
+          "dimension": "commercial_context",
+          "observation_id": "234",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "234",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "234",
+          "side": "B"
+        }
+      ],
+      "pair_id": "pair:145:234",
+      "state": "EXPLICIT_MISMATCH"
+    },
+    {
+      "explicit_mismatches": [
+        "PRICE_SCOPE_MISMATCH"
+      ],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "device_scope",
+          "observation_id": "146",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "146",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "146",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "146",
+          "side": "A"
+        },
+        {
+          "dimension": "commercial_context",
+          "observation_id": "234",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "234",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "234",
+          "side": "B"
+        }
+      ],
+      "pair_id": "pair:146:234",
+      "state": "EXPLICIT_MISMATCH"
+    }
+  ],
+  "pair_blockers_before": [
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [
+        "SAME_PROVIDER_NOT_INDEPENDENT"
+      ],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "69",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "69",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "69",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "69",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "70",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "70",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "70",
+          "side": "B"
+        }
+      ],
+      "pair_id": "pair:69:70",
+      "state": "HARD_BLOCKED"
+    },
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "126",
+          "side": "B"
+        },
+        {
+          "dimension": "delivery_mode",
+          "observation_id": "126",
+          "side": "B"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "126",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "126",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "126",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "126",
+          "side": "B"
+        },
+        {
+          "dimension": "price_scope",
+          "observation_id": "126",
+          "side": "B"
+        },
+        {
+          "dimension": "commercial_context",
+          "observation_id": "69",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "69",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "69",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "69",
+          "side": "A"
+        }
+      ],
+      "pair_id": "pair:69:126",
+      "state": "MISSING_EVIDENCE"
+    },
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "136",
+          "side": "B"
+        },
+        {
+          "dimension": "delivery_mode",
+          "observation_id": "136",
+          "side": "B"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "136",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "136",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "136",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "136",
+          "side": "B"
+        },
+        {
+          "dimension": "price_scope",
+          "observation_id": "136",
+          "side": "B"
+        },
+        {
+          "dimension": "commercial_context",
+          "observation_id": "69",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "69",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "69",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "69",
+          "side": "A"
+        }
+      ],
+      "pair_id": "pair:69:136",
+      "state": "MISSING_EVIDENCE"
+    },
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "137",
+          "side": "B"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "137",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "137",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "137",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "137",
+          "side": "B"
+        },
+        {
+          "dimension": "price_scope",
+          "observation_id": "137",
+          "side": "B"
+        },
+        {
+          "dimension": "commercial_context",
+          "observation_id": "69",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "69",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "69",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "69",
+          "side": "A"
+        }
+      ],
+      "pair_id": "pair:69:137",
+      "state": "MISSING_EVIDENCE"
+    },
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "145",
+          "side": "B"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "145",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "145",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "145",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "145",
+          "side": "B"
+        },
+        {
+          "dimension": "commercial_context",
+          "observation_id": "69",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "69",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "69",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "69",
+          "side": "A"
+        }
+      ],
+      "pair_id": "pair:69:145",
+      "state": "MISSING_EVIDENCE"
+    },
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "device_scope",
+          "observation_id": "146",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "146",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "146",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "146",
+          "side": "B"
+        },
+        {
+          "dimension": "commercial_context",
+          "observation_id": "69",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "69",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "69",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "69",
+          "side": "A"
+        }
+      ],
+      "pair_id": "pair:69:146",
+      "state": "MISSING_EVIDENCE"
+    },
+    {
+      "explicit_mismatches": [
+        "DEVICE_SCOPE_MISMATCH",
+        "PRICE_SCOPE_MISMATCH"
+      ],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "234",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "234",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "234",
+          "side": "B"
+        },
+        {
+          "dimension": "commercial_context",
+          "observation_id": "69",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "69",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "69",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "69",
+          "side": "A"
+        }
+      ],
+      "pair_id": "pair:69:234",
+      "state": "EXPLICIT_MISMATCH"
+    },
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "126",
+          "side": "B"
+        },
+        {
+          "dimension": "delivery_mode",
+          "observation_id": "126",
+          "side": "B"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "126",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "126",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "126",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "126",
+          "side": "B"
+        },
+        {
+          "dimension": "price_scope",
+          "observation_id": "126",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "70",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "70",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "70",
+          "side": "A"
+        }
+      ],
+      "pair_id": "pair:70:126",
+      "state": "MISSING_EVIDENCE"
+    },
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "136",
+          "side": "B"
+        },
+        {
+          "dimension": "delivery_mode",
+          "observation_id": "136",
+          "side": "B"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "136",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "136",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "136",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "136",
+          "side": "B"
+        },
+        {
+          "dimension": "price_scope",
+          "observation_id": "136",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "70",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "70",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "70",
+          "side": "A"
+        }
+      ],
+      "pair_id": "pair:70:136",
+      "state": "MISSING_EVIDENCE"
+    },
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "137",
+          "side": "B"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "137",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "137",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "137",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "137",
+          "side": "B"
+        },
+        {
+          "dimension": "price_scope",
+          "observation_id": "137",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "70",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "70",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "70",
+          "side": "A"
+        }
+      ],
+      "pair_id": "pair:70:137",
+      "state": "MISSING_EVIDENCE"
+    },
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "145",
+          "side": "B"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "145",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "145",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "145",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "145",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "70",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "70",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "70",
+          "side": "A"
+        }
+      ],
+      "pair_id": "pair:70:145",
+      "state": "MISSING_EVIDENCE"
+    },
+    {
+      "explicit_mismatches": [
+        "COMMERCIAL_CONTEXT_MISMATCH"
+      ],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "device_scope",
+          "observation_id": "146",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "146",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "146",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "146",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "70",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "70",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "70",
+          "side": "A"
+        }
+      ],
+      "pair_id": "pair:70:146",
+      "state": "EXPLICIT_MISMATCH"
+    },
+    {
+      "explicit_mismatches": [
+        "DEVICE_SCOPE_MISMATCH",
+        "PRICE_SCOPE_MISMATCH"
+      ],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "234",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "234",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "234",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "70",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "70",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "70",
+          "side": "A"
+        }
+      ],
+      "pair_id": "pair:70:234",
+      "state": "EXPLICIT_MISMATCH"
+    },
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "delivery_mode",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "price_scope",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "commercial_context",
+          "observation_id": "136",
+          "side": "B"
+        },
+        {
+          "dimension": "delivery_mode",
+          "observation_id": "136",
+          "side": "B"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "136",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "136",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "136",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "136",
+          "side": "B"
+        },
+        {
+          "dimension": "price_scope",
+          "observation_id": "136",
+          "side": "B"
+        }
+      ],
+      "pair_id": "pair:126:136",
+      "state": "MISSING_EVIDENCE"
+    },
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "delivery_mode",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "price_scope",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "commercial_context",
+          "observation_id": "137",
+          "side": "B"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "137",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "137",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "137",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "137",
+          "side": "B"
+        },
+        {
+          "dimension": "price_scope",
+          "observation_id": "137",
+          "side": "B"
+        }
+      ],
+      "pair_id": "pair:126:137",
+      "state": "MISSING_EVIDENCE"
+    },
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "delivery_mode",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "price_scope",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "commercial_context",
+          "observation_id": "145",
+          "side": "B"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "145",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "145",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "145",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "145",
+          "side": "B"
+        }
+      ],
+      "pair_id": "pair:126:145",
+      "state": "MISSING_EVIDENCE"
+    },
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "delivery_mode",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "price_scope",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "146",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "146",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "146",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "146",
+          "side": "B"
+        }
+      ],
+      "pair_id": "pair:126:146",
+      "state": "MISSING_EVIDENCE"
+    },
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "delivery_mode",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "price_scope",
+          "observation_id": "126",
+          "side": "A"
+        },
+        {
+          "dimension": "commercial_context",
+          "observation_id": "234",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "234",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "234",
+          "side": "B"
+        }
+      ],
+      "pair_id": "pair:126:234",
+      "state": "MISSING_EVIDENCE"
+    },
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "delivery_mode",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "price_scope",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "commercial_context",
+          "observation_id": "137",
+          "side": "B"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "137",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "137",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "137",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "137",
+          "side": "B"
+        },
+        {
+          "dimension": "price_scope",
+          "observation_id": "137",
+          "side": "B"
+        }
+      ],
+      "pair_id": "pair:136:137",
+      "state": "MISSING_EVIDENCE"
+    },
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "delivery_mode",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "price_scope",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "commercial_context",
+          "observation_id": "145",
+          "side": "B"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "145",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "145",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "145",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "145",
+          "side": "B"
+        }
+      ],
+      "pair_id": "pair:136:145",
+      "state": "MISSING_EVIDENCE"
+    },
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "delivery_mode",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "price_scope",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "146",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "146",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "146",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "146",
+          "side": "B"
+        }
+      ],
+      "pair_id": "pair:136:146",
+      "state": "MISSING_EVIDENCE"
+    },
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "delivery_mode",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "price_scope",
+          "observation_id": "136",
+          "side": "A"
+        },
+        {
+          "dimension": "commercial_context",
+          "observation_id": "234",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "234",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "234",
+          "side": "B"
+        }
+      ],
+      "pair_id": "pair:136:234",
+      "state": "MISSING_EVIDENCE"
+    },
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "137",
+          "side": "A"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "137",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "137",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "137",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "137",
+          "side": "A"
+        },
+        {
+          "dimension": "price_scope",
+          "observation_id": "137",
+          "side": "A"
+        },
+        {
+          "dimension": "commercial_context",
+          "observation_id": "145",
+          "side": "B"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "145",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "145",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "145",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "145",
+          "side": "B"
+        }
+      ],
+      "pair_id": "pair:137:145",
+      "state": "MISSING_EVIDENCE"
+    },
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "137",
+          "side": "A"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "137",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "137",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "137",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "137",
+          "side": "A"
+        },
+        {
+          "dimension": "price_scope",
+          "observation_id": "137",
+          "side": "A"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "146",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "146",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "146",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "146",
+          "side": "B"
+        }
+      ],
+      "pair_id": "pair:137:146",
+      "state": "MISSING_EVIDENCE"
+    },
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "137",
+          "side": "A"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "137",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "137",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "137",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "137",
+          "side": "A"
+        },
+        {
+          "dimension": "price_scope",
+          "observation_id": "137",
+          "side": "A"
+        },
+        {
+          "dimension": "commercial_context",
+          "observation_id": "234",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "234",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "234",
+          "side": "B"
+        }
+      ],
+      "pair_id": "pair:137:234",
+      "state": "MISSING_EVIDENCE"
+    },
+    {
+      "explicit_mismatches": [],
+      "hard_blockers": [
+        "SAME_PROVIDER_NOT_INDEPENDENT"
+      ],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "145",
+          "side": "A"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "145",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "145",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "145",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "145",
+          "side": "A"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "146",
+          "side": "B"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "146",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "146",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "146",
+          "side": "B"
+        }
+      ],
+      "pair_id": "pair:145:146",
+      "state": "HARD_BLOCKED"
+    },
+    {
+      "explicit_mismatches": [
+        "PRICE_SCOPE_MISMATCH"
+      ],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "commercial_context",
+          "observation_id": "145",
+          "side": "A"
+        },
+        {
+          "dimension": "device_scope",
+          "observation_id": "145",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "145",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "145",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "145",
+          "side": "A"
+        },
+        {
+          "dimension": "commercial_context",
+          "observation_id": "234",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "234",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "234",
+          "side": "B"
+        }
+      ],
+      "pair_id": "pair:145:234",
+      "state": "EXPLICIT_MISMATCH"
+    },
+    {
+      "explicit_mismatches": [
+        "PRICE_SCOPE_MISMATCH"
+      ],
+      "hard_blockers": [],
+      "missing_evidence": [
+        {
+          "dimension": "device_scope",
+          "observation_id": "146",
+          "side": "A"
+        },
+        {
+          "dimension": "geographic_reach",
+          "observation_id": "146",
+          "side": "A"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "146",
+          "side": "A"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "146",
+          "side": "A"
+        },
+        {
+          "dimension": "commercial_context",
+          "observation_id": "234",
+          "side": "B"
+        },
+        {
+          "dimension": "hardware_included",
+          "observation_id": "234",
+          "side": "B"
+        },
+        {
+          "dimension": "materials_included",
+          "observation_id": "234",
+          "side": "B"
+        }
+      ],
+      "pair_id": "pair:146:234",
+      "state": "EXPLICIT_MISMATCH"
+    }
+  ],
+  "pair_metrics_after": {
+    "BLOCKER_DISTRIBUTION": {
+      "COMMERCIAL_CONTEXT_MISMATCH": 1,
+      "DEVICE_SCOPE_MISMATCH": 2,
+      "MISSING_COMMERCIAL_CONTEXT_A": 21,
+      "MISSING_COMMERCIAL_CONTEXT_B": 21,
+      "MISSING_DELIVERY_MODE_A": 9,
+      "MISSING_DELIVERY_MODE_B": 5,
+      "MISSING_DEVICE_SCOPE_A": 15,
+      "MISSING_DEVICE_SCOPE_B": 20,
+      "MISSING_GEOGRAPHIC_REACH_A": 28,
+      "MISSING_GEOGRAPHIC_REACH_B": 21,
+      "MISSING_HARDWARE_INCLUDED_A": 28,
+      "MISSING_HARDWARE_INCLUDED_B": 28,
+      "MISSING_MATERIALS_INCLUDED_A": 28,
+      "MISSING_MATERIALS_INCLUDED_B": 28,
+      "MISSING_PRICE_SCOPE_A": 12,
+      "MISSING_PRICE_SCOPE_B": 9,
+      "PRICE_SCOPE_MISMATCH": 4,
+      "SAME_PROVIDER_NOT_INDEPENDENT": 2
+    },
+    "MIN_UNLOCK_SIZE_1": 0,
+    "MIN_UNLOCK_SIZE_2": 0,
+    "MIN_UNLOCK_SIZE_3": 0,
+    "MIN_UNLOCK_SIZE_4_PLUS": 21,
+    "PAIR_COMPARABLE": 0,
+    "PAIR_EXPLICIT_MISMATCH": 5,
+    "PAIR_HARD_BLOCKED": 2,
+    "PAIR_MISSING_EVIDENCE": 21,
+    "PAIR_POTENTIALLY_UNLOCKABLE": 21,
+    "PLANNED_ACTIONS": 6,
+    "TOTAL_PAIR_CANDIDATES": 28
+  },
+  "pair_metrics_before": {
+    "BLOCKER_DISTRIBUTION": {
+      "COMMERCIAL_CONTEXT_MISMATCH": 1,
+      "DEVICE_SCOPE_MISMATCH": 2,
+      "MISSING_COMMERCIAL_CONTEXT_A": 21,
+      "MISSING_COMMERCIAL_CONTEXT_B": 21,
+      "MISSING_DELIVERY_MODE_A": 9,
+      "MISSING_DELIVERY_MODE_B": 5,
+      "MISSING_DEVICE_SCOPE_A": 15,
+      "MISSING_DEVICE_SCOPE_B": 20,
+      "MISSING_GEOGRAPHIC_REACH_A": 28,
+      "MISSING_GEOGRAPHIC_REACH_B": 21,
+      "MISSING_HARDWARE_INCLUDED_A": 28,
+      "MISSING_HARDWARE_INCLUDED_B": 28,
+      "MISSING_MATERIALS_INCLUDED_A": 28,
+      "MISSING_MATERIALS_INCLUDED_B": 28,
+      "MISSING_PRICE_SCOPE_A": 12,
+      "MISSING_PRICE_SCOPE_B": 9,
+      "PRICE_SCOPE_MISMATCH": 4,
+      "SAME_PROVIDER_NOT_INDEPENDENT": 2
+    },
+    "MIN_UNLOCK_SIZE_1": 0,
+    "MIN_UNLOCK_SIZE_2": 0,
+    "MIN_UNLOCK_SIZE_3": 0,
+    "MIN_UNLOCK_SIZE_4_PLUS": 21,
+    "PAIR_COMPARABLE": 0,
+    "PAIR_EXPLICIT_MISMATCH": 5,
+    "PAIR_HARD_BLOCKED": 2,
+    "PAIR_MISSING_EVIDENCE": 21,
+    "PAIR_POTENTIALLY_UNLOCKABLE": 21,
+    "PLANNED_ACTIONS": 6,
+    "TOTAL_PAIR_CANDIDATES": 28
+  },
+  "quality_audit": [],
+  "schema_version": "cohort-pair-before-after-v1",
+  "temporal_mismatches": 0
+}

@@ -259,6 +259,20 @@ El contexto de una fuente o página no se aplica a una oferta sin atribución
 inequívoca. Footer, shipping, ubicación del provider o una sección ambigua no
 demuestran reach, inclusiones ni condiciones de una oferta particular.
 
+Los gaps de comparabilidad son bilaterales, no locales a una observación. Un
+claim conocido de un lado no resuelve el `UNKNOWN` del otro, y un minimal
+unlock set debe enumerar cada claim requerido con su oferta de pertenencia.
+
+El valor de adquisición se mide por unlock de pares y del cohort, no por
+cantidad de campos completados. Ninguna adquisición de red se ejecuta sin
+valor contrafactual positivo para una decisión, salvo una auditoría diagnóstica
+explícita y trazable.
+
+La ubicación del provider no participa como proxy de compatibilidad geográfica
+cuando existe la dimensión `geographic_reach`. Para servicios onsite, reach
+desconocido continúa siendo evidencia insuficiente; ubicaciones distintas no
+son por sí mismas un mismatch comercial.
+
 ## Acquisition
 
 Preferencia:
