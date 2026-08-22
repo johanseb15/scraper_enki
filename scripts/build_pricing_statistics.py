@@ -3,11 +3,14 @@ from __future__ import annotations
 import argparse
 import csv
 import math
-import re
 import statistics
-import unicodedata
 from collections import defaultdict
 from pathlib import Path
+
+from src.aplicacion.pricing_dimensions import (
+    infer_commercial_context,
+    infer_price_scope,
+)
 
 
 def _quantile_linear(values: list[float], q: float) -> float:
@@ -24,68 +27,6 @@ def _quantile_linear(values: list[float], q: float) -> float:
         return xs[lo]
     weight = pos - lo
     return xs[lo] * (1 - weight) + xs[hi] * weight
-
-
-def _fold(text: str) -> str:
-    normalized = unicodedata.normalize("NFKD", text or "")
-    return "".join(
-        ch for ch in normalized if not unicodedata.combining(ch)
-    ).lower()
-
-
-def infer_price_scope(economic_object_raw: str) -> str:
-    """Infer only explicit economic cadence from preserved source text.
-
-    Conservative rule: if cadence is not explicit, return UNKNOWN.
-    Technical quantities/specifications such as 100GB or Windows 11 do not
-    create cadence by themselves.
-    """
-    x = _fold(economic_object_raw)
-
-    if re.search(
-        r"\bx\s*1\s*(?:hs?|hora)\b"
-        r"|\bpor\s+hora\b"
-        r"|\bla\s+hora\b"
-        r"|\bhora\s+(?:inicial|adicional|servicio|tecnica|tecnico)\b"
-        r"|\bhora(?:s)?\s+de\s+(?:servicio|soporte|trabajo)\b",
-        x,
-    ):
-        return "PER_HOUR"
-
-    if re.search(
-        r"\bpor\s+mes\b"
-        r"|\bal\s+mes\b"
-        r"|\bmensual(?:mente)?\b"
-        r"|\babono\s+mensual\b",
-        x,
-    ):
-        return "PER_MONTH"
-
-    if re.search(r"\bpor\s+visita\b|\bcada\s+visita\b", x):
-        return "PER_VISIT"
-
-    if re.search(
-        r"\bpor\s+(?:equipo|unidad|pc|notebook|camara)\b"
-        r"|\bcada\s+\d+(?:[.,]\d+)?\s*(?:gb|tb)\b",
-        x,
-    ):
-        return "PER_UNIT"
-
-    return "UNKNOWN"
-
-
-def infer_commercial_context(economic_object_raw: str) -> str:
-    """Identify only explicit exceptional commercial conditions."""
-    x = _fold(economic_object_raw)
-    if re.search(
-        r"\burgenc(?:ia|ias)\b"
-        r"|\bfuera\s+de\s+horario\b"
-        r"|\bfin(?:es)?\s+de\s+semana\b"
-        r"|\bferiado(?:s)?\b",
-        x,
-    ):
-        return "URGENCY"
-    return "STANDARD"
 
 
 def _build(rows: list[dict[str, str]], *, market_scope: str) -> list[dict[str, object]]:
