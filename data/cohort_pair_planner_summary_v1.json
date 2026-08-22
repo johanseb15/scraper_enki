@@ -1,0 +1,171 @@
+{
+  "cohort": "VISITA_TECNICA_DOMICILIO",
+  "cohort_metrics": {
+    "COMPARABLE_PAIRS": 0,
+    "CURRENT_PROVIDER_COVERAGE": 0,
+    "CURRENT_READINESS": "INSUFFICIENT",
+    "MAX_COUNTERFACTUAL_READINESS": "READY",
+    "MAX_PROVIDER_COVERAGE_IF_TOP_ACTIONS_SUCCEED": 6,
+    "OBSERVATIONS": 8,
+    "PAIRS": 28,
+    "POTENTIALLY_UNLOCKABLE_PAIRS": 21,
+    "PROVIDERS": 6
+  },
+  "cohort_ranking": [
+    {
+      "cohort": "VISITA_TECNICA_DOMICILIO",
+      "rank": 1,
+      "score": 50,
+      "score_breakdown": {
+        "INDEPENDENT_PROVIDERS": 12,
+        "MINIMUM_ROUTE_SIZE_PENALTY": -8,
+        "NO_CURRENT_COMPARABLE_PENALTY": -8,
+        "OBSERVATIONS": 8,
+        "PARTIAL_ROUTE": 10,
+        "POTENTIALLY_UNLOCKABLE_PAIRS": 21,
+        "READY_ROUTE": 15
+      }
+    }
+  ],
+  "pair_metrics": {
+    "BLOCKER_DISTRIBUTION": {
+      "COMMERCIAL_CONTEXT_MISMATCH": 1,
+      "DEVICE_SCOPE_MISMATCH": 2,
+      "MISSING_COMMERCIAL_CONTEXT_A": 21,
+      "MISSING_COMMERCIAL_CONTEXT_B": 21,
+      "MISSING_DELIVERY_MODE_A": 9,
+      "MISSING_DELIVERY_MODE_B": 5,
+      "MISSING_DEVICE_SCOPE_A": 15,
+      "MISSING_DEVICE_SCOPE_B": 20,
+      "MISSING_GEOGRAPHIC_REACH_A": 28,
+      "MISSING_GEOGRAPHIC_REACH_B": 21,
+      "MISSING_HARDWARE_INCLUDED_A": 28,
+      "MISSING_HARDWARE_INCLUDED_B": 28,
+      "MISSING_MATERIALS_INCLUDED_A": 28,
+      "MISSING_MATERIALS_INCLUDED_B": 28,
+      "MISSING_PRICE_SCOPE_A": 12,
+      "MISSING_PRICE_SCOPE_B": 9,
+      "PRICE_SCOPE_MISMATCH": 4,
+      "SAME_PROVIDER_NOT_INDEPENDENT": 2
+    },
+    "MIN_UNLOCK_SIZE_1": 0,
+    "MIN_UNLOCK_SIZE_2": 0,
+    "MIN_UNLOCK_SIZE_3": 0,
+    "MIN_UNLOCK_SIZE_4_PLUS": 21,
+    "PAIR_COMPARABLE": 0,
+    "PAIR_EXPLICIT_MISMATCH": 5,
+    "PAIR_HARD_BLOCKED": 2,
+    "PAIR_MISSING_EVIDENCE": 21,
+    "PAIR_POTENTIALLY_UNLOCKABLE": 21,
+    "PLANNED_ACTIONS": 6,
+    "TOTAL_PAIR_CANDIDATES": 28
+  },
+  "planned_actions": 6,
+  "positive_value_actions": 0,
+  "routes": {
+    "FIRST_PAIR": {
+      "claim_count": 8,
+      "pair_ids": [
+        "pair:69:146"
+      ],
+      "required_claims": [
+        "146:device_scope",
+        "146:geographic_reach",
+        "146:hardware_included",
+        "146:materials_included",
+        "69:commercial_context",
+        "69:geographic_reach",
+        "69:hardware_included",
+        "69:materials_included"
+      ]
+    },
+    "FIRST_TWO_PROVIDERS": {
+      "claim_count": 8,
+      "pair_ids": [
+        "pair:69:146"
+      ],
+      "required_claims": [
+        "146:device_scope",
+        "146:geographic_reach",
+        "146:hardware_included",
+        "146:materials_included",
+        "69:commercial_context",
+        "69:geographic_reach",
+        "69:hardware_included",
+        "69:materials_included"
+      ]
+    },
+    "PARTIAL": {
+      "anchor": "137",
+      "claim_count": 17,
+      "pair_ids": [
+        "pair:69:137",
+        "pair:70:137",
+        "pair:137:146"
+      ],
+      "required_claims": [
+        "137:commercial_context",
+        "137:device_scope",
+        "137:geographic_reach",
+        "137:hardware_included",
+        "137:materials_included",
+        "137:price_scope",
+        "146:device_scope",
+        "146:geographic_reach",
+        "146:hardware_included",
+        "146:materials_included",
+        "69:commercial_context",
+        "69:geographic_reach",
+        "69:hardware_included",
+        "69:materials_included",
+        "70:geographic_reach",
+        "70:hardware_included",
+        "70:materials_included"
+      ]
+    },
+    "READY": {
+      "anchor": "137",
+      "claim_count": 29,
+      "pair_ids": [
+        "pair:69:137",
+        "pair:70:137",
+        "pair:126:137",
+        "pair:137:145",
+        "pair:137:146"
+      ],
+      "required_claims": [
+        "126:commercial_context",
+        "126:delivery_mode",
+        "126:device_scope",
+        "126:geographic_reach",
+        "126:hardware_included",
+        "126:materials_included",
+        "126:price_scope",
+        "137:commercial_context",
+        "137:device_scope",
+        "137:geographic_reach",
+        "137:hardware_included",
+        "137:materials_included",
+        "137:price_scope",
+        "145:commercial_context",
+        "145:device_scope",
+        "145:geographic_reach",
+        "145:hardware_included",
+        "145:materials_included",
+        "146:device_scope",
+        "146:geographic_reach",
+        "146:hardware_included",
+        "146:materials_included",
+        "69:commercial_context",
+        "69:geographic_reach",
+        "69:hardware_included",
+        "69:materials_included",
+        "70:geographic_reach",
+        "70:hardware_included",
+        "70:materials_included"
+      ]
+    }
+  },
+  "schema_version": "cohort-pair-evidence-planner-v1",
+  "zero_value_actions": 6
+}
