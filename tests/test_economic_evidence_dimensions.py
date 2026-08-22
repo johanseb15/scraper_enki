@@ -39,3 +39,23 @@ def test_absent_claim_remains_unknown():
     assert dimension.status is DimensionStatus.UNKNOWN
     assert dimension.value is None
     assert dimension.claims == ()
+
+
+def test_multiple_distinct_claims_from_same_origin_are_ambiguous_not_conflicted():
+    dimension = resolve_dimension(
+        DimensionClaim(
+            "URGENCY",
+            DimensionOrigin.OBSERVED,
+            provenance("raw:urgency"),
+            "urgencia",
+        ),
+        DimensionClaim(
+            "AFTER_HOURS",
+            DimensionOrigin.OBSERVED,
+            provenance("raw:after-hours"),
+            "fuera de horario",
+        ),
+    )
+
+    assert dimension.status is DimensionStatus.AMBIGUOUS
+    assert {item.value for item in dimension.claims} == {"URGENCY", "AFTER_HOURS"}

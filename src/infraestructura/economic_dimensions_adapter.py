@@ -180,8 +180,8 @@ def derive_economic_dimensions(
     normalized_currency = _known(_clean(row.get("currency")))
     if normalized_currency:
         currency_claims.append(DimensionClaim(
-            normalized_currency.upper(), DimensionOrigin.OBSERVED,
-            observed_provenance, f"currency={normalized_currency}",
+            normalized_currency.upper(), DimensionOrigin.INFERRED,
+            inferred_provenance, f"normalized currency={normalized_currency}",
         ))
     for currency in _explicit_currencies(folded):
         currency_claims.append(DimensionClaim(

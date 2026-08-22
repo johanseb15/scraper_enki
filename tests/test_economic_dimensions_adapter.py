@@ -80,7 +80,7 @@ def test_source_explicit_hour_abbreviation_and_after_hours_are_observed():
 
     assert dimensions.price_scope.value == "PER_HOUR"
     assert dimensions.price_scope.status is DimensionStatus.OBSERVED
-    assert dimensions.commercial_context.status is DimensionStatus.CONFLICTED
+    assert dimensions.commercial_context.status is DimensionStatus.AMBIGUOUS
     assert {claim.value for claim in dimensions.commercial_context.claims} == {
         "URGENCY",
         "AFTER_HOURS",
@@ -106,6 +106,10 @@ def test_currency_markers_are_observed_and_never_converted():
     assert usd.currency.value == "USD"
     assert conflict.currency.status is DimensionStatus.CONFLICTED
     assert {claim.value for claim in conflict.currency.claims} == {"ARS", "USD"}
+
+    normalized_only = derive_economic_dimensions(row(economic_object_raw="Precio 30.000"), registry())
+    assert normalized_only.currency.value == "ARS"
+    assert normalized_only.currency.status is DimensionStatus.INFERRED
 
 
 def test_geography_has_no_default_and_remote_does_not_invent_province():

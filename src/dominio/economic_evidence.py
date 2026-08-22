@@ -77,9 +77,14 @@ def resolve_dimension(*claims: DimensionClaim[T]) -> DimensionValue[T]:
         if claim.value not in distinct_values:
             distinct_values.append(claim.value)
     if len(distinct_values) > 1:
+        origins = {claim.origin for claim in claims}
         return DimensionValue(
             value=None,
-            status=DimensionStatus.CONFLICTED,
+            status=(
+                DimensionStatus.CONFLICTED
+                if len(origins) > 1
+                else DimensionStatus.AMBIGUOUS
+            ),
             claims=tuple(claims),
         )
     observed = any(claim.origin is DimensionOrigin.OBSERVED for claim in claims)

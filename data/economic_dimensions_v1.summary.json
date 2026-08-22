@@ -1,14 +1,14 @@
 {
   "metrics": {
-    "AMBIGUOUS_DIMENSIONS": {},
+    "AMBIGUOUS_DIMENSIONS": {
+      "commercial_context": 3
+    },
     "CONFLICTED_DIMENSIONS": {
-      "commercial_context": 3,
       "currency": 3,
       "market_scope": 5
     },
     "EXPLICIT_DIMENSIONS": {
       "commercial_context": 4,
-      "currency": 270,
       "device_scope": 75,
       "geography": 273,
       "hardware_included": 2,
@@ -17,13 +17,13 @@
     },
     "INFERRED_DIMENSIONS": {
       "bundle_status": 146,
+      "currency": 270,
       "hardware_included": 23,
       "market_scope": 135,
       "provider_identity": 273
     },
     "OBSERVED_DIMENSIONS": {
       "commercial_context": 4,
-      "currency": 270,
       "device_scope": 75,
       "geography": 273,
       "hardware_included": 2,
