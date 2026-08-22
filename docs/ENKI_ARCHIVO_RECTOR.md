@@ -180,6 +180,34 @@ conflictos y gaps sobre evidencia real. Sólo una validación posterior puede
 autorizar que este contexto influya en decisiones públicas; el bridge actual
 no tiene superficie de persistencia ni integración con el pricing público.
 
+## Economic Evidence Dimensions
+
+La comparabilidad económica se apoya en dimensiones tipadas y trazables. Cada
+dimensión conserva su valor, la evidencia que lo sostiene, provenance y una
+condición epistemológica explícita: `OBSERVED`, `INFERRED`, `UNKNOWN`,
+`CONFLICTED` o `AMBIGUOUS`. Una inferencia compatible puede acompañar a una
+observación, pero nunca la reemplaza ni borra su origen. Si dos claims difieren,
+Enki conserva ambos y declara conflicto sin elegir silenciosamente.
+
+La identidad independiente de provider se cuenta mediante un `provider_id`
+estable derivado del nombre exacto declarado en el registro de fuentes, no por
+cantidad de filas, URL ni fuzzy matching. El identificador preserva también el
+nombre y `source` originales y su provenance. Si el provider no puede
+demostrarse, permanece `UNKNOWN`; si registro y evidencia difieren, queda
+`CONFLICTED`.
+
+El enriquecimiento histórico vive en un sidecar versionado por
+`observation_id`. Es determinístico, idempotente, regenerable y read-only: no
+reescribe la normalización semántica ni la evidencia raw. Sus dimensiones
+pueden ser consumidas por el bridge en shadow manteniendo compatibilidad con
+entradas anteriores que no posean sidecar.
+
+La integración de dimensiones debe validarse primero en shadow. Un conflicto
+reduce comparabilidad/readiness; `UNKNOWN` no se completa con defaults; remoto
+no demuestra cobertura nacional; moneda no se convierte; bundles, hardware y
+materiales no se estiman ni descomponen. Sólo una evaluación posterior puede
+autorizar influencia sobre runtime o API pública.
+
 ## Acquisition
 
 Preferencia:
