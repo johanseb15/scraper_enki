@@ -9,12 +9,17 @@ from typing import Any
 from src.aplicacion.semantic_economic_evidence_bridge import (
     SemanticEconomicEvidenceBridge,
 )
+from src.dominio.economic_evidence import EconomicEvidenceDimensionsV2
 from src.infraestructura.semantic_economic_evidence_adapter import (
     compose_economic_evidence_records,
 )
-from src.infraestructura.economic_dimensions_artifact import (
-    build_dimension_metrics,
-    load_economic_dimensions_sidecar,
+from src.infraestructura.economic_dimensions_artifact import build_dimension_metrics
+from src.infraestructura.economic_dimensions_loader import (
+    load_versioned_economic_dimensions_sidecar,
+)
+from src.infraestructura.economic_dimensions_v2_artifact import (
+    build_migration_metrics,
+    build_v2_dimension_metrics,
 )
 from src.infraestructura.semantic_economic_shadow_artifact import (
     build_shadow_metrics,
@@ -32,6 +37,7 @@ def build_semantic_economic_shadow(
     *,
     version: str = "semantic-economic-bridge-v1",
     dimensions_path: str | Path | None = None,
+    previous_dimensions_path: str | Path | None = None,
 ) -> dict[str, Any]:
     input_path = Path(input_csv)
     output_path = Path(output_jsonl)
@@ -50,7 +56,7 @@ def build_semantic_economic_shadow(
         raise ValueError("Duplicate observation_id values in shadow input.")
 
     dimensions = (
-        load_economic_dimensions_sidecar(dimensions_path)
+        load_versioned_economic_dimensions_sidecar(dimensions_path)
         if dimensions_path is not None else {}
     )
     if dimensions and set(dimensions) != set(ids):
@@ -73,7 +79,14 @@ def build_semantic_economic_shadow(
     metrics = build_shadow_metrics(contexts)
     metrics.update(bridge.candidate_generation_metrics)
     if dimensions:
-        metrics.update(build_dimension_metrics(dimensions.values()))
+        first_dimension = next(iter(dimensions.values()))
+        if isinstance(first_dimension, EconomicEvidenceDimensionsV2):
+            metrics.update(build_v2_dimension_metrics(dimensions.values(), rows))
+            if previous_dimensions_path is not None:
+                previous = load_versioned_economic_dimensions_sidecar(previous_dimensions_path)
+                metrics.update(build_migration_metrics(previous, dimensions))
+        else:
+            metrics.update(build_dimension_metrics(dimensions.values()))
     summary_path = output_path.with_suffix(".summary.json")
     write_shadow_summary(metrics, summary_path, version=version)
 
@@ -94,12 +107,14 @@ def main() -> None:
     parser.add_argument("output_jsonl")
     parser.add_argument("--version", default="semantic-economic-bridge-v1")
     parser.add_argument("--dimensions")
+    parser.add_argument("--previous-dimensions")
     args = parser.parse_args()
     build_semantic_economic_shadow(
         args.input_csv,
         args.output_jsonl,
         version=args.version,
         dimensions_path=args.dimensions,
+        previous_dimensions_path=args.previous_dimensions,
     )
 
 

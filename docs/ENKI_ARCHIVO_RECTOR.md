@@ -186,8 +186,30 @@ La comparabilidad económica se apoya en dimensiones tipadas y trazables. Cada
 dimensión conserva su valor, la evidencia que lo sostiene, provenance y una
 condición epistemológica explícita: `OBSERVED`, `INFERRED`, `UNKNOWN`,
 `CONFLICTED` o `AMBIGUOUS`. Una inferencia compatible puede acompañar a una
-observación, pero nunca la reemplaza ni borra su origen. Si dos claims difieren,
-Enki conserva ambos y declara conflicto sin elegir silenciosamente.
+observación, pero nunca la reemplaza ni borra su origen.
+
+Economic Dimension Semantics v2 declara cardinalidad y compatibilidad por
+dimensión. Provider, moneda, cadencia, modalidad y bundle son escalares;
+hardware/materiales son booleanos; commercial context y device scope son sets;
+location es estructurada; geographic reach es jerárquica pero se compara de
+forma exacta y conservadora hasta disponer de reglas comerciales demostradas.
+No existe una igualdad genérica correcta para todos estos contratos.
+
+Orthogonal dimensions do not conflict merely because their values differ.
+`delivery_mode=REMOTE` y `geographic_reach=NATIONAL` pueden coexistir: REMOTE
+no implica NATIONAL y NATIONAL no implica REMOTE. Location (`country`,
+`province`, `city`) es un tercer eje y nunca recibe provincia por default.
+
+Multiple compatible claims are not ambiguity. `URGENCY + AFTER_HOURS` y
+`URGENCY + WEEKEND_HOLIDAY` son sets válidos. `AMBIGUOUS` queda reservado para
+interpretaciones escalares mutuamente excluyentes que la evidencia no permite
+resolver; `CONFLICTED` preserva desacuerdos entre claims de fuentes semánticas
+distintas. UNKNOWN no se transforma en conjunto vacío ni en valor estándar.
+
+La provenance de un claim distingue `RAW_SOURCE_OBSERVATION`,
+`NORMALIZED_FIELD`, `REGISTRY_CLAIM` y `DERIVED_CLAIM`. Una columna del artefacto
+normalizado no se etiqueta como publicación raw aunque conserve trazabilidad
+hacia su observación de origen.
 
 La identidad independiente de provider se cuenta mediante un `provider_id`
 estable derivado del nombre exacto declarado en el registro de fuentes, no por
@@ -200,7 +222,9 @@ El enriquecimiento histórico vive en un sidecar versionado por
 `observation_id`. Es determinístico, idempotente, regenerable y read-only: no
 reescribe la normalización semántica ni la evidencia raw. Sus dimensiones
 pueden ser consumidas por el bridge en shadow manteniendo compatibilidad con
-entradas anteriores que no posean sidecar.
+entradas anteriores. El sidecar v1 permanece inmutable; v2 se genera como un
+artefacto separado y un loader versionado concentra la compatibilidad de
+migración sin dispersar condiciones de schema por el dominio.
 
 La integración de dimensiones debe validarse primero en shadow. Un conflicto
 reduce comparabilidad/readiness; `UNKNOWN` no se completa con defaults; remoto
