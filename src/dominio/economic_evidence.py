@@ -16,8 +16,20 @@ T = TypeVar("T")
 
 
 class DimensionOrigin(Enum):
+    # Legacy v1 origins remain loadable; v2 emits the four precise origins.
     OBSERVED = "OBSERVED"
     INFERRED = "INFERRED"
+    RAW_SOURCE_OBSERVATION = "RAW_SOURCE_OBSERVATION"
+    NORMALIZED_FIELD = "NORMALIZED_FIELD"
+    REGISTRY_CLAIM = "REGISTRY_CLAIM"
+    DERIVED_CLAIM = "DERIVED_CLAIM"
+
+    @property
+    def is_direct_observation(self) -> bool:
+        return self in {
+            DimensionOrigin.OBSERVED,
+            DimensionOrigin.RAW_SOURCE_OBSERVATION,
+        }
 
 
 class DimensionStatus(Enum):
@@ -87,12 +99,77 @@ def resolve_dimension(*claims: DimensionClaim[T]) -> DimensionValue[T]:
             ),
             claims=tuple(claims),
         )
-    observed = any(claim.origin is DimensionOrigin.OBSERVED for claim in claims)
+    observed = any(claim.origin.is_direct_observation for claim in claims)
     return DimensionValue(
         value=distinct_values[0],
         status=DimensionStatus.OBSERVED if observed else DimensionStatus.INFERRED,
         claims=tuple(claims),
     )
+
+
+def resolve_scalar_dimension(*claims: DimensionClaim[T]) -> DimensionValue[T]:
+    return resolve_dimension(*claims)
+
+
+def resolve_set_dimension(
+    *claims: DimensionClaim[T],
+    incompatible_pairs: tuple[tuple[T, T], ...] = (),
+) -> DimensionValue[frozenset[T]]:
+    if not claims:
+        return DimensionValue(value=None, status=DimensionStatus.UNKNOWN)
+    values = frozenset(claim.value for claim in claims)
+    if any(left in values and right in values for left, right in incompatible_pairs):
+        return DimensionValue(
+            value=None,
+            status=DimensionStatus.AMBIGUOUS,
+            claims=tuple(claims),
+        )
+    observed = any(claim.origin.is_direct_observation for claim in claims)
+    return DimensionValue(
+        value=values,
+        status=DimensionStatus.OBSERVED if observed else DimensionStatus.INFERRED,
+        claims=tuple(claims),
+    )
+
+
+class DimensionCardinality(Enum):
+    SCALAR = "SCALAR"
+    MULTI_VALUE_SET = "MULTI_VALUE_SET"
+    STRUCTURED = "STRUCTURED"
+    BOOLEAN = "BOOLEAN"
+    HIERARCHICAL = "HIERARCHICAL"
+
+
+@dataclass(frozen=True)
+class DimensionDefinition:
+    name: str
+    cardinality: DimensionCardinality
+    compatibility: str
+
+
+_DIMENSION_DEFINITIONS = {
+    definition.name: definition
+    for definition in (
+        DimensionDefinition("provider_identity", DimensionCardinality.SCALAR, "IDENTITY_ONLY"),
+        DimensionDefinition("price_scope", DimensionCardinality.SCALAR, "EXACT"),
+        DimensionDefinition("currency", DimensionCardinality.SCALAR, "EXACT"),
+        DimensionDefinition("delivery_mode", DimensionCardinality.SCALAR, "EXACT"),
+        DimensionDefinition("geographic_reach", DimensionCardinality.HIERARCHICAL, "EXACT_CONSERVATIVE"),
+        DimensionDefinition("location", DimensionCardinality.STRUCTURED, "STRUCTURED_LOCATION"),
+        DimensionDefinition("commercial_context", DimensionCardinality.MULTI_VALUE_SET, "EXACT_SET"),
+        DimensionDefinition("bundle_status", DimensionCardinality.SCALAR, "EXACT"),
+        DimensionDefinition("hardware_included", DimensionCardinality.BOOLEAN, "EXACT_WHEN_KNOWN"),
+        DimensionDefinition("materials_included", DimensionCardinality.BOOLEAN, "EXACT_WHEN_KNOWN"),
+        DimensionDefinition("device_scope", DimensionCardinality.MULTI_VALUE_SET, "EXACT_SET_WHEN_KNOWN"),
+    )
+}
+
+
+def dimension_definition(name: str) -> DimensionDefinition:
+    try:
+        return _DIMENSION_DEFINITIONS[name]
+    except KeyError as exc:
+        raise ValueError(f"Unknown economic dimension: {name}") from exc
 
 
 @dataclass(frozen=True)
@@ -107,6 +184,13 @@ class GeographyDimension:
     province: str | None = None
     city: str | None = None
     coverage: str | None = None
+
+
+@dataclass(frozen=True)
+class LocationDimension:
+    country: str | None = None
+    province: str | None = None
+    city: str | None = None
 
 
 @dataclass(frozen=True)
@@ -137,6 +221,52 @@ class EconomicEvidenceDimensions:
         }
 
 
+@dataclass(frozen=True)
+class EconomicEvidenceDimensionsV2:
+    provider_identity: DimensionValue[ProviderIdentity] = field(default_factory=unknown_dimension)
+    price_scope: DimensionValue[str] = field(default_factory=unknown_dimension)
+    currency: DimensionValue[str] = field(default_factory=unknown_dimension)
+    delivery_mode: DimensionValue[str] = field(default_factory=unknown_dimension)
+    geographic_reach: DimensionValue[str] = field(default_factory=unknown_dimension)
+    location: DimensionValue[LocationDimension] = field(default_factory=unknown_dimension)
+    commercial_context: DimensionValue[frozenset[str]] = field(default_factory=unknown_dimension)
+    bundle_status: DimensionValue[str] = field(default_factory=unknown_dimension)
+    hardware_included: DimensionValue[bool] = field(default_factory=unknown_dimension)
+    materials_included: DimensionValue[bool] = field(default_factory=unknown_dimension)
+    device_scope: DimensionValue[frozenset[str]] = field(default_factory=unknown_dimension)
+
+    def all_dimensions(self) -> dict[str, DimensionValue[object]]:
+        return {
+            "provider_identity": self.provider_identity,
+            "price_scope": self.price_scope,
+            "currency": self.currency,
+            "delivery_mode": self.delivery_mode,
+            "geographic_reach": self.geographic_reach,
+            "location": self.location,
+            "commercial_context": self.commercial_context,
+            "bundle_status": self.bundle_status,
+            "hardware_included": self.hardware_included,
+            "materials_included": self.materials_included,
+            "device_scope": self.device_scope,
+        }
+
+    @property
+    def conflicted_dimensions(self) -> tuple[str, ...]:
+        return tuple(
+            name
+            for name, value in self.all_dimensions().items()
+            if value.status is DimensionStatus.CONFLICTED
+        )
+
+    @property
+    def ambiguous_dimensions(self) -> tuple[str, ...]:
+        return tuple(
+            name
+            for name, value in self.all_dimensions().items()
+            if value.status is DimensionStatus.AMBIGUOUS
+        )
+
+
 class EconomicObjectKind(Enum):
     SERVICE = "SERVICE"
     COMPOSITE_SERVICE = "COMPOSITE_SERVICE"
@@ -159,6 +289,9 @@ class EvidenceExclusionReason(Enum):
     CANONICAL_SERVICE_MISMATCH = "CANONICAL_SERVICE_MISMATCH"
     GEOGRAPHY_MISMATCH = "GEOGRAPHY_MISMATCH"
     MARKET_SCOPE_MISMATCH = "MARKET_SCOPE_MISMATCH"
+    DELIVERY_MODE_MISMATCH = "DELIVERY_MODE_MISMATCH"
+    GEOGRAPHIC_REACH_MISMATCH = "GEOGRAPHIC_REACH_MISMATCH"
+    LOCATION_MISMATCH = "LOCATION_MISMATCH"
     PRICE_SCOPE_MISMATCH = "PRICE_SCOPE_MISMATCH"
     CADENCE_MISMATCH = "CADENCE_MISMATCH"
     COMMERCIAL_CONTEXT_MISMATCH = "COMMERCIAL_CONTEXT_MISMATCH"
@@ -197,7 +330,7 @@ class EconomicEvidenceRecord:
     commercial_context: str
     provenance: KnowledgeProvenance
     meaning: object | None = None
-    dimensions: EconomicEvidenceDimensions | None = None
+    dimensions: EconomicEvidenceDimensions | EconomicEvidenceDimensionsV2 | None = None
 
     def __post_init__(self) -> None:
         if not self.evidence_id.strip():
