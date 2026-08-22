@@ -6,6 +6,15 @@
       "currency": 3,
       "market_scope": 5
     },
+    "EXPLICIT_DIMENSIONS": {
+      "commercial_context": 4,
+      "currency": 270,
+      "device_scope": 75,
+      "geography": 273,
+      "hardware_included": 2,
+      "market_scope": 8,
+      "price_scope": 20
+    },
     "INFERRED_DIMENSIONS": {
       "bundle_status": 146,
       "hardware_included": 23,

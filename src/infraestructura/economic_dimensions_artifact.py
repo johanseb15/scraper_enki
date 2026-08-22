@@ -109,10 +109,12 @@ def build_dimension_metrics(
     for item in dimensions:
         for name, value in item.all_dimensions().items():
             counters[value.status][name] += 1
-    return {
+    metrics = {
         f"{status.value}_DIMENSIONS": dict(sorted(counters[status].items()))
         for status in DimensionStatus
     }
+    metrics["EXPLICIT_DIMENSIONS"] = dict(metrics["OBSERVED_DIMENSIONS"])
+    return metrics
 
 
 def _dimensions_payload(value: EconomicEvidenceDimensions) -> dict[str, Any]:

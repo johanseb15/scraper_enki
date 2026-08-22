@@ -35,6 +35,7 @@ def test_sidecar_is_deterministic_cardinality_preserving_and_read_only(tmp_path)
     assert metrics_a["OUTPUT_ROWS"] == 2
     assert metrics_a["CONFLICTED_DIMENSIONS"]["price_scope"] == 1
     assert metrics_a["CONFLICTED_DIMENSIONS"]["currency"] == 1
+    assert metrics_a["EXPLICIT_DIMENSIONS"] == metrics_a["OBSERVED_DIMENSIONS"]
 
     loaded = load_economic_dimensions_sidecar(first)
     assert set(loaded) == {"1", "2"}
