@@ -244,6 +244,21 @@ Una URL sin documento reproducible no constituye lineage raw; permanece
 `UNKNOWN` con razón de no linkage. La reacquisition es selectiva y posterior al
 gap register, no un scraping indiscriminado para fabricar cobertura.
 
+La adquisición se prioriza por ganancia esperada de información para la
+decisión económica, con un score determinístico y explicable que sólo ordena
+trabajo operativo. El valor esperado se contrasta después con el unlock real;
+encontrar cero evidencia también es un outcome auditable y nunca habilita una
+inferencia.
+
+Un precio histórico y un scope observado en una versión actual no son
+automáticamente evidencia comparable. Sólo pueden combinarse cuando la
+identidad exacta de la oferta demuestra compatibilidad temporal; en caso
+contrario se registra `TEMPORAL_MISMATCH`.
+
+El contexto de una fuente o página no se aplica a una oferta sin atribución
+inequívoca. Footer, shipping, ubicación del provider o una sección ambigua no
+demuestran reach, inclusiones ni condiciones de una oferta particular.
+
 ## Acquisition
 
 Preferencia:

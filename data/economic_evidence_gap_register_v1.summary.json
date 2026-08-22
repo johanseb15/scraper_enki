@@ -6,10 +6,10 @@
       "MISSING_COMMERCIAL_CONTEXT": 266,
       "MISSING_DELIVERY_MODE": 257,
       "MISSING_DEVICE_SCOPE": 198,
-      "MISSING_HARDWARE_INFO": 248,
+      "MISSING_HARDWARE_INFO": 247,
       "MISSING_MATERIALS_INFO": 273,
       "MISSING_PRICE_SCOPE": 253,
-      "MISSING_REACH": 273
+      "MISSING_REACH": 272
     },
     "GAPS_BY_COHORT": {
       "canonical_service": {
@@ -25,7 +25,7 @@
           "MISSING_COMMERCIAL_CONTEXT": 4,
           "MISSING_DELIVERY_MODE": 4,
           "MISSING_DEVICE_SCOPE": 3,
-          "MISSING_HARDWARE_INFO": 4,
+          "MISSING_HARDWARE_INFO": 3,
           "MISSING_MATERIALS_INFO": 4,
           "MISSING_PRICE_SCOPE": 2,
           "MISSING_REACH": 4
@@ -197,7 +197,7 @@
           "MISSING_HARDWARE_INFO": 8,
           "MISSING_MATERIALS_INFO": 8,
           "MISSING_PRICE_SCOPE": 3,
-          "MISSING_REACH": 8
+          "MISSING_REACH": 7
         },
         "VPS_ADMINISTRADO": {
           "MISSING_COMMERCIAL_CONTEXT": 1,
@@ -268,7 +268,7 @@
           "MISSING_COMMERCIAL_CONTEXT": 46,
           "MISSING_DELIVERY_MODE": 45,
           "MISSING_DEVICE_SCOPE": 21,
-          "MISSING_HARDWARE_INFO": 46,
+          "MISSING_HARDWARE_INFO": 45,
           "MISSING_MATERIALS_INFO": 46,
           "MISSING_PRICE_SCOPE": 46,
           "MISSING_REACH": 46
@@ -447,7 +447,7 @@
           "MISSING_DELIVERY_MODE": 1,
           "MISSING_HARDWARE_INFO": 2,
           "MISSING_MATERIALS_INFO": 2,
-          "MISSING_REACH": 2
+          "MISSING_REACH": 1
         },
         "Reparaciones PC": {
           "MISSING_COMMERCIAL_CONTEXT": 1,
@@ -553,10 +553,10 @@
           "MISSING_COMMERCIAL_CONTEXT": 81,
           "MISSING_DELIVERY_MODE": 80,
           "MISSING_DEVICE_SCOPE": 53,
-          "MISSING_HARDWARE_INFO": 85,
+          "MISSING_HARDWARE_INFO": 84,
           "MISSING_MATERIALS_INFO": 85,
           "MISSING_PRICE_SCOPE": 82,
-          "MISSING_REACH": 85
+          "MISSING_REACH": 84
         },
         "La Rioja": {
           "MISSING_COMMERCIAL_CONTEXT": 1,
@@ -671,10 +671,10 @@
           "MISSING_COMMERCIAL_CONTEXT": 81,
           "MISSING_DELIVERY_MODE": 73,
           "MISSING_DEVICE_SCOPE": 50,
-          "MISSING_HARDWARE_INFO": 84,
+          "MISSING_HARDWARE_INFO": 83,
           "MISSING_MATERIALS_INFO": 84,
           "MISSING_PRICE_SCOPE": 71,
-          "MISSING_REACH": 84
+          "MISSING_REACH": 83
         },
         "UNMAPPED": {
           "MISSING_BUNDLE_INFO": 2,
@@ -711,7 +711,7 @@
           "MISSING_COMMERCIAL_CONTEXT": 46,
           "MISSING_DELIVERY_MODE": 45,
           "MISSING_DEVICE_SCOPE": 21,
-          "MISSING_HARDWARE_INFO": 46,
+          "MISSING_HARDWARE_INFO": 45,
           "MISSING_MATERIALS_INFO": 46,
           "MISSING_PRICE_SCOPE": 46,
           "MISSING_REACH": 46
@@ -890,7 +890,7 @@
           "MISSING_DELIVERY_MODE": 1,
           "MISSING_HARDWARE_INFO": 2,
           "MISSING_MATERIALS_INFO": 2,
-          "MISSING_REACH": 2
+          "MISSING_REACH": 1
         },
         "reparacionespc_caba": {
           "MISSING_COMMERCIAL_CONTEXT": 1,
@@ -975,6 +975,27 @@
         "blockers": [
           "MISSING_COMMERCIAL_CONTEXT",
           "MISSING_HARDWARE_INFO",
+          "MISSING_MATERIALS_INFO"
+        ],
+        "canonical_service": "VISITA_TECNICA_DOMICILIO",
+        "core_gap_count": 1,
+        "observation_id": "234",
+        "potential_similar_candidates": 5,
+        "priority_reasons": [
+          "HAS_PRICE",
+          "ECONOMICALLY_USEFUL_ROLE",
+          "KNOWN_CANONICAL_SERVICE",
+          "KNOWN_PROVIDER",
+          "ONE_OR_TWO_CORE_GAPS",
+          "HAS_POTENTIAL_SIMILAR_CANDIDATES"
+        ],
+        "source": "redmatica_cordoba"
+      },
+      {
+        "acquisition_priority": 12,
+        "blockers": [
+          "MISSING_COMMERCIAL_CONTEXT",
+          "MISSING_HARDWARE_INFO",
           "MISSING_MATERIALS_INFO",
           "MISSING_REACH"
         ],
@@ -1012,28 +1033,6 @@
           "HAS_POTENTIAL_SIMILAR_CANDIDATES"
         ],
         "source": "bairescloud_generic"
-      },
-      {
-        "acquisition_priority": 12,
-        "blockers": [
-          "MISSING_COMMERCIAL_CONTEXT",
-          "MISSING_HARDWARE_INFO",
-          "MISSING_MATERIALS_INFO",
-          "MISSING_REACH"
-        ],
-        "canonical_service": "VISITA_TECNICA_DOMICILIO",
-        "core_gap_count": 2,
-        "observation_id": "234",
-        "potential_similar_candidates": 5,
-        "priority_reasons": [
-          "HAS_PRICE",
-          "ECONOMICALLY_USEFUL_ROLE",
-          "KNOWN_CANONICAL_SERVICE",
-          "KNOWN_PROVIDER",
-          "ONE_OR_TWO_CORE_GAPS",
-          "HAS_POTENTIAL_SIMILAR_CANDIDATES"
-        ],
-        "source": "redmatica_cordoba"
       },
       {
         "acquisition_priority": 12,

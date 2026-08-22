@@ -1,0 +1,206 @@
+{
+  "comparable_quality_audit": [],
+  "global_after": {
+    "AMBIGUOUS": 3,
+    "EVIDENCE_RESOLVED": 0,
+    "HARDWARE_UNKNOWN": 247,
+    "INSUFFICIENT": 265,
+    "MATERIALS_UNKNOWN": 273,
+    "NO_EVIDENCE": 273,
+    "PARTIAL": 0,
+    "PRICE_SCOPE_UNKNOWN": 253,
+    "REACH_UNKNOWN": 272,
+    "READY": 0,
+    "SOURCE_EXPLICIT_CLAIMS": 1,
+    "TOTAL_COMPARABLE_EVIDENCE": 0,
+    "TOTAL_OBSERVATIONS": 273,
+    "UNKNOWN": 5
+  },
+  "global_before": {
+    "AMBIGUOUS": 3,
+    "EVIDENCE_RESOLVED": 0,
+    "HARDWARE_UNKNOWN": 248,
+    "INSUFFICIENT": 265,
+    "MATERIALS_UNKNOWN": 273,
+    "NO_EVIDENCE": 273,
+    "PARTIAL": 0,
+    "PRICE_SCOPE_UNKNOWN": 253,
+    "REACH_UNKNOWN": 273,
+    "READY": 0,
+    "SOURCE_EXPLICIT_CLAIMS": 0,
+    "TOTAL_COMPARABLE_EVIDENCE": 0,
+    "TOTAL_OBSERVATIONS": 273,
+    "UNKNOWN": 5
+  },
+  "global_delta": {
+    "AMBIGUOUS": 0,
+    "EVIDENCE_RESOLVED": 0,
+    "HARDWARE_UNKNOWN": -1,
+    "INSUFFICIENT": 0,
+    "MATERIALS_UNKNOWN": 0,
+    "NO_EVIDENCE": 0,
+    "PARTIAL": 0,
+    "PRICE_SCOPE_UNKNOWN": 0,
+    "REACH_UNKNOWN": -1,
+    "READY": 0,
+    "SOURCE_EXPLICIT_CLAIMS": 1,
+    "TOTAL_COMPARABLE_EVIDENCE": 0,
+    "TOTAL_OBSERVATIONS": 0,
+    "UNKNOWN": 0
+  },
+  "new_comparable_pairs": 0,
+  "new_partial_observations": 0,
+  "new_ready_observations": 0,
+  "schema_version": "targeted-economic-unlock-report-v1",
+  "targets": [
+    {
+      "after_blockers": [
+        "MISSING_COMMERCIAL_CONTEXT",
+        "MISSING_DELIVERY_MODE",
+        "MISSING_HARDWARE_INFO",
+        "MISSING_MATERIALS_INFO",
+        "MISSING_REACH"
+      ],
+      "after_comparable_candidates": 0,
+      "after_independent_providers": 0,
+      "after_readiness": "INSUFFICIENT",
+      "before_blockers": [
+        "MISSING_COMMERCIAL_CONTEXT",
+        "MISSING_DELIVERY_MODE",
+        "MISSING_HARDWARE_INFO",
+        "MISSING_MATERIALS_INFO",
+        "MISSING_REACH"
+      ],
+      "before_comparable_candidates": 0,
+      "before_independent_providers": 0,
+      "before_readiness": "INSUFFICIENT",
+      "new_evidence": [],
+      "observation_id": "62",
+      "remaining_missing_dimensions": [
+        "DELIVERY_MODE",
+        "GEOGRAPHIC_REACH",
+        "COMMERCIAL_CONTEXT",
+        "COMPARABLE_EVIDENCE"
+      ]
+    },
+    {
+      "after_blockers": [
+        "MISSING_COMMERCIAL_CONTEXT",
+        "MISSING_HARDWARE_INFO",
+        "MISSING_MATERIALS_INFO",
+        "MISSING_REACH"
+      ],
+      "after_comparable_candidates": 0,
+      "after_independent_providers": 0,
+      "after_readiness": "INSUFFICIENT",
+      "before_blockers": [
+        "MISSING_COMMERCIAL_CONTEXT",
+        "MISSING_HARDWARE_INFO",
+        "MISSING_MATERIALS_INFO",
+        "MISSING_REACH"
+      ],
+      "before_comparable_candidates": 0,
+      "before_independent_providers": 0,
+      "before_readiness": "INSUFFICIENT",
+      "new_evidence": [],
+      "observation_id": "68",
+      "remaining_missing_dimensions": [
+        "GEOGRAPHIC_REACH",
+        "COMMERCIAL_CONTEXT",
+        "COMPARABLE_EVIDENCE"
+      ]
+    },
+    {
+      "after_blockers": [
+        "MISSING_COMMERCIAL_CONTEXT",
+        "MISSING_HARDWARE_INFO",
+        "MISSING_MATERIALS_INFO",
+        "MISSING_REACH"
+      ],
+      "after_comparable_candidates": 0,
+      "after_independent_providers": 0,
+      "after_readiness": "INSUFFICIENT",
+      "before_blockers": [
+        "MISSING_COMMERCIAL_CONTEXT",
+        "MISSING_HARDWARE_INFO",
+        "MISSING_MATERIALS_INFO",
+        "MISSING_REACH"
+      ],
+      "before_comparable_candidates": 0,
+      "before_independent_providers": 0,
+      "before_readiness": "INSUFFICIENT",
+      "new_evidence": [],
+      "observation_id": "69",
+      "remaining_missing_dimensions": [
+        "GEOGRAPHIC_REACH",
+        "COMMERCIAL_CONTEXT",
+        "COMPARABLE_EVIDENCE"
+      ]
+    },
+    {
+      "after_blockers": [
+        "MISSING_HARDWARE_INFO",
+        "MISSING_MATERIALS_INFO",
+        "MISSING_REACH"
+      ],
+      "after_comparable_candidates": 0,
+      "after_independent_providers": 0,
+      "after_readiness": "INSUFFICIENT",
+      "before_blockers": [
+        "MISSING_HARDWARE_INFO",
+        "MISSING_MATERIALS_INFO",
+        "MISSING_REACH"
+      ],
+      "before_comparable_candidates": 0,
+      "before_independent_providers": 0,
+      "before_readiness": "INSUFFICIENT",
+      "new_evidence": [],
+      "observation_id": "70",
+      "remaining_missing_dimensions": [
+        "GEOGRAPHIC_REACH",
+        "COMPARABLE_EVIDENCE"
+      ]
+    },
+    {
+      "after_blockers": [
+        "MISSING_COMMERCIAL_CONTEXT",
+        "MISSING_HARDWARE_INFO",
+        "MISSING_MATERIALS_INFO"
+      ],
+      "after_comparable_candidates": 0,
+      "after_independent_providers": 0,
+      "after_readiness": "INSUFFICIENT",
+      "before_blockers": [
+        "MISSING_COMMERCIAL_CONTEXT",
+        "MISSING_HARDWARE_INFO",
+        "MISSING_MATERIALS_INFO",
+        "MISSING_REACH"
+      ],
+      "before_comparable_candidates": 0,
+      "before_independent_providers": 0,
+      "before_readiness": "INSUFFICIENT",
+      "new_evidence": [
+        {
+          "acquired_at": "2026-08-22T21:25:53.526029+00:00",
+          "dimension": "geographic_reach",
+          "extraction_method": "STRUCTURED_SOURCE_FIELD",
+          "extraction_path": "generic_price_extractor_v3/generic:0:servicio-técnico-a-domicilio-la-computadora-no-enciende-la-computadora-es-ruidosa-la-computadora-se-apaga-la-computadora-está-lenta-el-sistema-operativo-se-tilda-la-computadora-se-calienta-desde-solicitar-ahora:30000",
+          "observation_id": "234",
+          "provenance": "data/raw/near_comparable_v1/redmatica_cordoba/a0d741f3595cca2a41c81e3d8cfd52e145a123e351b2a5ccac00284e7725ef70.html",
+          "raw_basis": "Servicio Técnico de PC / Notebooks a Domicilio en Córdoba",
+          "raw_document_id": "sha256:a0d741f3595cca2a41c81e3d8cfd52e145a123e351b2a5ccac00284e7725ef70",
+          "schema_version": "versioned-targeted-source-claim-v1",
+          "source_url": "https://red-matica.com/",
+          "temporal_status": "COMPATIBLE_EXACT_OFFER_IDENTITY",
+          "value": "NAMED_AREA:Córdoba",
+          "version": "versioned-targeted-source-claim-v1"
+        }
+      ],
+      "observation_id": "234",
+      "remaining_missing_dimensions": [
+        "COMMERCIAL_CONTEXT",
+        "COMPARABLE_EVIDENCE"
+      ]
+    }
+  ]
+}
