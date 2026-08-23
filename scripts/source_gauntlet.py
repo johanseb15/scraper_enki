@@ -2,6 +2,14 @@
 
 from __future__ import annotations
 
+# ENKI_CLI_BOOTSTRAP_V1
+try:
+    from scripts._repo_bootstrap import activate_repo_root
+except ModuleNotFoundError:
+    from _repo_bootstrap import activate_repo_root
+
+activate_repo_root(__file__)
+
 import argparse
 from contextlib import nullcontext
 from dataclasses import asdict

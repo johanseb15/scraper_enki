@@ -1,3 +1,11 @@
+# ENKI_CLI_BOOTSTRAP_V1
+try:
+    from scripts._repo_bootstrap import activate_repo_root
+except ModuleNotFoundError:
+    from _repo_bootstrap import activate_repo_root
+
+activate_repo_root(__file__)
+
 import argparse
 import json
 import sqlite3

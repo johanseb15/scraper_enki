@@ -1,5 +1,13 @@
 """Entry point para la ingesta masiva de ofertas de CompraGamer."""
 
+# ENKI_CLI_BOOTSTRAP_V1
+try:
+    from scripts._repo_bootstrap import activate_repo_root
+except ModuleNotFoundError:
+    from _repo_bootstrap import activate_repo_root
+
+activate_repo_root(__file__)
+
 import logging
 import sys
 from pathlib import Path

@@ -184,7 +184,7 @@ The six specifically incorrect clarifications have one control-flow family:
 - CATEGORY: OPERABILITY, DEVELOPER_EXPERIENCE, TESTABILITY, REPRODUCIBILITY.
 - SEVERITY: `P1`.
 - CONFIDENCE: HIGH.
-- STATUS: CONFIRMED.
+- STATUS: RESOLVED by `enki-cli-execution-contract-v1`.
 - EVIDENCE: 45 intended scripts; 41 import `src`; 39 lack bootstrap; 33 safe help probes failed on `src`, one failed on `scripts`, six remain statically affected.
 - REPRODUCTION: Remove PYTHONPATH and invoke argparse surfaces as `.venv/Scripts/python.exe scripts/<name>.py --help`; `build_knowledge_candidates.py` reproduces the known failure.
 - AFFECTED_FILES: `scripts/*.py`, `pyproject.toml`, `tests/test_trace_real_query_cli.py`.
@@ -204,6 +204,7 @@ The six specifically incorrect clarifications have one control-flow family:
 - BLOCKS_FIELD_TESTING: false.
 - BLOCKS_PROMOTION: false.
 - NOTES: DIRECT_SAFE 5; BROKEN_CONFIRMED 34; POTENTIALLY_BROKEN 6; NOT_INTENDED 0.
+- REMEDIATION_NOTE: Closed with one shared `scripts/_repo_bootstrap.py` execution-boundary shim across all 49 current `__main__` entrypoints. Direct top-level probes pass 49/49 with `PYTHONPATH` unset. The project `.venv` was synchronized to the already-declared `requirements.txt`, including `truststore==0.10.4`. No product/runtime semantics changed.
 
 ### TD-006 — Real-query interpretation defects remain across five causal families
 

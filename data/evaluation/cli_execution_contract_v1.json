@@ -1,0 +1,9 @@
+{
+  "contract": "enki-cli-execution-contract-v1",
+  "entrypoints_total": 49,
+  "marked": 49,
+  "missing_marker": [],
+  "top_level_probe_failures": [],
+  "manual_pythonpath_required": false,
+  "status": "PASS"
+}
