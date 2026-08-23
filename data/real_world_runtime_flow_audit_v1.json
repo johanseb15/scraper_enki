@@ -1,0 +1,110 @@
+{
+  "evidence_granularity": "AGGREGATED_PRICING_COHORT",
+  "offer_level_runtime_evidence_available": false,
+  "public_entrypoint": "POST /decision/pricing",
+  "runtime_mutation": false,
+  "runtime_path": "FastAPI -> resolver_consulta_pricing -> parser/TechnicalNeed/evidence -> presentar_resultado_pricing",
+  "schema_version": "real-world-runtime-flow-audit-v1",
+  "stages": [
+    {
+      "input": "DecisionPricingRequest.query",
+      "missing_observability": null,
+      "output": "raw_user_input",
+      "provenance_currently_available": true,
+      "runtime_mutation_risk": "LOW",
+      "stage": "INGEST",
+      "timing_possible": true,
+      "uncertainty_currently_available": true
+    },
+    {
+      "input": "raw_user_input",
+      "missing_observability": null,
+      "output": "ParsedPricingQuery",
+      "provenance_currently_available": true,
+      "runtime_mutation_risk": "LOW",
+      "stage": "PARSE",
+      "timing_possible": true,
+      "uncertainty_currently_available": true
+    },
+    {
+      "input": "ParsedPricingQuery",
+      "missing_observability": null,
+      "output": "IntentAction/IntentSide",
+      "provenance_currently_available": true,
+      "runtime_mutation_risk": "LOW",
+      "stage": "INTENT",
+      "timing_possible": true,
+      "uncertainty_currently_available": true
+    },
+    {
+      "input": "raw_user_input",
+      "missing_observability": null,
+      "output": "canonical services/geography/price",
+      "provenance_currently_available": true,
+      "runtime_mutation_risk": "LOW",
+      "stage": "SEMANTIC_NORMALIZATION",
+      "timing_possible": true,
+      "uncertainty_currently_available": true
+    },
+    {
+      "input": "TechnicalNeed",
+      "missing_observability": null,
+      "output": "market resolution/evidence probe",
+      "provenance_currently_available": true,
+      "runtime_mutation_risk": "LOW",
+      "stage": "TECHNICAL_NEED",
+      "timing_possible": true,
+      "uncertainty_currently_available": true
+    },
+    {
+      "input": "ParsedPricingQuery",
+      "missing_observability": null,
+      "output": "runtime dimension projection",
+      "provenance_currently_available": true,
+      "runtime_mutation_risk": "NONE",
+      "stage": "ECONOMIC_DIMENSIONS",
+      "timing_possible": true,
+      "uncertainty_currently_available": true
+    },
+    {
+      "input": "versioned pricing cohorts",
+      "missing_observability": "Runtime cohorts do not expose constituent offer ids.",
+      "output": "accepted/excluded cohort references",
+      "provenance_currently_available": true,
+      "runtime_mutation_risk": "NONE",
+      "stage": "EVIDENCE_RETRIEVAL",
+      "timing_possible": true,
+      "uncertainty_currently_available": true
+    },
+    {
+      "input": "candidate cohort dimensions",
+      "missing_observability": "Runtime exposes selected aggregate cohort, not pair-level decisions.",
+      "output": "runtime comparable cohort state",
+      "provenance_currently_available": true,
+      "runtime_mutation_risk": "NONE",
+      "stage": "COMPARABILITY",
+      "timing_possible": true,
+      "uncertainty_currently_available": true
+    },
+    {
+      "input": "EnkiPricingQueryResult",
+      "missing_observability": null,
+      "output": "DECISION/RANGE/INSUFFICIENT/etc",
+      "provenance_currently_available": true,
+      "runtime_mutation_risk": "NONE",
+      "stage": "READINESS",
+      "timing_possible": true,
+      "uncertainty_currently_available": true
+    },
+    {
+      "input": "EnkiPricingQueryResult",
+      "missing_observability": null,
+      "output": "EnkiUserResponse",
+      "provenance_currently_available": true,
+      "runtime_mutation_risk": "NONE",
+      "stage": "RESPONSE",
+      "timing_possible": true,
+      "uncertainty_currently_available": true
+    }
+  ]
+}

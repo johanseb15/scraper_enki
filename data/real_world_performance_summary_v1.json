@@ -1,0 +1,159 @@
+{
+  "metrics": {
+    "ACCEPTED_EVIDENCE": 9,
+    "AMBIGUITIES_TOTAL": 4,
+    "AMBIGUOUS": 25,
+    "AUTO_PROMOTIONS": 0,
+    "CLAIMS_EXTRACTED": 172,
+    "CLAIMS_PER_RAW": null,
+    "COMPARABILITY_FAILURES": 5,
+    "COMPARABILITY_YIELD": {
+      "denominator": 94,
+      "numerator": 9,
+      "value": 0.095745
+    },
+    "CONFLICTS_TOTAL": 0,
+    "CONTEXT_FAILURES": 0,
+    "CURRENT_AUDIT_WRONG_INTERPRETATION": 27,
+    "EVIDENCE_CANDIDATES": 94,
+    "EVIDENCE_FAILURES": 8,
+    "EXCLUDED_EVIDENCE": 85,
+    "FAILURES_BY_STAGE": {
+      "COMPARABILITY": 41,
+      "EVIDENCE_RETRIEVAL": 41,
+      "READINESS": 33
+    },
+    "FAILURE_TAXONOMY": {
+      "INTENT_FAILURE": 16,
+      "MISSING_MARKET_EVIDENCE": 8,
+      "MISSING_USER_INFORMATION": 25,
+      "NON_COMPARABLE_EVIDENCE": 5,
+      "READINESS_FAILURE": 8,
+      "SEMANTIC_MAPPING_FAILURE": 11
+    },
+    "INTENT_FAILURES": 16,
+    "INTENT_SUCCESSES": 34,
+    "LEARNING_INTAKE_CASES": 50,
+    "NETWORK_REQUESTS": 0,
+    "NEW_ACQUISITION_GAPS": 8,
+    "NEW_GOLDEN_CANDIDATES": 0,
+    "NEW_KNOWLEDGE_CANDIDATES": 0,
+    "NORMALIZATION_FAILURES": 0,
+    "NORMALIZATION_SUCCESSES": 50,
+    "NORMALIZATION_YIELD": {
+      "denominator": 495,
+      "numerator": 163,
+      "value": 0.329293
+    },
+    "PARSE_FAILURES": 0,
+    "PARSE_SUCCESSES": 50,
+    "PREVIOUS_AUDIT_WRONG_INTERPRETATION": 19,
+    "RAW_DOCUMENTS_USED": 0,
+    "READINESS_DISTRIBUTION": {
+      "CLARIFICATION_REQUIRED": 25,
+      "DECISION_READY": 3,
+      "INSUFFICIENT_EVIDENCE": 5,
+      "NO_EVIDENCE": 8,
+      "RANGE_READY": 1,
+      "UNSUPPORTED_QUERY": 8
+    },
+    "REGRESSION_AUDIT_DRIFT": 8,
+    "REGRESSION_OUTCOMES": {
+      "CLARIFICATION_CORRECT": 17,
+      "PARSE_CORRECT": 2,
+      "SAFE_UNSUPPORTED": 4,
+      "WRONG_INTERPRETATION": 27
+    },
+    "RESPONSE_DISTRIBUTION": {
+      "ALTO": 2,
+      "Evidencia insuficiente": 5,
+      "Necesito una aclaración": 25,
+      "RAZONABLE": 1,
+      "Rango de mercado disponible": 1,
+      "Sin evidencia comparable": 8,
+      "Todavía no puedo comparar esta consulta": 8
+    },
+    "REUSABLE_EVIDENCE_LINKS": 9,
+    "RUNTIME_WRITES": 0,
+    "SUCCESSFUL": 23,
+    "TOTAL_REAL_TRACES": 0,
+    "TOTAL_TRACES": 50,
+    "TRACE_ORIGINS": {
+      "CURATED_ENKI": 37,
+      "SYNTHETIC_DEEPSEEK": 5,
+      "SYNTHETIC_GEMINI": 3,
+      "SYNTHETIC_GROK": 5
+    },
+    "UNKNOWN_DIMENSIONS": 332,
+    "UNKNOWN_OR_UNRESOLVED": 16,
+    "WITH_COMPARABLE_EVIDENCE": 9,
+    "WITH_DECISION": 3
+  },
+  "performance": {
+    "by_stage": {
+      "COMPARABILITY": {
+        "max": 0.0036,
+        "p50": 0.0026,
+        "p95": 0.0033
+      },
+      "ECONOMIC_DIMENSIONS": {
+        "max": 0.0131,
+        "p50": 0.00965,
+        "p95": 0.0124
+      },
+      "EVIDENCE_RETRIEVAL": {
+        "max": 0.6092,
+        "p50": 0.0078,
+        "p95": 0.0641
+      },
+      "INGEST": {
+        "max": 0.0053,
+        "p50": 0.0019,
+        "p95": 0.003
+      },
+      "INTENT": {
+        "max": 0.0022,
+        "p50": 0.0012,
+        "p95": 0.0018
+      },
+      "PARSE": {
+        "max": 8.0974,
+        "p50": 0.8597,
+        "p95": 1.6937
+      },
+      "READINESS": {
+        "max": 0.0005,
+        "p50": 0.0003,
+        "p95": 0.0005
+      },
+      "RESPONSE": {
+        "max": 0.0489,
+        "p50": 0.01315,
+        "p95": 0.0297
+      },
+      "SEMANTIC_NORMALIZATION": {
+        "max": 0.0159,
+        "p50": 0.0059,
+        "p95": 0.0106
+      },
+      "TECHNICAL_NEED": {
+        "max": 0.001,
+        "p50": 0.0006,
+        "p95": 0.0008
+      }
+    },
+    "sample_size": 50,
+    "sufficient_for_percentiles": true,
+    "total_latency_ms": {
+      "max": 9.1109,
+      "p50": 1.1166,
+      "p95": 1.9326
+    },
+    "trace_overhead_ms": {
+      "max": 0.0897,
+      "p50": 0.03745,
+      "p95": 0.056
+    }
+  },
+  "schema_version": "real-world-performance-summary-v1"
+}
