@@ -1,0 +1,57 @@
+{
+  "metrics": {
+    "AUTO_PROMOTIONS": 0,
+    "CLARIFICATION_QUALITY_AFTER": {
+      "JUSTIFIED_CLARIFICATION": 26,
+      "UNNECESSARY_CLARIFICATION": 3,
+      "WRONG_CLARIFICATION": 6
+    },
+    "COMPARABILITY_AFTER": {
+      "accepted": 5,
+      "excluded": 118
+    },
+    "COMPARABILITY_BEFORE": {
+      "accepted": 9,
+      "excluded": 85
+    },
+    "EXPLICIT_NORMALIZATION_RECALL": {
+      "denominator": 7,
+      "numerator": 7,
+      "value": 1.0
+    },
+    "HUMAN_REAL": 0,
+    "NETWORK_REQUESTS": 0,
+    "PRICE_SCOPE_CORRECTLY_PARSED_AFTER": 7,
+    "PRICE_SCOPE_CORRECTLY_PARSED_BEFORE": 6,
+    "PRICE_SCOPE_EXPLICIT_INPUT": 7,
+    "PRICE_SCOPE_LEGITIMATE_UNKNOWN": 43,
+    "PRICE_SCOPE_LOST_AFTER": 0,
+    "PRICE_SCOPE_LOST_BEFORE": 1,
+    "PRICE_SCOPE_MATCHES_AFTER": 5,
+    "PRICE_SCOPE_MATCHES_BEFORE": 9,
+    "PRICE_SCOPE_MISMATCHES_AFTER": 2,
+    "PRICE_SCOPE_MISMATCHES_BEFORE": 5,
+    "PRICE_SCOPE_UNKNOWN_SIDE_AFTER": 32,
+    "PRICE_SCOPE_UNKNOWN_SIDE_BEFORE": 0,
+    "READINESS_AFTER": {
+      "CLARIFICATION_REQUIRED": 35,
+      "INSUFFICIENT_EVIDENCE": 1,
+      "NO_EVIDENCE": 5,
+      "RANGE_READY": 2,
+      "UNSUPPORTED_QUERY": 7
+    },
+    "READINESS_BEFORE": {
+      "CLARIFICATION_REQUIRED": 25,
+      "DECISION_READY": 3,
+      "INSUFFICIENT_EVIDENCE": 5,
+      "NO_EVIDENCE": 8,
+      "RANGE_READY": 1,
+      "UNSUPPORTED_QUERY": 8
+    },
+    "RUNTIME_WRITES": 0,
+    "TOTAL_TRACES": 50,
+    "WRONG_INTERPRETATION_AFTER": 21,
+    "WRONG_INTERPRETATION_BEFORE": 27
+  },
+  "schema_version": "price-scope-reconciliation-before-after-v1"
+}

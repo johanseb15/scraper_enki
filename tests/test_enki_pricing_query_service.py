@@ -17,9 +17,12 @@ def test_remote_10k_hourly_is_low():
 def test_remote_60k_hourly_is_high():
     r=resolve("me quieren cobrar 60 lucas la hora por soporte remoto, está bien?"); assert r.status=="DECISION_READY" and r.decision_label=="ALTO"; assert r.evidence.price_position=="ABOVE_OBSERVED_RANGE"
 
-def test_local_insufficient_never_emits_decision():
+def test_local_unknown_scope_requests_clarification_instead_of_using_cohort():
     local=[cohort(market="Córdoba",service="FORMATEO_INSTALACION_SO",n=3,providers=1,min_=45000,q1=50000,median=55000,q3=59500,max_=64000,confidence="INSUFFICIENT",decision_ready=False,range_ready=False,price_scope="UNKNOWN")]
-    r=resolve("me quieren cobrar 55 lucas por formatear en Córdoba, está bien?",local=local); assert r.status=="INSUFFICIENT_EVIDENCE"; assert r.decision_label is None
+    r=resolve("me quieren cobrar 55 lucas por formatear en Córdoba, está bien?",local=local)
+    assert r.status=="CLARIFICATION_REQUIRED"
+    assert r.clarification_reason=="PRICE_SCOPE_REQUIRED"
+    assert r.decision_label is None
 
 def test_missing_local_province_requests_clarification():
     r=resolve("me quieren cobrar 55 lucas por formatear, está bien?"); assert r.status=="CLARIFICATION_REQUIRED" and r.evidence is None

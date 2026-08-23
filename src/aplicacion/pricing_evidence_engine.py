@@ -4,6 +4,8 @@ from dataclasses import dataclass
 from decimal import Decimal
 from typing import Iterable
 
+from src.dominio.price_scope_contract import ScopeCompatibility, compare_price_scopes
+
 
 @dataclass(frozen=True)
 class CohortePricing:
@@ -49,7 +51,7 @@ def evaluar_precio(
     market: str,
     canonical_service: str,
     proposed_price_ars: Decimal | None = None,
-    price_scope: str = "UNKNOWN",
+    price_scope: str | None = None,
     commercial_context: str = "STANDARD",
 ) -> ResultadoEvidenciaPrecio:
     cohort = next(
@@ -57,7 +59,10 @@ def evaluar_precio(
             c for c in cohortes
             if c.market == market
             and c.canonical_service == canonical_service
-            and c.price_scope == price_scope
+            and (
+                price_scope is None
+                or compare_price_scopes(c.price_scope, price_scope) is ScopeCompatibility.COMPATIBLE
+            )
             and c.commercial_context == commercial_context
         ),
         None,
@@ -68,7 +73,7 @@ def evaluar_precio(
             status="NO_EVIDENCE",
             market=market,
             canonical_service=canonical_service,
-            price_scope=price_scope,
+            price_scope=price_scope or "UNKNOWN",
             commercial_context=commercial_context,
         )
 

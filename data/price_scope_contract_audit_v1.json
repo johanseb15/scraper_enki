@@ -1,0 +1,112 @@
+{
+  "canonical_contract": "PriceScopeMeaning",
+  "orthogonal_dimensions": [
+    "charged_unit",
+    "billing_period",
+    "price_bound",
+    "commercial_context"
+  ],
+  "representations": [
+    {
+      "ambiguity": "documented",
+      "consumer": "runtime/evaluation",
+      "field": "PriceType",
+      "file_module": "language_query_contract.py",
+      "known_mismatch": "legacy conflation",
+      "producer": "documented module",
+      "provenance": "brownfield audit",
+      "semantic_meaning": "price form and charged scope conflated"
+    },
+    {
+      "ambiguity": "documented",
+      "consumer": "runtime/evaluation",
+      "field": "PriceScopeMeaning",
+      "file_module": "price_scope_contract.py",
+      "known_mismatch": null,
+      "producer": "documented module",
+      "provenance": "brownfield audit",
+      "semantic_meaning": "canonical orthogonal contract"
+    },
+    {
+      "ambiguity": "documented",
+      "consumer": "runtime/evaluation",
+      "field": "ChargedUnit",
+      "file_module": "offer_evidence.py",
+      "known_mismatch": null,
+      "producer": "documented module",
+      "provenance": "brownfield audit",
+      "semantic_meaning": "source charged unit"
+    },
+    {
+      "ambiguity": "documented",
+      "consumer": "runtime/evaluation",
+      "field": "PriceBound",
+      "file_module": "offer_evidence.py",
+      "known_mismatch": null,
+      "producer": "documented module",
+      "provenance": "brownfield audit",
+      "semantic_meaning": "source price bound"
+    },
+    {
+      "ambiguity": "documented",
+      "consumer": "runtime/evaluation",
+      "field": "infer_price_scope",
+      "file_module": "pricing_dimensions.py",
+      "known_mismatch": null,
+      "producer": "documented module",
+      "provenance": "brownfield audit",
+      "semantic_meaning": "source cadence projection"
+    },
+    {
+      "ambiguity": "documented",
+      "consumer": "runtime/evaluation",
+      "field": "price_scope",
+      "file_module": "economic_dimensions_v2",
+      "known_mismatch": null,
+      "producer": "documented module",
+      "provenance": "brownfield audit",
+      "semantic_meaning": "economic scalar dimension"
+    },
+    {
+      "ambiguity": "documented",
+      "consumer": "runtime/evaluation",
+      "field": "missing price_scope column",
+      "file_module": "local/remote_pricing_stats_v1.csv",
+      "known_mismatch": "legacy conflation",
+      "producer": "documented module",
+      "provenance": "brownfield audit",
+      "semantic_meaning": "legacy runtime cohort gap"
+    },
+    {
+      "ambiguity": "documented",
+      "consumer": "runtime/evaluation",
+      "field": "price_scope",
+      "file_module": "local/remote_pricing_stats_v2.csv",
+      "known_mismatch": null,
+      "producer": "documented module",
+      "provenance": "brownfield audit",
+      "semantic_meaning": "versioned explicit/unknown cohort dimension"
+    },
+    {
+      "ambiguity": "documented",
+      "consumer": "runtime/evaluation",
+      "field": "CohortePricing.price_scope",
+      "file_module": "pricing_evidence_engine.py",
+      "known_mismatch": null,
+      "producer": "documented module",
+      "provenance": "brownfield audit",
+      "semantic_meaning": "runtime comparability key"
+    },
+    {
+      "ambiguity": "documented",
+      "consumer": "runtime/evaluation",
+      "field": "economic_dimensions.price_scope",
+      "file_module": "real_world_query_trace.py",
+      "known_mismatch": null,
+      "producer": "documented module",
+      "provenance": "brownfield audit",
+      "semantic_meaning": "decision trace projection"
+    }
+  ],
+  "schema_version": "price-scope-contract-audit-v1"
+}

@@ -1,6 +1,7 @@
 from __future__ import annotations
 import re, unicodedata
 from src.aplicacion.language_query_contract import *
+from src.dominio.price_scope_contract import normalize_price_scope
 
 RULES=[
 ("FORMATEO_INSTALACION_SO",(r"\bformate",r"\binstal(?:ar|acion de) windows\b",r"\breinstalar windows\b")),
@@ -295,4 +296,5 @@ def parse_pricing_query(raw_text:str,*,language_evidence_type:str="UNKNOWN")->Pa
         reasons+=["UNKNOWN_PARTS_SCOPE"]; question=question or "¿El precio incluye el repuesto o es sólo mano de obra?"
     blocking={"MISSING_PROVINCE","UNKNOWN_ECONOMIC_OBJECT","UNKNOWN_CURRENCY","UNKNOWN_PARTS_SCOPE","MULTIPLE_MONETARY_MENTIONS"}
     clar=bool(blocking & set(reasons)); conf=max(0.0,round(.95-(.25 if clar else 0)-(.15 if action==IntentAction.UNKNOWN else 0)-(.20 if kind==EconomicObjectKind.UNKNOWN else 0),2))
-    return ParsedPricingQuery(raw_text,x,action,side,kind,sv,market,mod,p,g,dev,"USED" if re.search(r"\busad[oa]\b",x) else "NEW" if re.search(r"\bnuev[oa]\b",x) else "UNKNOWN",kind==EconomicObjectKind.BUNDLE,CommercialContext(parts_scope=ps),ParseMetadata(conf,clar,"|".join(reasons) if reasons else None,question,tuple(dict.fromkeys(explicit)),tuple(dict.fromkeys(inferred)),tuple(dict.fromkeys(derived))),language_evidence_type)
+    scope=normalize_price_scope(raw_text,has_price=has_price,is_range=p.type is PriceType.RANGE)
+    return ParsedPricingQuery(raw_text,x,action,side,kind,sv,market,mod,p,g,dev,"USED" if re.search(r"\busad[oa]\b",x) else "NEW" if re.search(r"\bnuev[oa]\b",x) else "UNKNOWN",kind==EconomicObjectKind.BUNDLE,CommercialContext(parts_scope=ps),ParseMetadata(conf,clar,"|".join(reasons) if reasons else None,question,tuple(dict.fromkeys(explicit)),tuple(dict.fromkeys(inferred)),tuple(dict.fromkeys(derived))),language_evidence_type,price_scope=scope)

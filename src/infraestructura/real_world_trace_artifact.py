@@ -30,7 +30,7 @@ def build_real_world_trace_artifacts(root, output_dir):
         )
         append_trace(trace_path, trace)
         intake = build_learning_intake(trace)
-        regression_outcome, regression_errors = _adjudicate(record, trace)
+        regression_outcome, regression_errors = adjudicate_trace(record, trace)
         intake["regression_outcome"] = regression_outcome
         intake["regression_errors"] = regression_errors
         intake_by_id[trace.trace_id] = intake
@@ -153,7 +153,7 @@ def _summary(traces, intake, previous_audit):
     return {"schema_version": "real-world-performance-summary-v1", "metrics": metrics, "performance": performance}
 
 
-def _adjudicate(record, trace):
+def adjudicate_trace(record, trace):
     adjudication = record["adjudication"]
     behavior = adjudication["expected_behavior"]
     errors = []

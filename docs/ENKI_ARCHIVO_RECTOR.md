@@ -334,6 +334,12 @@ permitan sus versiones de código y evidencia; el tracing observa el runtime sin
 cambiar su respuesta, y nunca convierte feedback, regression candidates ni
 conclusiones del sistema en conocimiento promovido.
 
+La información omitida por el usuario no es un fallo de normalización. El
+recall de normalización explícita separa campos omitidos de información
+explícita perdida y sólo se calcula con revisión humana disponible. Una
+dimensión económica normalizada preserva su identidad semántica entre parser,
+runtime y comparabilidad.
+
 Brownfield first.
 TDD.
 RED → GREEN → REFACTOR.

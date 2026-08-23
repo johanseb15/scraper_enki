@@ -68,6 +68,8 @@ def _fold(text: str) -> str:
 
 
 def _explicit_price_scope(text: str, parsed: ParsedPricingQuery) -> str:
+    if parsed.price_scope.comparison_scope != "UNKNOWN":
+        return parsed.price_scope.comparison_scope
     mapping = {
         PriceType.PER_HOUR: "PER_HOUR",
         PriceType.PER_MONTH: "PER_MONTH",
@@ -157,8 +159,7 @@ def resolver_consulta_pricing(
         and c.canonical_service == canonical_service
         and c.commercial_context == commercial_context
     ]
-    known_scopes = {c.price_scope for c in service_cohorts if c.price_scope != "UNKNOWN"}
-    if price_scope == "UNKNOWN" and known_scopes:
+    if price_scope == "UNKNOWN" and service_cohorts:
         return _clarification(
             parsed,
             reason="PRICE_SCOPE_REQUIRED",

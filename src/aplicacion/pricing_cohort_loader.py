@@ -8,8 +8,8 @@ from pathlib import Path
 from src.aplicacion.pricing_evidence_engine import CohortePricing
 
 
-DEFAULT_LOCAL_STATS = Path("data/local_pricing_stats_v1.csv")
-DEFAULT_REMOTE_STATS = Path("data/remote_pricing_stats_v1.csv")
+DEFAULT_LOCAL_STATS = Path("data/local_pricing_stats_v2.csv")
+DEFAULT_REMOTE_STATS = Path("data/remote_pricing_stats_v2.csv")
 
 
 def _decimal(value: str) -> Decimal:

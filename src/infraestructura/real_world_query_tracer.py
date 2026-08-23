@@ -217,7 +217,7 @@ def _technical_projection(parsed):
 
 
 def _economic_dimensions(parsed):
-    price_scope = parsed.price.type.value if parsed.price.type.value in {"PER_HOUR", "PER_MONTH", "PER_VISIT", "PER_UNIT", "PER_PROJECT"} else "UNKNOWN"
+    price_scope = parsed.price_scope.comparison_scope
     values = {
         "economic_object_kind": parsed.economic_object_kind.value,
         "service": list(parsed.canonical_services) or None,
@@ -227,6 +227,9 @@ def _economic_dimensions(parsed):
         "price": parsed.price.value,
         "currency": parsed.price.currency,
         "price_scope": price_scope,
+        "charged_unit": parsed.price_scope.charged_unit.value,
+        "billing_period": parsed.price_scope.billing_period.value,
+        "price_bound": parsed.price_scope.price_bound.value,
         "commercial_context": "STANDARD",
         "device": parsed.device_type,
         "hardware_included": None,
@@ -253,7 +256,8 @@ def _evidence_projection(parsed, result, local, remote):
             continue
         reasons = []
         if expected_market and item.market != expected_market: reasons.append("MARKET_MISMATCH")
-        if not result.market_resolution and item.price_scope != price_scope: reasons.append("PRICE_SCOPE_MISMATCH")
+        if not result.market_resolution and item.price_scope != price_scope:
+            reasons.append("PRICE_SCOPE_UNKNOWN_SIDE" if "UNKNOWN" in {item.price_scope, price_scope} else "PRICE_SCOPE_MISMATCH")
         accepted = not reasons and (result.evidence is not None or result.evidence_probe is not None)
         candidates.append(EvidenceDecisionTrace(
             _cohort_id(item), "ACCEPTED" if accepted else "EXCLUDED", tuple(reasons or (() if accepted else ("NOT_SELECTED_BY_RUNTIME",))),
@@ -310,6 +314,7 @@ def _parser_payload(parsed):
         "modality": parsed.modality.value, "price": _json_value(asdict(parsed.price)),
         "geography": _json_value(asdict(parsed.geography)), "clarification_required": parsed.metadata.clarification_required,
         "clarification_reason": parsed.metadata.clarification_reason,
+        "price_scope": _json_value(asdict(parsed.price_scope)),
     }
 
 
