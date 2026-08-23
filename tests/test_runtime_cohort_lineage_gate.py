@@ -234,7 +234,7 @@ def test_real_p0_cohort_is_rebuilt_without_mutating_historical_inputs(tmp_path: 
     assert {path: hashlib.sha256(path.read_bytes()).hexdigest() for path in before} == before
 
 
-def test_runtime_api_and_trace_only_project_gated_cohort_members() -> None:
+def test_runtime_api_and_trace_do_not_reintroduce_lineage_only_members() -> None:
     local, remote = cargar_cohortes_pricing_runtime()
     query = "Cuánto se está cobrando por hora por soporte remoto?"
     response = TestClient(app).post("/decision/pricing", json={"query": query})
@@ -247,14 +247,11 @@ def test_runtime_api_and_trace_only_project_gated_cohort_members() -> None:
     )
 
     assert response.status_code == 200
-    assert response.json()["status"] == "INSUFFICIENT_EVIDENCE"
-    assert response.json()["evidence"]["observation_ids"] == ["68"]
+    assert response.json()["status"] == "NO_EVIDENCE"
+    assert response.json()["evidence"]["observation_ids"] == []
     assert trace.readiness == response.json()["status"]
-    assert trace.accepted_evidence == (
-        "pricing-cohort:AR:SOPORTE_REMOTO:PER_HOUR:STANDARD",
-    )
-    accepted = next(item for item in remote if item.evidence_id in trace.accepted_evidence)
-    assert accepted.observation_ids == ("68",)
+    assert trace.accepted_evidence == ()
+    assert remote == []
 
 
 def test_lineage_gate_artifact_is_reproducible_and_records_no_semantic_drift(

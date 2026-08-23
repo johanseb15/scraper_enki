@@ -26,7 +26,7 @@ API_CASES = {
     ),
     "D_KNOWN_EVIDENCE": (
         "Cuánto se está cobrando por hora por soporte remoto?",
-        "INSUFFICIENT_EVIDENCE",
+        "NO_EVIDENCE",
     ),
     "E_UNSUPPORTED_BUNDLE": (
         "me cobran 110 lucas por formateo y backup en Córdoba",
@@ -79,9 +79,8 @@ def test_current_real_cohorts_do_not_manufacture_decision_ready():
     )
     assert response.status_code == 200
     body = response.json()
-    assert body["status"] == "INSUFFICIENT_EVIDENCE"
+    assert body["status"] == "NO_EVIDENCE"
     assert body["evidence"]["decision_label"] is None
-    assert body["evidence"]["observations_n"] == 1
-    assert body["evidence"]["providers_n"] == 1
-    assert body["evidence"]["observation_ids"] == ["68"]
-    assert body["evidence"]["lineage_gate_version"] == "runtime-cohort-lineage-gate-v1"
+    assert body["evidence"]["observations_n"] == 0
+    assert body["evidence"]["providers_n"] == 0
+    assert body["evidence"]["observation_ids"] == []

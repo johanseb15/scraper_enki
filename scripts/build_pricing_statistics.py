@@ -16,6 +16,9 @@ from src.aplicacion.runtime_cohort_lineage_gate import (
     build_runtime_cohort_rows,
 )
 from src.infraestructura.offer_evidence_artifact import load_offer_evidence_sidecar
+from src.infraestructura.economic_dimensions_v2_artifact import (
+    load_economic_dimensions_v2_sidecar,
+)
 
 
 def _quantile_linear(values: list[float], q: float) -> float:
@@ -127,7 +130,7 @@ def _write_runtime(path: str | Path, rows: list[dict[str, object]]) -> None:
         "observations_n", "providers_n",
         "min_ars", "q1_ars", "median_ars", "q3_ars", "max_ars",
         "spread_ratio", "evidence_confidence", "decision_ready", "range_ready",
-        "lineage_gate_version", "observation_ids",
+        "lineage_gate_version", "service_reach_gate_version", "observation_ids",
     ]
     out = Path(path)
     out.parent.mkdir(parents=True, exist_ok=True)
@@ -165,22 +168,29 @@ def build_runtime_pricing_statistics(
     repository_root: str | Path,
     local_out_path: str | Path,
     remote_out_path: str | Path,
+    dimensions_path: str | Path | None = None,
 ) -> tuple[RuntimeCohortBuild, RuntimeCohortBuild]:
     """Build versioned runtime cohorts after fail-closed RAW lineage admission."""
     with Path(normalization_path).open("r", encoding="utf-8-sig", newline="") as f:
         rows = list(csv.DictReader(f))
     evidence = load_offer_evidence_sidecar(lineage_path)
+    dimensions = (
+        load_economic_dimensions_v2_sidecar(dimensions_path)
+        if dimensions_path is not None else None
+    )
     local = build_runtime_cohort_rows(
         rows,
         evidence,
         repository_root,
         market_scope="LOCAL_SERVICE",
+        service_reach_dimensions=dimensions,
     )
     remote = build_runtime_cohort_rows(
         rows,
         evidence,
         repository_root,
         market_scope="REMOTE_NATIONAL_SERVICE",
+        service_reach_dimensions=dimensions,
     )
     _write_runtime(local_out_path, list(local.cohorts))
     _write_runtime(remote_out_path, list(remote.cohorts))
@@ -197,6 +207,10 @@ def main() -> None:
         help="Offer evidence sidecar; enables the fail-closed runtime lineage gate.",
     )
     ap.add_argument("--repository-root", default=".")
+    ap.add_argument(
+        "--dimensions",
+        help="Economic dimensions v2 sidecar; composes explicit service-reach admission.",
+    )
     ap.add_argument("--top", type=int, default=40)
     args = ap.parse_args()
 
@@ -207,6 +221,7 @@ def main() -> None:
             repository_root=args.repository_root,
             local_out_path=args.local_out,
             remote_out_path=args.remote_out,
+            dimensions_path=args.dimensions,
         )
         local = list(local_build.cohorts)
         remote = list(remote_build.cohorts)

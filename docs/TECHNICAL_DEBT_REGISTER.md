@@ -6,13 +6,13 @@ Program: ENKI TECHNICAL DEBT CONSOLIDATION
 
 Baseline: `main@b03e65ef287e3286bcca47e0355852b4fb8b6d77`
 
-Machine-readable sources: `data/evaluation/technical_debt_audit_v1.json` (historical audit) and `data/evaluation/runtime_cohort_lineage_gate_v1.json` (TD-001 remediation).
+Machine-readable sources: `data/evaluation/technical_debt_audit_v1.json` (historical audit), `data/evaluation/runtime_cohort_lineage_gate_v1.json` (TD-001 remediation), and `data/evaluation/offer_service_reach_admission_gate_v1.json` (TD-002 remediation).
 
 ## Executive decision
 
-The repository is test-green, but it is not yet safe to expand real market acquisition or authorize knowledge promotion. TD-001 is resolved by a fail-closed constituent RAW-lineage gate. Three P0 debts still affect runtime evidence truth: service reach, temporal freshness, and commercial-context projection. Founder field capture may continue only as supervised shadow testing; economic results must not be relied on until the remaining P0s close.
+The repository is test-green, but it is not yet safe to expand real market acquisition or authorize knowledge promotion. TD-001 is resolved by a fail-closed constituent RAW-lineage gate and TD-002 by a composable explicit service-reach gate. Two P0 debts still affect runtime evidence truth: temporal freshness and commercial-context projection. Founder field capture may continue only as supervised shadow testing; economic results must not be relied on until the remaining P0s close.
 
-This sprint changed no product behavior, threshold, evidence, HUMAN_REAL data or promotion state. The requested expected HEAD `a01a669...` was stale: the clean synchronized baseline was `b03e65e...`, the causal trace-reconciliation commit that this audit was required to verify.
+The TD-002 remediation changes runtime admission only: provider location no longer supplies service reach, UNKNOWN remains UNKNOWN, REMOTE does not imply NATIONAL, and no historical evidence, HUMAN_REAL data, readiness threshold or promotion state was changed.
 
 | Severity | Count | Meaning in this register |
 |---|---:|---|
@@ -100,10 +100,10 @@ The six specifically incorrect clarifications have one control-flow family:
 - CATEGORY: CORRECTNESS, SAFETY, ARCHITECTURAL_CONSISTENCY, DATA_LINEAGE.
 - SEVERITY: `P0`.
 - CONFIDENCE: HIGH.
-- STATUS: CONFIRMED.
-- EVIDENCE: `build_pricing_statistics.py` assigns local market from `row["province"]`; the evidence summary reports `NO_REACH_EVIDENCE=273` and `EXTRACTED_REACH=0`; the Rector forbids provider location as reach proxy.
-- REPRODUCTION: Read `_build(... LOCAL_SERVICE)` and compare semantic `province` with absent offer-level `geographic_reach` claims.
-- AFFECTED_FILES: `scripts/build_pricing_statistics.py`, `data/semantic_normalization_v4.csv`, `data/offer_evidence_v1.jsonl`, `data/local_pricing_stats_v2.csv`.
+- STATUS: RESOLVED by `offer-service-reach-admission-gate-v1`.
+- EVIDENCE: Provider location is known for 273 observations, while explicit service reach is OBSERVED for 1 and UNKNOWN for 272. Of the 84 eligible observations, 31 pass RAW-lineage but fail reach, 1 passes reach but fails lineage, 52 fail both and 0 pass both. The active projections therefore change from 18 local/4 remote cohorts to 0/0 without deleting any source observation.
+- REPRODUCTION: Regenerate `offer_service_reach_admission_gate_v1.json`; the 31 previously admitted observations are excluded with `MISSING_SERVICE_REACH`. Observation 234 proves the independent inverse path: its explicit `NAMED_AREA:Córdoba` reach passes while its RAW-lineage decision fails.
+- AFFECTED_FILES: `scripts/build_pricing_statistics.py`, `src/aplicacion/service_reach_admission_gate.py`, `src/aplicacion/runtime_cohort_lineage_gate.py`, `src/aplicacion/pricing_cohort_loader.py`, `src/aplicacion/pricing_evidence_engine.py`, `src/api/main.py`, reach-gated pricing projections and the TD-002 evaluation artifact.
 - AFFECTED_LAYERS: APPLICATION, DATA_ARTIFACTS, COMPARABILITY.
 - ROOT_CAUSE: A legacy provider/source location field was reused as runtime market before reach was typed.
 - PRODUCT_IMPACT: Evidence can be shown for a province the provider has not demonstrated serving.
@@ -113,13 +113,13 @@ The six specifically incorrect clarifications have one control-flow family:
 - LIKELIHOOD: HIGH.
 - BLAST_RADIUS: Every LOCAL_SERVICE cohort.
 - DEPENDENCIES: None.
-- PROPOSED_FIX: Admit local offers only through explicit offer reach; UNKNOWN remains insufficient/excluded and no containment heuristic is introduced.
-- REGRESSION_TEST_REQUIRED: Provider location + UNKNOWN reach never enters a local cohort; explicit exact reach does; remote never implies national.
+- IMPLEMENTED_FIX: Compose offer-level RAW-lineage and service-reach decisions before aggregation. LOCAL requires an exact source-observed `NAMED_AREA` or `PROVINCE` match; REMOTE_NATIONAL requires explicit `NATIONAL`; provider location and remote capability are retained as distinct facts but never admit reach. Runtime loading rejects projections without both gate-version markers.
+- REGRESSION_TEST: Eleven contracts cover provider-location isolation, UNKNOWN exclusion, exact local match, mismatch, REMOTE-not-NATIONAL, explicit NATIONAL, both asymmetric gate failures, joint admission and aggregate integrity, runtime/API fail-closed behavior, legacy-artifact rejection and deterministic replay.
 - ESTIMATED_SCOPE: M.
-- BLOCKS_MARKET_ACQUISITION: true.
-- BLOCKS_FIELD_TESTING: true for economic-result reliance.
-- BLOCKS_PROMOTION: true.
-- NOTES: Exact conservative geography remains the required policy.
+- BLOCKS_MARKET_ACQUISITION: false for TD-002; unresolved TD-003, TD-004 and P1 operability still block the program gate.
+- BLOCKS_FIELD_TESTING: false for TD-002; the program remains `CONDITIONAL_SHADOW_ONLY` because other P0s remain.
+- BLOCKS_PROMOTION: false for TD-002; promotion remains unauthorized at program level.
+- NOTES: Closed without acquisition, inferred reach, containment, historical rewrites, HUMAN_REAL mutation or runtime learning writes. Exact conservative geography remains the policy. See `data/evaluation/offer_service_reach_admission_gate_v1.json`.
 
 ### TD-003 — Runtime pricing evidence has no enforceable temporal or freshness contract
 
@@ -526,14 +526,14 @@ TD-005 CLI contract ──────────> TD-015 dependency/config
 TD-013 boundary tests ────────> TD-016 legacy retirement
 ```
 
-TD-002 and TD-004 can be remediated independently. Market acquisition requires TD-001/002/003/004/005/008/010. Promotion additionally requires TD-009/011/013.
+TD-004 can be remediated independently. Market acquisition still requires TD-003/004/005/008/010. Promotion additionally requires TD-009/011/013.
 
 ## Remediation waves
 
 ### WAVE 0 — P0 correctness and safety
 
-1. **RUNTIME COHORT LINEAGE GATE v1** — Goal: every contributor is auditable or fails closed. Closes TD-001. Likely files: stats builder, cohort engine/loader, API, lineage sidecars. Behavioral risk: high. Tests: cohort-to-RAW and public E2E. Exit: no contributor lacks explicit RAW/admissibility result. Dependency: none.
-2. **SERVICE REACH MARKET KEY v1** — Goal: stop provider-location reach proxy. Closes TD-002. Files: stats builder, reach contracts/loaders. Risk: high. Tests: UNKNOWN exclusion/exact reach/remote-not-national. Exit: local admission always has reach evidence. Dependency: lineage gate.
+1. **RUNTIME COHORT LINEAGE GATE v1 — COMPLETE** — Every contributor is auditable or fails closed. Closed TD-001.
+2. **OFFER SERVICE REACH ADMISSION GATE v1 — COMPLETE** — Provider location and remote capability cannot stand in for explicit offer reach. Closed TD-002.
 3. **TEMPORAL EVIDENCE ADMISSIBILITY v1** — Goal: type/enforce acquisition and freshness. Closes TD-003. Files: observation/cohort/API contracts. Risk: high. Tests: historical/current mismatch and freshness. Exit: every admitted row/cohort has explicit temporal state/window. Dependency: lineage gate.
 4. **COMMERCIAL CONTEXT SINGLE TRUTH v1** — Goal: unify context and trace truth. Closes TD-004. Files: context/parser/service/tracer. Risk: high. Tests: STANDARD/URGENCY matrix and engine/trace parity. Exit: parsed/selected/traced values and raw basis match. Dependency: none.
 
@@ -567,19 +567,19 @@ Estimated consolidation: **18 small causal sprints** (the broad interpretation i
 
 ### SAFE_FOR_FOUNDER_FIELD_TESTING
 
-`CONDITIONAL_SHADOW_ONLY`. Continue append-only HUMAN_REAL capture and supervised parser/clarification observation. Do not rely on displayed economic ranges until TD-001 through TD-004 close. Keep promotion and runtime learning writes disabled.
+`CONDITIONAL_SHADOW_ONLY`. Continue append-only HUMAN_REAL capture and supervised parser/clarification observation. Do not rely on displayed economic ranges until TD-003 and TD-004 close. Keep promotion and runtime learning writes disabled.
 
 ### SAFE_FOR_MARKET_ACQUISITION_EXPANSION
 
-`NO`. Required closures: TD-001, TD-002, TD-003, TD-004, TD-005, TD-008 and TD-010. This is risk-based, not “debt zero”: corpus cleanup, documentation and legacy wrappers do not block acquisition.
+`NO`. Required closures: TD-003, TD-004, TD-005, TD-008 and TD-010. This is risk-based, not “debt zero”: corpus cleanup, documentation and legacy wrappers do not block acquisition.
 
 ### SAFE_FOR_KNOWLEDGE_PROMOTION
 
-`NO`. Required closures: TD-001, TD-002, TD-003, TD-004, TD-008, TD-009, TD-010, TD-011 and TD-013; additionally, the current candidate remains `FAIL_SHADOW_VALIDATION`. Existing currency conflicts remain preserved and no promotion is authorized.
+`NO`. Required closures: TD-003, TD-004, TD-008, TD-009, TD-010, TD-011 and TD-013; additionally, the current candidate remains `FAIL_SHADOW_VALIDATION`. Existing currency conflicts remain preserved and no promotion is authorized.
 
-## Exact first remediation sprint
+## Exact next remediation sprint
 
-**RUNTIME COHORT LINEAGE GATE v1**. It closes only TD-001. It must start with a RED public-boundary test proving the active remote hourly cohort contains two contributors without RAW linkage, add a fail-closed/downgrade admission result without changing readiness thresholds, expose constituent evidence lineage, replay current API/trace/corpus, run full backend/frontend validation, and stop. Exit is not “more lineage fields”; it is that no economic range can contain an observation without an explicit, auditable admissibility decision.
+**TEMPORAL EVIDENCE ADMISSIBILITY v1**. It closes only TD-003. Every admitted row and cohort must carry an explicit temporal state and enforceable freshness window while preserving historical evidence and existing thresholds. TD-004 remains independent and out of scope for that sprint.
 
 ## Explicitly not debt
 

@@ -25,6 +25,7 @@ class CohortePricing:
     price_scope: str = "UNKNOWN"
     commercial_context: str = "STANDARD"
     lineage_gate_version: str | None = None
+    service_reach_gate_version: str | None = None
     observation_ids: tuple[str, ...] = ()
 
     @property
@@ -54,6 +55,7 @@ class ResultadoEvidenciaPrecio:
     price_scope: str = "UNKNOWN"
     commercial_context: str = "STANDARD"
     lineage_gate_version: str | None = None
+    service_reach_gate_version: str | None = None
     observation_ids: tuple[str, ...] = ()
 
 
@@ -104,6 +106,7 @@ def evaluar_precio(
         price_scope=cohort.price_scope,
         commercial_context=cohort.commercial_context,
         lineage_gate_version=cohort.lineage_gate_version,
+        service_reach_gate_version=cohort.service_reach_gate_version,
         observation_ids=cohort.observation_ids,
     )
 

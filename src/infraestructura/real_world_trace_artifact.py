@@ -7,7 +7,10 @@ import math
 from pathlib import Path
 from statistics import median
 
-from src.aplicacion.pricing_cohort_loader import cargar_cohortes_pricing_runtime
+from src.aplicacion.pricing_cohort_loader import (
+    cargar_cohortes_pricing,
+    cargar_cohortes_pricing_runtime,
+)
 from src.dominio.real_world_query_trace import InputModality, TraceStage
 from src.infraestructura.real_world_query_tracer import append_trace, build_learning_intake, trace_real_world_query
 
@@ -17,6 +20,14 @@ def build_real_world_trace_artifacts(root, output_dir):
     output.mkdir(parents=True, exist_ok=True)
     corpus = _jsonl(root / "data/language/real_query_corpus_v1.jsonl")
     local, remote = cargar_cohortes_pricing_runtime()
+    before_local = cargar_cohortes_pricing(
+        root / "data/local_pricing_stats_lineage_v1.csv",
+        require_runtime_lineage_gate=True,
+    )
+    before_remote = cargar_cohortes_pricing(
+        root / "data/remote_pricing_stats_lineage_v1.csv",
+        require_runtime_lineage_gate=True,
+    )
     trace_path = output / "real_world_query_traces_v1.jsonl"
     intake_by_id = {}
     for record in corpus:
@@ -31,6 +42,22 @@ def build_real_world_trace_artifacts(root, output_dir):
         append_trace(trace_path, trace)
         intake = build_learning_intake(trace)
         regression_outcome, regression_errors = adjudicate_trace(record, trace)
+        before_trace = trace_real_world_query(
+            record["query_raw"],
+            local_cohortes=before_local,
+            remote_cohortes=before_remote,
+            source_case_id=f"reach-before:{record['id']}",
+            case_origin=record["provenance"],
+        )
+        before_outcome, before_errors = adjudicate_trace(record, before_trace)
+        if (
+            before_trace.readiness != trace.readiness
+            and _semantic_projection(before_trace) == _semantic_projection(trace)
+        ):
+            if before_outcome == "WRONG_INTERPRETATION":
+                regression_outcome, regression_errors = before_outcome, before_errors
+            elif trace.readiness == "NO_EVIDENCE":
+                regression_outcome, regression_errors = "EXPECTED_SAFETY_CHANGE", []
         intake["regression_outcome"] = regression_outcome
         intake["regression_errors"] = regression_errors
         intake_by_id[trace.trace_id] = intake
@@ -193,6 +220,16 @@ def adjudicate_trace(record, trace):
     if expected_safety_change:
         return "EXPECTED_SAFETY_CHANGE", []
     return {"CLARIFICATION": "CLARIFICATION_CORRECT", "SAFE_UNSUPPORTED": "SAFE_UNSUPPORTED", "PARSE": "PARSE_CORRECT"}[behavior], []
+
+
+def _semantic_projection(trace):
+    return {
+        "intent": trace.intent_result,
+        "parser": trace.parser_result,
+        "economic_dimensions": trace.economic_dimensions,
+        "technical_need": trace.technical_need_result,
+        "semantic": trace.semantic_result,
+    }
 
 
 def _distribution(values):

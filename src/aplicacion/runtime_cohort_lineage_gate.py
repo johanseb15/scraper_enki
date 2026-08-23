@@ -12,6 +12,12 @@ from src.aplicacion.pricing_dimensions import (
     infer_commercial_context,
     infer_price_scope,
 )
+from src.aplicacion.service_reach_admission_gate import (
+    SERVICE_REACH_GATE_VERSION,
+    ServiceReachAdmissionDecision,
+    evaluate_service_reach,
+)
+from src.dominio.economic_evidence import EconomicEvidenceDimensionsV2
 from src.dominio.offer_evidence import OfferReachChargedScopeEvidence
 
 
@@ -39,7 +45,10 @@ class RuntimeCohortBuild:
     market_scope: str
     cohorts: tuple[dict[str, object], ...]
     decisions: tuple[RuntimeLineageDecision, ...]
+    reach_decisions: tuple[ServiceReachAdmissionDecision, ...]
     eligible_before: int
+    lineage_admitted: int
+    reach_admitted: int
     admitted: int
     excluded: int
 
@@ -158,7 +167,12 @@ def _eligible(row: Mapping[str, str], market_scope: str) -> bool:
     return True
 
 
-def _aggregate(rows: Sequence[Mapping[str, str]], market_scope: str) -> list[dict[str, object]]:
+def _aggregate(
+    rows: Sequence[Mapping[str, str]],
+    market_scope: str,
+    *,
+    service_reach_gated: bool,
+) -> list[dict[str, object]]:
     members: dict[tuple[str, str, str, str], list[Mapping[str, str]]] = defaultdict(list)
     for row in rows:
         market = row["province"] if market_scope == "LOCAL_SERVICE" else "AR"
@@ -203,6 +217,9 @@ def _aggregate(rows: Sequence[Mapping[str, str]], market_scope: str) -> list[dic
                 "decision_ready": "YES" if confidence == "MEDIUM" else "NO",
                 "range_ready": "YES" if confidence in {"LOW", "MEDIUM"} else "NO",
                 "lineage_gate_version": LINEAGE_GATE_VERSION,
+                "service_reach_gate_version": (
+                    SERVICE_REACH_GATE_VERSION if service_reach_gated else ""
+                ),
                 "observation_ids": "|".join(row["observation_id"] for row in ordered_rows),
             }
         )
@@ -216,8 +233,9 @@ def build_runtime_cohort_rows(
     repository_root: str | Path,
     *,
     market_scope: str,
+    service_reach_dimensions: Mapping[str, EconomicEvidenceDimensionsV2] | None = None,
 ) -> RuntimeCohortBuild:
-    """Apply lineage admission before any runtime aggregate is calculated."""
+    """Apply composable lineage/reach admission before runtime aggregation."""
     eligible = [row for row in rows if _eligible(row, market_scope)]
     decisions = tuple(
         evaluate_runtime_lineage(
@@ -227,13 +245,40 @@ def build_runtime_cohort_rows(
         )
         for row in eligible
     )
-    accepted_ids = {decision.observation_id for decision in decisions if decision.admitted}
+    reach_decisions = tuple(
+        evaluate_service_reach(
+            observation_id=row["observation_id"],
+            provider_location=row.get("province") or None,
+            runtime_market=(
+                row["province"] if market_scope == "LOCAL_SERVICE" else "AR"
+            ),
+            market_scope=market_scope,
+            dimensions=service_reach_dimensions.get(row["observation_id"]),
+        )
+        for row in eligible
+    ) if service_reach_dimensions is not None else ()
+    lineage_ids = {decision.observation_id for decision in decisions if decision.admitted}
+    reach_ids = (
+        {decision.observation_id for decision in reach_decisions if decision.admitted}
+        if service_reach_dimensions is not None
+        else {row["observation_id"] for row in eligible}
+    )
+    accepted_ids = lineage_ids & reach_ids
     accepted = [row for row in eligible if row["observation_id"] in accepted_ids]
     return RuntimeCohortBuild(
         market_scope=market_scope,
-        cohorts=tuple(_aggregate(accepted, market_scope)),
+        cohorts=tuple(
+            _aggregate(
+                accepted,
+                market_scope,
+                service_reach_gated=service_reach_dimensions is not None,
+            )
+        ),
         decisions=decisions,
+        reach_decisions=reach_decisions,
         eligible_before=len(eligible),
+        lineage_admitted=len(lineage_ids),
+        reach_admitted=len(reach_ids),
         admitted=len(accepted),
         excluded=len(eligible) - len(accepted),
     )

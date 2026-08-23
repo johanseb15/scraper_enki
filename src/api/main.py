@@ -176,6 +176,7 @@ def _serialize_decision_result(result):
             "price_scope": evidence.price_scope,
             "commercial_context": evidence.commercial_context,
             "lineage_gate_version": evidence.lineage_gate_version,
+            "service_reach_gate_version": evidence.service_reach_gate_version,
             "observation_ids": list(evidence.observation_ids),
         },
     }
