@@ -41,7 +41,7 @@ def _cohort_id(row: dict[str, str]) -> str:
     return (
         f"pricing-cohort:{market}:{row['canonical_service'].strip()}:"
         f"{infer_price_scope(row.get('economic_object_raw', ''))}:"
-        f"{infer_commercial_context(row.get('economic_object_raw', ''))}"
+        f"{infer_commercial_context(row.get('economic_object_raw', '')).value.value}"
     )
 
 

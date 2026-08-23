@@ -50,7 +50,7 @@ def compose_economic_evidence_records(
                 currency=_clean(row.get("currency")) or "UNKNOWN",
                 price_value=_decimal(row.get("price_value")),
                 price_scope=infer_price_scope(raw_expression),
-                commercial_context=infer_commercial_context(raw_expression),
+                commercial_context=infer_commercial_context(raw_expression).value.value,
                 provenance=observation.observation_provenance,
                 meaning=envelope.meaning,
                 dimensions=(dimensions_by_observation_id or {}).get(observation.observation_id),

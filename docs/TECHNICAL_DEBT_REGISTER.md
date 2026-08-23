@@ -10,7 +10,7 @@ Machine-readable sources: `data/evaluation/technical_debt_audit_v1.json` (histor
 
 ## Executive decision
 
-The repository is test-green, but it is not yet safe to expand real market acquisition or authorize knowledge promotion. TD-001 is resolved by a fail-closed constituent RAW-lineage gate, TD-002 by a composable explicit service-reach gate, and TD-003 by explicit temporal identity/current-compatibility admission. One P0 debt still affects runtime evidence truth: commercial-context projection. Founder field capture may continue only as supervised shadow testing; economic results must not be relied on until the remaining P0 closes.
+The repository is test-green, but it is not yet safe to expand real market acquisition or authorize knowledge promotion. TD-001 is resolved by a fail-closed constituent RAW-lineage gate, TD-002 by a composable explicit service-reach gate, TD-003 by explicit temporal identity/current-compatibility admission, and TD-004 by one typed commercial-context truth propagated through parser, runtime, comparability and trace. No P0 remains open. Founder field testing may continue under supervision; the active runtime still has zero admitted evidence and promotion/runtime learning writes remain disabled.
 
 The TD-003 remediation recovers only explicit RAW/manifest temporal facts, keeps all five dated observations historical because no freshness policy exists, and excludes all UNKNOWN or incompatible temporal states from current pricing. Filesystem timestamps, historical evidence, HUMAN_REAL data, readiness thresholds and promotion state remain untouched.
 
@@ -156,7 +156,7 @@ The six specifically incorrect clarifications have one control-flow family:
 - CATEGORY: CORRECTNESS, OBSERVABILITY, DUPLICATED_LOGIC, SAFETY.
 - SEVERITY: `P0`.
 - CONFIDENCE: HIGH.
-- STATUS: CONFIRMED.
+- STATUS: RESOLVED by `commercial-context-single-truth-v1`.
 - EVIDENCE: Query runtime uses `_commercial_context`, cohorts use `infer_commercial_context`, and trace economic dimensions hardcode `STANDARD`. A probe selected `pricing-cohort:AR:SOPORTE_REMOTO:PER_HOUR:URGENCY` while trace declared inferred `STANDARD`.
 - REPRODUCTION: Resolve “me quieren cobrar 48 lucas la hora por soporte remoto de urgencia, esta bien?” and compare engine evidence id with trace economic context.
 - AFFECTED_FILES: `src/aplicacion/enki_pricing_query_service.py`, `src/aplicacion/pricing_dimensions.py`, `src/infraestructura/real_world_query_tracer.py`, `scripts/build_pricing_statistics.py`.
@@ -169,13 +169,13 @@ The six specifically incorrect clarifications have one control-flow family:
 - LIKELIHOOD: HIGH.
 - BLAST_RADIUS: All non-standard contexts and trace consumers.
 - DEPENDENCIES: None.
-- PROPOSED_FIX: One typed CommercialContext with raw basis/provenance consumed by parser, builder, engine and trace.
-- REGRESSION_TEST_REQUIRED: STANDARD/URGENCY vocabulary matrix and exact engine/trace accepted-evidence parity.
+- IMPLEMENTED_FIX: `CommercialContext` is the single typed identity for user and source claims, preserves distinct origin/raw basis, represents STANDARD/URGENCY/UNKNOWN/AMBIGUOUS, and is propagated without reinterpretation through parser, cohort selection, comparability, API and trace. UNKNOWN and AMBIGUOUS fail closed.
+- REGRESSION_TEST: End-to-end STANDARD/URGENCY/UNKNOWN/AMBIGUOUS, user/source provenance, mismatch/unknown-side safety, rq003/rq032, API boundary, corpus 50, HUMAN_REAL and exact engine/trace parity.
 - ESTIMATED_SCOPE: M.
-- BLOCKS_MARKET_ACQUISITION: true.
-- BLOCKS_FIELD_TESTING: true for trace/economic-result reliance.
-- BLOCKS_PROMOTION: true.
-- NOTES: The prior selected-evidence-id mismatch is verified fixed; this is a separate dimension projection defect.
+- BLOCKS_MARKET_ACQUISITION: false for TD-004; TD-005, TD-008 and TD-010 still block the program gate.
+- BLOCKS_FIELD_TESTING: false; supervised field testing remains non-promotional and the runtime currently has zero admitted evidence.
+- BLOCKS_PROMOTION: false for TD-004; TD-008, TD-009, TD-010, TD-011 and TD-013 still block the program gate.
+- NOTES: Closed without acquisition, thresholds, evidence additions, historical rewrites, HUMAN_REAL mutation, promotion or runtime learning writes. See `data/evaluation/commercial_context_single_truth_v1.json`.
 
 ### TD-005 — Repository-wide direct CLI/import contract is not defined or enforced
 
@@ -526,7 +526,7 @@ TD-005 CLI contract ──────────> TD-015 dependency/config
 TD-013 boundary tests ────────> TD-016 legacy retirement
 ```
 
-TD-004 can be remediated independently. Market acquisition still requires TD-004/005/008/010. Promotion additionally requires TD-009/011/013.
+All P0 debts are resolved. Market acquisition still requires TD-005/008/010. Promotion additionally requires TD-008/009/010/011/013.
 
 ## Remediation waves
 
@@ -535,7 +535,7 @@ TD-004 can be remediated independently. Market acquisition still requires TD-004
 1. **RUNTIME COHORT LINEAGE GATE v1 — COMPLETE** — Every contributor is auditable or fails closed. Closed TD-001.
 2. **OFFER SERVICE REACH ADMISSION GATE v1 — COMPLETE** — Provider location and remote capability cannot stand in for explicit offer reach. Closed TD-002.
 3. **TEMPORAL EVIDENCE ADMISSIBILITY v1 — COMPLETE** — Every current-pricing contributor requires explicit temporal identity and compatible freshness policy. Closed TD-003.
-4. **COMMERCIAL CONTEXT SINGLE TRUTH v1** — Goal: unify context and trace truth. Closes TD-004. Files: context/parser/service/tracer. Risk: high. Tests: STANDARD/URGENCY matrix and engine/trace parity. Exit: parsed/selected/traced values and raw basis match. Dependency: none.
+4. **COMMERCIAL CONTEXT SINGLE TRUTH v1 — COMPLETE** — One typed user/source identity with raw basis and exact parser/runtime/trace parity. Closed TD-004.
 
 ### WAVE 1 — P1 operability and reproducibility
 
@@ -567,19 +567,19 @@ Estimated consolidation: **18 small causal sprints** (the broad interpretation i
 
 ### SAFE_FOR_FOUNDER_FIELD_TESTING
 
-`CONDITIONAL_SHADOW_ONLY`. Continue append-only HUMAN_REAL capture and supervised parser/clarification observation. Do not rely on displayed economic ranges until TD-004 closes. Keep promotion and runtime learning writes disabled.
+`YES_SUPERVISED`. Continue append-only HUMAN_REAL capture and supervised parser/clarification observation. The active runtime has zero admitted evidence, so there are no economic ranges to rely on. Keep promotion and runtime learning writes disabled.
 
 ### SAFE_FOR_MARKET_ACQUISITION_EXPANSION
 
-`NO`. Required closures: TD-004, TD-005, TD-008 and TD-010. This is risk-based, not “debt zero”: corpus cleanup, documentation and legacy wrappers do not block acquisition.
+`NO`. Required closures: TD-005, TD-008 and TD-010. This is risk-based, not “debt zero”: corpus cleanup, documentation and legacy wrappers do not block acquisition.
 
 ### SAFE_FOR_KNOWLEDGE_PROMOTION
 
-`NO`. Required closures: TD-004, TD-008, TD-009, TD-010, TD-011 and TD-013; additionally, the current candidate remains `FAIL_SHADOW_VALIDATION`. Existing currency conflicts remain preserved and no promotion is authorized.
+`NO`. Required closures: TD-008, TD-009, TD-010, TD-011 and TD-013; additionally, the current candidate remains `FAIL_SHADOW_VALIDATION`. Existing currency conflicts remain preserved and no promotion is authorized.
 
 ## Exact next remediation sprint
 
-**COMMERCIAL CONTEXT SINGLE TRUTH v1**. It closes only TD-004. Parser, cohort selection, engine and trace must consume one typed commercial-context result with raw basis/provenance and exact engine/trace parity. No TD-004 work was implemented in the temporal sprint.
+**CLI EXECUTION CONTRACT v1**. It closes only TD-005. Select and enforce one installed/module execution contract, then boundary-test every intended CLI safely without `PYTHONPATH`. Do not implement TD-008 or any later debt in that sprint.
 
 ## Explicitly not debt
 

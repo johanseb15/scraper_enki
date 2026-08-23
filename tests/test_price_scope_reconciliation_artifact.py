@@ -54,8 +54,8 @@ def test_versioned_cohorts_and_sidecar_use_only_observed_raw_evidence(reconcilia
             assert "price_scope" in next(csv.reader(handle))
     rows = jsonl(output / "pricing_cohort_scope_evidence_v1.jsonl")
     observed = [row for row in rows if row["status"] == "OBSERVED"]
-    assert len(observed) == 8
-    assert sum(len(row["observations"]) for row in observed) == 12
+    assert len(observed) == 9
+    assert sum(len(row["observations"]) for row in observed) == 14
     assert all(row["raw_rewritten"] is False for row in rows)
     assert all(item["raw_basis"] and item["provenance"] for row in observed for item in row["observations"])
 
@@ -66,9 +66,9 @@ def test_before_after_and_net_drift_are_reproducible(reconciliation):
     assert len(drift) == 19  # 13 regressions and 5 recoveries, plus one changed status with net zero.
     assert sum(row["wrong_interpretation_net_delta"] for row in drift) == 8
     assert metrics["WRONG_INTERPRETATION_BEFORE"] == 27
-    assert metrics["WRONG_INTERPRETATION_AFTER"] == 21
+    assert metrics["WRONG_INTERPRETATION_AFTER"] == 26
     assert metrics["PRICE_SCOPE_MISMATCHES_BEFORE"] == 5
     assert metrics["PRICE_SCOPE_MISMATCHES_AFTER"] == 2
-    assert metrics["PRICE_SCOPE_UNKNOWN_SIDE_AFTER"] == 32
+    assert metrics["PRICE_SCOPE_UNKNOWN_SIDE_AFTER"] == 35
     assert metrics["EXPLICIT_NORMALIZATION_RECALL"] == {"numerator": 7, "denominator": 7, "value": 1.0}
     assert metrics["AUTO_PROMOTIONS"] == metrics["NETWORK_REQUESTS"] == metrics["RUNTIME_WRITES"] == 0

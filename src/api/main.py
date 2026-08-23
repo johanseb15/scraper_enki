@@ -12,6 +12,7 @@ from src.configuracion_runtime import resolver_ruta_db_ofertas
 from src.infraestructura.sqlite.repositorio_sqlite_ofertas import RepositorioSQLiteOfertas
 from src.normalizadores.normalizador_servicios import NormalizadorServicios
 from src.reporte import generar_resumen_servicio
+from src.dominio.commercial_context import serialize_commercial_context
 
 
 app = FastAPI(title="Enki API", version="0.2.0")
@@ -148,6 +149,9 @@ def _serialize_decision_result(result):
             "condition": parsed.condition,
             "is_bundle": parsed.is_bundle,
             "parts_scope": parsed.commercial_context.parts_scope.value,
+            "commercial_context": serialize_commercial_context(
+                parsed.commercial_context
+            ),
             "clarification_required": parsed.metadata.clarification_required,
             "clarification_reason": parsed.metadata.clarification_reason,
             "clarification_question": parsed.metadata.clarification_question,
@@ -174,7 +178,13 @@ def _serialize_decision_result(result):
             "price_position": evidence.price_position,
             "decision_label": evidence.decision_label,
             "price_scope": evidence.price_scope,
-            "commercial_context": evidence.commercial_context,
+            "commercial_context": evidence.commercial_context.value.value,
+            "commercial_context_provenance": serialize_commercial_context(
+                evidence.commercial_context
+            ),
+            "evidence_commercial_context": None
+            if evidence.evidence_commercial_context is None
+            else serialize_commercial_context(evidence.evidence_commercial_context),
             "lineage_gate_version": evidence.lineage_gate_version,
             "service_reach_gate_version": evidence.service_reach_gate_version,
             "temporal_gate_version": evidence.temporal_gate_version,

@@ -2,6 +2,7 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from enum import Enum
 from src.dominio.price_scope_contract import PriceScopeMeaning
+from src.dominio.commercial_context import CommercialContext, PartsScope
 
 class QueryKind(str, Enum):
     ECONOMIC_QUERY="ECONOMIC_QUERY"; TECHNICAL_NEED="TECHNICAL_NEED"; UNKNOWN="UNKNOWN"
@@ -17,9 +18,6 @@ class ServiceModality(str, Enum):
     WORKSHOP="WORKSHOP"; ONSITE="ONSITE"; REMOTE="REMOTE"; UNKNOWN="UNKNOWN"
 class PriceType(str, Enum):
     EXACT="EXACT"; RANGE="RANGE"; MIN="MIN"; MAX="MAX"; PER_HOUR="PER_HOUR"; PER_MONTH="PER_MONTH"; PER_UNIT="PER_UNIT"; PER_VISIT="PER_VISIT"; PER_PROJECT="PER_PROJECT"; UNKNOWN="UNKNOWN"
-class PartsScope(str, Enum):
-    LABOR_ONLY="LABOR_ONLY"; PARTS_INCLUDED="PARTS_INCLUDED"; USER_PROVIDED="USER_PROVIDED"; UNKNOWN="UNKNOWN"
-
 @dataclass(frozen=True)
 class PriceMention:
     type: PriceType=PriceType.UNKNOWN
@@ -35,14 +33,6 @@ class Geography:
     raw_location: str|None=None
     province: str|None=None
     city: str|None=None
-
-@dataclass(frozen=True)
-class CommercialContext:
-    parts_scope: PartsScope=PartsScope.UNKNOWN
-    quantity: int|None=None
-    urgency: str="UNKNOWN"
-    environment: str="UNKNOWN"
-    payment_method: str="UNKNOWN"
 
 @dataclass(frozen=True)
 class ParseMetadata:

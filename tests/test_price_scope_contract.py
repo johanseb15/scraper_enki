@@ -21,6 +21,7 @@ def cohort(scope):
         min_ars=Decimal("20000"), q1_ars=Decimal("25000"), median_ars=Decimal("30000"),
         q3_ars=Decimal("35000"), max_ars=Decimal("40000"), spread_ratio=Decimal("2"),
         evidence_confidence="LOW", decision_ready=False, range_ready=True, price_scope=scope,
+        commercial_context="STANDARD",
     )
 
 
@@ -60,7 +61,7 @@ def test_real_corpus_each_100gb_loss_is_recovered_without_changing_intent():
 
 
 def test_explicit_scope_propagates_parser_runtime_comparability_and_trace():
-    text = "quiero cobrar 30 lucas la hora de soporte remoto, me quedo corto?"
+    text = "quiero cobrar 30 lucas la hora de soporte remoto en horario habitual, me quedo corto?"
     cohorts = (cohort("PER_HOUR"), cohort("PER_VISIT"))
     result = resolver_consulta_pricing(text, local_cohortes=(), remote_cohortes=cohorts)
     trace = trace_real_world_query(text, local_cohortes=(), remote_cohortes=cohorts, source_case_id="scope:e2e", case_origin="CURATED_ENKI")

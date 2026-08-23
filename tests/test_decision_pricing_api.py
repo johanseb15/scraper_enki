@@ -77,7 +77,7 @@ def test_decision_pricing_returns_real_range_payload():
     try:
         response = client.post(
             "/decision/pricing",
-            json={"query": "me quieren cobrar 35 lucas la hora por soporte remoto, está bien?"},
+            json={"query": "me quieren cobrar 35 lucas la hora por soporte remoto en horario habitual, está bien?"},
         )
     finally:
         app.dependency_overrides.clear()
@@ -89,6 +89,13 @@ def test_decision_pricing_returns_real_range_payload():
     assert body["parsed"]["canonical_services"] == ["SOPORTE_REMOTO"]
     assert body["parsed"]["price"]["value"] == 35000
     assert body["parsed"]["price"]["type"] == "PER_HOUR"
+    assert body["parsed"]["commercial_context"] == {
+        "value": "STANDARD",
+        "status": "OBSERVED",
+        "origin": "USER_CLAIM",
+        "raw_basis": ["horario habitual"],
+        "resolution_method": "commercial-context-v1",
+    }
     assert body["evidence"]["min_ars"] == 28000
     assert body["evidence"]["median_ars"] == 30000
     assert body["evidence"]["max_ars"] == 40000
@@ -96,6 +103,8 @@ def test_decision_pricing_returns_real_range_payload():
     assert body["evidence"]["providers_n"] == 3
     assert body["evidence"]["evidence_confidence"] == "LOW"
     assert body["evidence"]["price_scope"] == "PER_HOUR"
+    assert body["evidence"]["commercial_context"] == "STANDARD"
+    assert body["evidence"]["evidence_commercial_context"]["origin"] == "CONTROLLED_FIXTURE"
 
 
 def test_decision_pricing_returns_clarification_payload():
@@ -103,7 +112,7 @@ def test_decision_pricing_returns_clarification_payload():
     try:
         response = client.post(
             "/decision/pricing",
-            json={"query": "me quieren cobrar 35 lucas por soporte remoto, está bien?"},
+            json={"query": "me quieren cobrar 35 lucas por soporte remoto en horario habitual, está bien?"},
         )
     finally:
         app.dependency_overrides.clear()
@@ -204,14 +213,14 @@ def test_decision_pricing_technical_need_with_province_has_readiness_but_no_evid
     assert readiness["DIAGNOSTIC_SERVICE"]["status"] == "READY_FOR_PRICING"
     assert readiness["HARDWARE_DIAGNOSTIC"]["status"] == "UNRESOLVED_ROUTE"
     probe={item["route"]: item for item in body["evidence_probe"]["probes"]}
-    assert probe["OS_INSTALLATION_SERVICE"]["status"] == "EVIDENCE_AVAILABLE"
-    assert probe["OS_INSTALLATION_SERVICE"]["observations_n"] == 5
-    assert probe["OS_INSTALLATION_SERVICE"]["providers_n"] == 3
-    assert probe["OS_INSTALLATION_SERVICE"]["evidence_confidence"] == "MEDIUM"
-    assert probe["OS_INSTALLATION_SERVICE"]["observed_min"] == 45000
-    assert probe["OS_INSTALLATION_SERVICE"]["observed_max"] == 70000
-    assert probe["OS_INSTALLATION_SERVICE"]["median"] == 55000
-    assert probe["DIAGNOSTIC_SERVICE"]["status"] == "INSUFFICIENT_EVIDENCE"
+    assert probe["OS_INSTALLATION_SERVICE"]["status"] == "NO_EVIDENCE"
+    assert probe["OS_INSTALLATION_SERVICE"]["observations_n"] == 0
+    assert probe["OS_INSTALLATION_SERVICE"]["providers_n"] == 0
+    assert probe["OS_INSTALLATION_SERVICE"]["evidence_confidence"] == "NONE"
+    assert probe["OS_INSTALLATION_SERVICE"]["observed_min"] is None
+    assert probe["OS_INSTALLATION_SERVICE"]["observed_max"] is None
+    assert probe["OS_INSTALLATION_SERVICE"]["median"] is None
+    assert probe["DIAGNOSTIC_SERVICE"]["status"] == "NO_EVIDENCE"
     assert probe["HARDWARE_DIAGNOSTIC"]["status"] == "NOT_PROBED"
     assert "decision_label" not in probe["OS_INSTALLATION_SERVICE"]
     assert "recommendation" not in probe["OS_INSTALLATION_SERVICE"]

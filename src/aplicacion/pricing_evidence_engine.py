@@ -1,10 +1,17 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from decimal import Decimal
 from typing import Iterable
 
 from src.dominio.price_scope_contract import ScopeCompatibility, compare_price_scopes
+from src.dominio.commercial_context import (
+    CommercialContext,
+    CommercialContextCompatibility,
+    CommercialContextOrigin,
+    compare_commercial_contexts,
+    commercial_context_from_value,
+)
 
 
 @dataclass(frozen=True)
@@ -23,7 +30,12 @@ class CohortePricing:
     decision_ready: bool
     range_ready: bool
     price_scope: str = "UNKNOWN"
-    commercial_context: str = "STANDARD"
+    commercial_context: CommercialContext | str = field(
+        default_factory=lambda: commercial_context_from_value(
+            None,
+            origin=CommercialContextOrigin.CONTROLLED_FIXTURE,
+        )
+    )
     lineage_gate_version: str | None = None
     service_reach_gate_version: str | None = None
     temporal_gate_version: str | None = None
@@ -33,11 +45,22 @@ class CohortePricing:
     freshness_policy_version: str | None = None
     observation_ids: tuple[str, ...] = ()
 
+    def __post_init__(self) -> None:
+        if not isinstance(self.commercial_context, CommercialContext):
+            object.__setattr__(
+                self,
+                "commercial_context",
+                commercial_context_from_value(
+                    self.commercial_context,
+                    origin=CommercialContextOrigin.CONTROLLED_FIXTURE,
+                ),
+            )
+
     @property
     def evidence_id(self) -> str:
         return (
             f"pricing-cohort:{self.market}:{self.canonical_service}:"
-            f"{self.price_scope}:{self.commercial_context}"
+            f"{self.price_scope}:{self.commercial_context.value.value}"
         )
 
 
@@ -58,7 +81,13 @@ class ResultadoEvidenciaPrecio:
     decision_label: str | None = None
     evidence_id: str | None = None
     price_scope: str = "UNKNOWN"
-    commercial_context: str = "STANDARD"
+    commercial_context: CommercialContext = field(
+        default_factory=lambda: commercial_context_from_value(
+            None,
+            origin=CommercialContextOrigin.USER_CLAIM,
+        )
+    )
+    evidence_commercial_context: CommercialContext | None = None
     lineage_gate_version: str | None = None
     service_reach_gate_version: str | None = None
     temporal_gate_version: str | None = None
@@ -76,8 +105,12 @@ def evaluar_precio(
     canonical_service: str,
     proposed_price_ars: Decimal | None = None,
     price_scope: str | None = None,
-    commercial_context: str = "STANDARD",
+    commercial_context: CommercialContext | str | None = None,
 ) -> ResultadoEvidenciaPrecio:
+    query_context = commercial_context_from_value(
+        commercial_context,
+        origin=CommercialContextOrigin.USER_CLAIM,
+    )
     cohort = next(
         (
             c for c in cohortes
@@ -87,7 +120,10 @@ def evaluar_precio(
                 price_scope is None
                 or compare_price_scopes(c.price_scope, price_scope) is ScopeCompatibility.COMPATIBLE
             )
-            and c.commercial_context == commercial_context
+            and compare_commercial_contexts(
+                c.commercial_context,
+                query_context,
+            ) is CommercialContextCompatibility.COMPATIBLE
         ),
         None,
     )
@@ -98,7 +134,7 @@ def evaluar_precio(
             market=market,
             canonical_service=canonical_service,
             price_scope=price_scope or "UNKNOWN",
-            commercial_context=commercial_context,
+            commercial_context=query_context,
         )
 
     common = dict(
@@ -114,7 +150,8 @@ def evaluar_precio(
         evidence_confidence=cohort.evidence_confidence,
         evidence_id=cohort.evidence_id,
         price_scope=cohort.price_scope,
-        commercial_context=cohort.commercial_context,
+        commercial_context=query_context,
+        evidence_commercial_context=cohort.commercial_context,
         lineage_gate_version=cohort.lineage_gate_version,
         service_reach_gate_version=cohort.service_reach_gate_version,
         temporal_gate_version=cohort.temporal_gate_version,

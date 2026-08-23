@@ -67,13 +67,13 @@ def test_remote_support_is_split_by_price_scope_and_commercial_context(tmp_path)
     ]
     by_key = {(row["price_scope"], row["commercial_context"]): row for row in support}
 
-    unknown = by_key[("UNKNOWN", "STANDARD")]
+    unknown = by_key[("UNKNOWN", "UNKNOWN")]
     assert unknown["observations_n"] == 1
     assert unknown["providers_n"] == 1
     assert unknown["evidence_confidence"] == "INSUFFICIENT"
     assert unknown["decision_ready"] == "NO"
 
-    hourly = by_key[("PER_HOUR", "STANDARD")]
+    hourly = by_key[("PER_HOUR", "UNKNOWN")]
     assert hourly["observations_n"] == 3
     assert hourly["providers_n"] == 3
     assert hourly["min_ars"] == 28000
@@ -114,7 +114,7 @@ def test_scope_detection_does_not_treat_technical_numbers_as_cadence(tmp_path):
 
     assert len(remote) == 1
     assert remote[0]["price_scope"] == "UNKNOWN"
-    assert remote[0]["commercial_context"] == "STANDARD"
+    assert remote[0]["commercial_context"] == "UNKNOWN"
 
 
 def test_stats_csv_persists_scope_dimensions(tmp_path):
@@ -137,4 +137,4 @@ def test_stats_csv_persists_scope_dimensions(tmp_path):
         row = next(csv.DictReader(f))
 
     assert row["price_scope"] == "PER_HOUR"
-    assert row["commercial_context"] == "STANDARD"
+    assert row["commercial_context"] == "UNKNOWN"

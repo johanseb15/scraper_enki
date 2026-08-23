@@ -9,6 +9,10 @@ from src.aplicacion.pricing_evidence_engine import CohortePricing
 from src.aplicacion.runtime_cohort_lineage_gate import LINEAGE_GATE_VERSION
 from src.aplicacion.service_reach_admission_gate import SERVICE_REACH_GATE_VERSION
 from src.aplicacion.temporal_evidence_admission_gate import TEMPORAL_GATE_VERSION
+from src.dominio.commercial_context import (
+    CommercialContextOrigin,
+    commercial_context_from_value,
+)
 
 
 DEFAULT_LOCAL_STATS = Path("data/local_pricing_stats_temporal_v1.csv")
@@ -110,7 +114,10 @@ def cargar_cohortes_pricing(
                     decision_ready=row["decision_ready"].upper() == "YES",
                     range_ready=row["range_ready"].upper() == "YES",
                     price_scope=(row.get("price_scope") or "UNKNOWN"),
-                    commercial_context=(row.get("commercial_context") or "STANDARD"),
+                    commercial_context=commercial_context_from_value(
+                        row.get("commercial_context"),
+                        origin=CommercialContextOrigin.COHORT_ARTIFACT,
+                    ),
                     lineage_gate_version=gate_version,
                     service_reach_gate_version=reach_gate_version,
                     temporal_gate_version=temporal_gate_version,

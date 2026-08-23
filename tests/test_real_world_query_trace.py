@@ -59,10 +59,14 @@ def test_every_stage_has_real_nonnegative_timing_and_total_latency():
 
 
 def test_evidence_exclusions_and_reasons_are_preserved():
-    matching = CohortePricing(**{**asdict(cohort()), "price_scope": "PER_HOUR"})
+    matching = CohortePricing(**{
+        **asdict(cohort()),
+        "price_scope": "PER_HOUR",
+        "commercial_context": "STANDARD",
+    })
     other = CohortePricing(**{**asdict(matching), "price_scope": "PER_MONTH"})
     trace = trace_real_world_query(
-        "quiero cobrar 30 lucas la hora de soporte remoto, me quedo corto?",
+        "quiero cobrar 30 lucas la hora de soporte remoto en horario habitual, me quedo corto?",
         local_cohortes=(), remote_cohortes=(matching, other), source_case_id="case:2",
         case_origin="CURATED_ENKI", input_modality=InputModality.TEXT,
     )

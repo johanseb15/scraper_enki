@@ -22,6 +22,11 @@ from src.dominio.real_world_query_trace import (
     replay_fingerprint,
     stable_trace_id,
 )
+from src.dominio.commercial_context import (
+    CommercialContextCompatibility,
+    compare_commercial_contexts,
+    serialize_commercial_context,
+)
 
 
 TRACE_VERSION = "real-world-query-trace-v1"
@@ -231,13 +236,21 @@ def _economic_dimensions(parsed):
         "charged_unit": parsed.price_scope.charged_unit.value,
         "billing_period": parsed.price_scope.billing_period.value,
         "price_bound": parsed.price_scope.price_bound.value,
-        "commercial_context": "STANDARD",
         "device": parsed.device_type,
         "hardware_included": None,
         "materials_included": None,
         "bundle": parsed.is_bundle,
     }
-    return {key: {"value": value, "status": "UNKNOWN" if value is None or value == "UNKNOWN" else "OBSERVED" if key in {"price", "location"} else "INFERRED", "provenance": "parsed_query"} for key, value in values.items()}
+    dimensions = {key: {"value": value, "status": "UNKNOWN" if value is None or value == "UNKNOWN" else "OBSERVED" if key in {"price", "location"} else "INFERRED", "provenance": "parsed_query"} for key, value in values.items()}
+    context = serialize_commercial_context(parsed.commercial_context)
+    dimensions["commercial_context"] = {
+        "value": context["value"],
+        "status": context["status"],
+        "provenance": context["origin"],
+        "raw_basis": context["raw_basis"],
+        "resolution_method": context["resolution_method"],
+    }
+    return dimensions
 
 
 def _cohort_id(item):
@@ -264,7 +277,7 @@ def _evidence_projection(parsed, result, local, remote):
         targets |= {item.canonical_service for item in result.market_resolution.resolutions if item.canonical_service}
     expected_market = "AR" if parsed.market_scope.value == "REMOTE_NATIONAL" else parsed.geography.province
     price_scope = result.evidence.price_scope if result.evidence else parsed.price_scope.comparison_scope
-    commercial_context = result.evidence.commercial_context if result.evidence else None
+    commercial_context = parsed.commercial_context
     selected_ids = _engine_selected_evidence_ids(result)
     candidates = []
     for item in cohorts:
@@ -274,8 +287,17 @@ def _evidence_projection(parsed, result, local, remote):
         if expected_market and item.market != expected_market: reasons.append("MARKET_MISMATCH")
         if not result.market_resolution and item.price_scope != price_scope:
             reasons.append("PRICE_SCOPE_UNKNOWN_SIDE" if "UNKNOWN" in {item.price_scope, price_scope} else "PRICE_SCOPE_MISMATCH")
-        if not result.market_resolution and commercial_context and item.commercial_context != commercial_context:
-            reasons.append("COMMERCIAL_CONTEXT_MISMATCH")
+        if not result.market_resolution:
+            context_compatibility = compare_commercial_contexts(
+                item.commercial_context,
+                commercial_context,
+            )
+            if context_compatibility is CommercialContextCompatibility.MISMATCH:
+                reasons.append("COMMERCIAL_CONTEXT_MISMATCH")
+            elif context_compatibility is CommercialContextCompatibility.UNKNOWN_SIDE:
+                reasons.append("COMMERCIAL_CONTEXT_UNKNOWN_SIDE")
+            elif context_compatibility is CommercialContextCompatibility.AMBIGUOUS_SIDE:
+                reasons.append("COMMERCIAL_CONTEXT_AMBIGUOUS_SIDE")
         accepted = _cohort_id(item) in selected_ids
         candidates.append(EvidenceDecisionTrace(
             _cohort_id(item), "ACCEPTED" if accepted else "EXCLUDED", tuple(reasons or (() if accepted else ("NOT_SELECTED_BY_RUNTIME",))),
@@ -333,6 +355,7 @@ def _parser_payload(parsed):
         "geography": _json_value(asdict(parsed.geography)), "clarification_required": parsed.metadata.clarification_required,
         "clarification_reason": parsed.metadata.clarification_reason,
         "price_scope": _json_value(asdict(parsed.price_scope)),
+        "commercial_context": serialize_commercial_context(parsed.commercial_context),
     }
 
 

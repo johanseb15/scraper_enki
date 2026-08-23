@@ -1,0 +1,1215 @@
+{
+  "affected_cases": [
+    "rq001",
+    "rq002",
+    "rq003",
+    "rq004",
+    "rq005",
+    "rq006",
+    "rq007",
+    "rq008",
+    "rq009",
+    "rq010",
+    "rq011",
+    "rq012",
+    "rq013",
+    "rq014",
+    "rq015",
+    "rq016",
+    "rq017",
+    "rq018",
+    "rq019",
+    "rq020",
+    "rq021",
+    "rq022",
+    "rq023",
+    "rq024",
+    "rq025",
+    "rq026",
+    "rq027",
+    "rq028",
+    "rq029",
+    "rq030",
+    "rq031",
+    "rq032",
+    "rq033",
+    "rq034",
+    "rq035",
+    "rq036",
+    "rq037",
+    "rq038",
+    "rq039",
+    "rq040",
+    "rq041",
+    "rq042",
+    "rq043",
+    "rq044",
+    "rq045",
+    "rq046",
+    "rq047",
+    "rq048",
+    "rq049",
+    "rq050"
+  ],
+  "ambiguous_cases": {
+    "controlled": [
+      "explicit normal + urgencia"
+    ],
+    "corpus": []
+  },
+  "boundary_mismatches_after": 0,
+  "boundary_mismatches_before": 50,
+  "canonical_contract": {
+    "comparison": "exact known identity; UNKNOWN/AMBIGUOUS fail closed",
+    "name": "CommercialContext",
+    "origins": [
+      "USER_CLAIM",
+      "SOURCE_CLAIM",
+      "COHORT_ARTIFACT",
+      "CONTROLLED_FIXTURE"
+    ],
+    "raw_basis_required_for_text_resolution": true,
+    "unknown_defaults_to_standard": false,
+    "values": [
+      "STANDARD",
+      "URGENCY",
+      "UNKNOWN",
+      "AMBIGUOUS"
+    ],
+    "version": "commercial-context-v1"
+  },
+  "chosen_source_of_truth_boundary": "parse/resolve each user or source claim once; downstream consumers propagate the typed identity",
+  "commercial_context_wrong_interpretation_cases": {
+    "case_ids": [
+      "rq019",
+      "rq020",
+      "rq046"
+    ],
+    "classification": "UNCHANGED_UNRELATED_PARTS_SCOPE_FAMILY"
+  },
+  "comparability_changes": [
+    "STANDARD vs URGENCY => COMMERCIAL_CONTEXT_MISMATCH",
+    "known vs UNKNOWN => COMMERCIAL_CONTEXT_UNKNOWN_SIDE and not admitted",
+    "AMBIGUOUS on either side => COMMERCIAL_CONTEXT_AMBIGUOUS_SIDE and not admitted"
+  ],
+  "corpus_50": {
+    "boundary_cases": [
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq001",
+        "readiness": "NO_EVIDENCE"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq002",
+        "readiness": "NO_EVIDENCE"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq003",
+        "readiness": "NO_EVIDENCE"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq004",
+        "readiness": "NO_EVIDENCE"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq005",
+        "readiness": "NO_EVIDENCE"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq006",
+        "readiness": "NO_EVIDENCE"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq007",
+        "readiness": "NO_EVIDENCE"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq008",
+        "readiness": "NO_EVIDENCE"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq009",
+        "readiness": "NO_EVIDENCE"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq010",
+        "readiness": "NO_EVIDENCE"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq011",
+        "readiness": "NO_EVIDENCE"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq012",
+        "readiness": "NO_EVIDENCE"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq013",
+        "readiness": "CLARIFICATION_REQUIRED"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq014",
+        "readiness": "UNSUPPORTED_QUERY"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq015",
+        "readiness": "CLARIFICATION_REQUIRED"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq016",
+        "readiness": "CLARIFICATION_REQUIRED"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq017",
+        "readiness": "CLARIFICATION_REQUIRED"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq018",
+        "readiness": "CLARIFICATION_REQUIRED"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq019",
+        "readiness": "CLARIFICATION_REQUIRED"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq020",
+        "readiness": "UNSUPPORTED_QUERY"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq021",
+        "readiness": "CLARIFICATION_REQUIRED"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq022",
+        "readiness": "CLARIFICATION_REQUIRED"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq023",
+        "readiness": "CLARIFICATION_REQUIRED"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq024",
+        "readiness": "NO_EVIDENCE"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq025",
+        "readiness": "NO_EVIDENCE"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq026",
+        "readiness": "NO_EVIDENCE"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq027",
+        "readiness": "CLARIFICATION_REQUIRED"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq028",
+        "readiness": "CLARIFICATION_REQUIRED"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq029",
+        "readiness": "UNSUPPORTED_QUERY"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq030",
+        "readiness": "CLARIFICATION_REQUIRED"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq031",
+        "readiness": "CLARIFICATION_REQUIRED"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq032",
+        "readiness": "NO_EVIDENCE"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq033",
+        "readiness": "UNSUPPORTED_QUERY"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq034",
+        "readiness": "CLARIFICATION_REQUIRED"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq035",
+        "readiness": "UNSUPPORTED_QUERY"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq036",
+        "readiness": "UNSUPPORTED_QUERY"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq037",
+        "readiness": "CLARIFICATION_REQUIRED"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq038",
+        "readiness": "CLARIFICATION_REQUIRED"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq039",
+        "readiness": "CLARIFICATION_REQUIRED"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq040",
+        "readiness": "CLARIFICATION_REQUIRED"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq041",
+        "readiness": "CLARIFICATION_REQUIRED"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq042",
+        "readiness": "CLARIFICATION_REQUIRED"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq043",
+        "readiness": "UNSUPPORTED_QUERY"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq044",
+        "readiness": "CLARIFICATION_REQUIRED"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq045",
+        "readiness": "CLARIFICATION_REQUIRED"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq046",
+        "readiness": "UNSUPPORTED_QUERY"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq047",
+        "readiness": "CLARIFICATION_REQUIRED"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq048",
+        "readiness": "NO_EVIDENCE"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq049",
+        "readiness": "CLARIFICATION_REQUIRED"
+      },
+      {
+        "after": {
+          "normalization": "UNKNOWN",
+          "parser": "UNKNOWN",
+          "runtime": "UNKNOWN",
+          "trace": "UNKNOWN"
+        },
+        "before": {
+          "normalization": "UNREPRESENTED",
+          "parser": "UNKNOWN",
+          "runtime": "STANDARD",
+          "trace": "STANDARD"
+        },
+        "boundary_mismatch_after": false,
+        "boundary_mismatch_before": true,
+        "case_id": "rq050",
+        "readiness": "CLARIFICATION_REQUIRED"
+      }
+    ],
+    "cases": 50,
+    "contexts_after": {
+      "UNKNOWN": 50
+    },
+    "readiness": {
+      "CLARIFICATION_REQUIRED": 25,
+      "NO_EVIDENCE": 17,
+      "UNSUPPORTED_QUERY": 8
+    },
+    "regression_outcomes": {
+      "CLARIFICATION_CORRECT": 17,
+      "EXPECTED_SAFETY_CHANGE": 2,
+      "PARSE_CORRECT": 1,
+      "SAFE_UNSUPPORTED": 4,
+      "WRONG_INTERPRETATION": 26
+    }
+  },
+  "debt_id": "TD-004",
+  "historical_rows_rewritten": false,
+  "human_real_001": {
+    "case_id": "founder-20260823-001",
+    "mutated": false,
+    "parser": "UNKNOWN",
+    "readiness": "CLARIFICATION_REQUIRED",
+    "runtime": "UNKNOWN",
+    "trace": "UNKNOWN"
+  },
+  "known_cases": {
+    "rq003": {
+      "after": {
+        "normalization": "UNKNOWN",
+        "parser": "UNKNOWN",
+        "runtime": "UNKNOWN",
+        "trace": "UNKNOWN"
+      },
+      "before": {
+        "normalization": "UNREPRESENTED",
+        "parser": "UNKNOWN",
+        "runtime": "STANDARD",
+        "trace": "STANDARD"
+      },
+      "boundary_mismatch_after": false,
+      "boundary_mismatch_before": true,
+      "case_id": "rq003",
+      "readiness": "NO_EVIDENCE"
+    },
+    "rq032": {
+      "after": {
+        "normalization": "UNKNOWN",
+        "parser": "UNKNOWN",
+        "runtime": "UNKNOWN",
+        "trace": "UNKNOWN"
+      },
+      "before": {
+        "normalization": "UNREPRESENTED",
+        "parser": "UNKNOWN",
+        "runtime": "STANDARD",
+        "trace": "STANDARD"
+      },
+      "boundary_mismatch_after": false,
+      "boundary_mismatch_before": true,
+      "case_id": "rq032",
+      "readiness": "NO_EVIDENCE"
+    }
+  },
+  "p0_gate_composition": {
+    "TD-001": "unchanged lineage gate",
+    "TD-002": "unchanged service-reach gate",
+    "TD-003": "unchanged temporal gate",
+    "TD-004": "typed commercial-context comparison after independent admission gates",
+    "runtime_admitted_evidence": 0
+  },
+  "promotion_authorized": false,
+  "public_response_changes": [],
+  "representations_before": [
+    "language_query_contract.CommercialContext.urgency:string default UNKNOWN",
+    "enki_pricing_query_service._commercial_context:string default STANDARD",
+    "pricing_dimensions.infer_commercial_context:string default STANDARD",
+    "real_world_query_tracer._economic_dimensions:hardcoded STANDARD",
+    "pricing cohorts/artifacts:untyped strings with STANDARD fallbacks"
+  ],
+  "runtime_learning_writes": 0,
+  "schema_version": "commercial-context-single-truth-v1",
+  "semantic_drift": {
+    "expected_causal_cases": [
+      "rq001",
+      "rq002",
+      "rq003",
+      "rq004",
+      "rq005",
+      "rq006",
+      "rq007",
+      "rq008",
+      "rq009",
+      "rq010",
+      "rq011",
+      "rq012",
+      "rq013",
+      "rq014",
+      "rq015",
+      "rq016",
+      "rq017",
+      "rq018",
+      "rq019",
+      "rq020",
+      "rq021",
+      "rq022",
+      "rq023",
+      "rq024",
+      "rq025",
+      "rq026",
+      "rq027",
+      "rq028",
+      "rq029",
+      "rq030",
+      "rq031",
+      "rq032",
+      "rq033",
+      "rq034",
+      "rq035",
+      "rq036",
+      "rq037",
+      "rq038",
+      "rq039",
+      "rq040",
+      "rq041",
+      "rq042",
+      "rq043",
+      "rq044",
+      "rq045",
+      "rq046",
+      "rq047",
+      "rq048",
+      "rq049",
+      "rq050"
+    ],
+    "reason": "legacy silent STANDARD/UNREPRESENTED becomes explicit UNKNOWN; active runtime has zero evidence",
+    "unexpected_cases": [],
+    "unexpected_count": 0
+  },
+  "sources_of_truth_before": [
+    "user-query regex in enki_pricing_query_service",
+    "provider/source regex in pricing_dimensions",
+    "independent hardcoded trace projection"
+  ],
+  "standard_cases": {
+    "controlled": [
+      "explicit horario habitual"
+    ],
+    "corpus": []
+  },
+  "start_head": "9864dba808cc149ce7635bb999850ea3740203ef",
+  "trace_engine_parity": {
+    "mismatches": [],
+    "value": true
+  },
+  "unknown_cases": {
+    "corpus": [
+      "rq001",
+      "rq002",
+      "rq003",
+      "rq004",
+      "rq005",
+      "rq006",
+      "rq007",
+      "rq008",
+      "rq009",
+      "rq010",
+      "rq011",
+      "rq012",
+      "rq013",
+      "rq014",
+      "rq015",
+      "rq016",
+      "rq017",
+      "rq018",
+      "rq019",
+      "rq020",
+      "rq021",
+      "rq022",
+      "rq023",
+      "rq024",
+      "rq025",
+      "rq026",
+      "rq027",
+      "rq028",
+      "rq029",
+      "rq030",
+      "rq031",
+      "rq032",
+      "rq033",
+      "rq034",
+      "rq035",
+      "rq036",
+      "rq037",
+      "rq038",
+      "rq039",
+      "rq040",
+      "rq041",
+      "rq042",
+      "rq043",
+      "rq044",
+      "rq045",
+      "rq046",
+      "rq047",
+      "rq048",
+      "rq049",
+      "rq050"
+    ],
+    "count": 50
+  },
+  "urgency_cases": {
+    "controlled": [
+      "explicit urgencia"
+    ],
+    "corpus": []
+  }
+}

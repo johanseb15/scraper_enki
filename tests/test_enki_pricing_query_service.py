@@ -9,17 +9,17 @@ REMOTE=[cohort(price_scope="PER_HOUR")]
 def resolve(text,local=(),remote=REMOTE): return resolver_consulta_pricing(text,local_cohortes=local,remote_cohortes=remote)
 
 def test_remote_35k_hourly_is_reasonable_for_medium_fixture():
-    r=resolve("me quieren cobrar 35 lucas la hora por soporte remoto, está bien?"); assert r.status=="DECISION_READY" and r.decision_label=="RAZONABLE"; assert r.evidence.observations_n==5 and r.evidence.providers_n==4
+    r=resolve("me quieren cobrar 35 lucas la hora por soporte remoto en horario habitual, está bien?"); assert r.status=="DECISION_READY" and r.decision_label=="RAZONABLE"; assert r.evidence.observations_n==5 and r.evidence.providers_n==4
 
 def test_remote_10k_hourly_is_low():
-    r=resolve("me quieren cobrar 10 lucas la hora por soporte remoto, está bien?"); assert r.status=="DECISION_READY" and r.decision_label=="BAJO"; assert r.evidence.price_position=="BELOW_OBSERVED_RANGE"
+    r=resolve("me quieren cobrar 10 lucas la hora por soporte remoto en horario habitual, está bien?"); assert r.status=="DECISION_READY" and r.decision_label=="BAJO"; assert r.evidence.price_position=="BELOW_OBSERVED_RANGE"
 
 def test_remote_60k_hourly_is_high():
-    r=resolve("me quieren cobrar 60 lucas la hora por soporte remoto, está bien?"); assert r.status=="DECISION_READY" and r.decision_label=="ALTO"; assert r.evidence.price_position=="ABOVE_OBSERVED_RANGE"
+    r=resolve("me quieren cobrar 60 lucas la hora por soporte remoto en horario habitual, está bien?"); assert r.status=="DECISION_READY" and r.decision_label=="ALTO"; assert r.evidence.price_position=="ABOVE_OBSERVED_RANGE"
 
 def test_local_unknown_scope_requests_clarification_instead_of_using_cohort():
     local=[cohort(market="Córdoba",service="FORMATEO_INSTALACION_SO",n=3,providers=1,min_=45000,q1=50000,median=55000,q3=59500,max_=64000,confidence="INSUFFICIENT",decision_ready=False,range_ready=False,price_scope="UNKNOWN")]
-    r=resolve("me quieren cobrar 55 lucas por formatear en Córdoba, está bien?",local=local)
+    r=resolve("me quieren cobrar 55 lucas por formatear en Córdoba en horario habitual, está bien?",local=local)
     assert r.status=="CLARIFICATION_REQUIRED"
     assert r.clarification_reason=="PRICE_SCOPE_REQUIRED"
     assert r.decision_label is None
@@ -35,7 +35,7 @@ def test_unknown_currency_does_not_reach_evidence():
 
 def test_market_reference_hourly_returns_range_without_decision():
     remote=[cohort(n=3,providers=3,min_=28000,q1=29000,median=30000,q3=35000,max_=40000,confidence="LOW",decision_ready=False,range_ready=True,price_scope="PER_HOUR")]
-    r=resolve("cuánto se está cobrando por hora por soporte remoto?",remote=remote); assert r.status=="RANGE_READY"; assert r.decision_label is None; assert r.evidence.median_ars==Decimal("30000")
+    r=resolve("cuánto se está cobrando por hora por soporte remoto en horario habitual?",remote=remote); assert r.status=="RANGE_READY"; assert r.decision_label is None; assert r.evidence.median_ars==Decimal("30000")
 
 
 def test_technical_need_routes_without_pricing_evidence():
@@ -85,7 +85,7 @@ def test_technical_need_evidence_probe_runs_only_after_pricing_readiness(monkeyp
 
 
 def test_economic_query_still_uses_existing_pricing_flow_not_technical_readiness():
-    r=resolve("me quieren cobrar 35 lucas la hora por soporte remoto, está bien?")
+    r=resolve("me quieren cobrar 35 lucas la hora por soporte remoto en horario habitual, está bien?")
 
     assert r.status=="DECISION_READY"
     assert r.evidence is not None
@@ -106,11 +106,11 @@ def test_technical_need_ready_routes_probe_existing_evidence_without_price_decis
     assert r.decision_label is None
     assert r.evidence_probe is not None
     by_route={item.route: item for item in r.evidence_probe.probes}
-    assert by_route["OS_INSTALLATION_SERVICE"].status=="EVIDENCE_AVAILABLE"
-    assert by_route["OS_INSTALLATION_SERVICE"].observations_n==5
-    assert by_route["OS_INSTALLATION_SERVICE"].providers_n==3
-    assert by_route["OS_INSTALLATION_SERVICE"].evidence_confidence=="MEDIUM"
-    assert by_route["DIAGNOSTIC_SERVICE"].status=="INSUFFICIENT_EVIDENCE"
+    assert by_route["OS_INSTALLATION_SERVICE"].status=="NO_EVIDENCE"
+    assert by_route["OS_INSTALLATION_SERVICE"].observations_n==0
+    assert by_route["OS_INSTALLATION_SERVICE"].providers_n==0
+    assert by_route["OS_INSTALLATION_SERVICE"].evidence_confidence=="NONE"
+    assert by_route["DIAGNOSTIC_SERVICE"].status=="NO_EVIDENCE"
     assert by_route["HARDWARE_DIAGNOSTIC"].status=="NOT_PROBED"
     assert not hasattr(by_route["OS_INSTALLATION_SERVICE"],"decision_label")
 

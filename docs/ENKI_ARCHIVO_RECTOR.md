@@ -225,6 +225,15 @@ interpretaciones escalares mutuamente excluyentes que la evidencia no permite
 resolver; `CONFLICTED` preserva desacuerdos entre claims de fuentes semánticas
 distintas. UNKNOWN no se transforma en conjunto vacío ni en valor estándar.
 
+El contexto comercial efectivo de pricing usa el contrato versionado
+`CommercialContext`. Parser, selección de cohort, comparabilidad, respuesta y
+trace propagan la misma identidad `STANDARD`, `URGENCY`, `UNKNOWN` o
+`AMBIGUOUS`; ninguna capa la reconstruye. La ausencia de lenguaje comercial
+explícito permanece `UNKNOWN` y no equivale a `STANDARD`. Claims de usuario y
+de oferta comparten vocabulario, pero conservan `origin` y `raw_basis`
+separados. Sólo dos identidades conocidas e iguales son compatibles;
+`UNKNOWN` y `AMBIGUOUS` fallan cerrados.
+
 La provenance de un claim distingue `RAW_SOURCE_OBSERVATION`,
 `NORMALIZED_FIELD`, `REGISTRY_CLAIM` y `DERIVED_CLAIM`. Una columna del artefacto
 normalizado no se etiqueta como publicación raw aunque conserve trazabilidad

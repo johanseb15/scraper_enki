@@ -36,7 +36,7 @@ def main():
     r=evaluar_precio(load(path),market=market,canonical_service=a.service,price_scope=a.price_scope,commercial_context=a.commercial_context,proposed_price_ars=a.price)
     print("ENKI DECISION EVIDENCE v1"); print("=========================")
     print(f"Status:       {r.status}"); print(f"Market:       {r.market}"); print(f"Service:      {r.canonical_service}")
-    print(f"Price scope:  {r.price_scope}"); print(f"Context:      {r.commercial_context}")
+    print(f"Price scope:  {r.price_scope}"); print(f"Context:      {r.commercial_context.value.value}")
     if r.status!="NO_EVIDENCE":
         print(f"Observations: {r.observations_n}"); print(f"Providers:    {r.providers_n}")
         print(f"Min ARS:      {r.min_ars}"); print(f"Q1 ARS:       {r.q1_ars}"); print(f"Median ARS:   {r.median_ars}")

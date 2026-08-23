@@ -93,7 +93,7 @@ def test_generic_remote_price_requires_cadence_clarification():
     hourly = cohort(price_scope="PER_HOUR")
 
     r = resolver_consulta_pricing(
-        "me quieren cobrar 35 lucas por soporte remoto, está bien?",
+        "me quieren cobrar 35 lucas por soporte remoto en horario habitual, está bien?",
         local_cohortes=(),
         remote_cohortes=[hourly],
     )
@@ -122,7 +122,7 @@ def test_hourly_remote_query_uses_only_hourly_standard_cohort():
     )
 
     r = resolver_consulta_pricing(
-        "me quieren cobrar 35 lucas la hora por soporte remoto, está bien?",
+        "me quieren cobrar 35 lucas la hora por soporte remoto en horario habitual, está bien?",
         local_cohortes=(),
         remote_cohortes=[urgency, hourly],
     )
@@ -139,7 +139,7 @@ def test_monthly_remote_query_does_not_use_hourly_evidence():
     hourly = cohort(price_scope="PER_HOUR")
 
     r = resolver_consulta_pricing(
-        "me quieren cobrar 35 lucas al mes por soporte remoto, está bien?",
+        "me quieren cobrar 35 lucas al mes por soporte remoto en horario habitual, está bien?",
         local_cohortes=(),
         remote_cohortes=[hourly],
     )
@@ -166,7 +166,7 @@ def test_standard_query_never_uses_urgency_cohort():
     )
 
     r = resolver_consulta_pricing(
-        "me quieren cobrar 35 lucas la hora por soporte remoto, está bien?",
+        "me quieren cobrar 35 lucas la hora por soporte remoto en horario habitual, está bien?",
         local_cohortes=(),
         remote_cohortes=[urgency],
     )

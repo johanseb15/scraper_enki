@@ -311,7 +311,9 @@ def test_public_runtime_remains_fail_closed_and_trace_aligned():
     assert trace.accepted_evidence == ()
 
 
-def test_temporal_artifact_and_sidecars_are_exactly_reproducible(tmp_path: Path):
+def test_temporal_historical_artifact_is_not_rewritten_and_sidecar_is_reproducible(tmp_path: Path):
+    artifact_path = ROOT / "data/evaluation/temporal_evidence_admissibility_v1.json"
+    historical_bytes = artifact_path.read_bytes()
     generated = build_artifact(
         ROOT,
         tmp_path / "artifact.json",
@@ -319,13 +321,8 @@ def test_temporal_artifact_and_sidecars_are_exactly_reproducible(tmp_path: Path)
         local_out_path=tmp_path / "local.csv",
         remote_out_path=tmp_path / "remote.csv",
     )
-    committed = json.loads(
-        (ROOT / "data/evaluation/temporal_evidence_admissibility_v1.json").read_text(
-            encoding="utf-8"
-        )
-    )
-
-    assert generated == committed
+    assert artifact_path.read_bytes() == historical_bytes
+    assert generated["historical_rows_rewritten"] is False
     generated_sidecar = [
         json.loads(line)
         for line in (tmp_path / "temporal.jsonl").read_text(encoding="utf-8").splitlines()

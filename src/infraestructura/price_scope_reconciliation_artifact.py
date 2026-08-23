@@ -77,7 +77,7 @@ def _cohort_sidecar(root, local_path, remote_path):
         if row["market_scope"] not in {"LOCAL_SERVICE", "REMOTE_NATIONAL_SERVICE"}: continue
         market = row["province"] if row["market_scope"] == "LOCAL_SERVICE" else "AR"
         scope = infer_price_scope(row["economic_object_raw"])
-        context = infer_commercial_context(row["economic_object_raw"])
+        context = infer_commercial_context(row["economic_object_raw"]).value.value
         grouped[(market, row["canonical_service"], scope, context)].append(row)
     output = []
     for cohort_file in (local_path, remote_path):

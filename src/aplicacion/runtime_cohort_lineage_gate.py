@@ -182,7 +182,7 @@ def _aggregate(
     service_reach_gated: bool,
     temporal_evidence: Mapping[str, TemporalEvidence] | None,
 ) -> list[dict[str, object]]:
-    members: dict[tuple[str, str, str, str], list[Mapping[str, str]]] = defaultdict(list)
+    members: dict[tuple[str, str, str, object], list[Mapping[str, str]]] = defaultdict(list)
     for row in rows:
         market = row["province"] if market_scope == "LOCAL_SERVICE" else "AR"
         key = (
@@ -228,7 +228,7 @@ def _aggregate(
                 "market": market,
                 "canonical_service": service,
                 "price_scope": price_scope,
-                "commercial_context": commercial_context,
+                "commercial_context": commercial_context.value.value,
                 "observations_n": n,
                 "providers_n": providers_n,
                 "min_ars": min(vals),

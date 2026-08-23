@@ -2,6 +2,10 @@ from __future__ import annotations
 import re, unicodedata
 from src.aplicacion.language_query_contract import *
 from src.dominio.price_scope_contract import normalize_price_scope
+from src.dominio.commercial_context import (
+    CommercialContextOrigin,
+    resolve_commercial_context,
+)
 
 RULES=[
 ("FORMATEO_INSTALACION_SO",(r"\bformate",r"\binstal(?:ar|acion de) windows\b",r"\breinstalar windows\b")),
@@ -240,7 +244,10 @@ def parse_pricing_query(raw_text:str,*,language_evidence_type:str="UNKNOWN")->Pa
             "PC",
             "UNKNOWN",
             False,
-            CommercialContext(),
+            resolve_commercial_context(
+                raw_text,
+                origin=CommercialContextOrigin.USER_CLAIM,
+            ),
             ParseMetadata(
                 0.8,
                 True,
@@ -297,4 +304,8 @@ def parse_pricing_query(raw_text:str,*,language_evidence_type:str="UNKNOWN")->Pa
     blocking={"MISSING_PROVINCE","UNKNOWN_ECONOMIC_OBJECT","UNKNOWN_CURRENCY","UNKNOWN_PARTS_SCOPE","MULTIPLE_MONETARY_MENTIONS"}
     clar=bool(blocking & set(reasons)); conf=max(0.0,round(.95-(.25 if clar else 0)-(.15 if action==IntentAction.UNKNOWN else 0)-(.20 if kind==EconomicObjectKind.UNKNOWN else 0),2))
     scope=normalize_price_scope(raw_text,has_price=has_price,is_range=p.type is PriceType.RANGE)
-    return ParsedPricingQuery(raw_text,x,action,side,kind,sv,market,mod,p,g,dev,"USED" if re.search(r"\busad[oa]\b",x) else "NEW" if re.search(r"\bnuev[oa]\b",x) else "UNKNOWN",kind==EconomicObjectKind.BUNDLE,CommercialContext(parts_scope=ps),ParseMetadata(conf,clar,"|".join(reasons) if reasons else None,question,tuple(dict.fromkeys(explicit)),tuple(dict.fromkeys(inferred)),tuple(dict.fromkeys(derived))),language_evidence_type,price_scope=scope)
+    commercial_context = resolve_commercial_context(
+        raw_text,
+        origin=CommercialContextOrigin.USER_CLAIM,
+    ).with_parts_scope(ps)
+    return ParsedPricingQuery(raw_text,x,action,side,kind,sv,market,mod,p,g,dev,"USED" if re.search(r"\busad[oa]\b",x) else "NEW" if re.search(r"\bnuev[oa]\b",x) else "UNKNOWN",kind==EconomicObjectKind.BUNDLE,commercial_context,ParseMetadata(conf,clar,"|".join(reasons) if reasons else None,question,tuple(dict.fromkeys(explicit)),tuple(dict.fromkeys(inferred)),tuple(dict.fromkeys(derived))),language_evidence_type,price_scope=scope)

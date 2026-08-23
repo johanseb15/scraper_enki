@@ -3,7 +3,6 @@ from __future__ import annotations
 from dataclasses import dataclass
 from decimal import Decimal
 import re
-import unicodedata
 from typing import Iterable
 
 from src.aplicacion.language_query_contract import (
@@ -29,6 +28,10 @@ from src.aplicacion.technical_need_market_resolution import (
     TechnicalNeedPricingReadiness,
     evaluate_technical_need_pricing_readiness,
     resolve_technical_need_market,
+)
+from src.dominio.commercial_context import (
+    CommercialContextCompatibility,
+    compare_commercial_contexts,
 )
 
 
@@ -62,11 +65,6 @@ def _unsupported(parsed: ParsedPricingQuery, reason: str) -> EnkiPricingQueryRes
     return EnkiPricingQueryResult(status="UNSUPPORTED_QUERY", parsed=parsed, unsupported_reason=reason)
 
 
-def _fold(text: str) -> str:
-    x = unicodedata.normalize("NFKD", text or "")
-    return "".join(ch for ch in x if not unicodedata.combining(ch)).lower()
-
-
 def _explicit_price_scope(text: str, parsed: ParsedPricingQuery) -> str:
     if parsed.price_scope.comparison_scope != "UNKNOWN":
         return parsed.price_scope.comparison_scope
@@ -78,7 +76,9 @@ def _explicit_price_scope(text: str, parsed: ParsedPricingQuery) -> str:
     }
     if parsed.price.type in mapping:
         return mapping[parsed.price.type]
-    x = _fold(text)
+    import unicodedata
+    x = unicodedata.normalize("NFKD", text or "")
+    x = "".join(ch for ch in x if not unicodedata.combining(ch)).lower()
     if re.search(r"\bpor\s+hora\b|\bla\s+hora\b", x):
         return "PER_HOUR"
     if re.search(r"\bpor\s+mes\b|\bal\s+mes\b|\bmensual(?:mente)?\b", x):
@@ -88,13 +88,6 @@ def _explicit_price_scope(text: str, parsed: ParsedPricingQuery) -> str:
     if re.search(r"\bpor\s+(?:equipo|unidad|pc|notebook)\b", x):
         return "PER_UNIT"
     return "UNKNOWN"
-
-
-def _commercial_context(text: str) -> str:
-    x = _fold(text)
-    if re.search(r"\burgenc(?:ia|ias)\b|\bfuera\s+de\s+horario\b|\bfin(?:es)?\s+de\s+semana\b|\bferiado(?:s)?\b", x):
-        return "URGENCY"
-    return "STANDARD"
 
 
 def resolver_consulta_pricing(
@@ -151,13 +144,14 @@ def resolver_consulta_pricing(
         return _unsupported(parsed, "UNSUPPORTED_MARKET_SCOPE")
 
     price_scope = _explicit_price_scope(texto, parsed)
-    commercial_context = _commercial_context(texto)
+    commercial_context = parsed.commercial_context
 
     service_cohorts = [
         c for c in cohorts
         if c.market == market
         and c.canonical_service == canonical_service
-        and c.commercial_context == commercial_context
+        and compare_commercial_contexts(c.commercial_context, commercial_context)
+        is CommercialContextCompatibility.COMPATIBLE
     ]
     if price_scope == "UNKNOWN" and service_cohorts:
         return _clarification(

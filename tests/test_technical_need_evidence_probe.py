@@ -51,19 +51,19 @@ def blocked(route="OS_INSTALLATION_SERVICE",status="MISSING_PROVINCE"):
     )
 
 
-def test_ready_route_with_existing_evidence_reports_evidence_available_without_decision():
+def test_ready_route_without_commercial_claim_fails_closed():
     result=probe_pricing_evidence(ready(), local_cohortes=[cohort()], remote_cohortes=[])
 
-    assert result.status=="EVIDENCE_AVAILABLE"
+    assert result.status=="NO_EVIDENCE"
     assert result.route=="OS_INSTALLATION_SERVICE"
     assert result.market=="Córdoba"
     assert result.canonical_service=="FORMATEO_INSTALACION_SO"
-    assert result.observations_n==5
-    assert result.providers_n==3
-    assert result.evidence_confidence=="MEDIUM"
-    assert result.observed_min==Decimal("45000")
-    assert result.observed_max==Decimal("70000")
-    assert result.median==Decimal("55000")
+    assert result.observations_n==0
+    assert result.providers_n==0
+    assert result.evidence_confidence=="NONE"
+    assert result.observed_min is None
+    assert result.observed_max is None
+    assert result.median is None
     assert not hasattr(result,"decision_label")
     assert not hasattr(result,"recommendation")
     assert not hasattr(result,"suggested_product")
@@ -80,19 +80,19 @@ def test_ready_route_without_matching_evidence_reports_no_evidence():
     assert result.providers_n==0
 
 
-def test_ready_route_with_insufficient_engine_result_preserves_insufficient_evidence():
+def test_ready_route_with_unknown_context_does_not_admit_insufficient_cohort():
     result=probe_pricing_evidence(
         ready(route="DIAGNOSTIC_SERVICE",service="DIAGNOSTICO_REVISION"),
         local_cohortes=[cohort(service="DIAGNOSTICO_REVISION",n=1,providers=1,confidence="INSUFFICIENT",range_ready=False)],
         remote_cohortes=[],
     )
 
-    assert result.status=="INSUFFICIENT_EVIDENCE"
+    assert result.status=="NO_EVIDENCE"
     assert result.route=="DIAGNOSTIC_SERVICE"
     assert result.canonical_service=="DIAGNOSTICO_REVISION"
-    assert result.observations_n==1
-    assert result.providers_n==1
-    assert result.evidence_confidence=="INSUFFICIENT"
+    assert result.observations_n==0
+    assert result.providers_n==0
+    assert result.evidence_confidence=="NONE"
 
 
 def test_missing_province_route_is_not_probed():
@@ -122,5 +122,5 @@ def test_probe_collection_only_executes_ready_routes():
 
     assert [item.route for item in result.probes]==["OS_INSTALLATION_SERVICE","HARDWARE_DIAGNOSTIC"]
     by_route={item.route: item for item in result.probes}
-    assert by_route["OS_INSTALLATION_SERVICE"].status=="EVIDENCE_AVAILABLE"
+    assert by_route["OS_INSTALLATION_SERVICE"].status=="NO_EVIDENCE"
     assert by_route["HARDWARE_DIAGNOSTIC"].status=="NOT_PROBED"

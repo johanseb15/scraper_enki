@@ -47,7 +47,7 @@ def main() -> None:
         print(f"price={p.price.value}"); print(f"price_type={p.price.type.value}"); print(f"currency={p.price.currency}")
         if result.clarification_reason: print(f"clarification_reason={result.clarification_reason}")
         if result.evidence:
-            e=result.evidence; print(f"market={e.market}"); print(f"price_scope={e.price_scope}"); print(f"commercial_context={e.commercial_context}")
+            e=result.evidence; print(f"market={e.market}"); print(f"price_scope={e.price_scope}"); print(f"commercial_context={e.commercial_context.value.value}")
             print(f"confidence={e.evidence_confidence}"); print(f"decision={e.decision_label}")
 
 if __name__=="__main__": main()

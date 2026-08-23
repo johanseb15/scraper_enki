@@ -3,6 +3,12 @@ from __future__ import annotations
 import re
 import unicodedata
 
+from src.dominio.commercial_context import (
+    CommercialContext,
+    CommercialContextOrigin,
+    resolve_commercial_context,
+)
+
 
 def _fold(text: str) -> str:
     normalized = unicodedata.normalize("NFKD", text or "")
@@ -35,12 +41,8 @@ def infer_price_scope(economic_object_raw: str) -> str:
     return "UNKNOWN"
 
 
-def infer_commercial_context(economic_object_raw: str) -> str:
-    text = _fold(economic_object_raw)
-    if re.search(
-        r"\burgenc(?:ia|ias)\b|\bfuera\s+de\s+horario\b"
-        r"|\bfin(?:es)?\s+de\s+semana\b|\bferiado(?:s)?\b",
-        text,
-    ):
-        return "URGENCY"
-    return "STANDARD"
+def infer_commercial_context(economic_object_raw: str) -> CommercialContext:
+    return resolve_commercial_context(
+        economic_object_raw,
+        origin=CommercialContextOrigin.SOURCE_CLAIM,
+    )

@@ -39,8 +39,8 @@ def _quantile_linear(values: list[float], q: float) -> float:
 
 
 def _build(rows: list[dict[str, str]], *, market_scope: str) -> list[dict[str, object]]:
-    prices: dict[tuple[str, str, str, str], list[float]] = defaultdict(list)
-    sources: dict[tuple[str, str, str, str], set[str]] = defaultdict(set)
+    prices: dict[tuple[str, str, str, object], list[float]] = defaultdict(list)
+    sources: dict[tuple[str, str, str, object], set[str]] = defaultdict(set)
 
     for row in rows:
         if row["semantic_role"] != "SINGLE_SERVICE":
@@ -89,7 +89,7 @@ def _build(rows: list[dict[str, str]], *, market_scope: str) -> list[dict[str, o
             "market": market,
             "canonical_service": service,
             "price_scope": price_scope,
-            "commercial_context": commercial_context,
+            "commercial_context": commercial_context.value.value,
             "observations_n": n,
             "providers_n": providers_n,
             "min_ars": min(vals),
