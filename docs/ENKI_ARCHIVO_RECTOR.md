@@ -292,6 +292,11 @@ cuando existe la dimensión `geographic_reach`. Para servicios onsite, reach
 desconocido continúa siendo evidencia insuficiente; ubicaciones distintas no
 son por sí mismas un mismatch comercial.
 
+La adquisición para validación debe buscar el conjunto mínimo de evidencia
+capaz tanto de confirmar como de refutar el candidate. Esa evidencia conserva
+su raw primario y lineage para poder reutilizarse fuera del validation runner;
+la ejecución de una validación no la convierte en verdad promovida.
+
 ## Acquisition
 
 Preferencia:
