@@ -1,0 +1,155 @@
+{
+  "schema_version": "full-product-e2e-v1",
+  "start_head": "788358e5c08aa196886bea4c978815931f97d9cb",
+  "end_head": "788358e5c08aa196886bea4c978815931f97d9cb",
+  "executed_at": "2026-08-23T04:56:12.9705370Z",
+  "environment": {
+    "os": "Windows",
+    "python": "3.14.7",
+    "interpreter": ".venv/Scripts/python.exe",
+    "manual_pythonpath_required_after_fix": false
+  },
+  "checks": {
+    "cli_clean_entrypoint": "PASS",
+    "human_real_001_audit": "PASS",
+    "human_real_append_only": "PASS",
+    "founder_feedback_multilabel": "PASS",
+    "public_api_real_cohorts": "PASS",
+    "tracing_semantic_parity": "PASS",
+    "price_scope_contract": "PASS",
+    "explicit_normalization_preservation": "PASS",
+    "comparability_engine": "PASS",
+    "knowledge_candidate_generation": "PASS",
+    "shadow_validation": "PASS",
+    "local_raw_acquisition_smoke": "PASS",
+    "artifact_determinism": "PASS",
+    "focused_tests": "PASS",
+    "full_suite": "PASS",
+    "compileall": "PASS",
+    "detached_validation": "PASS"
+  },
+  "status": "PASS_WITH_KNOWN_DEBT",
+  "failures": [],
+  "warnings": [
+    "21 corpus cases remain WRONG_INTERPRETATION.",
+    "DECISION_READY is not reproducible with the current real runtime cohorts.",
+    "Runtime cohorts expose aggregate provenance, not constituent offer-level lineage.",
+    "One additional direct script was confirmed broken without PYTHONPATH and 38 share the same potentially broken import pattern.",
+    "Trace evidence projection can over-report an urgency cohort as accepted when the pricing engine selected STANDARD context; public decision selection remains conservative."
+  ],
+  "real_field_regressions": [
+    {
+      "id": "trace-real-query-direct-import",
+      "before": "ModuleNotFoundError: No module named 'src'",
+      "after": "PASS without PYTHONPATH",
+      "root_cause": "Direct file execution put scripts/, not the repository root, on sys.path."
+    }
+  ],
+  "known_debt": {
+    "wrong_interpretation": 21,
+    "wrong_clarifications": ["rq013", "rq015", "rq017", "rq027", "rq039", "rq043"],
+    "price_scope_unknown_cohorts": 45,
+    "offer_level_runtime_lineage": false,
+    "potentially_broken_direct_cli_scripts": 39
+  },
+  "human_real_001_summary": {
+    "case_id": "founder-20260823-001",
+    "trace_id": "real-query-trace:e2577f3cb8e98f198ba0cc7f",
+    "raw_user_input": "Cuánto puedo cobrar por formatear una notebook?",
+    "source_type": "HUMAN_REAL",
+    "received_at": "2026-08-23T04:34:18.383544+00:00",
+    "intent": {"action": "SUGGEST_PRICE", "side": "SELL"},
+    "service": ["FORMATEO_INSTALACION_SO"],
+    "device": "NOTEBOOK",
+    "location": null,
+    "currency": "UNKNOWN",
+    "price_scope": "UNKNOWN",
+    "backup": "UNKNOWN",
+    "delivery": "UNKNOWN",
+    "commercial_context": "STANDARD",
+    "unknowns": ["billing_period", "charged_unit", "currency", "delivery_mode", "hardware_included", "location", "materials_included", "price", "price_bound", "price_scope"],
+    "readiness": "CLARIFICATION_REQUIRED",
+    "failures": ["MISSING_USER_INFORMATION"],
+    "promotion_authorized": false,
+    "runtime_mutation": false,
+    "field_data_preserved": true,
+    "versioned": true,
+    "mutated": false
+  },
+  "api_cases": {
+    "A": {"http": 200, "status": "CLARIFICATION_REQUIRED", "reason": "MISSING_PROVINCE"},
+    "B": {"http": 200, "status": "CLARIFICATION_REQUIRED", "reason": "UNKNOWN_CURRENCY"},
+    "C": {"http": 200, "status": "CLARIFICATION_REQUIRED", "reason": "MISSING_PROVINCE"},
+    "D": {"http": 200, "status": "RANGE_READY"},
+    "E": {"http": 200, "status": "UNSUPPORTED_QUERY", "reason": "SINGLE_CANONICAL_SERVICE_REQUIRED"},
+    "technical_need": {"http": 200, "status": "TECHNICAL_NEED_ROUTED"}
+  },
+  "intent_coverage": {
+    "real_corpus_actions": {"EVALUATE_PRICE": 21, "SUGGEST_PRICE": 7, "MARKET_REFERENCE": 6, "UNKNOWN": 16},
+    "real_corpus_sides": {"BUY": 17, "SELL": 9, "UNKNOWN": 24},
+    "additional_non_adjudicated_probes": ["COMPARE", "TECHNICAL_NEED", "UNSUPPORTED_QUERY"],
+    "hire_contract": "Represented as BUY side for service acquisition; no separate HIRE enum exists."
+  },
+  "price_scope_coverage": {
+    "real_corpus": {"PER_HOUR": ["rq003", "rq032", "rq034", "rq040"], "PER_UNIT": ["rq037"], "PER_MONTH": ["rq033", "rq048"], "UNKNOWN": 43},
+    "controlled_existing_contract_cases": ["PER_VISIT", "FROM"],
+    "unknown_is_mismatch": false,
+    "unknown_is_compatible": false,
+    "charged_unit_separate_from_price_bound": true
+  },
+  "comparability_coverage": {
+    "known_comparable": "rq003",
+    "price_scope_mismatch": "rq033",
+    "unknown_side": "rq001",
+    "market_mismatch": "rq005",
+    "mismatch_accepted_by_pricing_engine": false
+  },
+  "readiness_coverage": {
+    "CLARIFICATION_REQUIRED": 35,
+    "UNSUPPORTED_QUERY": 7,
+    "NO_EVIDENCE": 5,
+    "INSUFFICIENT_EVIDENCE": 1,
+    "RANGE_READY": 2,
+    "DECISION_READY": 0
+  },
+  "corpus_summary": {
+    "total": 50,
+    "parse_success": 50,
+    "intent_failure": 16,
+    "semantic_failure": 11,
+    "missing_user_information": 25,
+    "wrong_interpretation": 21,
+    "evidence_candidates": 123,
+    "evidence_accepted": 5,
+    "evidence_excluded": 118,
+    "drift_vs_latest_price_scope_baseline": 0
+  },
+  "latency_summary": {
+    "total_latency_ms": 68.6615,
+    "p50_ms": 1.16485,
+    "p95_ms": 1.9204,
+    "max_ms": 8.5779,
+    "trace_overhead_total_ms": 2.0798,
+    "trace_overhead_p50_ms": 0.04005,
+    "trace_overhead_p95_ms": 0.0596,
+    "trace_overhead_max_ms": 0.0654,
+    "material_regression_vs_latest_baseline": false
+  },
+  "knowledge_safety": {
+    "candidate_id": "knowledge-candidate:3190e09c277a38b6330d",
+    "outcome": "FAIL_SHADOW_VALIDATION",
+    "currency_conflicts_preserved": ["159", "160", "161"],
+    "auto_promotions": 0,
+    "runtime_writes": 0,
+    "runtime_effect": false
+  },
+  "acquisition_smoke": {
+    "mode": "LOCAL_REPLAY_AND_SOURCE_MANIFEST",
+    "network_requests": 0,
+    "broad_crawl": false,
+    "outcome": "PASS"
+  },
+  "no_promotion": true,
+  "no_runtime_learning": true,
+  "overall_outcome": "PASS_WITH_KNOWN_DEBT"
+}

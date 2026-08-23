@@ -1,6 +1,11 @@
 from argparse import ArgumentParser
 from datetime import datetime, timezone
 from pathlib import Path
+import sys
+
+
+if __package__ in {None, ""}:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
 from src.aplicacion.pricing_cohort_loader import cargar_cohortes_pricing_runtime
 from src.infraestructura.human_real_intake import ingest_human_real_case
