@@ -11,6 +11,11 @@ from src.aplicacion.pricing_dimensions import (
     infer_commercial_context,
     infer_price_scope,
 )
+from src.aplicacion.runtime_cohort_lineage_gate import (
+    RuntimeCohortBuild,
+    build_runtime_cohort_rows,
+)
+from src.infraestructura.offer_evidence_artifact import load_offer_evidence_sidecar
 
 
 def _quantile_linear(values: list[float], q: float) -> float:
@@ -116,6 +121,22 @@ def _write(path: str | Path, rows: list[dict[str, object]]) -> None:
         w.writerows(rows)
 
 
+def _write_runtime(path: str | Path, rows: list[dict[str, object]]) -> None:
+    fields = [
+        "market", "canonical_service", "price_scope", "commercial_context",
+        "observations_n", "providers_n",
+        "min_ars", "q1_ars", "median_ars", "q3_ars", "max_ars",
+        "spread_ratio", "evidence_confidence", "decision_ready", "range_ready",
+        "lineage_gate_version", "observation_ids",
+    ]
+    out = Path(path)
+    out.parent.mkdir(parents=True, exist_ok=True)
+    with out.open("w", encoding="utf-8-sig", newline="") as f:
+        writer = csv.DictWriter(f, fieldnames=fields)
+        writer.writeheader()
+        writer.writerows(rows)
+
+
 def build_pricing_statistics(
     normalization_path: str | Path,
     *,
@@ -137,19 +158,64 @@ def build_pricing_statistics(
     return local, remote
 
 
+def build_runtime_pricing_statistics(
+    normalization_path: str | Path,
+    lineage_path: str | Path,
+    *,
+    repository_root: str | Path,
+    local_out_path: str | Path,
+    remote_out_path: str | Path,
+) -> tuple[RuntimeCohortBuild, RuntimeCohortBuild]:
+    """Build versioned runtime cohorts after fail-closed RAW lineage admission."""
+    with Path(normalization_path).open("r", encoding="utf-8-sig", newline="") as f:
+        rows = list(csv.DictReader(f))
+    evidence = load_offer_evidence_sidecar(lineage_path)
+    local = build_runtime_cohort_rows(
+        rows,
+        evidence,
+        repository_root,
+        market_scope="LOCAL_SERVICE",
+    )
+    remote = build_runtime_cohort_rows(
+        rows,
+        evidence,
+        repository_root,
+        market_scope="REMOTE_NATIONAL_SERVICE",
+    )
+    _write_runtime(local_out_path, list(local.cohorts))
+    _write_runtime(remote_out_path, list(remote.cohorts))
+    return local, remote
+
+
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--normalization", default="data/semantic_normalization_v4.csv")
     ap.add_argument("--local-out", default="data/local_pricing_stats_v1.csv")
     ap.add_argument("--remote-out", default="data/remote_pricing_stats_v1.csv")
+    ap.add_argument(
+        "--lineage",
+        help="Offer evidence sidecar; enables the fail-closed runtime lineage gate.",
+    )
+    ap.add_argument("--repository-root", default=".")
     ap.add_argument("--top", type=int, default=40)
     args = ap.parse_args()
 
-    local, remote = build_pricing_statistics(
-        args.normalization,
-        local_out_path=args.local_out,
-        remote_out_path=args.remote_out,
-    )
+    if args.lineage:
+        local_build, remote_build = build_runtime_pricing_statistics(
+            args.normalization,
+            args.lineage,
+            repository_root=args.repository_root,
+            local_out_path=args.local_out,
+            remote_out_path=args.remote_out,
+        )
+        local = list(local_build.cohorts)
+        remote = list(remote_build.cohorts)
+    else:
+        local, remote = build_pricing_statistics(
+            args.normalization,
+            local_out_path=args.local_out,
+            remote_out_path=args.remote_out,
+        )
 
     print("ENKI PRICING STATISTICS v1")
     print("==========================")

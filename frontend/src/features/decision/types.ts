@@ -62,6 +62,8 @@ export type DecisionPricingEvidence = {
   market: string;
   canonical_service: string;
   observations_n: number;
+  lineage_gate_version?: string | null;
+  observation_ids?: string[];
   providers_n: number;
   min_ars: number | null;
   q1_ars: number | null;

@@ -24,6 +24,8 @@ class CohortePricing:
     range_ready: bool
     price_scope: str = "UNKNOWN"
     commercial_context: str = "STANDARD"
+    lineage_gate_version: str | None = None
+    observation_ids: tuple[str, ...] = ()
 
     @property
     def evidence_id(self) -> str:
@@ -51,6 +53,8 @@ class ResultadoEvidenciaPrecio:
     evidence_id: str | None = None
     price_scope: str = "UNKNOWN"
     commercial_context: str = "STANDARD"
+    lineage_gate_version: str | None = None
+    observation_ids: tuple[str, ...] = ()
 
 
 def evaluar_precio(
@@ -99,6 +103,8 @@ def evaluar_precio(
         evidence_id=cohort.evidence_id,
         price_scope=cohort.price_scope,
         commercial_context=cohort.commercial_context,
+        lineage_gate_version=cohort.lineage_gate_version,
+        observation_ids=cohort.observation_ids,
     )
 
     if not cohort.range_ready:

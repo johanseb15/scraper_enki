@@ -1,0 +1,1776 @@
+{
+  "affected_cases": [
+    {
+      "case_id": "rq003",
+      "classification": "EXPECTED_SAFETY_CHANGE",
+      "readiness_after": "INSUFFICIENT_EVIDENCE",
+      "readiness_before": "RANGE_READY",
+      "response_after": {
+        "caveat": "Enki retiene la decisión en lugar de sobreinterpretar la muestra.",
+        "evidence_line": "Rango observado $30.000–$30.000; mediana $30.000; 1 precios de 1 proveedores.",
+        "headline": "Evidencia insuficiente",
+        "summary": "Hay precios observados, pero la muestra o diversidad de proveedores todavía no alcanza para una decisión confiable."
+      },
+      "response_before": {
+        "caveat": "Confianza de evidencia: LOW.",
+        "evidence_line": "Rango observado $28.000–$40.000; mediana $30.000; 3 precios de 3 proveedores.",
+        "headline": "Rango de mercado disponible",
+        "summary": "Hay evidencia suficiente para mostrar un rango empírico, pero no para emitir BAJO/RAZONABLE/ALTO."
+      }
+    },
+    {
+      "case_id": "rq009",
+      "classification": "EXPECTED_SAFETY_CHANGE",
+      "readiness_after": "NO_EVIDENCE",
+      "readiness_before": "CLARIFICATION_REQUIRED",
+      "response_after": {
+        "caveat": null,
+        "evidence_line": null,
+        "headline": "Sin evidencia comparable",
+        "summary": "No encontré precios comparables para este servicio y mercado."
+      },
+      "response_before": {
+        "caveat": "PRICE_SCOPE_REQUIRED",
+        "evidence_line": null,
+        "headline": "Necesito una aclaración",
+        "summary": "¿Ese precio corresponde a una hora, una visita, un abono mensual u otra unidad de cobro?"
+      }
+    },
+    {
+      "case_id": "rq011",
+      "classification": "EXPECTED_SAFETY_CHANGE",
+      "readiness_after": "NO_EVIDENCE",
+      "readiness_before": "CLARIFICATION_REQUIRED",
+      "response_after": {
+        "caveat": null,
+        "evidence_line": null,
+        "headline": "Sin evidencia comparable",
+        "summary": "No encontré precios comparables para este servicio y mercado."
+      },
+      "response_before": {
+        "caveat": "PRICE_SCOPE_REQUIRED",
+        "evidence_line": null,
+        "headline": "Necesito una aclaración",
+        "summary": "¿Ese precio corresponde a una hora, una visita, un abono mensual u otra unidad de cobro?"
+      }
+    },
+    {
+      "case_id": "rq012",
+      "classification": "EXPECTED_SAFETY_CHANGE",
+      "readiness_after": "NO_EVIDENCE",
+      "readiness_before": "CLARIFICATION_REQUIRED",
+      "response_after": {
+        "caveat": null,
+        "evidence_line": null,
+        "headline": "Sin evidencia comparable",
+        "summary": "No encontré precios comparables para este servicio y mercado."
+      },
+      "response_before": {
+        "caveat": "PRICE_SCOPE_REQUIRED",
+        "evidence_line": null,
+        "headline": "Necesito una aclaración",
+        "summary": "¿Ese precio corresponde a una hora, una visita, un abono mensual u otra unidad de cobro?"
+      }
+    },
+    {
+      "case_id": "rq032",
+      "classification": "EXPECTED_SAFETY_CHANGE",
+      "readiness_after": "INSUFFICIENT_EVIDENCE",
+      "readiness_before": "RANGE_READY",
+      "response_after": {
+        "caveat": "Enki retiene la decisión en lugar de sobreinterpretar la muestra.",
+        "evidence_line": "Rango observado $30.000–$30.000; mediana $30.000; 1 precios de 1 proveedores.",
+        "headline": "Evidencia insuficiente",
+        "summary": "Hay precios observados, pero la muestra o diversidad de proveedores todavía no alcanza para una decisión confiable."
+      },
+      "response_before": {
+        "caveat": "Confianza de evidencia: LOW.",
+        "evidence_line": "Rango observado $28.000–$40.000; mediana $30.000; 3 precios de 3 proveedores.",
+        "headline": "Rango de mercado disponible",
+        "summary": "Hay evidencia suficiente para mostrar un rango empírico, pero no para emitir BAJO/RAZONABLE/ALTO."
+      }
+    },
+    {
+      "case_id": "rq048",
+      "classification": "EXPECTED_SAFETY_CHANGE",
+      "readiness_after": "NO_EVIDENCE",
+      "readiness_before": "INSUFFICIENT_EVIDENCE",
+      "response_after": {
+        "caveat": null,
+        "evidence_line": null,
+        "headline": "Sin evidencia comparable",
+        "summary": "No encontré precios comparables para este servicio y mercado."
+      },
+      "response_before": {
+        "caveat": "Enki retiene la decisión en lugar de sobreinterpretar la muestra.",
+        "evidence_line": "Rango observado $45.000–$45.000; mediana $45.000; 1 precios de 1 proveedores.",
+        "headline": "Evidencia insuficiente",
+        "summary": "Hay precios observados, pero la muestra o diversidad de proveedores todavía no alcanza para una decisión confiable."
+      }
+    }
+  ],
+  "affected_cohorts": [
+    {
+      "after": null,
+      "before": {
+        "decision_ready": false,
+        "evidence_confidence": "INSUFFICIENT",
+        "max_ars": 98000.0,
+        "median_ars": 98000.0,
+        "min_ars": 98000.0,
+        "observations_n": 1,
+        "providers_n": 1,
+        "range_ready": false,
+        "spread_ratio": 1.0
+      },
+      "cohort_id": "pricing-cohort:AR:DESARROLLO_SOFTWARE_HORA:UNKNOWN:STANDARD",
+      "exclusions": [
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "157",
+          "price_ars": 98000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "informatica_del_plata_ba"
+        }
+      ],
+      "observation_ids_admitted_after": [],
+      "observation_ids_before": [
+        "157"
+      ],
+      "observation_ids_excluded": [
+        "157"
+      ]
+    },
+    {
+      "after": {
+        "decision_ready": false,
+        "evidence_confidence": "INSUFFICIENT",
+        "max_ars": 38000.0,
+        "median_ars": 38000.0,
+        "min_ars": 38000.0,
+        "observations_n": 1,
+        "providers_n": 1,
+        "range_ready": false,
+        "spread_ratio": 1.0
+      },
+      "before": {
+        "decision_ready": false,
+        "evidence_confidence": "INSUFFICIENT",
+        "max_ars": 38000.0,
+        "median_ars": 26500.0,
+        "min_ars": 15000.0,
+        "observations_n": 2,
+        "providers_n": 2,
+        "range_ready": false,
+        "spread_ratio": 2.533
+      },
+      "cohort_id": "pricing-cohort:AR:HOSTING_ADMINISTRADO:UNKNOWN:STANDARD",
+      "exclusions": [
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "135",
+          "price_ars": 15000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "mb_soluciones_caba"
+        }
+      ],
+      "observation_ids_admitted_after": [
+        "83"
+      ],
+      "observation_ids_before": [
+        "83",
+        "135"
+      ],
+      "observation_ids_excluded": [
+        "135"
+      ]
+    },
+    {
+      "after": {
+        "decision_ready": false,
+        "evidence_confidence": "INSUFFICIENT",
+        "max_ars": 30000.0,
+        "median_ars": 30000.0,
+        "min_ars": 30000.0,
+        "observations_n": 1,
+        "providers_n": 1,
+        "range_ready": false,
+        "spread_ratio": 1.0
+      },
+      "before": {
+        "decision_ready": false,
+        "evidence_confidence": "LOW",
+        "max_ars": 40000.0,
+        "median_ars": 30000.0,
+        "min_ars": 28000.0,
+        "observations_n": 3,
+        "providers_n": 3,
+        "range_ready": true,
+        "spread_ratio": 1.429
+      },
+      "cohort_id": "pricing-cohort:AR:SOPORTE_REMOTO:PER_HOUR:STANDARD",
+      "exclusions": [
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "147",
+          "price_ars": 28000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "informatica_del_plata_ba"
+        },
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "213",
+          "price_ars": 40000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "tecnico_eliseo_cordoba"
+        }
+      ],
+      "observation_ids_admitted_after": [
+        "68"
+      ],
+      "observation_ids_before": [
+        "68",
+        "147",
+        "213"
+      ],
+      "observation_ids_excluded": [
+        "147",
+        "213"
+      ]
+    },
+    {
+      "after": null,
+      "before": {
+        "decision_ready": false,
+        "evidence_confidence": "INSUFFICIENT",
+        "max_ars": 48000.0,
+        "median_ars": 48000.0,
+        "min_ars": 48000.0,
+        "observations_n": 1,
+        "providers_n": 1,
+        "range_ready": false,
+        "spread_ratio": 1.0
+      },
+      "cohort_id": "pricing-cohort:AR:SOPORTE_REMOTO:PER_HOUR:URGENCY",
+      "exclusions": [
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "148",
+          "price_ars": 48000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "informatica_del_plata_ba"
+        }
+      ],
+      "observation_ids_admitted_after": [],
+      "observation_ids_before": [
+        "148"
+      ],
+      "observation_ids_excluded": [
+        "148"
+      ]
+    },
+    {
+      "after": null,
+      "before": {
+        "decision_ready": false,
+        "evidence_confidence": "INSUFFICIENT",
+        "max_ars": 650000.0,
+        "median_ars": 650000.0,
+        "min_ars": 650000.0,
+        "observations_n": 1,
+        "providers_n": 1,
+        "range_ready": false,
+        "spread_ratio": 1.0
+      },
+      "cohort_id": "pricing-cohort:AR:WEB_ECOMMERCE:UNKNOWN:STANDARD",
+      "exclusions": [
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "133",
+          "price_ars": 650000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "mb_soluciones_caba"
+        }
+      ],
+      "observation_ids_admitted_after": [],
+      "observation_ids_before": [
+        "133"
+      ],
+      "observation_ids_excluded": [
+        "133"
+      ]
+    },
+    {
+      "after": null,
+      "before": {
+        "decision_ready": false,
+        "evidence_confidence": "INSUFFICIENT",
+        "max_ars": 180000.0,
+        "median_ars": 180000.0,
+        "min_ars": 180000.0,
+        "observations_n": 1,
+        "providers_n": 1,
+        "range_ready": false,
+        "spread_ratio": 1.0
+      },
+      "cohort_id": "pricing-cohort:AR:WEB_LANDING:UNKNOWN:STANDARD",
+      "exclusions": [
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "131",
+          "price_ars": 180000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "mb_soluciones_caba"
+        }
+      ],
+      "observation_ids_admitted_after": [],
+      "observation_ids_before": [
+        "131"
+      ],
+      "observation_ids_excluded": [
+        "131"
+      ]
+    },
+    {
+      "after": null,
+      "before": {
+        "decision_ready": false,
+        "evidence_confidence": "INSUFFICIENT",
+        "max_ars": 45000.0,
+        "median_ars": 45000.0,
+        "min_ars": 45000.0,
+        "observations_n": 1,
+        "providers_n": 1,
+        "range_ready": false,
+        "spread_ratio": 1.0
+      },
+      "cohort_id": "pricing-cohort:AR:WEB_MANTENIMIENTO:PER_MONTH:STANDARD",
+      "exclusions": [
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "134",
+          "price_ars": 45000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "mb_soluciones_caba"
+        }
+      ],
+      "observation_ids_admitted_after": [],
+      "observation_ids_before": [
+        "134"
+      ],
+      "observation_ids_excluded": [
+        "134"
+      ]
+    },
+    {
+      "after": null,
+      "before": {
+        "decision_ready": false,
+        "evidence_confidence": "INSUFFICIENT",
+        "max_ars": 320000.0,
+        "median_ars": 320000.0,
+        "min_ars": 320000.0,
+        "observations_n": 1,
+        "providers_n": 1,
+        "range_ready": false,
+        "spread_ratio": 1.0
+      },
+      "cohort_id": "pricing-cohort:AR:WEB_SITIO_INSTITUCIONAL:UNKNOWN:STANDARD",
+      "exclusions": [
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "132",
+          "price_ars": 320000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "mb_soluciones_caba"
+        }
+      ],
+      "observation_ids_admitted_after": [],
+      "observation_ids_before": [
+        "132"
+      ],
+      "observation_ids_excluded": [
+        "132"
+      ]
+    },
+    {
+      "after": {
+        "decision_ready": false,
+        "evidence_confidence": "INSUFFICIENT",
+        "max_ars": 30000.0,
+        "median_ars": 30000.0,
+        "min_ars": 30000.0,
+        "observations_n": 1,
+        "providers_n": 1,
+        "range_ready": false,
+        "spread_ratio": 1.0
+      },
+      "before": {
+        "decision_ready": false,
+        "evidence_confidence": "INSUFFICIENT",
+        "max_ars": 30000.0,
+        "median_ars": 25000.0,
+        "min_ars": 20000.0,
+        "observations_n": 2,
+        "providers_n": 2,
+        "range_ready": false,
+        "spread_ratio": 1.5
+      },
+      "cohort_id": "pricing-cohort:Buenos Aires:DIAGNOSTICO_REVISION:UNKNOWN:STANDARD",
+      "exclusions": [
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "144",
+          "price_ars": 20000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "informatica_del_plata_ba"
+        }
+      ],
+      "observation_ids_admitted_after": [
+        "58"
+      ],
+      "observation_ids_before": [
+        "58",
+        "144"
+      ],
+      "observation_ids_excluded": [
+        "144"
+      ]
+    },
+    {
+      "after": {
+        "decision_ready": false,
+        "evidence_confidence": "INSUFFICIENT",
+        "max_ars": 34000.0,
+        "median_ars": 32000.0,
+        "min_ars": 30000.0,
+        "observations_n": 2,
+        "providers_n": 1,
+        "range_ready": false,
+        "spread_ratio": 1.133
+      },
+      "before": {
+        "decision_ready": false,
+        "evidence_confidence": "LOW",
+        "max_ars": 38000.0,
+        "median_ars": 34000.0,
+        "min_ars": 30000.0,
+        "observations_n": 3,
+        "providers_n": 2,
+        "range_ready": true,
+        "spread_ratio": 1.267
+      },
+      "cohort_id": "pricing-cohort:Buenos Aires:INSTALACION_PROGRAMAS:UNKNOWN:STANDARD",
+      "exclusions": [
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "154",
+          "price_ars": 38000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "informatica_del_plata_ba"
+        }
+      ],
+      "observation_ids_admitted_after": [
+        "64",
+        "65"
+      ],
+      "observation_ids_before": [
+        "64",
+        "65",
+        "154"
+      ],
+      "observation_ids_excluded": [
+        "154"
+      ]
+    },
+    {
+      "after": null,
+      "before": {
+        "decision_ready": false,
+        "evidence_confidence": "INSUFFICIENT",
+        "max_ars": 100000.0,
+        "median_ars": 100000.0,
+        "min_ars": 100000.0,
+        "observations_n": 1,
+        "providers_n": 1,
+        "range_ready": false,
+        "spread_ratio": 1.0
+      },
+      "cohort_id": "pricing-cohort:Buenos Aires:RECUPERACION_DATOS:UNKNOWN:STANDARD",
+      "exclusions": [
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "158",
+          "price_ars": 100000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "informatica_del_plata_ba"
+        }
+      ],
+      "observation_ids_admitted_after": [],
+      "observation_ids_before": [
+        "158"
+      ],
+      "observation_ids_excluded": [
+        "158"
+      ]
+    },
+    {
+      "after": {
+        "decision_ready": false,
+        "evidence_confidence": "INSUFFICIENT",
+        "max_ars": 98000.0,
+        "median_ars": 74000.0,
+        "min_ars": 50000.0,
+        "observations_n": 2,
+        "providers_n": 1,
+        "range_ready": false,
+        "spread_ratio": 1.96
+      },
+      "before": {
+        "decision_ready": false,
+        "evidence_confidence": "INSUFFICIENT",
+        "max_ars": 98000.0,
+        "median_ars": 50000.0,
+        "min_ars": 44000.0,
+        "observations_n": 3,
+        "providers_n": 2,
+        "range_ready": false,
+        "spread_ratio": 2.227
+      },
+      "cohort_id": "pricing-cohort:Buenos Aires:VISITA_TECNICA_DOMICILIO:PER_HOUR:STANDARD",
+      "exclusions": [
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "145",
+          "price_ars": 44000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "informatica_del_plata_ba"
+        }
+      ],
+      "observation_ids_admitted_after": [
+        "69",
+        "70"
+      ],
+      "observation_ids_before": [
+        "69",
+        "70",
+        "145"
+      ],
+      "observation_ids_excluded": [
+        "145"
+      ]
+    },
+    {
+      "after": null,
+      "before": {
+        "decision_ready": false,
+        "evidence_confidence": "INSUFFICIENT",
+        "max_ars": 80000.0,
+        "median_ars": 80000.0,
+        "min_ars": 80000.0,
+        "observations_n": 1,
+        "providers_n": 1,
+        "range_ready": false,
+        "spread_ratio": 1.0
+      },
+      "cohort_id": "pricing-cohort:Buenos Aires:VISITA_TECNICA_DOMICILIO:PER_HOUR:URGENCY",
+      "exclusions": [
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "146",
+          "price_ars": 80000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "informatica_del_plata_ba"
+        }
+      ],
+      "observation_ids_admitted_after": [],
+      "observation_ids_before": [
+        "146"
+      ],
+      "observation_ids_excluded": [
+        "146"
+      ]
+    },
+    {
+      "after": null,
+      "before": {
+        "decision_ready": false,
+        "evidence_confidence": "INSUFFICIENT",
+        "max_ars": 90000.0,
+        "median_ars": 90000.0,
+        "min_ars": 90000.0,
+        "observations_n": 1,
+        "providers_n": 1,
+        "range_ready": false,
+        "spread_ratio": 1.0
+      },
+      "cohort_id": "pricing-cohort:CABA:ARMADO_PC:UNKNOWN:STANDARD",
+      "exclusions": [
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "125",
+          "price_ars": 90000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "mb_soluciones_caba"
+        }
+      ],
+      "observation_ids_admitted_after": [],
+      "observation_ids_before": [
+        "125"
+      ],
+      "observation_ids_excluded": [
+        "125"
+      ]
+    },
+    {
+      "after": null,
+      "before": {
+        "decision_ready": false,
+        "evidence_confidence": "INSUFFICIENT",
+        "max_ars": 21060.0,
+        "median_ars": 21060.0,
+        "min_ars": 21060.0,
+        "observations_n": 1,
+        "providers_n": 1,
+        "range_ready": false,
+        "spread_ratio": 1.0
+      },
+      "cohort_id": "pricing-cohort:CABA:BACKUP_DATOS:PER_UNIT:STANDARD",
+      "exclusions": [
+        {
+          "detail": "OBSERVATION_NOT_REPRODUCED_FROM_SNAPSHOT",
+          "observation_id": "4",
+          "price_ars": 21060.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "jadetech_generic"
+        }
+      ],
+      "observation_ids_admitted_after": [],
+      "observation_ids_before": [
+        "4"
+      ],
+      "observation_ids_excluded": [
+        "4"
+      ]
+    },
+    {
+      "after": null,
+      "before": {
+        "decision_ready": false,
+        "evidence_confidence": "INSUFFICIENT",
+        "max_ars": 35000.0,
+        "median_ars": 35000.0,
+        "min_ars": 35000.0,
+        "observations_n": 1,
+        "providers_n": 1,
+        "range_ready": false,
+        "spread_ratio": 1.0
+      },
+      "cohort_id": "pricing-cohort:CABA:BACKUP_DATOS:UNKNOWN:STANDARD",
+      "exclusions": [
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "124",
+          "price_ars": 35000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "mb_soluciones_caba"
+        }
+      ],
+      "observation_ids_admitted_after": [],
+      "observation_ids_before": [
+        "124"
+      ],
+      "observation_ids_excluded": [
+        "124"
+      ]
+    },
+    {
+      "after": null,
+      "before": {
+        "decision_ready": false,
+        "evidence_confidence": "INSUFFICIENT",
+        "max_ars": 45000.0,
+        "median_ars": 45000.0,
+        "min_ars": 45000.0,
+        "observations_n": 1,
+        "providers_n": 1,
+        "range_ready": false,
+        "spread_ratio": 1.0
+      },
+      "cohort_id": "pricing-cohort:CABA:CCTV_INSTALACION_MANO_OBRA:PER_UNIT:STANDARD",
+      "exclusions": [
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "127",
+          "price_ars": 45000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "mb_soluciones_caba"
+        }
+      ],
+      "observation_ids_admitted_after": [],
+      "observation_ids_before": [
+        "127"
+      ],
+      "observation_ids_excluded": [
+        "127"
+      ]
+    },
+    {
+      "after": null,
+      "before": {
+        "decision_ready": false,
+        "evidence_confidence": "INSUFFICIENT",
+        "max_ars": 420000.0,
+        "median_ars": 320000.0,
+        "min_ars": 220000.0,
+        "observations_n": 2,
+        "providers_n": 1,
+        "range_ready": false,
+        "spread_ratio": 1.909
+      },
+      "cohort_id": "pricing-cohort:CABA:CCTV_INSTALACION_MANO_OBRA:UNKNOWN:STANDARD",
+      "exclusions": [
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "128",
+          "price_ars": 220000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "mb_soluciones_caba"
+        },
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "129",
+          "price_ars": 420000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "mb_soluciones_caba"
+        }
+      ],
+      "observation_ids_admitted_after": [],
+      "observation_ids_before": [
+        "128",
+        "129"
+      ],
+      "observation_ids_excluded": [
+        "128",
+        "129"
+      ]
+    },
+    {
+      "after": null,
+      "before": {
+        "decision_ready": false,
+        "evidence_confidence": "INSUFFICIENT",
+        "max_ars": 60000.0,
+        "median_ars": 42500.0,
+        "min_ars": 25000.0,
+        "observations_n": 2,
+        "providers_n": 1,
+        "range_ready": false,
+        "spread_ratio": 2.4
+      },
+      "cohort_id": "pricing-cohort:CABA:DIAGNOSTICO_REVISION:UNKNOWN:STANDARD",
+      "exclusions": [
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "121",
+          "price_ars": 25000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "mb_soluciones_caba"
+        },
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "130",
+          "price_ars": 60000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "mb_soluciones_caba"
+        }
+      ],
+      "observation_ids_admitted_after": [],
+      "observation_ids_before": [
+        "121",
+        "130"
+      ],
+      "observation_ids_excluded": [
+        "121",
+        "130"
+      ]
+    },
+    {
+      "after": null,
+      "before": {
+        "decision_ready": false,
+        "evidence_confidence": "INSUFFICIENT",
+        "max_ars": 26325.0,
+        "median_ars": 26325.0,
+        "min_ars": 26325.0,
+        "observations_n": 1,
+        "providers_n": 1,
+        "range_ready": false,
+        "spread_ratio": 1.0
+      },
+      "cohort_id": "pricing-cohort:CABA:ELIMINACION_MALWARE:UNKNOWN:STANDARD",
+      "exclusions": [
+        {
+          "detail": "OBSERVATION_NOT_REPRODUCED_FROM_SNAPSHOT",
+          "observation_id": "11",
+          "price_ars": 26325.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "jadetech_generic"
+        }
+      ],
+      "observation_ids_admitted_after": [],
+      "observation_ids_before": [
+        "11"
+      ],
+      "observation_ids_excluded": [
+        "11"
+      ]
+    },
+    {
+      "after": null,
+      "before": {
+        "decision_ready": false,
+        "evidence_confidence": "INSUFFICIENT",
+        "max_ars": 85000.0,
+        "median_ars": 85000.0,
+        "min_ars": 85000.0,
+        "observations_n": 1,
+        "providers_n": 1,
+        "range_ready": false,
+        "spread_ratio": 1.0
+      },
+      "cohort_id": "pricing-cohort:CABA:FORMATEO_INSTALACION_SO:UNKNOWN:STANDARD",
+      "exclusions": [
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "123",
+          "price_ars": 85000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "mb_soluciones_caba"
+        }
+      ],
+      "observation_ids_admitted_after": [],
+      "observation_ids_before": [
+        "123"
+      ],
+      "observation_ids_excluded": [
+        "123"
+      ]
+    },
+    {
+      "after": null,
+      "before": {
+        "decision_ready": false,
+        "evidence_confidence": "INSUFFICIENT",
+        "max_ars": 21060.0,
+        "median_ars": 21060.0,
+        "min_ars": 21060.0,
+        "observations_n": 1,
+        "providers_n": 1,
+        "range_ready": false,
+        "spread_ratio": 1.0
+      },
+      "cohort_id": "pricing-cohort:CABA:INSTALACION_DRIVERS:UNKNOWN:STANDARD",
+      "exclusions": [
+        {
+          "detail": "OBSERVATION_NOT_REPRODUCED_FROM_SNAPSHOT",
+          "observation_id": "8",
+          "price_ars": 21060.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "jadetech_generic"
+        }
+      ],
+      "observation_ids_admitted_after": [],
+      "observation_ids_before": [
+        "8"
+      ],
+      "observation_ids_excluded": [
+        "8"
+      ]
+    },
+    {
+      "after": null,
+      "before": {
+        "decision_ready": false,
+        "evidence_confidence": "INSUFFICIENT",
+        "max_ars": 15795.0,
+        "median_ars": 14215.5,
+        "min_ars": 12636.0,
+        "observations_n": 2,
+        "providers_n": 1,
+        "range_ready": false,
+        "spread_ratio": 1.25
+      },
+      "cohort_id": "pricing-cohort:CABA:INSTALACION_PROGRAMAS:UNKNOWN:STANDARD",
+      "exclusions": [
+        {
+          "detail": "OBSERVATION_NOT_REPRODUCED_FROM_SNAPSHOT",
+          "observation_id": "6",
+          "price_ars": 12636.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "jadetech_generic"
+        },
+        {
+          "detail": "OBSERVATION_NOT_REPRODUCED_FROM_SNAPSHOT",
+          "observation_id": "7",
+          "price_ars": 15795.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "jadetech_generic"
+        }
+      ],
+      "observation_ids_admitted_after": [],
+      "observation_ids_before": [
+        "6",
+        "7"
+      ],
+      "observation_ids_excluded": [
+        "6",
+        "7"
+      ]
+    },
+    {
+      "after": null,
+      "before": {
+        "decision_ready": false,
+        "evidence_confidence": "INSUFFICIENT",
+        "max_ars": 70000.0,
+        "median_ars": 36855.0,
+        "min_ars": 26325.0,
+        "observations_n": 5,
+        "providers_n": 4,
+        "range_ready": false,
+        "spread_ratio": 2.659
+      },
+      "cohort_id": "pricing-cohort:CABA:LIMPIEZA_MANTENIMIENTO:UNKNOWN:STANDARD",
+      "exclusions": [
+        {
+          "detail": "OBSERVATION_NOT_REPRODUCED_FROM_SNAPSHOT",
+          "observation_id": "9",
+          "price_ars": 26325.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "jadetech_generic"
+        },
+        {
+          "detail": "OBSERVATION_NOT_REPRODUCED_FROM_SNAPSHOT",
+          "observation_id": "10",
+          "price_ars": 36855.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "jadetech_generic"
+        },
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "112",
+          "price_ars": 28000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "masterfix_caba"
+        },
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "118",
+          "price_ars": 70000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "pclaf_caba"
+        },
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "122",
+          "price_ars": 45000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "mb_soluciones_caba"
+        }
+      ],
+      "observation_ids_admitted_after": [],
+      "observation_ids_before": [
+        "9",
+        "10",
+        "112",
+        "118",
+        "122"
+      ],
+      "observation_ids_excluded": [
+        "9",
+        "10",
+        "112",
+        "118",
+        "122"
+      ]
+    },
+    {
+      "after": null,
+      "before": {
+        "decision_ready": false,
+        "evidence_confidence": "INSUFFICIENT",
+        "max_ars": 45000.0,
+        "median_ars": 15000.0,
+        "min_ars": 9000.0,
+        "observations_n": 3,
+        "providers_n": 3,
+        "range_ready": false,
+        "spread_ratio": 5.0
+      },
+      "cohort_id": "pricing-cohort:CABA:VISITA_TECNICA_DOMICILIO:UNKNOWN:STANDARD",
+      "exclusions": [
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "126",
+          "price_ars": 45000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "mb_soluciones_caba"
+        },
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "136",
+          "price_ars": 15000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "pcdoctor_caba"
+        },
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "137",
+          "price_ars": 9000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "taja_service_caba"
+        }
+      ],
+      "observation_ids_admitted_after": [],
+      "observation_ids_before": [
+        "126",
+        "136",
+        "137"
+      ],
+      "observation_ids_excluded": [
+        "126",
+        "136",
+        "137"
+      ]
+    },
+    {
+      "after": null,
+      "before": {
+        "decision_ready": false,
+        "evidence_confidence": "INSUFFICIENT",
+        "max_ars": 45000.0,
+        "median_ars": 25000.0,
+        "min_ars": 20000.0,
+        "observations_n": 3,
+        "providers_n": 1,
+        "range_ready": false,
+        "spread_ratio": 2.25
+      },
+      "cohort_id": "pricing-cohort:Córdoba:ELIMINACION_MALWARE:UNKNOWN:STANDARD",
+      "exclusions": [
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "208",
+          "price_ars": 25000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "tecnico_eliseo_cordoba"
+        },
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "209",
+          "price_ars": 45000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "tecnico_eliseo_cordoba"
+        },
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "210",
+          "price_ars": 20000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "tecnico_eliseo_cordoba"
+        }
+      ],
+      "observation_ids_admitted_after": [],
+      "observation_ids_before": [
+        "208",
+        "209",
+        "210"
+      ],
+      "observation_ids_excluded": [
+        "208",
+        "209",
+        "210"
+      ]
+    },
+    {
+      "after": {
+        "decision_ready": false,
+        "evidence_confidence": "INSUFFICIENT",
+        "max_ars": 40000.0,
+        "median_ars": 40000.0,
+        "min_ars": 40000.0,
+        "observations_n": 1,
+        "providers_n": 1,
+        "range_ready": false,
+        "spread_ratio": 1.0
+      },
+      "before": {
+        "decision_ready": false,
+        "evidence_confidence": "INSUFFICIENT",
+        "max_ars": 40000.0,
+        "median_ars": 20000.0,
+        "min_ars": 10000.0,
+        "observations_n": 3,
+        "providers_n": 2,
+        "range_ready": false,
+        "spread_ratio": 4.0
+      },
+      "cohort_id": "pricing-cohort:Córdoba:INSTALACION_PROGRAMAS:UNKNOWN:STANDARD",
+      "exclusions": [
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "206",
+          "price_ars": 10000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "tecnico_eliseo_cordoba"
+        },
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "207",
+          "price_ars": 20000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "tecnico_eliseo_cordoba"
+        }
+      ],
+      "observation_ids_admitted_after": [
+        "51"
+      ],
+      "observation_ids_before": [
+        "51",
+        "206",
+        "207"
+      ],
+      "observation_ids_excluded": [
+        "206",
+        "207"
+      ]
+    },
+    {
+      "after": null,
+      "before": {
+        "decision_ready": false,
+        "evidence_confidence": "INSUFFICIENT",
+        "max_ars": 59000.0,
+        "median_ars": 59000.0,
+        "min_ars": 59000.0,
+        "observations_n": 1,
+        "providers_n": 1,
+        "range_ready": false,
+        "spread_ratio": 1.0
+      },
+      "cohort_id": "pricing-cohort:Córdoba:LIMPIEZA_MANTENIMIENTO:UNKNOWN:STANDARD",
+      "exclusions": [
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "198",
+          "price_ars": 59000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "cisled_cordoba"
+        }
+      ],
+      "observation_ids_admitted_after": [],
+      "observation_ids_before": [
+        "198"
+      ],
+      "observation_ids_excluded": [
+        "198"
+      ]
+    },
+    {
+      "after": null,
+      "before": {
+        "decision_ready": false,
+        "evidence_confidence": "INSUFFICIENT",
+        "max_ars": 65000.0,
+        "median_ars": 52000.0,
+        "min_ars": 39000.0,
+        "observations_n": 2,
+        "providers_n": 2,
+        "range_ready": false,
+        "spread_ratio": 1.667
+      },
+      "cohort_id": "pricing-cohort:Córdoba:UPGRADE_HARDWARE:UNKNOWN:STANDARD",
+      "exclusions": [
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "199",
+          "price_ars": 39000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "cisled_cordoba"
+        },
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "216",
+          "price_ars": 65000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "miservice_cordoba"
+        }
+      ],
+      "observation_ids_admitted_after": [],
+      "observation_ids_before": [
+        "199",
+        "216"
+      ],
+      "observation_ids_excluded": [
+        "199",
+        "216"
+      ]
+    },
+    {
+      "after": null,
+      "before": {
+        "decision_ready": false,
+        "evidence_confidence": "INSUFFICIENT",
+        "max_ars": 30000.0,
+        "median_ars": 30000.0,
+        "min_ars": 30000.0,
+        "observations_n": 1,
+        "providers_n": 1,
+        "range_ready": false,
+        "spread_ratio": 1.0
+      },
+      "cohort_id": "pricing-cohort:Córdoba:VISITA_TECNICA_DOMICILIO:UNKNOWN:STANDARD",
+      "exclusions": [
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "234",
+          "price_ars": 30000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "redmatica_cordoba"
+        }
+      ],
+      "observation_ids_admitted_after": [],
+      "observation_ids_before": [
+        "234"
+      ],
+      "observation_ids_excluded": [
+        "234"
+      ]
+    },
+    {
+      "after": null,
+      "before": {
+        "decision_ready": false,
+        "evidence_confidence": "INSUFFICIENT",
+        "max_ars": 24000.0,
+        "median_ars": 24000.0,
+        "min_ars": 24000.0,
+        "observations_n": 1,
+        "providers_n": 1,
+        "range_ready": false,
+        "spread_ratio": 1.0
+      },
+      "cohort_id": "pricing-cohort:La Rioja:DIAGNOSTICO_REVISION:UNKNOWN:STANDARD",
+      "exclusions": [
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "268",
+          "price_ars": 24000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "bh_systems_larioja"
+        }
+      ],
+      "observation_ids_admitted_after": [],
+      "observation_ids_before": [
+        "268"
+      ],
+      "observation_ids_excluded": [
+        "268"
+      ]
+    },
+    {
+      "after": null,
+      "before": {
+        "decision_ready": false,
+        "evidence_confidence": "INSUFFICIENT",
+        "max_ars": 75000.0,
+        "median_ars": 75000.0,
+        "min_ars": 75000.0,
+        "observations_n": 1,
+        "providers_n": 1,
+        "range_ready": false,
+        "spread_ratio": 1.0
+      },
+      "cohort_id": "pricing-cohort:Santa Fe:FORMATEO_INSTALACION_SO:UNKNOWN:STANDARD",
+      "exclusions": [
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "237",
+          "price_ars": 75000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "compustark_santafe"
+        }
+      ],
+      "observation_ids_admitted_after": [],
+      "observation_ids_before": [
+        "237"
+      ],
+      "observation_ids_excluded": [
+        "237"
+      ]
+    },
+    {
+      "after": null,
+      "before": {
+        "decision_ready": false,
+        "evidence_confidence": "INSUFFICIENT",
+        "max_ars": 65000.0,
+        "median_ars": 65000.0,
+        "min_ars": 65000.0,
+        "observations_n": 1,
+        "providers_n": 1,
+        "range_ready": false,
+        "spread_ratio": 1.0
+      },
+      "cohort_id": "pricing-cohort:Santa Fe:LIMPIEZA_MANTENIMIENTO:UNKNOWN:STANDARD",
+      "exclusions": [
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "236",
+          "price_ars": 65000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "compustark_santafe"
+        }
+      ],
+      "observation_ids_admitted_after": [],
+      "observation_ids_before": [
+        "236"
+      ],
+      "observation_ids_excluded": [
+        "236"
+      ]
+    },
+    {
+      "after": null,
+      "before": {
+        "decision_ready": false,
+        "evidence_confidence": "INSUFFICIENT",
+        "max_ars": 250000.0,
+        "median_ars": 250000.0,
+        "min_ars": 250000.0,
+        "observations_n": 1,
+        "providers_n": 1,
+        "range_ready": false,
+        "spread_ratio": 1.0
+      },
+      "cohort_id": "pricing-cohort:Santa Fe:REPARACION_HARDWARE:UNKNOWN:STANDARD",
+      "exclusions": [
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "238",
+          "price_ars": 250000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "compustark_santafe"
+        }
+      ],
+      "observation_ids_admitted_after": [],
+      "observation_ids_before": [
+        "238"
+      ],
+      "observation_ids_excluded": [
+        "238"
+      ]
+    },
+    {
+      "after": null,
+      "before": {
+        "decision_ready": false,
+        "evidence_confidence": "INSUFFICIENT",
+        "max_ars": 25000.0,
+        "median_ars": 25000.0,
+        "min_ars": 25000.0,
+        "observations_n": 1,
+        "providers_n": 1,
+        "range_ready": false,
+        "spread_ratio": 1.0
+      },
+      "cohort_id": "pricing-cohort:Tucumán:FORMATEO_INSTALACION_SO:UNKNOWN:STANDARD",
+      "exclusions": [
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "253",
+          "price_ars": 25000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "viciadero_tucuman"
+        }
+      ],
+      "observation_ids_admitted_after": [],
+      "observation_ids_before": [
+        "253"
+      ],
+      "observation_ids_excluded": [
+        "253"
+      ]
+    },
+    {
+      "after": null,
+      "before": {
+        "decision_ready": false,
+        "evidence_confidence": "INSUFFICIENT",
+        "max_ars": 35000.0,
+        "median_ars": 27500.0,
+        "min_ars": 20000.0,
+        "observations_n": 2,
+        "providers_n": 2,
+        "range_ready": false,
+        "spread_ratio": 1.75
+      },
+      "cohort_id": "pricing-cohort:Tucumán:LIMPIEZA_MANTENIMIENTO:UNKNOWN:STANDARD",
+      "exclusions": [
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "91",
+          "price_ars": 35000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "cirowhite_generic"
+        },
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "266",
+          "price_ars": 20000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "viciadero_tucuman"
+        }
+      ],
+      "observation_ids_admitted_after": [],
+      "observation_ids_before": [
+        "91",
+        "266"
+      ],
+      "observation_ids_excluded": [
+        "91",
+        "266"
+      ]
+    },
+    {
+      "after": null,
+      "before": {
+        "decision_ready": false,
+        "evidence_confidence": "INSUFFICIENT",
+        "max_ars": 45000.0,
+        "median_ars": 32500.0,
+        "min_ars": 20000.0,
+        "observations_n": 2,
+        "providers_n": 1,
+        "range_ready": false,
+        "spread_ratio": 2.25
+      },
+      "cohort_id": "pricing-cohort:Tucumán:REPARACION_HARDWARE:UNKNOWN:STANDARD",
+      "exclusions": [
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "93",
+          "price_ars": 20000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "cirowhite_generic"
+        },
+        {
+          "detail": "SOURCE_RAW_NOT_AVAILABLE",
+          "observation_id": "97",
+          "price_ars": 45000.0,
+          "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE",
+          "source_id": "cirowhite_generic"
+        }
+      ],
+      "observation_ids_admitted_after": [],
+      "observation_ids_before": [
+        "93",
+        "97"
+      ],
+      "observation_ids_excluded": [
+        "93",
+        "97"
+      ]
+    }
+  ],
+  "corpus_50": {
+    "accepted_evidence_after": 2,
+    "accepted_evidence_before": 3,
+    "cases": 50,
+    "excluded_evidence_after": 47,
+    "excluded_evidence_before": 120,
+    "expected_safety_changes_after": 2,
+    "failure_taxonomy_after": {
+      "INTENT_FAILURE": 16,
+      "MISSING_MARKET_EVIDENCE": 9,
+      "MISSING_USER_INFORMATION": 25,
+      "NON_COMPARABLE_EVIDENCE": 2,
+      "READINESS_FAILURE": 7,
+      "SEMANTIC_MAPPING_FAILURE": 11
+    },
+    "failure_taxonomy_before": {
+      "INTENT_FAILURE": 16,
+      "MISSING_MARKET_EVIDENCE": 5,
+      "MISSING_USER_INFORMATION": 25,
+      "NON_COMPARABLE_EVIDENCE": 1,
+      "READINESS_FAILURE": 7,
+      "SEMANTIC_MAPPING_FAILURE": 11
+    },
+    "intent_failures_after": 16,
+    "intent_failures_before": 16,
+    "parse_failures_after": 0,
+    "parse_failures_before": 0,
+    "public_responses_changed": 6,
+    "readiness_distribution_after": {
+      "CLARIFICATION_REQUIRED": 32,
+      "INSUFFICIENT_EVIDENCE": 2,
+      "NO_EVIDENCE": 9,
+      "UNSUPPORTED_QUERY": 7
+    },
+    "readiness_distribution_before": {
+      "CLARIFICATION_REQUIRED": 35,
+      "INSUFFICIENT_EVIDENCE": 1,
+      "NO_EVIDENCE": 5,
+      "RANGE_READY": 2,
+      "UNSUPPORTED_QUERY": 7
+    },
+    "wrong_interpretations_after": 21,
+    "wrong_interpretations_before": 21
+  },
+  "debt_id": "TD-001",
+  "decision_ready_after": 0,
+  "decision_ready_before": 0,
+  "excluded_missing_lineage": 53,
+  "historical_rows_rewritten": false,
+  "human_real_001": {
+    "canonical_services": [
+      "FORMATEO_INSTALACION_SO"
+    ],
+    "case_id": "founder-20260823-001",
+    "currency": "UNKNOWN",
+    "device": "NOTEBOOK",
+    "intent": {
+      "action": "SUGGEST_PRICE",
+      "side": "SELL"
+    },
+    "location": null,
+    "price_scope": "UNKNOWN",
+    "readiness_after": "CLARIFICATION_REQUIRED",
+    "readiness_before": "CLARIFICATION_REQUIRED",
+    "semantic_drift": false
+  },
+  "observations_total": 273,
+  "promotion_authorized": false,
+  "provider_counts_before_after": [
+    {
+      "after": 0,
+      "before": 1,
+      "cohort_id": "pricing-cohort:AR:DESARROLLO_SOFTWARE_HORA:UNKNOWN:STANDARD"
+    },
+    {
+      "after": 1,
+      "before": 2,
+      "cohort_id": "pricing-cohort:AR:HOSTING_ADMINISTRADO:UNKNOWN:STANDARD"
+    },
+    {
+      "after": 1,
+      "before": 3,
+      "cohort_id": "pricing-cohort:AR:SOPORTE_REMOTO:PER_HOUR:STANDARD"
+    },
+    {
+      "after": 0,
+      "before": 1,
+      "cohort_id": "pricing-cohort:AR:SOPORTE_REMOTO:PER_HOUR:URGENCY"
+    },
+    {
+      "after": 0,
+      "before": 1,
+      "cohort_id": "pricing-cohort:AR:WEB_ECOMMERCE:UNKNOWN:STANDARD"
+    },
+    {
+      "after": 0,
+      "before": 1,
+      "cohort_id": "pricing-cohort:AR:WEB_LANDING:UNKNOWN:STANDARD"
+    },
+    {
+      "after": 0,
+      "before": 1,
+      "cohort_id": "pricing-cohort:AR:WEB_MANTENIMIENTO:PER_MONTH:STANDARD"
+    },
+    {
+      "after": 0,
+      "before": 1,
+      "cohort_id": "pricing-cohort:AR:WEB_SITIO_INSTITUCIONAL:UNKNOWN:STANDARD"
+    },
+    {
+      "after": 1,
+      "before": 2,
+      "cohort_id": "pricing-cohort:Buenos Aires:DIAGNOSTICO_REVISION:UNKNOWN:STANDARD"
+    },
+    {
+      "after": 1,
+      "before": 2,
+      "cohort_id": "pricing-cohort:Buenos Aires:INSTALACION_PROGRAMAS:UNKNOWN:STANDARD"
+    },
+    {
+      "after": 0,
+      "before": 1,
+      "cohort_id": "pricing-cohort:Buenos Aires:RECUPERACION_DATOS:UNKNOWN:STANDARD"
+    },
+    {
+      "after": 1,
+      "before": 2,
+      "cohort_id": "pricing-cohort:Buenos Aires:VISITA_TECNICA_DOMICILIO:PER_HOUR:STANDARD"
+    },
+    {
+      "after": 0,
+      "before": 1,
+      "cohort_id": "pricing-cohort:Buenos Aires:VISITA_TECNICA_DOMICILIO:PER_HOUR:URGENCY"
+    },
+    {
+      "after": 0,
+      "before": 1,
+      "cohort_id": "pricing-cohort:CABA:ARMADO_PC:UNKNOWN:STANDARD"
+    },
+    {
+      "after": 0,
+      "before": 1,
+      "cohort_id": "pricing-cohort:CABA:BACKUP_DATOS:PER_UNIT:STANDARD"
+    },
+    {
+      "after": 0,
+      "before": 1,
+      "cohort_id": "pricing-cohort:CABA:BACKUP_DATOS:UNKNOWN:STANDARD"
+    },
+    {
+      "after": 0,
+      "before": 1,
+      "cohort_id": "pricing-cohort:CABA:CCTV_INSTALACION_MANO_OBRA:PER_UNIT:STANDARD"
+    },
+    {
+      "after": 0,
+      "before": 1,
+      "cohort_id": "pricing-cohort:CABA:CCTV_INSTALACION_MANO_OBRA:UNKNOWN:STANDARD"
+    },
+    {
+      "after": 0,
+      "before": 1,
+      "cohort_id": "pricing-cohort:CABA:DIAGNOSTICO_REVISION:UNKNOWN:STANDARD"
+    },
+    {
+      "after": 0,
+      "before": 1,
+      "cohort_id": "pricing-cohort:CABA:ELIMINACION_MALWARE:UNKNOWN:STANDARD"
+    },
+    {
+      "after": 0,
+      "before": 1,
+      "cohort_id": "pricing-cohort:CABA:FORMATEO_INSTALACION_SO:UNKNOWN:STANDARD"
+    },
+    {
+      "after": 0,
+      "before": 1,
+      "cohort_id": "pricing-cohort:CABA:INSTALACION_DRIVERS:UNKNOWN:STANDARD"
+    },
+    {
+      "after": 0,
+      "before": 1,
+      "cohort_id": "pricing-cohort:CABA:INSTALACION_PROGRAMAS:UNKNOWN:STANDARD"
+    },
+    {
+      "after": 0,
+      "before": 4,
+      "cohort_id": "pricing-cohort:CABA:LIMPIEZA_MANTENIMIENTO:UNKNOWN:STANDARD"
+    },
+    {
+      "after": 0,
+      "before": 3,
+      "cohort_id": "pricing-cohort:CABA:VISITA_TECNICA_DOMICILIO:UNKNOWN:STANDARD"
+    },
+    {
+      "after": 0,
+      "before": 1,
+      "cohort_id": "pricing-cohort:Córdoba:ELIMINACION_MALWARE:UNKNOWN:STANDARD"
+    },
+    {
+      "after": 1,
+      "before": 2,
+      "cohort_id": "pricing-cohort:Córdoba:INSTALACION_PROGRAMAS:UNKNOWN:STANDARD"
+    },
+    {
+      "after": 0,
+      "before": 1,
+      "cohort_id": "pricing-cohort:Córdoba:LIMPIEZA_MANTENIMIENTO:UNKNOWN:STANDARD"
+    },
+    {
+      "after": 0,
+      "before": 2,
+      "cohort_id": "pricing-cohort:Córdoba:UPGRADE_HARDWARE:UNKNOWN:STANDARD"
+    },
+    {
+      "after": 0,
+      "before": 1,
+      "cohort_id": "pricing-cohort:Córdoba:VISITA_TECNICA_DOMICILIO:UNKNOWN:STANDARD"
+    },
+    {
+      "after": 0,
+      "before": 1,
+      "cohort_id": "pricing-cohort:La Rioja:DIAGNOSTICO_REVISION:UNKNOWN:STANDARD"
+    },
+    {
+      "after": 0,
+      "before": 1,
+      "cohort_id": "pricing-cohort:Santa Fe:FORMATEO_INSTALACION_SO:UNKNOWN:STANDARD"
+    },
+    {
+      "after": 0,
+      "before": 1,
+      "cohort_id": "pricing-cohort:Santa Fe:LIMPIEZA_MANTENIMIENTO:UNKNOWN:STANDARD"
+    },
+    {
+      "after": 0,
+      "before": 1,
+      "cohort_id": "pricing-cohort:Santa Fe:REPARACION_HARDWARE:UNKNOWN:STANDARD"
+    },
+    {
+      "after": 0,
+      "before": 1,
+      "cohort_id": "pricing-cohort:Tucumán:FORMATEO_INSTALACION_SO:UNKNOWN:STANDARD"
+    },
+    {
+      "after": 0,
+      "before": 2,
+      "cohort_id": "pricing-cohort:Tucumán:LIMPIEZA_MANTENIMIENTO:UNKNOWN:STANDARD"
+    },
+    {
+      "after": 0,
+      "before": 1,
+      "cohort_id": "pricing-cohort:Tucumán:REPARACION_HARDWARE:UNKNOWN:STANDARD"
+    }
+  ],
+  "public_safety_changes": [
+    "rq003",
+    "rq009",
+    "rq011",
+    "rq012",
+    "rq032",
+    "rq048"
+  ],
+  "range_ready_after": 0,
+  "range_ready_before": 2,
+  "raw_reproducible_before": 78,
+  "runtime_admitted_after": 31,
+  "runtime_admitted_before": 84,
+  "runtime_cohorts_after": {
+    "cohorts_total": 22,
+    "cohorts_with_evidence": 22,
+    "decision_ready": 0,
+    "range_ready": 0
+  },
+  "runtime_cohorts_before": {
+    "cohorts_total": 53,
+    "cohorts_with_evidence": 53,
+    "decision_ready": 0,
+    "range_ready": 2
+  },
+  "runtime_learning_writes": 0,
+  "schema_version": "runtime-cohort-lineage-gate-v1",
+  "start_head": "1d10f977cbccc07250506ad6bd02deb631bf3e8d",
+  "trace_engine_parity": {
+    "mismatches": [],
+    "value": true
+  },
+  "unexpected_drift": [],
+  "unexpected_semantic_drift": 0
+}

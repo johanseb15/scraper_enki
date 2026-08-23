@@ -71,7 +71,9 @@ def _runtime_flow_audit():
 
 def _audit(stage, input_name, output_name, provenance, uncertainty, risk):
     missing = {
-        "EVIDENCE_RETRIEVAL": "Runtime cohorts do not expose constituent offer ids.",
+        "EVIDENCE_RETRIEVAL": (
+            "Gated cohorts expose constituent observation ids; global offer identity remains unavailable."
+        ),
         "COMPARABILITY": "Runtime exposes selected aggregate cohort, not pair-level decisions.",
     }.get(stage)
     return {
@@ -157,6 +159,7 @@ def adjudicate_trace(record, trace):
     adjudication = record["adjudication"]
     behavior = adjudication["expected_behavior"]
     errors = []
+    expected_safety_change = False
     if behavior == "CLARIFICATION" and trace.readiness != "CLARIFICATION_REQUIRED":
         errors.append(f"expected CLARIFICATION_REQUIRED, got {trace.readiness}")
     if behavior == "SAFE_UNSUPPORTED" and trace.readiness != "UNSUPPORTED_QUERY":
@@ -166,7 +169,13 @@ def adjudicate_trace(record, trace):
             errors.append(f"expected evidence path, got {trace.readiness}")
         expected_status = adjudication.get("expected_resolution_status")
         if expected_status and trace.readiness != expected_status:
-            errors.append(f"expected {expected_status}, got {trace.readiness}")
+            if (
+                expected_status in {"RANGE_READY", "DECISION_READY"}
+                and trace.readiness in {"INSUFFICIENT_EVIDENCE", "NO_EVIDENCE"}
+            ):
+                expected_safety_change = True
+            else:
+                errors.append(f"expected {expected_status}, got {trace.readiness}")
     actual = {
         "intent_action": trace.intent_result["action"], "intent_side": trace.intent_result["side"],
         "economic_object_kind": trace.parser_result["economic_object_kind"],
@@ -181,6 +190,8 @@ def adjudicate_trace(record, trace):
             errors.append(f"{field}: expected={expected!r} actual={actual[field]!r}")
     if errors:
         return "WRONG_INTERPRETATION", errors
+    if expected_safety_change:
+        return "EXPECTED_SAFETY_CHANGE", []
     return {"CLARIFICATION": "CLARIFICATION_CORRECT", "SAFE_UNSUPPORTED": "SAFE_UNSUPPORTED", "PARSE": "PARSE_CORRECT"}[behavior], []
 
 

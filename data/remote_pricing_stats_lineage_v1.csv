@@ -1,0 +1,5 @@
+﻿market,canonical_service,price_scope,commercial_context,observations_n,providers_n,min_ars,q1_ars,median_ars,q3_ars,max_ars,spread_ratio,evidence_confidence,decision_ready,range_ready,lineage_gate_version,observation_ids
+AR,SOPORTE_REMOTO,UNKNOWN,STANDARD,1,1,35000.0,35000.0,35000.0,35000.0,35000.0,1.0,INSUFFICIENT,NO,NO,runtime-cohort-lineage-gate-v1,43
+AR,SOPORTE_REMOTO,PER_HOUR,STANDARD,1,1,30000.0,30000.0,30000.0,30000.0,30000.0,1.0,INSUFFICIENT,NO,NO,runtime-cohort-lineage-gate-v1,68
+AR,HOSTING_ADMINISTRADO,UNKNOWN,STANDARD,1,1,38000.0,38000.0,38000.0,38000.0,38000.0,1.0,INSUFFICIENT,NO,NO,runtime-cohort-lineage-gate-v1,83
+AR,VPS_ADMINISTRADO,UNKNOWN,STANDARD,1,1,78000.0,78000.0,78000.0,78000.0,78000.0,1.0,INSUFFICIENT,NO,NO,runtime-cohort-lineage-gate-v1,84

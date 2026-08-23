@@ -6,11 +6,11 @@ Program: ENKI TECHNICAL DEBT CONSOLIDATION
 
 Baseline: `main@b03e65ef287e3286bcca47e0355852b4fb8b6d77`
 
-Machine-readable source: `data/evaluation/technical_debt_audit_v1.json`
+Machine-readable sources: `data/evaluation/technical_debt_audit_v1.json` (historical audit) and `data/evaluation/runtime_cohort_lineage_gate_v1.json` (TD-001 remediation).
 
 ## Executive decision
 
-The repository is test-green, but it is not yet safe to expand real market acquisition or authorize knowledge promotion. Four confirmed P0 debts affect runtime evidence truth: constituent RAW lineage, service reach, temporal freshness, and commercial-context projection. Founder field capture may continue only as supervised shadow testing; displayed economic ranges must not be relied on until those P0s close.
+The repository is test-green, but it is not yet safe to expand real market acquisition or authorize knowledge promotion. TD-001 is resolved by a fail-closed constituent RAW-lineage gate. Three P0 debts still affect runtime evidence truth: service reach, temporal freshness, and commercial-context projection. Founder field capture may continue only as supervised shadow testing; economic results must not be relied on until the remaining P0s close.
 
 This sprint changed no product behavior, threshold, evidence, HUMAN_REAL data or promotion state. The requested expected HEAD `a01a669...` was stale: the clean synchronized baseline was `b03e65e...`, the causal trace-reconciliation commit that this audit was required to verify.
 
@@ -72,9 +72,9 @@ The six specifically incorrect clarifications have one control-flow family:
 - CATEGORY: CORRECTNESS, OBSERVABILITY, DATA_LINEAGE, SAFETY.
 - SEVERITY: `P0`.
 - CONFIDENCE: HIGH.
-- STATUS: CONFIRMED.
-- EVIDENCE: `offer_evidence_v1.summary.json` reports 78/273 TRACEABLE_RAW and 195/273 without traceable RAW. The active remote hourly support cohort uses observations 68, 147 and 213; only 68 is TRACEABLE_RAW. `CohortePricing`/API expose aggregates, not constituent observation/RAW/claim identities.
-- REPRODUCTION: Join the active cohort in `remote_pricing_stats_v2.csv` and `pricing_cohort_scope_evidence_v1.jsonl` to observations 68/147/213 in `offer_evidence_v1.jsonl`; then inspect a complete remote-hourly API response.
+- STATUS: RESOLVED by `runtime-cohort-lineage-gate-v1`.
+- EVIDENCE: The historical audit remains unchanged at 78/273 TRACEABLE_RAW. The versioned runtime projection admits only 31/84 eligible observations and preserves/excludes 53 with `MISSING_REPRODUCIBLE_RAW_LINEAGE`. The active remote hourly support cohort now contains only observation 68; observations 147 and 213 remain preserved but cannot affect provider count, median, range or readiness. `CohortePricing` and the API expose admitted `observation_ids` and the gate version.
+- REPRODUCTION: Regenerate `runtime_cohort_lineage_gate_v1.json`; `pricing-cohort:AR:SOPORTE_REMOTO:PER_HOUR:STANDARD` changes from 3 observations/3 sources/RANGE_READY to 1 observation/1 source/INSUFFICIENT_EVIDENCE, with exact exclusion reasons for 147 and 213.
 - AFFECTED_FILES: `scripts/build_pricing_statistics.py`, `src/aplicacion/pricing_evidence_engine.py`, `src/aplicacion/pricing_cohort_loader.py`, `src/api/main.py`, `data/offer_evidence_v1.jsonl`, `data/pricing_cohort_scope_evidence_v1.jsonl`.
 - AFFECTED_LAYERS: APPLICATION, API, DATA_ARTIFACTS.
 - ROOT_CAUSE: Runtime cohorts predate offer-level lineage as an admission contract.
@@ -85,13 +85,13 @@ The six specifically incorrect clarifications have one control-flow family:
 - LIKELIHOOD: HIGH.
 - BLAST_RADIUS: Every runtime cohort and evidence-bearing public response.
 - DEPENDENCIES: None.
-- PROPOSED_FIX: Add a fail-closed constituent lineage/admissibility projection with observation, source, offer identity, RAW id/hash and claim provenance; exclude or explicitly downgrade inadmissible rows.
-- REGRESSION_TEST_REQUIRED: At the public boundary, every contributor resolves to declared RAW or an explicit exclusion/downgrade reason.
+- IMPLEMENTED_FIX: `runtime_cohort_lineage_gate` validates observation/source identity, extractor/import provenance, repository-contained RAW path, content hash and RAW document id before aggregation. Runtime loading rejects ungated cohort artifacts. Excluded observations remain historical input.
+- REGRESSION_TEST: Ten focused contracts cover admission, URL-only/missing/tampered RAW exclusion, mixed constituents, aggregate/provider integrity, historical preservation, trace parity, HUMAN_REAL replay, public fail-closed behavior and deterministic artifact regeneration.
 - ESTIMATED_SCOPE: L.
-- BLOCKS_MARKET_ACQUISITION: true.
-- BLOCKS_FIELD_TESTING: true for economic-result reliance.
-- BLOCKS_PROMOTION: true.
-- NOTES: Legitimate missing evidence is not debt; admitting it without enforcing/disclosing its state is.
+- BLOCKS_MARKET_ACQUISITION: false for TD-001; TD-002, TD-003, TD-004 and P1 operability still block the program gate.
+- BLOCKS_FIELD_TESTING: false for TD-001; the program remains `CONDITIONAL_SHADOW_ONLY` because other P0s remain.
+- BLOCKS_PROMOTION: false for TD-001; promotion remains unauthorized at program level.
+- NOTES: Closed without acquisition, new data, inferred lineage, threshold changes, historical rewrites or runtime learning writes. See `data/evaluation/runtime_cohort_lineage_gate_v1.json`.
 
 ### TD-002 — Local cohort geography treats provider location as service reach
 
