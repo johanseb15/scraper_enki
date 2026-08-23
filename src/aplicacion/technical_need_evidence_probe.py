@@ -23,6 +23,7 @@ class EvidenceProbeResult:
     observed_min: Decimal | None = None
     observed_max: Decimal | None = None
     median: Decimal | None = None
+    evidence_id: str | None = None
     reason: str | None = None
 
 
@@ -83,6 +84,7 @@ def probe_pricing_evidence(
         observed_min=evidence.min_ars,
         observed_max=evidence.max_ars,
         median=evidence.median_ars,
+        evidence_id=evidence.evidence_id,
         reason=evidence.status,
     )
 

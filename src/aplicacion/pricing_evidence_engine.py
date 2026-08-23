@@ -25,6 +25,13 @@ class CohortePricing:
     price_scope: str = "UNKNOWN"
     commercial_context: str = "STANDARD"
 
+    @property
+    def evidence_id(self) -> str:
+        return (
+            f"pricing-cohort:{self.market}:{self.canonical_service}:"
+            f"{self.price_scope}:{self.commercial_context}"
+        )
+
 
 @dataclass(frozen=True)
 class ResultadoEvidenciaPrecio:
@@ -41,6 +48,7 @@ class ResultadoEvidenciaPrecio:
     evidence_confidence: str = "NONE"
     price_position: str | None = None
     decision_label: str | None = None
+    evidence_id: str | None = None
     price_scope: str = "UNKNOWN"
     commercial_context: str = "STANDARD"
 
@@ -88,6 +96,7 @@ def evaluar_precio(
         q3_ars=cohort.q3_ars,
         max_ars=cohort.max_ars,
         evidence_confidence=cohort.evidence_confidence,
+        evidence_id=cohort.evidence_id,
         price_scope=cohort.price_scope,
         commercial_context=cohort.commercial_context,
     )

@@ -1,0 +1,103 @@
+{
+  "schema_version": "trace-evidence-projection-reconciliation-v1",
+  "start_head": "a01a669fa9335615a25f9a4a222fcf201a1764f8",
+  "engine_accepted_before": 3,
+  "trace_accepted_before": 5,
+  "mismatches_before": 2,
+  "mismatch_cases": [
+    {
+      "query_id": "rq003",
+      "raw_query": "quiero cobrar 30 lucas la hora de soporte remoto, me quedo corto?",
+      "engine_selected": ["pricing-cohort:AR:SOPORTE_REMOTO:PER_HOUR:STANDARD"],
+      "trace_accepted_before": [
+        "pricing-cohort:AR:SOPORTE_REMOTO:PER_HOUR:STANDARD",
+        "pricing-cohort:AR:SOPORTE_REMOTO:PER_HOUR:URGENCY"
+      ],
+      "trace_accepted_after": ["pricing-cohort:AR:SOPORTE_REMOTO:PER_HOUR:STANDARD"],
+      "new_exclusion": {
+        "evidence_id": "pricing-cohort:AR:SOPORTE_REMOTO:PER_HOUR:URGENCY",
+        "reason": "COMMERCIAL_CONTEXT_MISMATCH"
+      }
+    },
+    {
+      "query_id": "rq032",
+      "raw_query": "me quieren cobrar 35 lucas la hora por soporte remoto, está bien?",
+      "engine_selected": ["pricing-cohort:AR:SOPORTE_REMOTO:PER_HOUR:STANDARD"],
+      "trace_accepted_before": [
+        "pricing-cohort:AR:SOPORTE_REMOTO:PER_HOUR:STANDARD",
+        "pricing-cohort:AR:SOPORTE_REMOTO:PER_HOUR:URGENCY"
+      ],
+      "trace_accepted_after": ["pricing-cohort:AR:SOPORTE_REMOTO:PER_HOUR:STANDARD"],
+      "new_exclusion": {
+        "evidence_id": "pricing-cohort:AR:SOPORTE_REMOTO:PER_HOUR:URGENCY",
+        "reason": "COMMERCIAL_CONTEXT_MISMATCH"
+      }
+    }
+  ],
+  "root_cause": "RealWorldQueryTrace independently inferred acceptance from market and price scope, then treated every remaining candidate as accepted whenever the runtime returned any evidence. It did not consume the exact cohort identity selected by PricingEvidenceEngine and omitted commercial_context from its projection filter.",
+  "source_of_truth": "ResultadoEvidenciaPrecio.evidence_id and TechnicalNeed EvidenceProbeResult.evidence_id, both originating from the exact CohortePricing instance selected by PricingEvidenceEngine.",
+  "engine_accepted_after": 3,
+  "trace_accepted_after": 3,
+  "mismatches_after": 0,
+  "trace_engine_evidence_parity": true,
+  "public_decision_drift": 0,
+  "readiness_drift": 0,
+  "human_real_001": {
+    "replay_only": true,
+    "productive_trace_created": false,
+    "raw_user_input": "Cuánto puedo cobrar por formatear una notebook?",
+    "intent": {"action": "SUGGEST_PRICE", "side": "SELL"},
+    "service": ["FORMATEO_INSTALACION_SO"],
+    "device": "NOTEBOOK",
+    "location": null,
+    "currency": "UNKNOWN",
+    "price_scope": "UNKNOWN",
+    "readiness": "CLARIFICATION_REQUIRED",
+    "accepted_evidence": []
+  },
+  "corpus_50_summary": {
+    "total": 50,
+    "affected_cases": ["rq003", "rq032"],
+    "accepted_evidence_refs_before": 5,
+    "accepted_evidence_refs_after": 3,
+    "excluded_evidence_refs_before": 118,
+    "excluded_evidence_refs_after": 120,
+    "comparability_yield_before": {"numerator": 5, "denominator": 123, "value": 0.04065},
+    "comparability_yield_after": {"numerator": 3, "denominator": 123, "value": 0.02439},
+    "readiness_before": {
+      "CLARIFICATION_REQUIRED": 35,
+      "INSUFFICIENT_EVIDENCE": 1,
+      "NO_EVIDENCE": 5,
+      "RANGE_READY": 2,
+      "UNSUPPORTED_QUERY": 7
+    },
+    "readiness_after": {
+      "CLARIFICATION_REQUIRED": 35,
+      "INSUFFICIENT_EVIDENCE": 1,
+      "NO_EVIDENCE": 5,
+      "RANGE_READY": 2,
+      "UNSUPPORTED_QUERY": 7
+    },
+    "wrong_interpretation_before": 21,
+    "wrong_interpretation_after": 21,
+    "failure_taxonomy_before": {
+      "INTENT_FAILURE": 16,
+      "MISSING_MARKET_EVIDENCE": 5,
+      "MISSING_USER_INFORMATION": 25,
+      "NON_COMPARABLE_EVIDENCE": 1,
+      "READINESS_FAILURE": 7,
+      "SEMANTIC_MAPPING_FAILURE": 11
+    },
+    "failure_taxonomy_after": {
+      "INTENT_FAILURE": 16,
+      "MISSING_MARKET_EVIDENCE": 5,
+      "MISSING_USER_INFORMATION": 25,
+      "NON_COMPARABLE_EVIDENCE": 1,
+      "READINESS_FAILURE": 7,
+      "SEMANTIC_MAPPING_FAILURE": 11
+    }
+  },
+  "historical_e2e_artifact_rewritten": false,
+  "runtime_effect": false,
+  "promotion_authorized": false
+}

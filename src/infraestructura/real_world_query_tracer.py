@@ -9,6 +9,7 @@ from time import perf_counter_ns
 from src.aplicacion.enki_pricing_query_service import resolver_consulta_pricing
 from src.aplicacion.enki_pricing_response import presentar_resultado_pricing
 from src.aplicacion.parser_consulta_pricing import parse_pricing_query
+from src.aplicacion.pricing_cohort_loader import DEFAULT_LOCAL_STATS, DEFAULT_REMOTE_STATS
 from src.dominio.real_world_query_trace import (
     EvidenceDecisionTrace,
     FailureType,
@@ -240,7 +241,20 @@ def _economic_dimensions(parsed):
 
 
 def _cohort_id(item):
-    return f"pricing-cohort:{item.market}:{item.canonical_service}:{item.price_scope}:{item.commercial_context}"
+    return item.evidence_id
+
+
+def _engine_selected_evidence_ids(result):
+    selected = set()
+    if result.evidence and result.evidence.evidence_id:
+        selected.add(result.evidence.evidence_id)
+    if result.evidence_probe:
+        selected.update(
+            item.evidence_id
+            for item in result.evidence_probe.probes
+            if item.evidence_id
+        )
+    return selected
 
 
 def _evidence_projection(parsed, result, local, remote):
@@ -249,7 +263,9 @@ def _evidence_projection(parsed, result, local, remote):
     if result.market_resolution:
         targets |= {item.canonical_service for item in result.market_resolution.resolutions if item.canonical_service}
     expected_market = "AR" if parsed.market_scope.value == "REMOTE_NATIONAL" else parsed.geography.province
-    price_scope = result.evidence.price_scope if result.evidence else (parsed.price.type.value if parsed.price.type.value.startswith("PER_") else "UNKNOWN")
+    price_scope = result.evidence.price_scope if result.evidence else parsed.price_scope.comparison_scope
+    commercial_context = result.evidence.commercial_context if result.evidence else None
+    selected_ids = _engine_selected_evidence_ids(result)
     candidates = []
     for item in cohorts:
         if not targets or item.canonical_service not in targets:
@@ -258,10 +274,12 @@ def _evidence_projection(parsed, result, local, remote):
         if expected_market and item.market != expected_market: reasons.append("MARKET_MISMATCH")
         if not result.market_resolution and item.price_scope != price_scope:
             reasons.append("PRICE_SCOPE_UNKNOWN_SIDE" if "UNKNOWN" in {item.price_scope, price_scope} else "PRICE_SCOPE_MISMATCH")
-        accepted = not reasons and (result.evidence is not None or result.evidence_probe is not None)
+        if not result.market_resolution and commercial_context and item.commercial_context != commercial_context:
+            reasons.append("COMMERCIAL_CONTEXT_MISMATCH")
+        accepted = _cohort_id(item) in selected_ids
         candidates.append(EvidenceDecisionTrace(
             _cohort_id(item), "ACCEPTED" if accepted else "EXCLUDED", tuple(reasons or (() if accepted else ("NOT_SELECTED_BY_RUNTIME",))),
-            "data/local_pricing_stats_v1.csv" if item in local else "data/remote_pricing_stats_v1.csv",
+            DEFAULT_LOCAL_STATS.as_posix() if item in local else DEFAULT_REMOTE_STATS.as_posix(),
         ))
     accepted_ids = tuple(item.evidence_id for item in candidates if item.decision == "ACCEPTED")
     excluded_ids = tuple(item.evidence_id for item in candidates if item.decision == "EXCLUDED")
