@@ -101,8 +101,9 @@ def resolver_consulta_pricing(
     local_cohortes: Iterable[CohortePricing],
     remote_cohortes: Iterable[CohortePricing],
     language_evidence_type: str = "OBSERVED_USER",
+    parsed_query: ParsedPricingQuery | None = None,
 ) -> EnkiPricingQueryResult:
-    parsed = parse_pricing_query(texto, language_evidence_type=language_evidence_type)
+    parsed = parsed_query or parse_pricing_query(texto, language_evidence_type=language_evidence_type)
 
     if parsed.query_kind == QueryKind.TECHNICAL_NEED:
         market_resolution = resolve_technical_need_market(

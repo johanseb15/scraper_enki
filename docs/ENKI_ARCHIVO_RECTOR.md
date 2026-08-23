@@ -328,6 +328,12 @@ gap
 
 ## Engineering
 
+Los fallos observados en interacciones reales son evidencia de aprendizaje de
+primera clase. Cada decisión real debe poder reproducirse hasta el límite que
+permitan sus versiones de código y evidencia; el tracing observa el runtime sin
+cambiar su respuesta, y nunca convierte feedback, regression candidates ni
+conclusiones del sistema en conocimiento promovido.
+
 Brownfield first.
 TDD.
 RED → GREEN → REFACTOR.
