@@ -8,10 +8,11 @@ from pathlib import Path
 from src.aplicacion.pricing_evidence_engine import CohortePricing
 from src.aplicacion.runtime_cohort_lineage_gate import LINEAGE_GATE_VERSION
 from src.aplicacion.service_reach_admission_gate import SERVICE_REACH_GATE_VERSION
+from src.aplicacion.temporal_evidence_admission_gate import TEMPORAL_GATE_VERSION
 
 
-DEFAULT_LOCAL_STATS = Path("data/local_pricing_stats_reach_v1.csv")
-DEFAULT_REMOTE_STATS = Path("data/remote_pricing_stats_reach_v1.csv")
+DEFAULT_LOCAL_STATS = Path("data/local_pricing_stats_temporal_v1.csv")
+DEFAULT_REMOTE_STATS = Path("data/remote_pricing_stats_temporal_v1.csv")
 
 
 def _decimal(value: str) -> Decimal:
@@ -23,6 +24,7 @@ def cargar_cohortes_pricing(
     *,
     require_runtime_lineage_gate: bool = False,
     require_service_reach_gate: bool = False,
+    require_temporal_gate: bool = False,
 ) -> list[CohortePricing]:
     cohortes: list[CohortePricing] = []
 
@@ -33,12 +35,23 @@ def cargar_cohortes_pricing(
             required_fields.update({"lineage_gate_version", "observation_ids"})
         if require_service_reach_gate:
             required_fields.add("service_reach_gate_version")
+        if require_temporal_gate:
+            required_fields.update(
+                {
+                    "temporal_gate_version",
+                    "temporal_state",
+                    "acquired_at_min",
+                    "acquired_at_max",
+                    "freshness_policy_version",
+                }
+            )
         if not required_fields.issubset(set(reader.fieldnames or ())):
             expected_gates = ", ".join(
                 version
                 for required, version in (
                     (require_runtime_lineage_gate, LINEAGE_GATE_VERSION),
                     (require_service_reach_gate, SERVICE_REACH_GATE_VERSION),
+                    (require_temporal_gate, TEMPORAL_GATE_VERSION),
                 )
                 if required
             )
@@ -49,6 +62,9 @@ def cargar_cohortes_pricing(
             gate_version = (row.get("lineage_gate_version") or "").strip() or None
             reach_gate_version = (
                 (row.get("service_reach_gate_version") or "").strip() or None
+            )
+            temporal_gate_version = (
+                (row.get("temporal_gate_version") or "").strip() or None
             )
             observation_ids = tuple(
                 item for item in (row.get("observation_ids") or "").split("|") if item
@@ -67,6 +83,16 @@ def cargar_cohortes_pricing(
             ):
                 raise ValueError(
                     f"Runtime pricing cohort lacks {SERVICE_REACH_GATE_VERSION}: {path}"
+                )
+            if require_temporal_gate and (
+                temporal_gate_version != TEMPORAL_GATE_VERSION
+                or row.get("temporal_state") != "CURRENT_REPRODUCIBLE"
+                or not (row.get("acquired_at_min") or "").strip()
+                or not (row.get("acquired_at_max") or "").strip()
+                or not (row.get("freshness_policy_version") or "").strip()
+            ):
+                raise ValueError(
+                    f"Runtime pricing cohort lacks {TEMPORAL_GATE_VERSION}: {path}"
                 )
             cohortes.append(
                 CohortePricing(
@@ -87,6 +113,13 @@ def cargar_cohortes_pricing(
                     commercial_context=(row.get("commercial_context") or "STANDARD"),
                     lineage_gate_version=gate_version,
                     service_reach_gate_version=reach_gate_version,
+                    temporal_gate_version=temporal_gate_version,
+                    temporal_state=(row.get("temporal_state") or None),
+                    acquired_at_min=(row.get("acquired_at_min") or None),
+                    acquired_at_max=(row.get("acquired_at_max") or None),
+                    freshness_policy_version=(
+                        row.get("freshness_policy_version") or None
+                    ),
                     observation_ids=observation_ids,
                 )
             )
@@ -107,10 +140,12 @@ def cargar_cohortes_pricing_runtime() -> tuple[list[CohortePricing], list[Cohort
             local_path,
             require_runtime_lineage_gate=True,
             require_service_reach_gate=True,
+            require_temporal_gate=True,
         ),
         cargar_cohortes_pricing(
             remote_path,
             require_runtime_lineage_gate=True,
             require_service_reach_gate=True,
+            require_temporal_gate=True,
         ),
     )

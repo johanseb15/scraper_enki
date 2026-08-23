@@ -17,8 +17,14 @@ from src.aplicacion.service_reach_admission_gate import (
     ServiceReachAdmissionDecision,
     evaluate_service_reach,
 )
+from src.aplicacion.temporal_evidence_admission_gate import (
+    TEMPORAL_GATE_VERSION,
+    TemporalAdmissionDecision,
+    evaluate_temporal_admission,
+)
 from src.dominio.economic_evidence import EconomicEvidenceDimensionsV2
 from src.dominio.offer_evidence import OfferReachChargedScopeEvidence
+from src.dominio.temporal_evidence import TemporalEvidence
 
 
 LINEAGE_GATE_VERSION = "runtime-cohort-lineage-gate-v1"
@@ -46,9 +52,11 @@ class RuntimeCohortBuild:
     cohorts: tuple[dict[str, object], ...]
     decisions: tuple[RuntimeLineageDecision, ...]
     reach_decisions: tuple[ServiceReachAdmissionDecision, ...]
+    temporal_decisions: tuple[TemporalAdmissionDecision, ...]
     eligible_before: int
     lineage_admitted: int
     reach_admitted: int
+    temporal_admitted: int
     admitted: int
     excluded: int
 
@@ -172,6 +180,7 @@ def _aggregate(
     market_scope: str,
     *,
     service_reach_gated: bool,
+    temporal_evidence: Mapping[str, TemporalEvidence] | None,
 ) -> list[dict[str, object]]:
     members: dict[tuple[str, str, str, str], list[Mapping[str, str]]] = defaultdict(list)
     for row in rows:
@@ -191,6 +200,21 @@ def _aggregate(
         sources = {row["source"] for row in ordered_rows}
         n = len(vals)
         providers_n = len(sources)
+        temporal_members = [
+            temporal_evidence[row["observation_id"]]
+            for row in ordered_rows
+            if temporal_evidence is not None
+        ]
+        acquired_times = sorted(
+            item.acquired_at for item in temporal_members if item.acquired_at
+        )
+        freshness_versions = sorted(
+            {
+                item.freshness_policy_version
+                for item in temporal_members
+                if item.freshness_policy_version
+            }
+        )
         spread_ratio = max(vals) / min(vals) if min(vals) > 0 else float("inf")
         if n >= 5 and providers_n >= 3 and spread_ratio <= 2.5:
             confidence = "MEDIUM"
@@ -220,6 +244,17 @@ def _aggregate(
                 "service_reach_gate_version": (
                     SERVICE_REACH_GATE_VERSION if service_reach_gated else ""
                 ),
+                "temporal_gate_version": (
+                    TEMPORAL_GATE_VERSION if temporal_evidence is not None else ""
+                ),
+                "temporal_state": (
+                    "CURRENT_REPRODUCIBLE" if temporal_evidence is not None else ""
+                ),
+                "acquired_at_min": acquired_times[0] if acquired_times else "",
+                "acquired_at_max": acquired_times[-1] if acquired_times else "",
+                "freshness_policy_version": (
+                    freshness_versions[0] if len(freshness_versions) == 1 else ""
+                ),
                 "observation_ids": "|".join(row["observation_id"] for row in ordered_rows),
             }
         )
@@ -234,6 +269,7 @@ def build_runtime_cohort_rows(
     *,
     market_scope: str,
     service_reach_dimensions: Mapping[str, EconomicEvidenceDimensionsV2] | None = None,
+    temporal_evidence: Mapping[str, TemporalEvidence] | None = None,
 ) -> RuntimeCohortBuild:
     """Apply composable lineage/reach admission before runtime aggregation."""
     eligible = [row for row in rows if _eligible(row, market_scope)]
@@ -257,13 +293,29 @@ def build_runtime_cohort_rows(
         )
         for row in eligible
     ) if service_reach_dimensions is not None else ()
+    temporal_decisions = tuple(
+        evaluate_temporal_admission(
+            observation_id=row["observation_id"],
+            evidence=temporal_evidence.get(row["observation_id"]),
+        )
+        for row in eligible
+    ) if temporal_evidence is not None else ()
     lineage_ids = {decision.observation_id for decision in decisions if decision.admitted}
     reach_ids = (
         {decision.observation_id for decision in reach_decisions if decision.admitted}
         if service_reach_dimensions is not None
         else {row["observation_id"] for row in eligible}
     )
-    accepted_ids = lineage_ids & reach_ids
+    temporal_ids = (
+        {
+            decision.observation_id
+            for decision in temporal_decisions
+            if decision.admitted
+        }
+        if temporal_evidence is not None
+        else {row["observation_id"] for row in eligible}
+    )
+    accepted_ids = lineage_ids & reach_ids & temporal_ids
     accepted = [row for row in eligible if row["observation_id"] in accepted_ids]
     return RuntimeCohortBuild(
         market_scope=market_scope,
@@ -272,13 +324,16 @@ def build_runtime_cohort_rows(
                 accepted,
                 market_scope,
                 service_reach_gated=service_reach_dimensions is not None,
+                temporal_evidence=temporal_evidence,
             )
         ),
         decisions=decisions,
         reach_decisions=reach_decisions,
+        temporal_decisions=temporal_decisions,
         eligible_before=len(eligible),
         lineage_admitted=len(lineage_ids),
         reach_admitted=len(reach_ids),
+        temporal_admitted=len(temporal_ids),
         admitted=len(accepted),
         excluded=len(eligible) - len(accepted),
     )

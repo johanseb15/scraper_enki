@@ -1,0 +1,1757 @@
+{
+  "acquired_at_known": 5,
+  "acquired_at_unknown": 268,
+  "cohorts_before_after": {
+    "local": {
+      "after": 0,
+      "before": 0
+    },
+    "remote": {
+      "after": 0,
+      "before": 0
+    }
+  },
+  "corpus_50": {
+    "accepted_evidence_after": 0,
+    "accepted_evidence_before": 0,
+    "cases": 50,
+    "excluded_evidence_after": 0,
+    "excluded_evidence_before": 0,
+    "expected_safety_changes": 0,
+    "failure_taxonomy_after": {
+      "INTENT_FAILURE": 16,
+      "MISSING_MARKET_EVIDENCE": 17,
+      "MISSING_USER_INFORMATION": 25,
+      "READINESS_FAILURE": 8,
+      "SEMANTIC_MAPPING_FAILURE": 11
+    },
+    "failure_taxonomy_before": {
+      "INTENT_FAILURE": 16,
+      "MISSING_MARKET_EVIDENCE": 17,
+      "MISSING_USER_INFORMATION": 25,
+      "READINESS_FAILURE": 8,
+      "SEMANTIC_MAPPING_FAILURE": 11
+    },
+    "public_response_changes": [],
+    "readiness_after": {
+      "CLARIFICATION_REQUIRED": 25,
+      "NO_EVIDENCE": 17,
+      "UNSUPPORTED_QUERY": 8
+    },
+    "readiness_before": {
+      "CLARIFICATION_REQUIRED": 25,
+      "NO_EVIDENCE": 17,
+      "UNSUPPORTED_QUERY": 8
+    },
+    "unexpected_drift": [],
+    "wrong_interpretations_after": 21,
+    "wrong_interpretations_before": 21
+  },
+  "current_reproducible": 0,
+  "debt_id": "TD-003",
+  "filesystem_dates_used_as_evidence": false,
+  "gate_composition": {
+    "lineage_fail_reach_fail_temporal_fail": 52,
+    "lineage_fail_reach_pass_temporal_fail": 1,
+    "lineage_pass_reach_fail_temporal_fail": 31
+  },
+  "historical_reproducible": 5,
+  "historical_rows_rewritten": false,
+  "human_real_001": {
+    "case_id": "founder-20260823-001",
+    "currency": {
+      "provenance": "parsed_query",
+      "status": "UNKNOWN",
+      "value": "UNKNOWN"
+    },
+    "location": {
+      "provenance": "parsed_query",
+      "status": "UNKNOWN",
+      "value": null
+    },
+    "price_scope": {
+      "provenance": "parsed_query",
+      "status": "UNKNOWN",
+      "value": "UNKNOWN"
+    },
+    "readiness_after": "CLARIFICATION_REQUIRED",
+    "readiness_before": "CLARIFICATION_REQUIRED",
+    "semantic_drift": false
+  },
+  "observations_total": 273,
+  "promotion_authorized": false,
+  "published_at_known": 0,
+  "published_at_unknown": 273,
+  "raw_dates_recovered": {
+    "observations_with_acquired_at": 5,
+    "observations_with_price_validity_time_raw": 30
+  },
+  "runtime_admissible": 0,
+  "runtime_admitted_before_after": {
+    "after": 0,
+    "before": 0
+  },
+  "runtime_excluded": 84,
+  "runtime_exclusion_reasons": {
+    "MISSING_TEMPORAL_PROVENANCE": 79,
+    "TEMPORAL_MISMATCH": 5
+  },
+  "runtime_gate_decisions": [
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "OBSERVATION_NOT_REPRODUCED_FROM_SNAPSHOT",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "4",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "OBSERVATION_NOT_REPRODUCED_FROM_SNAPSHOT",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "6",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "OBSERVATION_NOT_REPRODUCED_FROM_SNAPSHOT",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "7",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "OBSERVATION_NOT_REPRODUCED_FROM_SNAPSHOT",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "8",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "OBSERVATION_NOT_REPRODUCED_FROM_SNAPSHOT",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "9",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "OBSERVATION_NOT_REPRODUCED_FROM_SNAPSHOT",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "10",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "OBSERVATION_NOT_REPRODUCED_FROM_SNAPSHOT",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "11",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": true,
+        "detail": null,
+        "reason": null
+      },
+      "observation_id": "43",
+      "service_reach": {
+        "admitted": false,
+        "detail": "REMOTE_CAPABILITY_WITHOUT_NATIONAL_REACH",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": true,
+        "detail": null,
+        "reason": null
+      },
+      "observation_id": "49",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": true,
+        "detail": null,
+        "reason": null
+      },
+      "observation_id": "51",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": true,
+        "detail": null,
+        "reason": null
+      },
+      "observation_id": "56",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": true,
+        "detail": null,
+        "reason": null
+      },
+      "observation_id": "57",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": true,
+        "detail": null,
+        "reason": null
+      },
+      "observation_id": "58",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": true,
+        "detail": null,
+        "reason": null
+      },
+      "observation_id": "59",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": true,
+        "detail": null,
+        "reason": null
+      },
+      "observation_id": "60",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": true,
+        "detail": null,
+        "reason": null
+      },
+      "observation_id": "62",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "FRESHNESS_POLICY_UNKNOWN",
+        "reason": "TEMPORAL_MISMATCH",
+        "state": "HISTORICAL_REPRODUCIBLE"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": true,
+        "detail": null,
+        "reason": null
+      },
+      "observation_id": "63",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": true,
+        "detail": null,
+        "reason": null
+      },
+      "observation_id": "64",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": true,
+        "detail": null,
+        "reason": null
+      },
+      "observation_id": "65",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": true,
+        "detail": null,
+        "reason": null
+      },
+      "observation_id": "66",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": true,
+        "detail": null,
+        "reason": null
+      },
+      "observation_id": "67",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": true,
+        "detail": null,
+        "reason": null
+      },
+      "observation_id": "68",
+      "service_reach": {
+        "admitted": false,
+        "detail": "REMOTE_CAPABILITY_WITHOUT_NATIONAL_REACH",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "FRESHNESS_POLICY_UNKNOWN",
+        "reason": "TEMPORAL_MISMATCH",
+        "state": "HISTORICAL_REPRODUCIBLE"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": true,
+        "detail": null,
+        "reason": null
+      },
+      "observation_id": "69",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "FRESHNESS_POLICY_UNKNOWN",
+        "reason": "TEMPORAL_MISMATCH",
+        "state": "HISTORICAL_REPRODUCIBLE"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": true,
+        "detail": null,
+        "reason": null
+      },
+      "observation_id": "70",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "FRESHNESS_POLICY_UNKNOWN",
+        "reason": "TEMPORAL_MISMATCH",
+        "state": "HISTORICAL_REPRODUCIBLE"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": true,
+        "detail": null,
+        "reason": null
+      },
+      "observation_id": "71",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": true,
+        "detail": null,
+        "reason": null
+      },
+      "observation_id": "72",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": true,
+        "detail": null,
+        "reason": null
+      },
+      "observation_id": "73",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": true,
+        "detail": null,
+        "reason": null
+      },
+      "observation_id": "74",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": true,
+        "detail": null,
+        "reason": null
+      },
+      "observation_id": "75",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": true,
+        "detail": null,
+        "reason": null
+      },
+      "observation_id": "76",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": true,
+        "detail": null,
+        "reason": null
+      },
+      "observation_id": "77",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": true,
+        "detail": null,
+        "reason": null
+      },
+      "observation_id": "78",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": true,
+        "detail": null,
+        "reason": null
+      },
+      "observation_id": "79",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": true,
+        "detail": null,
+        "reason": null
+      },
+      "observation_id": "80",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": true,
+        "detail": null,
+        "reason": null
+      },
+      "observation_id": "81",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": true,
+        "detail": null,
+        "reason": null
+      },
+      "observation_id": "82",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": true,
+        "detail": null,
+        "reason": null
+      },
+      "observation_id": "83",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": true,
+        "detail": null,
+        "reason": null
+      },
+      "observation_id": "84",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "91",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "93",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "97",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "112",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "118",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "121",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "122",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "123",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "124",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "125",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "126",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "127",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "128",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "129",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "130",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "131",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "132",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "133",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "134",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "135",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "136",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "137",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "144",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "145",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "146",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "147",
+      "service_reach": {
+        "admitted": false,
+        "detail": "REMOTE_CAPABILITY_WITHOUT_NATIONAL_REACH",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "148",
+      "service_reach": {
+        "admitted": false,
+        "detail": "REMOTE_CAPABILITY_WITHOUT_NATIONAL_REACH",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "154",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "157",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "158",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "198",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "199",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "206",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "207",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "208",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "209",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "210",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "213",
+      "service_reach": {
+        "admitted": false,
+        "detail": "REMOTE_CAPABILITY_WITHOUT_NATIONAL_REACH",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "216",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "234",
+      "service_reach": {
+        "admitted": true,
+        "detail": null,
+        "reason": null
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "FRESHNESS_POLICY_UNKNOWN",
+        "reason": "TEMPORAL_MISMATCH",
+        "state": "HISTORICAL_REPRODUCIBLE"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "236",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "237",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "238",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "253",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "266",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    },
+    {
+      "lineage": {
+        "admitted": false,
+        "detail": "SOURCE_RAW_NOT_AVAILABLE",
+        "reason": "MISSING_REPRODUCIBLE_RAW_LINEAGE"
+      },
+      "observation_id": "268",
+      "service_reach": {
+        "admitted": false,
+        "detail": "GEOGRAPHIC_REACH_UNKNOWN",
+        "reason": "MISSING_SERVICE_REACH"
+      },
+      "temporal": {
+        "admitted": false,
+        "detail": "ACQUIRED_AT_UNKNOWN",
+        "reason": "MISSING_TEMPORAL_PROVENANCE",
+        "state": "TEMPORAL_UNKNOWN"
+      }
+    }
+  ],
+  "runtime_learning_writes": 0,
+  "schema_version": "temporal-evidence-admissibility-v1",
+  "start_head": "0c29196b4b75c129350de7fd68ce962b93529ad8",
+  "temporal_conflict": 0,
+  "temporal_fields_inventory": {
+    "api_runtime_after": [
+      "temporal_gate_version",
+      "temporal_state",
+      "acquired_at_min",
+      "acquired_at_max",
+      "freshness_policy_version"
+    ],
+    "offer_evidence_before_recovery": {
+      "acquired_at_known": 0,
+      "acquired_at_unknown": 273
+    },
+    "pricing_cohorts_after": {
+      "acquisition_window": true,
+      "freshness_policy": true,
+      "temporal_gate": true
+    },
+    "pricing_cohorts_before": {
+      "acquisition_window": false,
+      "freshness_policy": false,
+      "temporal_gate": false
+    },
+    "raw_documents": {
+      "acquired_at": "2 selective RAW manifests; exact identity propagates to 5 observations",
+      "filesystem_mtime": "present operationally but prohibited and unused",
+      "price_validity_time_raw": "30 observations with exact month/year raw context",
+      "publication_at": "no unambiguous offer-level publication timestamp propagated"
+    },
+    "semantic_observations": {
+      "acquired_at_column": false,
+      "extractor_version_known": 273,
+      "observed_at_column": false,
+      "published_at_column": false,
+      "validity_columns": false
+    },
+    "source_manifests": {
+      "legacy_acquired_at_known": 0,
+      "legacy_acquired_at_unknown": 4,
+      "targeted_acquired_at_known": 2,
+      "targeted_last_modified_known": 0
+    },
+    "traces": {
+      "artifact_latency": "telemetry only",
+      "evidence_temporal_exclusions": [
+        "MISSING_TEMPORAL_PROVENANCE",
+        "TEMPORAL_MISMATCH"
+      ],
+      "request_received_at": "request provenance only; never evidence acquisition"
+    }
+  },
+  "temporal_mismatch": 5,
+  "temporal_unknown": 268,
+  "trace_engine_parity": {
+    "mismatches": [],
+    "value": true
+  }
+}

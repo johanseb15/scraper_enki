@@ -6,13 +6,13 @@ Program: ENKI TECHNICAL DEBT CONSOLIDATION
 
 Baseline: `main@b03e65ef287e3286bcca47e0355852b4fb8b6d77`
 
-Machine-readable sources: `data/evaluation/technical_debt_audit_v1.json` (historical audit), `data/evaluation/runtime_cohort_lineage_gate_v1.json` (TD-001 remediation), and `data/evaluation/offer_service_reach_admission_gate_v1.json` (TD-002 remediation).
+Machine-readable sources: `data/evaluation/technical_debt_audit_v1.json` (historical audit), `data/evaluation/runtime_cohort_lineage_gate_v1.json` (TD-001 remediation), `data/evaluation/offer_service_reach_admission_gate_v1.json` (TD-002 remediation), and `data/evaluation/temporal_evidence_admissibility_v1.json` (TD-003 remediation).
 
 ## Executive decision
 
-The repository is test-green, but it is not yet safe to expand real market acquisition or authorize knowledge promotion. TD-001 is resolved by a fail-closed constituent RAW-lineage gate and TD-002 by a composable explicit service-reach gate. Two P0 debts still affect runtime evidence truth: temporal freshness and commercial-context projection. Founder field capture may continue only as supervised shadow testing; economic results must not be relied on until the remaining P0s close.
+The repository is test-green, but it is not yet safe to expand real market acquisition or authorize knowledge promotion. TD-001 is resolved by a fail-closed constituent RAW-lineage gate, TD-002 by a composable explicit service-reach gate, and TD-003 by explicit temporal identity/current-compatibility admission. One P0 debt still affects runtime evidence truth: commercial-context projection. Founder field capture may continue only as supervised shadow testing; economic results must not be relied on until the remaining P0 closes.
 
-The TD-002 remediation changes runtime admission only: provider location no longer supplies service reach, UNKNOWN remains UNKNOWN, REMOTE does not imply NATIONAL, and no historical evidence, HUMAN_REAL data, readiness threshold or promotion state was changed.
+The TD-003 remediation recovers only explicit RAW/manifest temporal facts, keeps all five dated observations historical because no freshness policy exists, and excludes all UNKNOWN or incompatible temporal states from current pricing. Filesystem timestamps, historical evidence, HUMAN_REAL data, readiness thresholds and promotion state remain untouched.
 
 | Severity | Count | Meaning in this register |
 |---|---:|---|
@@ -128,10 +128,10 @@ The six specifically incorrect clarifications have one control-flow family:
 - CATEGORY: CORRECTNESS, REPRODUCIBILITY, DATA_LINEAGE, SAFETY.
 - SEVERITY: `P0`.
 - CONFIDENCE: HIGH.
-- STATUS: CONFIRMED.
-- EVIDENCE: All 273 semantic rows lack an `acquired_at` column; all four legacy RAW-manifest `acquired_at` values are blank; cohort/API evidence exposes no acquisition window or freshness state.
-- REPRODUCTION: Inspect headers/values of `semantic_normalization_v4.csv`, `offer_evidence_raw_manifest_v1.csv`, runtime cohort CSVs and the API evidence payload.
-- AFFECTED_FILES: `data/semantic_normalization_v4.csv`, `data/offer_evidence_raw_manifest_v1.csv`, `scripts/build_pricing_statistics.py`, `src/aplicacion/pricing_evidence_engine.py`, `src/api/main.py`.
+- STATUS: RESOLVED by `temporal-evidence-admissibility-v1`.
+- EVIDENCE: The 273 semantic rows still correctly preserve their original schema without invented dates. Exact RAW identity joins recover `acquired_at` for 5 observations and exact month/year price context for 30; 268 remain `TEMPORAL_UNKNOWN`. Because no validated freshness policy exists, all 5 dated observations are `HISTORICAL_REPRODUCIBLE`, none is `CURRENT_REPRODUCIBLE`, and current-pricing admission remains 0/84.
+- REPRODUCTION: Regenerate `temporal_evidence_admissibility_v1.json`; runtime temporal decisions exclude 79 eligible observations with `MISSING_TEMPORAL_PROVENANCE` and 5 with `TEMPORAL_MISMATCH`/`FRESHNESS_POLICY_UNKNOWN`. Filesystem mtime/ctime/git/sync timestamps are never read as evidence.
+- AFFECTED_FILES: `src/dominio/temporal_evidence.py`, `src/aplicacion/temporal_evidence_admission_gate.py`, `src/aplicacion/runtime_cohort_lineage_gate.py`, `src/infraestructura/temporal_evidence_artifact.py`, `scripts/build_pricing_statistics.py`, temporal sidecars/projections, cohort loader/engine and API projection.
 - AFFECTED_LAYERS: DATA_ARTIFACTS, APPLICATION, API.
 - ROOT_CAUSE: Fixture, publication and acquisition time were never unified before historical data became runtime input.
 - PRODUCT_IMPACT: Enki cannot say whether a range is current, historical or mixed.
@@ -141,13 +141,13 @@ The six specifically incorrect clarifications have one control-flow family:
 - LIKELIHOOD: HIGH.
 - BLAST_RADIUS: All runtime cohorts and future reacquisition.
 - DEPENDENCIES: TD-001.
-- PROPOSED_FIX: Propagate acquired/publication/snapshot/extractor identity, type temporal state and fail closed on incompatible/unknown mixes under an explicit policy.
-- REGRESSION_TEST_REQUIRED: Historical/current mixes without exact offer identity yield TEMPORAL_MISMATCH or insufficient evidence, never silent replacement.
+- IMPLEMENTED_FIX: A deterministic temporal sidecar joins only exact offer/RAW identities to captured acquisition manifests, preserves raw month/year price context without adding precision, and types `CURRENT_REPRODUCIBLE`, `HISTORICAL_REPRODUCIBLE`, `TEMPORAL_UNKNOWN`, `TEMPORAL_CONFLICT` and `TEMPORAL_MISMATCH`. The third independent admission gate requires both temporal identity and an explicit compatible freshness policy before aggregation; no policy or threshold was invented.
+- REGRESSION_TEST: Thirteen focused contracts cover exact RAW recovery, missing acquisition, filesystem rejection, historical preservation, UNKNOWN/conflict/mismatch, every required gate composition, causal exclusion visibility, API/trace fail-closed behavior and exact artifact/sidecar regeneration.
 - ESTIMATED_SCOPE: L.
-- BLOCKS_MARKET_ACQUISITION: true.
-- BLOCKS_FIELD_TESTING: true for economic-result reliance.
-- BLOCKS_PROMOTION: true.
-- NOTES: The two newer selective RAW snapshots have timestamps; propagation into the baseline/runtime is the missing contract.
+- BLOCKS_MARKET_ACQUISITION: false for TD-003; unresolved TD-004 and P1 operability still block the program gate.
+- BLOCKS_FIELD_TESTING: false for TD-003; the program remains `CONDITIONAL_SHADOW_ONLY` because TD-004 remains.
+- BLOCKS_PROMOTION: false for TD-003; promotion remains unauthorized at program level.
+- NOTES: Closed without acquisition, fabricated dates, freshness thresholds, historical rewrites, HUMAN_REAL mutation or runtime learning writes. See `data/evaluation/temporal_evidence_admissibility_v1.json`.
 
 ### TD-004 — Commercial context has divergent sources of truth and false trace projection
 
@@ -526,7 +526,7 @@ TD-005 CLI contract ──────────> TD-015 dependency/config
 TD-013 boundary tests ────────> TD-016 legacy retirement
 ```
 
-TD-004 can be remediated independently. Market acquisition still requires TD-003/004/005/008/010. Promotion additionally requires TD-009/011/013.
+TD-004 can be remediated independently. Market acquisition still requires TD-004/005/008/010. Promotion additionally requires TD-009/011/013.
 
 ## Remediation waves
 
@@ -534,7 +534,7 @@ TD-004 can be remediated independently. Market acquisition still requires TD-003
 
 1. **RUNTIME COHORT LINEAGE GATE v1 — COMPLETE** — Every contributor is auditable or fails closed. Closed TD-001.
 2. **OFFER SERVICE REACH ADMISSION GATE v1 — COMPLETE** — Provider location and remote capability cannot stand in for explicit offer reach. Closed TD-002.
-3. **TEMPORAL EVIDENCE ADMISSIBILITY v1** — Goal: type/enforce acquisition and freshness. Closes TD-003. Files: observation/cohort/API contracts. Risk: high. Tests: historical/current mismatch and freshness. Exit: every admitted row/cohort has explicit temporal state/window. Dependency: lineage gate.
+3. **TEMPORAL EVIDENCE ADMISSIBILITY v1 — COMPLETE** — Every current-pricing contributor requires explicit temporal identity and compatible freshness policy. Closed TD-003.
 4. **COMMERCIAL CONTEXT SINGLE TRUTH v1** — Goal: unify context and trace truth. Closes TD-004. Files: context/parser/service/tracer. Risk: high. Tests: STANDARD/URGENCY matrix and engine/trace parity. Exit: parsed/selected/traced values and raw basis match. Dependency: none.
 
 ### WAVE 1 — P1 operability and reproducibility
@@ -567,19 +567,19 @@ Estimated consolidation: **18 small causal sprints** (the broad interpretation i
 
 ### SAFE_FOR_FOUNDER_FIELD_TESTING
 
-`CONDITIONAL_SHADOW_ONLY`. Continue append-only HUMAN_REAL capture and supervised parser/clarification observation. Do not rely on displayed economic ranges until TD-003 and TD-004 close. Keep promotion and runtime learning writes disabled.
+`CONDITIONAL_SHADOW_ONLY`. Continue append-only HUMAN_REAL capture and supervised parser/clarification observation. Do not rely on displayed economic ranges until TD-004 closes. Keep promotion and runtime learning writes disabled.
 
 ### SAFE_FOR_MARKET_ACQUISITION_EXPANSION
 
-`NO`. Required closures: TD-003, TD-004, TD-005, TD-008 and TD-010. This is risk-based, not “debt zero”: corpus cleanup, documentation and legacy wrappers do not block acquisition.
+`NO`. Required closures: TD-004, TD-005, TD-008 and TD-010. This is risk-based, not “debt zero”: corpus cleanup, documentation and legacy wrappers do not block acquisition.
 
 ### SAFE_FOR_KNOWLEDGE_PROMOTION
 
-`NO`. Required closures: TD-003, TD-004, TD-008, TD-009, TD-010, TD-011 and TD-013; additionally, the current candidate remains `FAIL_SHADOW_VALIDATION`. Existing currency conflicts remain preserved and no promotion is authorized.
+`NO`. Required closures: TD-004, TD-008, TD-009, TD-010, TD-011 and TD-013; additionally, the current candidate remains `FAIL_SHADOW_VALIDATION`. Existing currency conflicts remain preserved and no promotion is authorized.
 
 ## Exact next remediation sprint
 
-**TEMPORAL EVIDENCE ADMISSIBILITY v1**. It closes only TD-003. Every admitted row and cohort must carry an explicit temporal state and enforceable freshness window while preserving historical evidence and existing thresholds. TD-004 remains independent and out of scope for that sprint.
+**COMMERCIAL CONTEXT SINGLE TRUTH v1**. It closes only TD-004. Parser, cohort selection, engine and trace must consume one typed commercial-context result with raw basis/provenance and exact engine/trace parity. No TD-004 work was implemented in the temporal sprint.
 
 ## Explicitly not debt
 

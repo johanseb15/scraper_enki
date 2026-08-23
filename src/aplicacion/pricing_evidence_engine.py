@@ -26,6 +26,11 @@ class CohortePricing:
     commercial_context: str = "STANDARD"
     lineage_gate_version: str | None = None
     service_reach_gate_version: str | None = None
+    temporal_gate_version: str | None = None
+    temporal_state: str | None = None
+    acquired_at_min: str | None = None
+    acquired_at_max: str | None = None
+    freshness_policy_version: str | None = None
     observation_ids: tuple[str, ...] = ()
 
     @property
@@ -56,6 +61,11 @@ class ResultadoEvidenciaPrecio:
     commercial_context: str = "STANDARD"
     lineage_gate_version: str | None = None
     service_reach_gate_version: str | None = None
+    temporal_gate_version: str | None = None
+    temporal_state: str | None = None
+    acquired_at_min: str | None = None
+    acquired_at_max: str | None = None
+    freshness_policy_version: str | None = None
     observation_ids: tuple[str, ...] = ()
 
 
@@ -107,6 +117,11 @@ def evaluar_precio(
         commercial_context=cohort.commercial_context,
         lineage_gate_version=cohort.lineage_gate_version,
         service_reach_gate_version=cohort.service_reach_gate_version,
+        temporal_gate_version=cohort.temporal_gate_version,
+        temporal_state=cohort.temporal_state,
+        acquired_at_min=cohort.acquired_at_min,
+        acquired_at_max=cohort.acquired_at_max,
+        freshness_policy_version=cohort.freshness_policy_version,
         observation_ids=cohort.observation_ids,
     )
 

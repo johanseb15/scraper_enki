@@ -177,6 +177,11 @@ def _serialize_decision_result(result):
             "commercial_context": evidence.commercial_context,
             "lineage_gate_version": evidence.lineage_gate_version,
             "service_reach_gate_version": evidence.service_reach_gate_version,
+            "temporal_gate_version": evidence.temporal_gate_version,
+            "temporal_state": evidence.temporal_state,
+            "acquired_at_min": evidence.acquired_at_min,
+            "acquired_at_max": evidence.acquired_at_max,
+            "freshness_policy_version": evidence.freshness_policy_version,
             "observation_ids": list(evidence.observation_ids),
         },
     }
