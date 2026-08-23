@@ -3,23 +3,26 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 from src.aplicacion.pricing_cohort_loader import cargar_cohortes_pricing_runtime
-from src.dominio.real_world_query_trace import InputModality
-from src.infraestructura.real_world_query_tracer import append_trace, trace_real_world_query
+from src.infraestructura.human_real_intake import ingest_human_real_case
 
 
 def main():
     parser = ArgumentParser(description="Append one human real query trace through Enki's real runtime.")
     parser.add_argument("--query", required=True)
     parser.add_argument("--case-id", required=True, help="Non-secret stable field-case identifier.")
-    parser.add_argument("--out", default="data/field/real_world_query_traces_v1.jsonl")
+    parser.add_argument("--founder-note")
+    parser.add_argument("--expected-intent")
+    parser.add_argument("--observed-problem")
+    parser.add_argument("--out", default="data/field/human_real_query_traces_v1.jsonl")
+    parser.add_argument("--cases-out", default="data/field/human_real_cases_v1.jsonl")
     args = parser.parse_args()
     local, remote = cargar_cohortes_pricing_runtime()
-    trace = trace_real_world_query(
-        args.query, local_cohortes=local, remote_cohortes=remote,
-        source_case_id=args.case_id, case_origin="HUMAN_REAL", input_modality=InputModality.TEXT,
-        provenance=("founder-field-intake",), received_at=datetime.now(timezone.utc).isoformat(),
+    trace, _ = ingest_human_real_case(
+        case_path=Path(args.cases_out), trace_path=Path(args.out), raw_user_input=args.query,
+        case_id=args.case_id, received_at=datetime.now(timezone.utc).isoformat(),
+        local_cohortes=local, remote_cohortes=remote, founder_note=args.founder_note,
+        expected_intent=args.expected_intent, observed_problem=args.observed_problem,
     )
-    append_trace(Path(args.out), trace)
     print(f"TRACE_ID={trace.trace_id}")
     print(f"READINESS={trace.readiness}")
     print(f"FAILURES={','.join(item.value for item in trace.failures)}")
