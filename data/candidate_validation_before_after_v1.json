@@ -1,0 +1,34 @@
+{
+  "after": {
+    "conflicts_preserved": true,
+    "explicit_controls": 2,
+    "false_negatives": 0,
+    "false_positives": 2,
+    "holdout_cases": 6,
+    "independent_validation_provider_count": 2,
+    "independent_validation_source_count": 2,
+    "outcome": "FAIL_SHADOW_VALIDATION",
+    "provenance_preserved": true,
+    "scope_violations": 0,
+    "support_cases": 5,
+    "temporal_holdouts": 0,
+    "temporal_violations": 0,
+    "unknown_controls": 1,
+    "unknown_safely_preserved": 7
+  },
+  "before": {
+    "conflicts_preserved": true,
+    "false_negatives": 0,
+    "false_positives": 0,
+    "holdout_cases": 3,
+    "independent_validation_provider_count": 0,
+    "independent_validation_source_count": 0,
+    "outcome": "NEEDS_MORE_EVIDENCE",
+    "provenance_preserved": true,
+    "scope_violations": 0,
+    "support_cases": 5,
+    "temporal_violations": 0,
+    "unknown_safely_preserved": 6
+  },
+  "schema_version": "candidate-validation-before-after-v1"
+}

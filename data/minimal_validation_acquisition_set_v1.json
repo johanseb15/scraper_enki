@@ -1,0 +1,143 @@
+{
+  "actions": [
+    {
+      "acquisition_cost": "ZERO_NETWORK",
+      "acquisition_method": "LOCAL_REPLAY",
+      "attribution_quality": "OFFER_EXACT",
+      "blocked": false,
+      "existing_local_raw": true,
+      "explicit_exclusion_potential": true,
+      "explicit_inclusion_potential": false,
+      "genuinely_unknown_potential": false,
+      "hardware_related_offer": true,
+      "independent_provider": true,
+      "independent_source": true,
+      "network_authorized": false,
+      "provider_id": "provider:bitz:b7ecf7d98fe1",
+      "reacquirable": true,
+      "risk": "LOW",
+      "score_breakdown": [
+        [
+          "BLOCKED",
+          0
+        ],
+        [
+          "CANDIDATE_SCOPE_MATCH",
+          4
+        ],
+        [
+          "EXPLICIT_CONTROL",
+          4
+        ],
+        [
+          "INDEPENDENT_PROVIDER",
+          5
+        ],
+        [
+          "INDEPENDENT_SOURCE",
+          5
+        ],
+        [
+          "OFFER_ATTRIBUTION",
+          3
+        ],
+        [
+          "REPRODUCIBLE_LOCAL_RAW",
+          5
+        ],
+        [
+          "REUSABLE_VALIDATION",
+          2
+        ],
+        [
+          "TEMPORAL_CONTINUITY",
+          2
+        ],
+        [
+          "UNKNOWN_CONTROL",
+          0
+        ]
+      ],
+      "source_id": "bitz_generic",
+      "temporal_continuity": "SNAPSHOT_HASHED",
+      "url": "https://bitz.com.ar/tarifas-de-servicio-tecnico",
+      "validation_value": 30
+    },
+    {
+      "acquisition_cost": "ZERO_NETWORK",
+      "acquisition_method": "LOCAL_REPLAY",
+      "attribution_quality": "OFFER_EXACT",
+      "blocked": false,
+      "existing_local_raw": true,
+      "explicit_exclusion_potential": false,
+      "explicit_inclusion_potential": true,
+      "genuinely_unknown_potential": true,
+      "hardware_related_offer": true,
+      "independent_provider": true,
+      "independent_source": true,
+      "network_authorized": false,
+      "provider_id": "provider:jadetech:2206701adec3",
+      "reacquirable": true,
+      "risk": "LOW",
+      "score_breakdown": [
+        [
+          "BLOCKED",
+          0
+        ],
+        [
+          "CANDIDATE_SCOPE_MATCH",
+          4
+        ],
+        [
+          "EXPLICIT_CONTROL",
+          4
+        ],
+        [
+          "INDEPENDENT_PROVIDER",
+          5
+        ],
+        [
+          "INDEPENDENT_SOURCE",
+          5
+        ],
+        [
+          "OFFER_ATTRIBUTION",
+          3
+        ],
+        [
+          "REPRODUCIBLE_LOCAL_RAW",
+          5
+        ],
+        [
+          "REUSABLE_VALIDATION",
+          2
+        ],
+        [
+          "TEMPORAL_CONTINUITY",
+          2
+        ],
+        [
+          "UNKNOWN_CONTROL",
+          3
+        ]
+      ],
+      "source_id": "jadetech_generic",
+      "temporal_continuity": "SNAPSHOT_HASHED",
+      "url": "https://jadetech.com.ar/categoria/servicio-tecnico/",
+      "validation_value": 33
+    }
+  ],
+  "attribution_risk": "LOW",
+  "candidate_id": "knowledge-candidate:3190e09c277a38b6330d",
+  "expected_control_coverage": [
+    "EXPLICIT_EXCLUDED",
+    "EXPLICIT_INCLUDED",
+    "GENUINELY_UNKNOWN"
+  ],
+  "expected_providers_gained": 2,
+  "expected_sources_gained": 2,
+  "expected_validation_blockers_remaining": [],
+  "schema_version": "minimal-validation-acquisition-set-v1",
+  "temporal_risk": "LOW",
+  "total_requests": 0
+}

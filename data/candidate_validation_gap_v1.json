@@ -1,0 +1,16 @@
+{
+  "attribution_requirement": "OFFER_EXACT",
+  "candidate_id": "knowledge-candidate:3190e09c277a38b6330d",
+  "missing_negative_control": false,
+  "missing_positive_control": true,
+  "missing_provider_diversity": 2,
+  "missing_source_diversity": 2,
+  "missing_temporal_diversity": 0,
+  "missing_unknown_control": true,
+  "provenance_requirement": "REPRODUCIBLE_RAW_WITH_SHA256",
+  "schema_version": "candidate-validation-gap-v1",
+  "scope_requirement": "targeted_acquisition:v1",
+  "validation_blockers": [
+    "INSUFFICIENT_IN_SCOPE_INDEPENDENT_HOLDOUT"
+  ]
+}
