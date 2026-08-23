@@ -102,6 +102,16 @@ candidate permanece challenger shadow-only hasta una validación y promoción
 posteriores, explícitas y auditables; el champion de runtime no cambia por la
 creación ni por la evaluación del candidate.
 
+La validación que pretenda demostrar generalización debe usar evidencia
+independiente del support que originó el candidate. Un control fuera de scope o
+una nueva versión del mismo source puede probar safety o consistencia temporal,
+pero no cuenta como un provider/source independiente. Sin holdout independiente
+in-scope, el candidate permanece en recolección de evidencia.
+
+Shadow validation produce evidencia sobre un candidate, nunca promoción. La
+ausencia de evidencia explícita no es evidencia de ausencia y no puede convertir
+`UNKNOWN` en `FALSE`.
+
 Todo conocimiento promovido debe ser:
 
 - trazable
