@@ -1,0 +1,50 @@
+{
+  "metrics": {
+    "BY_DOMAIN": {
+      "ECONOMIC": 90,
+      "SEMANTIC": 211
+    },
+    "BY_PROVIDER_COUNT": {
+      "1": 4,
+      "15": 1,
+      "2": 2,
+      "26": 1,
+      "27": 1,
+      "28": 2,
+      "29": 3,
+      "3": 1,
+      "4": 1,
+      "5": 1,
+      "6": 3
+    },
+    "BY_SOURCE_COUNT": {
+      "1": 4,
+      "15": 1,
+      "2": 2,
+      "26": 1,
+      "27": 1,
+      "28": 2,
+      "29": 3,
+      "3": 1,
+      "4": 1,
+      "5": 1,
+      "6": 3
+    },
+    "BY_SOURCE_TYPE": {
+      "ACQUISITION_OUTCOME": 3,
+      "ECONOMIC_DIMENSION": 70,
+      "GAP_REGISTER": 9,
+      "PAIR_ANALYSIS": 7,
+      "SEMANTIC_MAPPING": 211,
+      "TARGETED_SOURCE_CLAIM": 1
+    },
+    "CURRENTLY_RUNTIME_USED": 84,
+    "HISTORICAL_ONLY": 0,
+    "SHADOW_ONLY": 217,
+    "TOTAL_POTENTIAL_PATTERNS": 301,
+    "WITHOUT_CONTRADICTION": 298,
+    "WITH_CONTRADICTION": 3
+  },
+  "schema_version": "knowledge-observation-audit-v1",
+  "version": "knowledge-candidate-v1"
+}

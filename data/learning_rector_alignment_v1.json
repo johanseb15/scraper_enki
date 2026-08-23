@@ -1,0 +1,21 @@
+{
+  "APRENDER": {
+    "auto_promotion": false,
+    "candidates_generated": 20,
+    "conflicts_preserved": true
+  },
+  "CONECTAR": {
+    "candidate_evidence_links": true,
+    "gap_and_pair_links": true
+  },
+  "ENTENDER": {
+    "epistemic_states_explicit": true,
+    "provenance_required": true,
+    "unknown_preserved": true
+  },
+  "EXPLOTAR": {
+    "new_public_economic_decision": false,
+    "runtime_integration": false
+  },
+  "schema_version": "rector-learning-alignment-v1"
+}

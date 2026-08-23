@@ -1,0 +1,33 @@
+{
+  "metrics": {
+    "AUTO_PROMOTIONS": 0,
+    "CANDIDATES_BY_TYPE": {
+      "ACQUISITION_PATTERN_CANDIDATE": 3,
+      "DIMENSION_EXTRACTION_CANDIDATE": 2,
+      "GAP_PATTERN_CANDIDATE": 15
+    },
+    "CANDIDATE_EVIDENCE_REQUESTS": 19,
+    "CONFLICTED": 1,
+    "CONTRADICTIONS": 3,
+    "INSUFFICIENT": 18,
+    "KNOWLEDGE_REUSE_TARGET_COUNT": 55,
+    "NORMALIZED_EVIDENCE_SUPPORT": 3,
+    "POTENTIAL_REUSE": {
+      "acquisition": 18,
+      "economic_dimensions": 20,
+      "pricing_evidence": 17
+    },
+    "QUARANTINED": 0,
+    "RAW_EVIDENCE_SUPPORT": 14,
+    "READY_FOR_SHADOW_VALIDATION": 1,
+    "RUNTIME_WRITES": 0,
+    "SHADOW_VALIDATION_PLANS": 1,
+    "SUPPORTED": 1,
+    "TOTAL_CANDIDATES": 20,
+    "TOTAL_SUPPORTING_OBSERVATIONS": 1946,
+    "UNIQUE_SUPPORTING_PROVIDERS": 29,
+    "UNIQUE_SUPPORTING_SOURCES": 29
+  },
+  "schema_version": "knowledge-candidates-v1-summary",
+  "version": "knowledge-candidate-v1"
+}

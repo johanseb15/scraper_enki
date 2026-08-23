@@ -93,6 +93,15 @@ Frequency != independence.
 Repeticiones del mismo provider no equivalen a múltiples
 fuentes independientes.
 
+Un knowledge candidate es una hipótesis trazable, no conocimiento promovido.
+Aprender comienza acumulando evidencia independiente y contradicciones alrededor
+de candidates; la frecuencia por sí sola no autoriza promoción.
+
+La generación de candidates puede automatizarse, pero su promoción no. Un
+candidate permanece challenger shadow-only hasta una validación y promoción
+posteriores, explícitas y auditables; el champion de runtime no cambia por la
+creación ni por la evaluación del candidate.
+
 Todo conocimiento promovido debe ser:
 
 - trazable
