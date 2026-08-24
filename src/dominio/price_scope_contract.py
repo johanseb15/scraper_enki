@@ -61,7 +61,13 @@ class PriceScopeMeaning:
         }.get(self.charged_unit, "UNKNOWN")
 
 
-def normalize_price_scope(raw_text: str, *, has_price: bool, is_range: bool = False) -> PriceScopeMeaning:
+def normalize_price_scope(
+    raw_text: str,
+    *,
+    has_price: bool,
+    is_range: bool = False,
+    provenance: str = "raw_user_input",
+) -> PriceScopeMeaning:
     text = _fold(raw_text)
     unit, unit_match = _charged_unit(text)
     billing, billing_match = _billing_period(text)
@@ -72,7 +78,7 @@ def normalize_price_scope(raw_text: str, *, has_price: bool, is_range: bool = Fa
     return PriceScopeMeaning(
         charged_unit=unit, billing_period=billing, price_bound=bound,
         status=ScopeEpistemicStatus.EXPLICIT if explicit_scope or explicit_bound else ScopeEpistemicStatus.UNKNOWN,
-        raw_basis=" | ".join(markers) or None, provenance="raw_user_input",
+        raw_basis=" | ".join(markers) or None, provenance=provenance,
     )
 
 
@@ -84,9 +90,33 @@ def compare_price_scopes(left: PriceScopeMeaning | str, right: PriceScopeMeaning
     return ScopeCompatibility.COMPATIBLE if left_value == right_value else ScopeCompatibility.INCOMPATIBLE
 
 
+def project_price_scope_dimension(scope: PriceScopeMeaning) -> str | None:
+    if scope.comparison_scope != "UNKNOWN":
+        return scope.comparison_scope
+    if scope.price_bound in {PriceBoundMeaning.FROM, PriceBoundMeaning.MINIMUM}:
+        return "LOWER_BOUND"
+    if scope.price_bound is PriceBoundMeaning.RANGE:
+        return "RANGE"
+    return None
+
+
+def comparison_scope_from_charged_unit(value: str) -> str | None:
+    try:
+        unit = ChargedUnitMeaning(value)
+    except ValueError:
+        return None
+    result = PriceScopeMeaning(charged_unit=unit).comparison_scope
+    return None if result == "UNKNOWN" else result
+
+
 def _charged_unit(text):
     patterns = (
-        (ChargedUnitMeaning.HOUR, r"\b(?:por\s+hora|la\s+hora|x\s*1\s*(?:hs?|hora))\b"),
+        (
+            ChargedUnitMeaning.HOUR,
+            r"\b(?:por\s+hora|la\s+hora|x\s*1\s*(?:hs?|hora)"
+            r"|hora\s+(?:inicial|adicional|servicio|tecnica|tecnico)"
+            r"|hora(?:s)?\s+de\s+(?:servicio|soporte|trabajo))\b",
+        ),
         (ChargedUnitMeaning.VISIT, r"\b(?:por\s+visita|cada\s+visita)\b"),
         (ChargedUnitMeaning.UNIT, r"\b(?:por\s+(?:equipo|unidad|pc|notebook|camara)|cada\s+\d+(?:[.,]\d+)?\s*(?:gb|tb))\b"),
         (ChargedUnitMeaning.PROJECT, r"\bpor\s+proyecto\b"),

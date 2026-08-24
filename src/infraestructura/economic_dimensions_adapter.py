@@ -5,7 +5,7 @@ import hashlib
 import re
 import unicodedata
 
-from src.aplicacion.pricing_dimensions import infer_price_scope
+from src.aplicacion.pricing_dimensions import normalize_source_price_scope
 from src.dominio.economic_evidence import (
     DimensionClaim,
     DimensionOrigin,
@@ -15,6 +15,7 @@ from src.dominio.economic_evidence import (
     resolve_dimension,
 )
 from src.dominio.semantic_knowledge import KnowledgeProvenance
+from src.dominio.price_scope_contract import project_price_scope_dimension
 
 
 DIMENSIONS_VERSION = "economic-evidence-dimensions-v1"
@@ -203,14 +204,7 @@ def derive_economic_dimensions(
 
 
 def _explicit_price_scope(text: str) -> str | None:
-    existing = infer_price_scope(text)
-    if existing != "UNKNOWN":
-        return existing
-    if re.search(r"\bdesde\b|\ba partir de\b", text):
-        return "LOWER_BOUND"
-    if re.search(r"\bprecio total\b|\btotal(?: final)?\b", text):
-        return "TOTAL"
-    return None
+    return project_price_scope_dimension(normalize_source_price_scope(text))
 
 
 def _explicit_commercial_contexts(text: str) -> tuple[str, ...]:

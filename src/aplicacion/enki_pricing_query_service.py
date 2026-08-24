@@ -33,6 +33,7 @@ from src.dominio.commercial_context import (
     CommercialContextCompatibility,
     compare_commercial_contexts,
 )
+from src.dominio.price_scope_contract import normalize_price_scope
 
 
 @dataclass(frozen=True)
@@ -93,18 +94,11 @@ def _explicit_price_scope(text: str, parsed: ParsedPricingQuery) -> str:
     }
     if parsed.price.type in mapping:
         return mapping[parsed.price.type]
-    import unicodedata
-    x = unicodedata.normalize("NFKD", text or "")
-    x = "".join(ch for ch in x if not unicodedata.combining(ch)).lower()
-    if re.search(r"\bpor\s+hora\b|\bla\s+hora\b", x):
-        return "PER_HOUR"
-    if re.search(r"\bpor\s+mes\b|\bal\s+mes\b|\bmensual(?:mente)?\b", x):
-        return "PER_MONTH"
-    if re.search(r"\bpor\s+visita\b|\bcada\s+visita\b", x):
-        return "PER_VISIT"
-    if re.search(r"\bpor\s+(?:equipo|unidad|pc|notebook)\b", x):
-        return "PER_UNIT"
-    return "UNKNOWN"
+    return normalize_price_scope(
+        text,
+        has_price=parsed.price.value is not None,
+        is_range=parsed.price.min is not None and parsed.price.max is not None,
+    ).comparison_scope
 
 
 def resolver_consulta_pricing(
