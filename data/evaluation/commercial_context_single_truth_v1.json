@@ -362,7 +362,7 @@
         "boundary_mismatch_after": false,
         "boundary_mismatch_before": true,
         "case_id": "rq015",
-        "readiness": "CLARIFICATION_REQUIRED"
+        "readiness": "UNSUPPORTED_QUERY"
       },
       {
         "after": {
@@ -794,7 +794,7 @@
         "boundary_mismatch_after": false,
         "boundary_mismatch_before": true,
         "case_id": "rq039",
-        "readiness": "CLARIFICATION_REQUIRED"
+        "readiness": "UNSUPPORTED_QUERY"
       },
       {
         "after": {
@@ -1000,16 +1000,16 @@
       "UNKNOWN": 50
     },
     "readiness": {
-      "CLARIFICATION_REQUIRED": 25,
+      "CLARIFICATION_REQUIRED": 23,
       "NO_EVIDENCE": 17,
-      "UNSUPPORTED_QUERY": 8
+      "UNSUPPORTED_QUERY": 10
     },
     "regression_outcomes": {
       "CLARIFICATION_CORRECT": 17,
       "EXPECTED_SAFETY_CHANGE": 2,
       "PARSE_CORRECT": 1,
-      "SAFE_UNSUPPORTED": 4,
-      "WRONG_INTERPRETATION": 26
+      "SAFE_UNSUPPORTED": 6,
+      "WRONG_INTERPRETATION": 24
     }
   },
   "debt_id": "TD-004",

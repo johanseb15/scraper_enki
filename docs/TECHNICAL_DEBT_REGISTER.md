@@ -241,26 +241,26 @@ The six specifically incorrect clarifications have one control-flow family:
 - CATEGORY: CORRECTNESS, APPLICATION_SERVICES, TESTABILITY.
 - SEVERITY: `P1`.
 - CONFIDENCE: HIGH.
-- STATUS: CONFIRMED.
-- EVIDENCE: Four bundles, one USDT query and one non-economic fragment are adjudicated SAFE_UNSUPPORTED but return CLARIFICATION_REQUIRED.
-- REPRODUCTION: Replay `rq013`, `rq015`, `rq017`, `rq027`, `rq039`, `rq043`.
-- AFFECTED_FILES: `src/aplicacion/enki_pricing_query_service.py`, `src/aplicacion/parser_consulta_pricing.py`, `data/language/real_query_corpus_v1.jsonl`.
-- AFFECTED_LAYERS: APPLICATION, PARSER, EVALUATION.
-- ROOT_CAUSE: Clarification precedes terminal eligibility/currency/bundle checks.
-- PRODUCT_IMPACT: Enki asks irrelevant follow-ups for requests that remain unsupported.
-- DATA_RISK: Feedback can misclassify eligibility defects as missing context.
-- SAFETY_RISK: Fail-closed but misleading.
-- MAINTENANCE_COST: MEDIUM.
-- LIKELIHOOD: HIGH.
-- BLAST_RADIUS: Six known cases and analogous inputs.
+- STATUS: RESOLVED by `terminal-fact-precedence-v1`.
+- EVIDENCE: Root-cause replay narrowed the original six-case hypothesis. `rq015` already carries a positive BUNDLE fact plus `BUNDLE_REQUIRES_COMPARABLE_SCOPE`, and `rq039` explicitly names unsupported USDT; both previously reached clarification first. `rq013`, `rq017`, and `rq027` remain parser/interpretation debt because their complete bundle/intent facts are not represented. `rq043` already reaches terminal unsupported without clarification.
+- REPRODUCTION: Replay `rq015` and `rq039` against the published pre-fix service, then compare `rq013`, `rq017`, `rq027`, and `rq043` to distinguish gate-order from parser/intent causes.
+- AFFECTED_FILES: `src/aplicacion/enki_pricing_query_service.py`, `tests/test_td007_gate_order.py`, dependent deterministic regression artifacts/tests.
+- AFFECTED_LAYERS: APPLICATION, EVALUATION.
+- ROOT_CAUSE: Positive terminal facts for an already-recognized unsupported bundle and an explicitly unsupported currency were evaluated after generic clarification selection.
+- PRODUCT_IMPACT: Enki no longer asks an irrelevant follow-up when those terminal facts are already known.
+- DATA_RISK: None added; incomplete parser facts remain fail-closed and are not promoted into terminal facts.
+- SAFETY_RISK: Fail-closed.
+- MAINTENANCE_COST: LOW after remediation.
+- LIKELIHOOD: LOW for the remediated terminal-fact family.
+- BLAST_RADIUS: Positively recognized unsupported bundles carrying the bundle terminal marker and explicit unsupported currencies.
 - DEPENDENCIES: None.
-- PROPOSED_FIX: Establish explicit order: parsed facts → terminal eligibility → actionable clarification → evidence/readiness.
-- REGRESSION_TEST_REQUIRED: Six safe-unsupported regressions plus valid clarification controls.
+- IMPLEMENTED_FIX: Advance only positively known terminal facts before clarification. Missing/unknown currency remains actionable clarification; broad UNKNOWN intent and incomplete bundle interpretations keep their existing fail-closed path.
+- REGRESSION_TEST: Focused controls cover explicit bundle terminal precedence, explicit USDT precedence, missing currency, generic actionable clarification, incomplete parser bundle families, and the non-actionable fragment. Product-boundary E2E remains unchanged.
 - ESTIMATED_SCOPE: M.
 - BLOCKS_MARKET_ACQUISITION: false.
 - BLOCKS_FIELD_TESTING: false.
 - BLOCKS_PROMOTION: false.
-- NOTES: No bundle decomposition is permitted.
+- NOTES: The original six-case root-cause grouping was partially refuted by runtime probes. `rq013`, `rq017`, and `rq027` remain under TD-006; no bundle decomposition or fabricated parser facts were introduced.
 
 ### TD-008 — Artifact lifecycle mixes historical snapshots, mutable defaults and nondeterministic telemetry
 

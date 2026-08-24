@@ -65,6 +65,23 @@ def _unsupported(parsed: ParsedPricingQuery, reason: str) -> EnkiPricingQueryRes
     return EnkiPricingQueryResult(status="UNSUPPORTED_QUERY", parsed=parsed, unsupported_reason=reason)
 
 
+def _has_explicit_unsupported_currency(text: str, parsed: ParsedPricingQuery) -> bool:
+    if parsed.price.currency not in {"ARS", "UNKNOWN"}:
+        return True
+    if parsed.price.currency != "UNKNOWN" or parsed.price.value is None:
+        return False
+    return bool(re.search(r"\b(?:usdt|usdc|btc|eth)\b", text.casefold()))
+
+
+def _has_terminal_bundle_fact(parsed: ParsedPricingQuery) -> bool:
+    reason = parsed.metadata.clarification_reason or ""
+    return (
+        parsed.is_bundle
+        and parsed.economic_object_kind == EconomicObjectKind.BUNDLE
+        and "BUNDLE_REQUIRES_COMPARABLE_SCOPE" in reason.split("|")
+    )
+
+
 def _explicit_price_scope(text: str, parsed: ParsedPricingQuery) -> str:
     if parsed.price_scope.comparison_scope != "UNKNOWN":
         return parsed.price_scope.comparison_scope
@@ -120,6 +137,16 @@ def resolver_consulta_pricing(
             pricing_readiness=pricing_readiness,
             evidence_probe=evidence_probe,
         )
+
+    # Terminal facts already positively known outrank clarification.
+    if _has_terminal_bundle_fact(parsed):
+        return _unsupported(parsed, "SINGLE_CANONICAL_SERVICE_REQUIRED")
+
+    if (
+        parsed.intent_action == IntentAction.EVALUATE_PRICE
+        and _has_explicit_unsupported_currency(texto, parsed)
+    ):
+        return _unsupported(parsed, "ARS_ONLY_V1")
 
     if parsed.metadata.clarification_required:
         return _clarification(parsed)

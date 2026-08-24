@@ -32,9 +32,9 @@ def test_summary_uses_percentiles_only_with_sufficient_sample_and_no_promotion(t
     assert set(summary["performance"]["total_latency_ms"]) == {"p50", "p95", "max"}
     assert metrics["AUTO_PROMOTIONS"] == 0
     assert metrics["NEW_KNOWLEDGE_CANDIDATES"] == 0
-    assert metrics["REGRESSION_OUTCOMES"]["WRONG_INTERPRETATION"] == 26
+    assert metrics["REGRESSION_OUTCOMES"]["WRONG_INTERPRETATION"] == 24
     assert metrics["PREVIOUS_AUDIT_WRONG_INTERPRETATION"] == 19
-    assert metrics["REGRESSION_AUDIT_DRIFT"] == 7
+    assert metrics["REGRESSION_AUDIT_DRIFT"] == 5
     assert all(item["promotion_authorized"] is False for item in intake)
 
 
