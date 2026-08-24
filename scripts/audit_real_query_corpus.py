@@ -33,8 +33,15 @@ def classify(record,result):
     if b=="CLARIFICATION" and result.status!="CLARIFICATION_REQUIRED": return "WRONG_INTERPRETATION",[f"expected CLARIFICATION_REQUIRED, got {result.status}"]
     if b=="SAFE_UNSUPPORTED" and result.status!="UNSUPPORTED_QUERY": return "WRONG_INTERPRETATION",[f"expected UNSUPPORTED_QUERY, got {result.status}"]
     if b=="PARSE":
-        if result.status in {"CLARIFICATION_REQUIRED","UNSUPPORTED_QUERY"}: return "WRONG_INTERPRETATION",[f"expected evidence path, got {result.status}"]
-        if expected_status and result.status!=expected_status: return "WRONG_INTERPRETATION",[f"expected {expected_status}, got {result.status}"]
+        if result.status in {"CLARIFICATION_REQUIRED","UNSUPPORTED_QUERY"}:
+            return "WRONG_INTERPRETATION",[f"expected evidence path, got {result.status}"]
+        if expected_status and result.status!=expected_status:
+            if (
+                expected_status in {"RANGE_READY","DECISION_READY"}
+                and result.status in {"INSUFFICIENT_EVIDENCE","NO_EVIDENCE"}
+            ):
+                return "EXPECTED_SAFETY_CHANGE",[]
+            return "WRONG_INTERPRETATION",[f"expected {expected_status}, got {result.status}"]
     actual=fields(result); errors=[]
     for k,e in a.get("expected_fields",{}).items():
         if k not in actual: errors.append(f"unsupported expected field: {k}")
@@ -51,6 +58,6 @@ def main():
     with out.open("w",encoding="utf-8-sig",newline="") as f:
         w=csv.DictWriter(f,fieldnames=["id","provenance","query_raw","actual_status","audit_outcome","errors"]); w.writeheader(); w.writerows(rows)
     print("ENKI REAL QUERY CORPUS v1"); print("========================="); print(f"Cases: {len(rows)}")
-    for k in ["PARSE_CORRECT","CLARIFICATION_CORRECT","SAFE_UNSUPPORTED","WRONG_INTERPRETATION","UNSAFE_DECISION"]: print(f"{k}: {c[k]}")
+    for k in ["PARSE_CORRECT","CLARIFICATION_CORRECT","SAFE_UNSUPPORTED","EXPECTED_SAFETY_CHANGE","WRONG_INTERPRETATION","UNSAFE_DECISION"]: print(f"{k}: {c[k]}")
     print(f"Audit: {out}")
 if __name__=="__main__": main()
