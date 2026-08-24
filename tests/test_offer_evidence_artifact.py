@@ -37,7 +37,7 @@ def test_real_inventory_is_cardinality_safe_and_reports_no_linkage_reasons(tmp_p
     assert metrics["NETWORK_REACQUIRE_COUNT"] == 0
     assert metrics["LINEAGE_COVERAGE"] == 0.285714
     assert metrics["RAW_LINKAGE_YIELD"] == 0.795918
-    assert metrics["EXTRACTION_YIELD"] == 0.102564
+    assert metrics["EXTRACTION_YIELD"] == 0.115385
     assert metrics["CLAIMS_BY_DIMENSION"]["hardware_included"] == 1
     assert metrics["NO_LINKAGE_REASONS"] == {
         "OBSERVATION_NOT_REPRODUCED_FROM_SNAPSHOT": 20,

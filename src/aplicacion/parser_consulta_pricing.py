@@ -129,6 +129,16 @@ def _has_multiple_monetary_mentions(t:str)->bool:
 
     return len(spans) > 1
 
+def _price_type_from_scope(text: str) -> PriceType:
+    scope = normalize_price_scope(text, has_price=True).comparison_scope
+    return {
+        "PER_HOUR": PriceType.PER_HOUR,
+        "PER_MONTH": PriceType.PER_MONTH,
+        "PER_VISIT": PriceType.PER_VISIT,
+        "PER_UNIT": PriceType.PER_UNIT,
+    }.get(scope, PriceType.EXACT)
+
+
 def price(t):
     x=t.lower()
     m=re.search(r"\bentre\s+([\d.,]+)\s+y\s+([\d.,]+)\s*(lucas?|mil|k|palos?|usd|d[oó]lares?)\b",x)
@@ -139,12 +149,12 @@ def price(t):
     m=re.search(r"\b(casi|aprox(?:imadamente)?|alrededor de)?\s*([\d.,]+)\s*(lucas?|mil|k|palos?)\b",x)
     if m:
         approx=bool(m.group(1)); v=scalar_num(m.group(2)); u=m.group(3); v*=1_000_000 if u.startswith("palo") else 1000
-        pt=PriceType.PER_HOUR if re.search(r"\bpor hora\b|\bla hora\b",x) else PriceType.PER_MONTH if re.search(r"\bpor mes\b|\bal mes\b|\bmensual\b",x) else PriceType.PER_VISIT if re.search(r"\bpor visita\b",x) else PriceType.PER_UNIT if re.search(r"\bpor (?:equipo|unidad|pc)\b",x) else PriceType.EXACT
+        pt=_price_type_from_scope(t)
         return PriceMention(pt,v,currency="ARS",raw_expression=m.group(0),is_approximate=approx)
     if re.search(r"\bun palo\b",x): return PriceMention(PriceType.EXACT,1_000_000,currency="ARS",raw_expression="un palo")
     m=re.search(r"\b([\d.,]+)\s*(usd|u\$s|d[oó]lares?)\b",x)
     if m:
-        pt=PriceType.PER_HOUR if re.search(r"\bpor hora\b|\bla hora\b",x) else PriceType.PER_MONTH if re.search(r"\bpor mes\b|\bal mes\b|\bmensual\b",x) else PriceType.PER_VISIT if re.search(r"\bpor visita\b",x) else PriceType.PER_UNIT if re.search(r"\bpor (?:equipo|unidad|pc)\b",x) else PriceType.EXACT
+        pt=_price_type_from_scope(t)
         return PriceMention(pt,money_num(m.group(1)),currency="USD",raw_expression=m.group(0))
     m=re.search(r"(?<!\w)\$\s*([\d.]+(?:,\d+)?)",x)
     if m: return PriceMention(PriceType.EXACT,money_num(m.group(1)),currency="ARS",raw_expression=m.group(0))

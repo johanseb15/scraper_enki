@@ -11,6 +11,8 @@ from src.dominio.semantic_observation import (
     SemanticObservationRole,
 )
 
+from src.aplicacion.pricing_dimensions import normalize_source_price_scope
+
 
 def interpret_price_context(
     observation: SemanticObservation,
@@ -56,15 +58,7 @@ def _context_kind(folded: str) -> PriceContextKind:
 
 
 def _price_scope(folded: str) -> str:
-    if re.search(r"\bpor hora\b|\bhora\b(?!s\b)", folded):
-        return "PER_HOUR"
-    if re.search(r"\bpor mes\b|\bmensual\b|\bmes\b", folded):
-        return "PER_MONTH"
-    if re.search(r"\bpor visita\b|\bvisita\b", folded):
-        return "PER_VISIT"
-    if re.search(r"\bpor unidad\b|\bpor equipo\b|\bpor cantidad\b", folded):
-        return "PER_UNIT"
-    return "UNKNOWN"
+    return normalize_source_price_scope(folded).comparison_scope
 
 
 def _currency_markers(folded: str) -> tuple[str, ...]:

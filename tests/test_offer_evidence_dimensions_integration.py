@@ -71,7 +71,8 @@ def test_real_enrichment_preserves_currency_conflicts_and_cardinality(tmp_path):
     loaded = load_economic_dimensions_v2_sidecar(dimensions)
     assert len(loaded) == 273
     assert metrics["SOURCE_EXPLICIT_REACH"] == 0
-    assert metrics["SOURCE_EXPLICIT_SCOPE"] == 3
+    assert metrics["SOURCE_EXPLICIT_SCOPE"] == 4
+    assert loaded["62"].price_scope.value == "PER_UNIT"
     assert metrics["SOURCE_EXPLICIT_DELIVERY_MODE"] == 7
     assert metrics["CONFLICTED_DIMENSIONS"] == {"currency": 3}
     assert all(loaded[value].currency.status is DimensionStatus.CONFLICTED for value in ("159", "160", "161"))

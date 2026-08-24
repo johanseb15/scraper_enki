@@ -25,6 +25,7 @@ class PriceBoundMeaning(str, Enum):
     FROM = "FROM"
     RANGE = "RANGE"
     MINIMUM = "MINIMUM"
+    QUOTE_REQUIRED = "QUOTE_REQUIRED"
     UNKNOWN = "UNKNOWN"
 
 
@@ -74,7 +75,12 @@ def normalize_price_scope(
     bound, bound_match = _price_bound(text, has_price=has_price, is_range=is_range)
     markers = [item for item in (unit_match, billing_match, bound_match) if item]
     explicit_scope = unit is not ChargedUnitMeaning.UNKNOWN or billing is not BillingPeriodMeaning.UNKNOWN
-    explicit_bound = bound in {PriceBoundMeaning.FROM, PriceBoundMeaning.MINIMUM, PriceBoundMeaning.RANGE}
+    explicit_bound = bound in {
+        PriceBoundMeaning.FROM,
+        PriceBoundMeaning.MINIMUM,
+        PriceBoundMeaning.RANGE,
+        PriceBoundMeaning.QUOTE_REQUIRED,
+    }
     return PriceScopeMeaning(
         charged_unit=unit, billing_period=billing, price_bound=bound,
         status=ScopeEpistemicStatus.EXPLICIT if explicit_scope or explicit_bound else ScopeEpistemicStatus.UNKNOWN,
@@ -118,7 +124,12 @@ def _charged_unit(text):
             r"|hora(?:s)?\s+de\s+(?:servicio|soporte|trabajo))\b",
         ),
         (ChargedUnitMeaning.VISIT, r"\b(?:por\s+visita|cada\s+visita)\b"),
-        (ChargedUnitMeaning.UNIT, r"\b(?:por\s+(?:equipo|unidad|pc|notebook|camara)|cada\s+\d+(?:[.,]\d+)?\s*(?:gb|tb))\b"),
+        (
+            ChargedUnitMeaning.UNIT,
+            r"\b(?:por\s+(?:equipo|unidad|pc|notebook|camara)"
+            r"|precios?\s+por\s+equipo"
+            r"|cada\s+\d+(?:[.,]\d+)?\s*(?:gb|tb))\b",
+        ),
         (ChargedUnitMeaning.PROJECT, r"\bpor\s+proyecto\b"),
         (ChargedUnitMeaning.TOTAL, r"\b(?:precio\s+(?:cerrado|total)|total\s+final)\b"),
     )
@@ -138,9 +149,15 @@ def _price_bound(text, *, has_price, is_range):
     match = re.search(r"\b(?:desde|a\s+partir\s+de)\b", text)
     if match:
         return PriceBoundMeaning.FROM, match.group(0)
-    match = re.search(r"\bminimo\b", text)
+    match = re.search(r"\b(?:precio\s+minimo|minimo)\b", text)
     if match:
         return PriceBoundMeaning.MINIMUM, match.group(0)
+    match = re.search(r"\b(?:presupuesto(?:\s+a)?\s+consultar|consultar\s+precio)\b", text)
+    if match:
+        return PriceBoundMeaning.QUOTE_REQUIRED, match.group(0)
+    match = re.search(r"\b(?:precio\s+(?:cerrado|exacto|total)|total\s+final)\b", text)
+    if match:
+        return PriceBoundMeaning.EXACT, match.group(0)
     if is_range:
         return PriceBoundMeaning.RANGE, "range price expression"
     return (PriceBoundMeaning.EXACT, None) if has_price else (PriceBoundMeaning.UNKNOWN, None)

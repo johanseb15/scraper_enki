@@ -10,6 +10,12 @@ from src.dominio.offer_evidence import (
     SourceClaimMethod,
     SourceEconomicClaim,
 )
+from src.aplicacion.pricing_dimensions import normalize_source_price_scope
+from src.dominio.price_scope_contract import (
+    BillingPeriodMeaning,
+    ChargedUnitMeaning,
+    PriceBoundMeaning,
+)
 
 
 EXTRACTOR_VERSION = "offer-reach-charged-scope-extractor-v1"
@@ -72,27 +78,29 @@ def extract_claims_from_explicit_basis(
     elif re.search(r"\b(?:atendemos|zona de atencion|cobertura)\b[^.;]{0,50}\bprovincia de cordoba\b", text):
         add("geographic_reach", "PROVINCE:Córdoba")
 
-    if re.search(r"\bx\s*1\s*(?:hs?|hora)\b|\bpor hora\b|\bla hora\b|\bhora (?:inicial|adicional)\b", text):
-        add("charged_unit", ChargedUnit.HOUR.value)
-    elif re.search(r"\bpor visita\b|\bcada visita\b|\bvisita tecnica\b", text):
-        add("charged_unit", ChargedUnit.VISIT.value)
-    elif re.search(r"\bpor (?:equipo|unidad|pc|notebook)\b|\bprecios por equipo\b", text):
-        add("charged_unit", ChargedUnit.UNIT.value)
-    elif re.search(r"\bpor mes\b|\bal mes\b|\babono mensual\b|\bmensual(?:mente)?\b", text):
-        add("charged_unit", ChargedUnit.MONTH.value)
-    elif re.search(r"\bpor proyecto\b", text):
-        add("charged_unit", ChargedUnit.PROJECT.value)
-    elif re.search(r"\bprecio (?:cerrado|total)\b|\btotal final\b", text):
-        add("charged_unit", ChargedUnit.TOTAL.value)
+    scope = normalize_source_price_scope(raw_basis)
 
-    if re.search(r"\bdesde\b|\ba partir de\b", text):
-        add("price_bound", PriceBound.LOWER_BOUND.value)
-    elif re.search(r"\bprecio minimo\b|\bminimo\b", text):
-        add("price_bound", PriceBound.MINIMUM.value)
-    elif re.search(r"\bpresupuesto\b|\bconsultar\b", text):
-        add("price_bound", PriceBound.QUOTE_REQUIRED.value)
-    elif re.search(r"\bprecio (?:cerrado|exacto|total)\b|\btotal final\b", text):
-        add("price_bound", PriceBound.EXACT.value)
+    if scope.billing_period is BillingPeriodMeaning.MONTH:
+        add("charged_unit", ChargedUnit.MONTH.value)
+    else:
+        charged_unit = {
+            ChargedUnitMeaning.HOUR: ChargedUnit.HOUR.value,
+            ChargedUnitMeaning.VISIT: ChargedUnit.VISIT.value,
+            ChargedUnitMeaning.UNIT: ChargedUnit.UNIT.value,
+            ChargedUnitMeaning.PROJECT: ChargedUnit.PROJECT.value,
+            ChargedUnitMeaning.TOTAL: ChargedUnit.TOTAL.value,
+        }.get(scope.charged_unit)
+        if charged_unit:
+            add("charged_unit", charged_unit)
+
+    price_bound = {
+        PriceBoundMeaning.FROM: PriceBound.LOWER_BOUND.value,
+        PriceBoundMeaning.MINIMUM: PriceBound.MINIMUM.value,
+        PriceBoundMeaning.QUOTE_REQUIRED: PriceBound.QUOTE_REQUIRED.value,
+        PriceBoundMeaning.EXACT: PriceBound.EXACT.value,
+    }.get(scope.price_bound)
+    if price_bound and (scope.price_bound is not PriceBoundMeaning.EXACT or scope.raw_basis is not None):
+        add("price_bound", price_bound)
 
     qualifiers = []
     for pattern, value in (
