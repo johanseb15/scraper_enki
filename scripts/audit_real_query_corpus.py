@@ -42,7 +42,7 @@ def classify(record,result):
     if errors:return "WRONG_INTERPRETATION",errors
     return ({"CLARIFICATION":"CLARIFICATION_CORRECT","SAFE_UNSUPPORTED":"SAFE_UNSUPPORTED","PARSE":"PARSE_CORRECT"}[b],[])
 def main():
-    ap=argparse.ArgumentParser(); ap.add_argument("--corpus",default="data/language/real_query_corpus_v1.jsonl"); ap.add_argument("--local-stats",required=True); ap.add_argument("--remote-stats",required=True); ap.add_argument("--out",default="data/language/real_query_audit_v1.csv"); x=ap.parse_args()
+    ap=argparse.ArgumentParser(); ap.add_argument("--corpus",default="data/language/real_query_corpus_v1.jsonl"); ap.add_argument("--local-stats",required=True); ap.add_argument("--remote-stats",required=True); ap.add_argument("--out", required=True); x=ap.parse_args()
     local,remote=load(x.local_stats),load(x.remote_stats); rows=[]; c=Counter()
     for line in Path(x.corpus).read_text(encoding="utf-8").splitlines():
         if not line.strip():continue

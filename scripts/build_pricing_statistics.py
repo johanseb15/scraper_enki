@@ -216,8 +216,8 @@ def build_runtime_pricing_statistics(
 def main() -> None:
     ap = argparse.ArgumentParser()
     ap.add_argument("--normalization", default="data/semantic_normalization_v4.csv")
-    ap.add_argument("--local-out", default="data/local_pricing_stats_v1.csv")
-    ap.add_argument("--remote-out", default="data/remote_pricing_stats_v1.csv")
+    ap.add_argument("--local-out", required=True)
+    ap.add_argument("--remote-out", required=True)
     ap.add_argument(
         "--lineage",
         help="Offer evidence sidecar; enables the fail-closed runtime lineage gate.",

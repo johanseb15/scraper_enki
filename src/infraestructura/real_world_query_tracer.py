@@ -140,10 +140,36 @@ def trace_real_world_query(
     )
 
 
+def semantic_trace_payload(trace):
+    payload = _json_value(asdict(trace))
+    payload["schema_version"] = "real-world-query-trace-semantic-v1"
+    payload.pop("total_latency_ms", None)
+    payload.pop("trace_overhead_ms", None)
+    for stage in payload["stages"]:
+        stage.pop("elapsed_ms", None)
+    return payload
+
+
+def trace_telemetry_payload(trace):
+    return {
+        "schema_version": "real-world-query-trace-telemetry-v1",
+        "trace_id": trace.trace_id,
+        "replay_fingerprint": trace.replay_fingerprint,
+        "stages": [
+            {"stage": item.stage.value, "elapsed_ms": item.elapsed_ms}
+            for item in trace.stages
+        ],
+        "total_latency_ms": trace.total_latency_ms,
+        "trace_overhead_ms": trace.trace_overhead_ms,
+    }
+
+
 def append_trace(path, trace):
+    # Persist deterministic semantic trace only.
+    # Runtime timing remains on the in-memory trace and telemetry projection.
     path = Path(path)
     rows = _jsonl(path)
-    payload = {"schema_version": TRACE_VERSION, **_json_value(asdict(trace))}
+    payload = semantic_trace_payload(trace)
     existing = next((item for item in rows if item["trace_id"] == trace.trace_id), None)
     if existing and existing["replay_fingerprint"] != trace.replay_fingerprint:
         raise ValueError("Trace id collision with a different replay fingerprint.")

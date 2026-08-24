@@ -28,10 +28,7 @@ def main() -> None:
         "--baseline",
         default="data/semantic_normalization_v4.csv",
     )
-    ap.add_argument(
-        "--out",
-        default="data/semantic_normalization_live_v1.csv",
-    )
+    ap.add_argument("--out", required=True)
     args = ap.parse_args()
 
     rows, reused, newly_classified = build_semantic_rows(

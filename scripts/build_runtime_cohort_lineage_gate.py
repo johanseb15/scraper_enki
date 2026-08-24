@@ -346,12 +346,9 @@ def build_artifact(
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", default=".")
-    parser.add_argument(
-        "--out",
-        default="data/evaluation/runtime_cohort_lineage_gate_v1.json",
-    )
-    parser.add_argument("--local-out", default="data/local_pricing_stats_lineage_v1.csv")
-    parser.add_argument("--remote-out", default="data/remote_pricing_stats_lineage_v1.csv")
+    parser.add_argument("--out", required=True)
+    parser.add_argument("--local-out", required=True)
+    parser.add_argument("--remote-out", required=True)
     args = parser.parse_args()
     payload = build_artifact(
         args.root,

@@ -230,10 +230,7 @@ def build_artifact(root: str | Path) -> dict[str, object]:
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--root", default=".")
-    parser.add_argument(
-        "--out",
-        default="data/evaluation/commercial_context_single_truth_v1.json",
-    )
+    parser.add_argument("--out", required=True)
     args = parser.parse_args()
     artifact = build_artifact(args.root)
     output = Path(args.out)

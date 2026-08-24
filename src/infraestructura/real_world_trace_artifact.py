@@ -12,7 +12,8 @@ from src.aplicacion.pricing_cohort_loader import (
     cargar_cohortes_pricing_runtime,
 )
 from src.dominio.real_world_query_trace import InputModality, TraceStage
-from src.infraestructura.real_world_query_tracer import append_trace, build_learning_intake, trace_real_world_query
+from src.infraestructura.real_world_query_tracer import append_trace, build_learning_intake, trace_real_world_query, trace_telemetry_payload
+from src.infraestructura.artifact_lifecycle import ArtifactClass, build_manifest, write_deterministic_json
 
 
 def build_real_world_trace_artifacts(root, output_dir):
@@ -30,6 +31,7 @@ def build_real_world_trace_artifacts(root, output_dir):
     )
     trace_path = output / "real_world_query_traces_v1.jsonl"
     intake_by_id = {}
+    telemetry_by_id = {}
     for record in corpus:
         trace = trace_real_world_query(
             record["query_raw"], local_cohortes=local, remote_cohortes=remote,
@@ -40,6 +42,7 @@ def build_real_world_trace_artifacts(root, output_dir):
             request_context={"corpus_tags": record.get("tags", []), "provenance_status": record["provenance_status"]},
         )
         append_trace(trace_path, trace)
+        telemetry_by_id[trace.trace_id] = trace_telemetry_payload(trace)
         intake = build_learning_intake(trace)
         regression_outcome, regression_errors = adjudicate_trace(record, trace)
         before_trace = trace_real_world_query(
@@ -64,11 +67,70 @@ def build_real_world_trace_artifacts(root, output_dir):
 
     persisted = _jsonl(trace_path)
     _write_jsonl(output / "real_world_learning_intake_v1.jsonl", (intake_by_id[key] for key in sorted(intake_by_id)))
+    _write_jsonl(
+        output / "real_world_query_trace_telemetry_v1.jsonl",
+        (telemetry_by_id[key] for key in sorted(telemetry_by_id)),
+    )
     audit = _runtime_flow_audit()
     previous_audit = _csv(root / "data/language/real_query_audit_v1.csv")
-    summary = _summary(persisted, tuple(intake_by_id.values()), previous_audit)
-    _write_json(output / "real_world_runtime_flow_audit_v1.json", audit)
-    _write_json(output / "real_world_performance_summary_v1.json", summary)
+    summary = _summary(
+        persisted,
+        tuple(intake_by_id.values()),
+        previous_audit,
+        tuple(telemetry_by_id.values()),
+    )
+    audit_path = output / "real_world_runtime_flow_audit_v1.json"
+    summary_path = output / "real_world_performance_summary_v1.json"
+    _write_json(audit_path, audit)
+    _write_json(summary_path, summary)
+
+    generator = root / "src/infraestructura/real_world_trace_artifact.py"
+    deterministic_inputs = (
+        root / "data/language/real_query_corpus_v1.jsonl",
+        root / "data/language/real_query_audit_v1.csv",
+        root / "data/local_pricing_stats_lineage_v1.csv",
+        root / "data/remote_pricing_stats_lineage_v1.csv",
+    )
+    deterministic_outputs = (
+        trace_path,
+        output / "real_world_learning_intake_v1.jsonl",
+        audit_path,
+    )
+    manifests = [
+        build_manifest(
+            root=root,
+            artifact_class=ArtifactClass.DETERMINISTIC_DERIVED,
+            generator_path=generator,
+            input_paths=deterministic_inputs,
+            output_path=path,
+        ).as_dict()
+        for path in deterministic_outputs
+    ]
+    write_deterministic_json(
+        output / "real_world_artifact_manifest_v1.json",
+        {"schema_version": "real-world-artifact-manifest-v1", "artifacts": manifests},
+        root=root,
+    )
+
+    telemetry_outputs = (
+        output / "real_world_query_trace_telemetry_v1.jsonl",
+        summary_path,
+    )
+    telemetry_manifests = [
+        build_manifest(
+            root=root,
+            artifact_class=ArtifactClass.TELEMETRY,
+            generator_path=generator,
+            input_paths=deterministic_inputs,
+            output_path=path,
+        ).as_dict()
+        for path in telemetry_outputs
+    ]
+    write_deterministic_json(
+        output / "real_world_telemetry_manifest_v1.json",
+        {"schema_version": "real-world-telemetry-manifest-v1", "artifacts": telemetry_manifests},
+        root=root,
+    )
     return summary["metrics"]
 
 
@@ -110,7 +172,7 @@ def _audit(stage, input_name, output_name, provenance, uncertainty, risk):
     }
 
 
-def _summary(traces, intake, previous_audit):
+def _summary(traces, intake, previous_audit, telemetry):
     origins = Counter(item["case_origin"] for item in traces)
     readiness = Counter(item["readiness"] for item in traces)
     classifications = Counter(item["classification"] for item in traces)
@@ -121,11 +183,13 @@ def _summary(traces, intake, previous_audit):
     stage_latencies = defaultdict(list)
     for item in traces:
         for stage in item["stages"]:
-            stage_latencies[stage["stage"]].append(stage["elapsed_ms"])
             if stage["failure_reason"]:
                 failures_by_stage[stage["stage"]] += 1
-    totals = [item["total_latency_ms"] for item in traces]
-    overhead = [item["trace_overhead_ms"] for item in traces]
+    for item in telemetry:
+        for stage in item["stages"]:
+            stage_latencies[stage["stage"]].append(stage["elapsed_ms"])
+    totals = [item["total_latency_ms"] for item in telemetry]
+    overhead = [item["trace_overhead_ms"] for item in telemetry]
     norm_num = sum(item["learning_yield"]["normalization_yield"]["numerator"] for item in traces)
     norm_den = sum(item["learning_yield"]["normalization_yield"]["denominator"] for item in traces)
     comp_num = sum(item["learning_yield"]["comparability_yield"]["numerator"] for item in traces)
