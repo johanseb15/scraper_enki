@@ -1,4 +1,4 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 from decimal import Decimal
 from types import SimpleNamespace
@@ -138,4 +138,3 @@ def test_remote_service_fragment_without_pricing_intent_stays_unsupported():
     assert result.parsed.intent_action.value == "UNKNOWN"
     assert result.status == "UNSUPPORTED_QUERY"
     assert result.unsupported_reason == "UNSUPPORTED_INTENT"
-
