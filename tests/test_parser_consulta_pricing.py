@@ -9,7 +9,9 @@ def test_evaluate_buy_local():
 def test_sell_suggest_remote():
     r=parse_pricing_query("cuánto debería cobrar por soporte remoto?")
     assert r.intent_action==IntentAction.SUGGEST_PRICE and r.intent_side==IntentSide.SELL
-    assert r.market_scope==MarketScope.REMOTE_NATIONAL and not r.metadata.clarification_required
+    assert r.market_scope==MarketScope.REMOTE_NATIONAL
+    assert r.metadata.clarification_required
+    assert r.metadata.clarification_reason=="PRICE_SCOPE_REQUIRED"
 def test_remote_evaluate():
     r=parse_pricing_query("quiero cobrar 35 lucas por soporte remoto, está bien?")
     assert r.price.value==35000 and r.modality==ServiceModality.REMOTE

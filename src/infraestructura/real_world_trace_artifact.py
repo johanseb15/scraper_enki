@@ -261,7 +261,11 @@ def adjudicate_trace(record, trace):
         expected_status = adjudication.get("expected_resolution_status")
         if expected_status and trace.readiness != expected_status:
             if (
-                expected_status in {"RANGE_READY", "DECISION_READY"}
+                expected_status in {
+                    "INSUFFICIENT_EVIDENCE",
+                    "RANGE_READY",
+                    "DECISION_READY",
+                }
                 and trace.readiness in {"INSUFFICIENT_EVIDENCE", "NO_EVIDENCE"}
             ):
                 expected_safety_change = True

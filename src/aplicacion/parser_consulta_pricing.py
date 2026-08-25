@@ -60,6 +60,11 @@ RULES=[
 )),
 ]
 REMOTE={"SOPORTE_REMOTO","WEB_LANDING","WEB_SITIO_INSTITUCIONAL","WEB_ECOMMERCE","WEB_MANTENIMIENTO","HOSTING_ADMINISTRADO","VPS_ADMINISTRADO","DESARROLLO_SOFTWARE_HORA"}
+
+PRICE_SCOPE_REQUIRED_SERVICES = frozenset({
+    "SOPORTE_REMOTO",
+    "VISITA_TECNICA_DOMICILIO",
+})
 PROV={"caba":"CABA","capital federal":"CABA","capital":"CABA","buenos aires":"Buenos Aires","bs as":"Buenos Aires","cordoba":"Córdoba","santa fe":"Santa Fe","mendoza":"Mendoza","tucuman":"Tucumán","salta":"Salta","jujuy":"Jujuy","chaco":"Chaco","corrientes":"Corrientes","entre rios":"Entre Ríos","neuquen":"Neuquén","rio negro":"Río Negro","chubut":"Chubut","santa cruz":"Santa Cruz","tierra del fuego":"Tierra del Fuego","la pampa":"La Pampa","san juan":"San Juan","san luis":"San Luis","la rioja":"La Rioja","catamarca":"Catamarca","formosa":"Formosa","misiones":"Misiones","santiago del estero":"Santiago del Estero"}
 CITIES={"rosario":("Santa Fe","Rosario"),"la plata":("Buenos Aires","La Plata"),"mar del plata":("Buenos Aires","Mar del Plata"),"lanus":("Buenos Aires","Lanús"),"quilmes":("Buenos Aires","Quilmes"),"moreno":("Buenos Aires","Moreno"),"posadas":("Misiones","Posadas"),"comodoro rivadavia":("Chubut","Comodoro Rivadavia"),"zona norte":("Buenos Aires","Zona Norte"),"zona oeste":("Buenos Aires","Zona Oeste"),"zona sur":("Buenos Aires","Zona Sur"),"gba":("Buenos Aires","GBA"),"gran buenos aires":("Buenos Aires","GBA")}
 BUY=(r"\bme quieren cobrar\b",r"\bme cobran\b",r"\bme cobraron\b",r"\bme pasaron\b",r"\bme presupuestaron\b",r"\bme cotizaron\b",r"\bme dijeron\b",r"\bpagar\b",r"\bme ofrecieron\b")
@@ -290,6 +295,11 @@ def parse_pricing_query(raw_text:str,*,language_evidence_type:str="UNKNOWN")->Pa
     p=price(raw_text); g=geo(raw_text); sv=services(raw_text); dev=device(raw_text); ps=parts(raw_text)
     explicit=[]; inferred=[]; derived=[]
     has_price=p.value is not None or p.min is not None
+    scope=normalize_price_scope(
+        raw_text,
+        has_price=has_price,
+        is_range=p.type is PriceType.RANGE,
+    )
     if has_price: explicit.append("price")
     if p.currency=="ARS" and re.search(r"\b(?:lucas?|mil|k|palos?)\b|\$",raw_text,re.I): inferred.append("price.currency")
     if g.raw_location:
@@ -327,11 +337,29 @@ def parse_pricing_query(raw_text:str,*,language_evidence_type:str="UNKNOWN")->Pa
     if kind==EconomicObjectKind.UNKNOWN: reasons+=["UNKNOWN_ECONOMIC_OBJECT"]; question=question or "¿Qué servicio o producto tecnológico querés evaluar?"
     if p.currency=="UNKNOWN" and has_price: reasons+=["UNKNOWN_CURRENCY"]; question=question or "¿Ese monto está expresado en pesos argentinos o en otra moneda?"
     if kind==EconomicObjectKind.BUNDLE: reasons+=["BUNDLE_REQUIRES_COMPARABLE_SCOPE"]
+    if (
+        len(sv)==1
+        and sv[0] in PRICE_SCOPE_REQUIRED_SERVICES
+        and scope.comparison_scope=="UNKNOWN"
+        and action in {
+            IntentAction.EVALUATE_PRICE,
+            IntentAction.SUGGEST_PRICE,
+            IntentAction.MARKET_REFERENCE,
+        }
+    ):
+        reasons+=["PRICE_SCOPE_REQUIRED"]
+        question=question or "?Ese precio corresponde a una hora, una visita, un abono mensual u otra unidad de cobro?"
     if re.search(r"\b(?:(?:cambio de )|(?:cambiar (?:un |una |el |la )?))(?:pantalla|teclado|fuente|ssd|disco)\b",x) and ps==PartsScope.UNKNOWN:
         reasons+=["UNKNOWN_PARTS_SCOPE"]; question=question or "¿El precio incluye el repuesto o es sólo mano de obra?"
-    blocking={"MISSING_PROVINCE","UNKNOWN_ECONOMIC_OBJECT","UNKNOWN_CURRENCY","UNKNOWN_PARTS_SCOPE","MULTIPLE_MONETARY_MENTIONS"}
+    blocking={
+        "MISSING_PROVINCE",
+        "UNKNOWN_ECONOMIC_OBJECT",
+        "UNKNOWN_CURRENCY",
+        "UNKNOWN_PARTS_SCOPE",
+        "MULTIPLE_MONETARY_MENTIONS",
+        "PRICE_SCOPE_REQUIRED",
+    }
     clar=bool(blocking & set(reasons)); conf=max(0.0,round(.95-(.25 if clar else 0)-(.15 if action==IntentAction.UNKNOWN else 0)-(.20 if kind==EconomicObjectKind.UNKNOWN else 0),2))
-    scope=normalize_price_scope(raw_text,has_price=has_price,is_range=p.type is PriceType.RANGE)
     commercial_context = resolve_commercial_context(
         raw_text,
         origin=CommercialContextOrigin.USER_CLAIM,

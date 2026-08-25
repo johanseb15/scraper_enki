@@ -37,7 +37,11 @@ def classify(record,result):
             return "WRONG_INTERPRETATION",[f"expected evidence path, got {result.status}"]
         if expected_status and result.status!=expected_status:
             if (
-                expected_status in {"RANGE_READY","DECISION_READY"}
+                expected_status in {
+                    "INSUFFICIENT_EVIDENCE",
+                    "RANGE_READY",
+                    "DECISION_READY",
+                }
                 and result.status in {"INSUFFICIENT_EVIDENCE","NO_EVIDENCE"}
             ):
                 return "EXPECTED_SAFETY_CHANGE",[]

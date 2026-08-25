@@ -171,14 +171,18 @@ def resolver_consulta_pricing(
         c for c in cohorts
         if c.market == market
         and c.canonical_service == canonical_service
-        and compare_commercial_contexts(c.commercial_context, commercial_context)
+        and compare_commercial_contexts(
+            c.commercial_context,
+            commercial_context,
+        )
         is CommercialContextCompatibility.COMPATIBLE
     ]
+
     if price_scope == "UNKNOWN" and service_cohorts:
         return _clarification(
             parsed,
             reason="PRICE_SCOPE_REQUIRED",
-            question="¿Ese precio corresponde a una hora, una visita, un abono mensual u otra unidad de cobro?",
+            question="?Ese precio corresponde a una hora, una visita, un abono mensual u otra unidad de cobro?",
         )
 
     proposed_price: Decimal | None = None
