@@ -23,13 +23,15 @@ def test_generic_missing_information_remains_clarification():
     assert resolve("Necesito formatear una PC").status == "CLARIFICATION_REQUIRED"
     assert resolve("cuánto cobrar por formatear una notebook?").status == "CLARIFICATION_REQUIRED"
 
-def test_incomplete_parser_bundle_families_remain_for_td006():
+def test_recovered_td006_bundle_families_now_reach_terminal_gate():
     for q in (
-        "hice backup de 70gb, cambié el disco, instalé windows y después llevé la pc a la casa del cliente, cuanto le cobro?",
-        "quiero cobrar instalación de ssd más clonado más limpieza, cuánto tendría que pedir?",
-        "tengo que hacer backup de 70 GB y cambiar el disco, cuánto cobro?",
+        'hice backup de 70gb, cambié el disco, instalé windows y después llevé la pc a la casa del cliente, cuanto le cobro?',
+        'quiero cobrar instalación de ssd más clonado más limpieza, cuánto tendría que pedir?',
+        'tengo que hacer backup de 70 GB y cambiar el disco, cuánto cobro?',
     ):
-        assert resolve(q).status == "CLARIFICATION_REQUIRED"
+        result = resolve(q)
+        assert result.status == "UNSUPPORTED_QUERY"
+        assert result.unsupported_reason == "SINGLE_CANONICAL_SERVICE_REQUIRED"
 
 def test_non_actionable_fragment_keeps_existing_terminal_behavior():
     r = resolve("remoto por TeamViewer")

@@ -57,7 +57,8 @@ def test_real_corpus_each_100gb_loss_is_recovered_without_changing_intent():
     parsed = parse_pricing_query("backup de 500GB, cada 100GB extras 38k, cuánto cobro?")
     assert parsed.price_scope.charged_unit is ChargedUnitMeaning.UNIT
     assert parsed.price_scope.comparison_scope == "PER_UNIT"
-    assert parsed.intent_action.value == "UNKNOWN"  # Existing unrelated intent behavior is not changed here.
+    assert parsed.intent_action.value == "SUGGEST_PRICE"  # TD-006 now recovers the previously unrelated intent.
+    assert parsed.intent_side.value == "SELL"
 
 
 def test_explicit_scope_propagates_parser_runtime_comparability_and_trace():
