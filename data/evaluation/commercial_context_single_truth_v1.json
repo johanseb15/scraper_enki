@@ -326,7 +326,7 @@
         "boundary_mismatch_after": false,
         "boundary_mismatch_before": true,
         "case_id": "rq013",
-        "readiness": "CLARIFICATION_REQUIRED"
+        "readiness": "UNSUPPORTED_QUERY"
       },
       {
         "after": {
@@ -398,7 +398,7 @@
         "boundary_mismatch_after": false,
         "boundary_mismatch_before": true,
         "case_id": "rq017",
-        "readiness": "CLARIFICATION_REQUIRED"
+        "readiness": "UNSUPPORTED_QUERY"
       },
       {
         "after": {
@@ -452,7 +452,7 @@
         "boundary_mismatch_after": false,
         "boundary_mismatch_before": true,
         "case_id": "rq020",
-        "readiness": "UNSUPPORTED_QUERY"
+        "readiness": "CLARIFICATION_REQUIRED"
       },
       {
         "after": {
@@ -578,7 +578,7 @@
         "boundary_mismatch_after": false,
         "boundary_mismatch_before": true,
         "case_id": "rq027",
-        "readiness": "CLARIFICATION_REQUIRED"
+        "readiness": "UNSUPPORTED_QUERY"
       },
       {
         "after": {
@@ -920,7 +920,7 @@
         "boundary_mismatch_after": false,
         "boundary_mismatch_before": true,
         "case_id": "rq046",
-        "readiness": "UNSUPPORTED_QUERY"
+        "readiness": "CLARIFICATION_REQUIRED"
       },
       {
         "after": {
@@ -1000,16 +1000,16 @@
       "UNKNOWN": 50
     },
     "readiness": {
-      "CLARIFICATION_REQUIRED": 23,
+      "CLARIFICATION_REQUIRED": 22,
       "NO_EVIDENCE": 17,
-      "UNSUPPORTED_QUERY": 10
+      "UNSUPPORTED_QUERY": 11
     },
     "regression_outcomes": {
-      "CLARIFICATION_CORRECT": 17,
+      "CLARIFICATION_CORRECT": 19,
       "EXPECTED_SAFETY_CHANGE": 2,
       "PARSE_CORRECT": 1,
-      "SAFE_UNSUPPORTED": 6,
-      "WRONG_INTERPRETATION": 24
+      "SAFE_UNSUPPORTED": 9,
+      "WRONG_INTERPRETATION": 19
     }
   },
   "debt_id": "TD-004",
