@@ -206,7 +206,7 @@ The six specifically incorrect clarifications have one control-flow family:
 - NOTES: DIRECT_SAFE 5; BROKEN_CONFIRMED 34; POTENTIALLY_BROKEN 6; NOT_INTENDED 0.
 - REMEDIATION_NOTE: Closed with one shared `scripts/_repo_bootstrap.py` execution-boundary shim across all 49 current `__main__` entrypoints. Direct top-level probes pass 49/49 with `PYTHONPATH` unset. The project `.venv` was synchronized to the already-declared `requirements.txt`, including `truststore==0.10.4`. No product/runtime semantics changed.
 
-### TD-006 ? Real-query interpretation defects remain across five causal families
+### TD-006 — Real-query interpretation defects remain across five causal families
 
 - DEBT_ID: `TD-006`
 - TITLE: Real-query interpretation defects remain across five causal families.
@@ -544,7 +544,7 @@ All P0 debts are resolved. Market acquisition still requires TD-005/008/010. Pro
 1. **CLI EXECUTION CONTRACT v1** — TD-005; risk medium; all 45 surfaces explicitly classified and intended CLIs subprocess-green without PYTHONPATH.
 2. **ARTIFACT RUN MANIFEST v1** — TD-008; dependency CLI; risk medium; deterministic outputs have commit/input/output hashes and historical writes are explicit.
 3. **QUERY GATE PRECEDENCE v1** — TD-007; risk medium; six known cases become safe unsupported without valid-clarification drift.
-4. **REAL QUERY CAUSAL RECOVERY v1-v3 ? COMPLETED** ? TD-006; dependencies gate precedence and scope engine resolved first; three causal remediation blocks completed with final official runtime replay at `0 WRONG_INTERPRETATION` and `0 UNSAFE_DECISION`.
+4. **REAL QUERY CAUSAL RECOVERY v1-v3 — COMPLETED** — TD-006; dependencies gate precedence and scope engine resolved first; three causal remediation blocks completed with final official runtime replay at `0 WRONG_INTERPRETATION` and `0 UNSAFE_DECISION`.
 
 ### WAVE 2 — Provenance and data model
 
