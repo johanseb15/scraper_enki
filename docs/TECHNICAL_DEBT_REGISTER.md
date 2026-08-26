@@ -55,7 +55,7 @@ POTENTIALLY_BROKEN: `acquire_candidate_validation_evidence.py`, `guardar_comprag
 
 ## Corpus root-cause partition
 
-Current replay against v2 cohorts produces `21 WRONG_INTERPRETATION`, `0 UNSAFE_DECISION`: intent 3, semantic alias 2, technical need 0, market resolution 7, normalization 1, commercial context 3, device 0, other control-flow/bundle 5.
+Historical audit baseline against v2 cohorts produced `21 WRONG_INTERPRETATION`, `0 UNSAFE_DECISION`: intent 3, semantic alias 2, technical need 0, market resolution 7, normalization 1, commercial context 3, device 0, other control-flow/bundle 5. TD-006 remediation later reduced the official 50-case runtime replay to `0 WRONG_INTERPRETATION` and `0 UNSAFE_DECISION`; this partition is retained as the historical root-cause baseline, not current state.
 
 The six specifically incorrect clarifications have one control-flow family:
 
@@ -206,33 +206,34 @@ The six specifically incorrect clarifications have one control-flow family:
 - NOTES: DIRECT_SAFE 5; BROKEN_CONFIRMED 34; POTENTIALLY_BROKEN 6; NOT_INTENDED 0.
 - REMEDIATION_NOTE: Closed with one shared `scripts/_repo_bootstrap.py` execution-boundary shim across all 49 current `__main__` entrypoints. Direct top-level probes pass 49/49 with `PYTHONPATH` unset. The project `.venv` was synchronized to the already-declared `requirements.txt`, including `truststore==0.10.4`. No product/runtime semantics changed.
 
-### TD-006 — Real-query interpretation defects remain across five causal families
+### TD-006 ? Real-query interpretation defects remain across five causal families
 
 - DEBT_ID: `TD-006`
 - TITLE: Real-query interpretation defects remain across five causal families.
 - CATEGORY: CORRECTNESS, TESTABILITY, DOMAIN_MODEL.
 - SEVERITY: `P1`.
 - CONFIDENCE: HIGH.
-- STATUS: CONFIRMED.
-- EVIDENCE: Current v2 replay yields 21 wrong interpretations, partitioned above, with zero unsafe decisions.
-- REPRODUCTION: Run `python -m scripts.audit_real_query_corpus` against v2 local/remote stats to a temp output.
-- AFFECTED_FILES: `src/aplicacion/parser_consulta_pricing.py`, `src/aplicacion/enki_pricing_query_service.py`, `src/aplicacion/technical_need_market_resolution.py`, `data/language/real_query_corpus_v1.jsonl`.
+- STATUS: RESOLVED by `td006-real-query-causal-recovery-v1-v3`.
+- BASELINE_EVIDENCE: The historical v2 replay produced `21 WRONG_INTERPRETATION` and `0 UNSAFE_DECISION`, partitioned into intent, semantic alias, market resolution, normalization, commercial-context and control-flow/bundle causes.
+- FINAL_EVIDENCE: Official runtime replay of all 50 adjudicated cases produces `28 CLARIFICATION_CORRECT`, `10 EXPECTED_SAFETY_CHANGE`, `1 PARSE_CORRECT`, `11 SAFE_UNSUPPORTED`, `0 WRONG_INTERPRETATION`, and `0 UNSAFE_DECISION`.
+- REPRODUCTION: Replay `data/language/real_query_corpus_v1.jsonl` through `parse_pricing_query`, `resolver_consulta_pricing`, `trace_real_world_query`, and `adjudicate_trace` using runtime cohorts from `cargar_cohortes_pricing_runtime`; assert zero wrong and zero unsafe outcomes.
+- AFFECTED_FILES: `src/aplicacion/parser_consulta_pricing.py`, `src/aplicacion/enki_pricing_query_service.py`, `scripts/audit_real_query_corpus.py`, `src/infraestructura/real_world_trace_artifact.py`, `data/evaluation/commercial_context_single_truth_v1.json`, and TD-006 regression tests.
 - AFFECTED_LAYERS: APPLICATION, DOMAIN, EVALUATION.
-- ROOT_CAUSE: Intent, aliases, context and market routing evolved independently without root-cause-partitioned remediation.
-- PRODUCT_IMPACT: Valid language is misunderstood, prematurely rejected or routed to the wrong evidence state.
-- DATA_RISK: Aggregate totals hide causal regressions.
-- SAFETY_RISK: Audited corpus remains fail-closed.
-- MAINTENANCE_COST: HIGH.
-- LIKELIHOOD: HIGH.
-- BLAST_RADIUS: 21/50 adjudicated cases.
-- DEPENDENCIES: TD-007, TD-011.
-- PROPOSED_FIX: Separate causal sprints for gate order, market resolution, intent, aliases, context and currency normalization.
-- REGRESSION_TEST_REQUIRED: Per-cause deltas, no new wrong cases, zero unsafe decisions.
-- ESTIMATED_SCOPE: XL_SPLIT_REQUIRED.
+- ROOT_CAUSE: Intent, aliases, cadence requirements, commercial context and runtime clarification/evidence ordering evolved independently without a single causal regression loop over the adjudicated real-query corpus.
+- PRODUCT_IMPACT: The audited query corpus no longer contains known wrong interpretations or unsafe decisions; valid language is either parsed, safely clarified, safely unsupported, or conservatively downgraded when evidence is insufficient.
+- DATA_RISK: Aggregate totals are no longer used alone; causal regression tests preserve the recovered interpretation boundaries.
+- SAFETY_RISK: Fail-closed behavior preserved. No unsafe decision was introduced during remediation.
+- MAINTENANCE_COST: LOW after remediation, with causal regression coverage retained.
+- LIKELIHOOD: LOW for the remediated corpus families.
+- BLAST_RADIUS: The original 21/50 wrong interpretations were reduced to 0/50 on the official runtime replay without unsafe promotion.
+- DEPENDENCIES: TD-007 and TD-011, both resolved before final TD-006 closure.
+- IMPLEMENTED_FIX: Block A recovered service/object, intent and parts-supplied semantics and aligned audit safety classification. Block B moved cadence ambiguity for `SOPORTE_REMOTO` and `VISITA_TECNICA_DOMICILIO` into semantic clarification independent of evidence availability and aligned conservative safety downgrades. Block C recovered BUY price recommendation phrasing, `conviene` evaluation, `ARMADO_PC` direct/anaphoric aliases, active SELL phrasing, and explicit labor-only component separation.
+- REGRESSION_TEST: TD-006 Blocks A/B/C plus parser, pricing-query-service, price-scope, commercial-context and real-world-trace contracts cover the recovered causes and negative boundaries. Final repository suite: `993 passed`. Deterministic commercial-context artifact regeneration passes with zero boundary mismatches, trace-engine parity true, zero unexpected semantic drift, zero auto-promotions, and zero runtime learning writes.
+- ESTIMATED_SCOPE: XL_SPLIT_REQUIRED, completed as three causal remediation blocks.
 - BLOCKS_MARKET_ACQUISITION: false.
 - BLOCKS_FIELD_TESTING: false.
 - BLOCKS_PROMOTION: false.
-- NOTES: Legitimate UNKNOWN/insufficient evidence is not counted unless it contradicts adjudication.
+- NOTES: Legitimate UNKNOWN, clarification, unsupported and insufficient-evidence outcomes remain valid when they match adjudication. Historical baseline metrics remain preserved rather than rewritten as current truth.
 
 ### TD-007 — Terminal unsupported checks run after clarification selection
 
@@ -543,7 +544,7 @@ All P0 debts are resolved. Market acquisition still requires TD-005/008/010. Pro
 1. **CLI EXECUTION CONTRACT v1** — TD-005; risk medium; all 45 surfaces explicitly classified and intended CLIs subprocess-green without PYTHONPATH.
 2. **ARTIFACT RUN MANIFEST v1** — TD-008; dependency CLI; risk medium; deterministic outputs have commit/input/output hashes and historical writes are explicit.
 3. **QUERY GATE PRECEDENCE v1** — TD-007; risk medium; six known cases become safe unsupported without valid-clarification drift.
-4. **REAL QUERY CAUSAL RECOVERY v1-v3** — TD-006; dependencies gate precedence and scope engine; risk medium; separate market, intent/alias and context/normalization sprints with zero new wrong/unsafe cases.
+4. **REAL QUERY CAUSAL RECOVERY v1-v3 ? COMPLETED** ? TD-006; dependencies gate precedence and scope engine resolved first; three causal remediation blocks completed with final official runtime replay at `0 WRONG_INTERPRETATION` and `0 UNSAFE_DECISION`.
 
 ### WAVE 2 — Provenance and data model
 

@@ -16,7 +16,13 @@ RULES=[
 ("INSTALACION_DRIVERS",(r"\bdrivers?\b",r"\bcontroladores\b")),
 ("INSTALACION_PROGRAMAS",(r"\binstalar (?:programas?|office|antivirus)\b",r"\bprogramas? basicos\b")),
 ("SOPORTE_REMOTO",(r"\bsoporte remoto\b",r"\basistencia remota\b",r"\ba distancia\b",r"\bteamviewer\b",r"\banydesk\b",r"\bacceso remoto\b")),
-("ARMADO_PC",(r"\barmado de pc\b",r"\barmar una pc\b",r"\barmar pc\b",r"\bensambl")),
+("ARMADO_PC",(
+    r"\barmado de pc\b",
+    r"\barmar (?:una|la) pc\b",
+    r"\barmar pc\b",
+    r"\b(?:la|una) pc\b[^.!?]{0,120}\barmarla\b",
+    r"\bensambl",
+)),
 ("UPGRADE_HARDWARE",(
     r"\bupgrade\b",
     r"\bmejorar la compu\b",
@@ -67,9 +73,9 @@ PRICE_SCOPE_REQUIRED_SERVICES = frozenset({
 })
 PROV={"caba":"CABA","capital federal":"CABA","capital":"CABA","buenos aires":"Buenos Aires","bs as":"Buenos Aires","cordoba":"Córdoba","santa fe":"Santa Fe","mendoza":"Mendoza","tucuman":"Tucumán","salta":"Salta","jujuy":"Jujuy","chaco":"Chaco","corrientes":"Corrientes","entre rios":"Entre Ríos","neuquen":"Neuquén","rio negro":"Río Negro","chubut":"Chubut","santa cruz":"Santa Cruz","tierra del fuego":"Tierra del Fuego","la pampa":"La Pampa","san juan":"San Juan","san luis":"San Luis","la rioja":"La Rioja","catamarca":"Catamarca","formosa":"Formosa","misiones":"Misiones","santiago del estero":"Santiago del Estero"}
 CITIES={"rosario":("Santa Fe","Rosario"),"la plata":("Buenos Aires","La Plata"),"mar del plata":("Buenos Aires","Mar del Plata"),"lanus":("Buenos Aires","Lanús"),"quilmes":("Buenos Aires","Quilmes"),"moreno":("Buenos Aires","Moreno"),"posadas":("Misiones","Posadas"),"comodoro rivadavia":("Chubut","Comodoro Rivadavia"),"zona norte":("Buenos Aires","Zona Norte"),"zona oeste":("Buenos Aires","Zona Oeste"),"zona sur":("Buenos Aires","Zona Sur"),"gba":("Buenos Aires","GBA"),"gran buenos aires":("Buenos Aires","GBA")}
-BUY=(r"\bme quieren cobrar\b",r"\bme cobran\b",r"\bme cobraron\b",r"\bme pasaron\b",r"\bme presupuestaron\b",r"\bme cotizaron\b",r"\bme dijeron\b",r"\bpagar\b",r"\bme ofrecieron\b")
-SELL=(r"\bquiero cobrar\b",r"\bcuanto cobrar\b",r"\bcuanto cobro\b",r"\bcuanto le cobro\b",r"\bcuanto puedo cobrar\b",r"\ble puedo cobrar\b",r"\bdeberia cobrar\b",r"\bcuanto pedir\b",r"\bquiero vender\b",r"\bvoy a vender\b",r"\bvendo\b")
-EVAL=(r"\besta bien\b",r"\bte parece bien\b",r"\bes mucho\b",r"\bes caro\b",r"\besta caro\b",r"\bes barato\b",r"\bme estan matando\b",r"\bme estan afanando\b",r"\bme quedo corto\b",r"\bme estoy pasando\b",r"\brazonable\b")
+BUY=(r"\bme quieren cobrar\b",r"\bme cobran\b",r"\bme cobraron\b",r"\bme pasaron\b",r"\bme presupuestaron\b",r"\bme cotizaron\b",r"\bme dijeron\b",r"\bpagar\b",r"\bme ofrecieron\b",r"\bme ofrecen\b")
+SELL=(r"\bquiero cobrar\b",r"\bcuanto cobrar\b",r"\bcuanto cobro\b",r"\bcuanto le cobro\b",r"\bcuanto puedo cobrar\b",r"\ble puedo cobrar\b",r"\bdeberia cobrar\b",r"\bestoy cobrando\b",r"\bcuanto pedir\b",r"\bquiero vender\b",r"\bvoy a vender\b",r"\bvendo\b")
+EVAL=(r"\besta bien\b",r"\bte parece bien\b",r"\bconviene\b",r"\bes mucho\b",r"\bes caro\b",r"\besta caro\b",r"\bes barato\b",r"\bme estan matando\b",r"\bme estan afanando\b",r"\bme quedo corto\b",r"\bme estoy pasando\b",r"\brazonable\b")
 HW=(r"\b(?:rtx|gtx|rx)\s?\d{3,4}\b",r"\bryzen\s+[3579]\b",r"\bcore\s+i[3579]\b",r"\bi[3579]\b",r"\bssd\b",r"\bnvme\b",r"\bmemoria ram\b",r"\bnotebook\b.*\b(?:nueva|usada|precio|sale|vender|vendo)\b",r"\bpc armada\b",r"\b(?:una|la) pc\s+(?:para|con)\b")
 
 def fold(t):
@@ -223,6 +229,15 @@ def device(t):
 def parts(t):
     x=fold(t)
     if re.search(r"\b(?:solo|solamente) (?:de )?(?:la )?mano de obra\b|\bsin repuesto\b",x): return PartsScope.LABOR_ONLY
+    if (
+        re.search(r"\bmano de obra\b", x)
+        and re.search(
+            r"\b(?:el |la )?(?:repuesto|ssd|disco|fuente|teclado|pantalla)\b"
+            r"[^.!?]{0,40}\bva aparte\b",
+            x,
+        )
+    ):
+        return PartsScope.LABOR_ONLY
     if re.search(r"\bincluye (?:el |la |los |las )?(?:repuesto|panel|pantalla|ssd|fuente|teclado|materiales)\b",x): return PartsScope.PARTS_INCLUDED
     if re.search(r"\bya (?:tengo|compre|compro) (?:el |la )?(?:repuesto|ssd|fuente|teclado|pantalla)\b",x): return PartsScope.USER_PROVIDED
     return PartsScope.UNKNOWN
@@ -309,6 +324,11 @@ def parse_pricing_query(raw_text:str,*,language_evidence_type:str="UNKNOWN")->Pa
     if sv: derived.append("canonical_services")
     side=IntentSide.SELL if has(raw_text,SELL) else IntentSide.BUY if (has(raw_text,BUY) or (has_price and re.search(r"\bme piden\b",x))) else IntentSide.UNKNOWN
     if has(raw_text,EVAL) and has_price: action=IntentAction.EVALUATE_PRICE
+    elif (
+        side==IntentSide.BUY
+        and re.search(r"\bcuanto deberia pagar\b",x)
+    ):
+        action=IntentAction.SUGGEST_PRICE
     elif re.search(r"\bcuanto(?: le)? cobro\b",x): action=IntentAction.SUGGEST_PRICE
     elif side==IntentSide.SELL and not has_price: action=IntentAction.SUGGEST_PRICE
     elif re.search(r"\bcompar",x): action=IntentAction.COMPARE

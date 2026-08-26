@@ -66,7 +66,7 @@ def test_before_after_and_net_drift_are_reproducible(reconciliation):
     assert len(drift) == 19  # 13 regressions and 5 recoveries, plus one changed status with net zero.
     assert sum(row["wrong_interpretation_net_delta"] for row in drift) == 8
     assert metrics["WRONG_INTERPRETATION_BEFORE"] == 27
-    assert metrics["WRONG_INTERPRETATION_AFTER"] == 5
+    assert metrics["WRONG_INTERPRETATION_AFTER"] == 0
     assert metrics["PRICE_SCOPE_MISMATCHES_BEFORE"] == 5
     assert metrics["PRICE_SCOPE_MISMATCHES_AFTER"] == 2
     assert metrics["PRICE_SCOPE_UNKNOWN_SIDE_AFTER"] == 35

@@ -1005,11 +1005,10 @@
       "UNSUPPORTED_QUERY": 11
     },
     "regression_outcomes": {
-      "CLARIFICATION_CORRECT": 25,
+      "CLARIFICATION_CORRECT": 28,
       "EXPECTED_SAFETY_CHANGE": 10,
       "PARSE_CORRECT": 1,
-      "SAFE_UNSUPPORTED": 9,
-      "WRONG_INTERPRETATION": 5
+      "SAFE_UNSUPPORTED": 11
     }
   },
   "debt_id": "TD-004",
