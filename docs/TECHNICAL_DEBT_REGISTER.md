@@ -172,9 +172,9 @@ The six specifically incorrect clarifications have one control-flow family:
 - IMPLEMENTED_FIX: `CommercialContext` is the single typed identity for user and source claims, preserves distinct origin/raw basis, represents STANDARD/URGENCY/UNKNOWN/AMBIGUOUS, and is propagated without reinterpretation through parser, cohort selection, comparability, API and trace. UNKNOWN and AMBIGUOUS fail closed.
 - REGRESSION_TEST: End-to-end STANDARD/URGENCY/UNKNOWN/AMBIGUOUS, user/source provenance, mismatch/unknown-side safety, rq003/rq032, API boundary, corpus 50, HUMAN_REAL and exact engine/trace parity.
 - ESTIMATED_SCOPE: M.
-- BLOCKS_MARKET_ACQUISITION: false for TD-004; TD-005, TD-008 and TD-010 still block the program gate.
+- BLOCKS_MARKET_ACQUISITION: false for TD-004; TD-008 still blocks the program gate.
 - BLOCKS_FIELD_TESTING: false; supervised field testing remains non-promotional and the runtime currently has zero admitted evidence.
-- BLOCKS_PROMOTION: false for TD-004; TD-008, TD-010, TD-011 and TD-013 still block the program gate.
+- BLOCKS_PROMOTION: false for TD-004; TD-008, TD-011 and TD-013 still block the program gate.
 - NOTES: Closed without acquisition, thresholds, evidence additions, historical rewrites, HUMAN_REAL mutation, promotion or runtime learning writes. See `data/evaluation/commercial_context_single_truth_v1.json`.
 
 ### TD-005 — Repository-wide direct CLI/import contract is not defined or enforced
@@ -317,7 +317,7 @@ The six specifically incorrect clarifications have one control-flow family:
 - BLOCKS_MARKET_ACQUISITION: false.
 - BLOCKS_FIELD_TESTING: false.
 - BLOCKS_PROMOTION: false.
-- NOTES: Closed without acquisition, pricing threshold changes, historical artifact rewrites, fabricated logical identities, fabricated provenance or runtime consumer migration. TD-010 remains the provider-independence follow-up.
+- NOTES: Closed without acquisition, pricing threshold changes, historical artifact rewrites, fabricated logical identities, fabricated provenance or runtime consumer migration. TD-010 was closed by provider-independence-contract-v1.
 
 ### TD-010 — Runtime provider independence counts source ids instead of stable provider ids
 
@@ -326,26 +326,26 @@ The six specifically incorrect clarifications have one control-flow family:
 - CATEGORY: CORRECTNESS, ARCHITECTURAL_CONSISTENCY, DATA_LINEAGE.
 - SEVERITY: `P2`.
 - CONFIDENCE: HIGH.
-- STATUS: CONFIRMED.
-- EVIDENCE: Runtime adds `row["source"]` to a set and publishes it as `providers_n`; shadow uses stable provider ids; registry can contain multiple source ids for one exact provider name.
-- REPRODUCTION: Compare `build_pricing_statistics.py` with `semantic_economic_evidence_bridge.py` and provider-identity tests.
-- AFFECTED_FILES: `scripts/build_pricing_statistics.py`, `src/aplicacion/semantic_economic_evidence_bridge.py`, `data/pricing_sources.csv`, `data/economic_dimensions_v2.jsonl`.
-- AFFECTED_LAYERS: APPLICATION, DATA_ARTIFACTS, READINESS.
-- ROOT_CAUSE: Runtime statistics predate stable provider identity.
-- PRODUCT_IMPACT: Multi-page/provider acquisition can inflate or deflate readiness.
-- DATA_RISK: Provider/source/URL/document/observation/temporal independence collapse into one count.
-- SAFETY_RISK: No current DECISION_READY is affected; future threshold risk is concrete.
-- MAINTENANCE_COST: MEDIUM.
-- LIKELIHOOD: HIGH_DURING_ACQUISITION.
-- BLAST_RADIUS: Future cohort confidence/readiness.
+- STATUS: RESOLVED by `provider-independence-contract-v1`.
+- EVIDENCE: Runtime cohorts now count only stable provider ids from `EconomicEvidenceDimensionsV2.provider_identity` as `providers_n` and expose source cardinality separately as `source_count`. UNKNOWN, CONFLICTED or absent provider identity contributes zero provider independence. The real-data probe found no admitted runtime cohorts after lineage/reach/temporal gates, so no current RANGE_READY cohort changed.
+- REPRODUCTION: Build runtime cohorts with same-provider/multi-source rows, distinct-provider rows, same-provider/multi-snapshot rows and UNKNOWN/CONFLICTED provider dimensions; compare `providers_n` with `source_count`.
+- AFFECTED_FILES: `src/aplicacion/provider_independence.py`, `src/aplicacion/runtime_cohort_lineage_gate.py`, `src/aplicacion/pricing_cohort_loader.py`, `src/aplicacion/pricing_evidence_engine.py`, `src/aplicacion/technical_need_evidence_probe.py`, `src/api/main.py`, `scripts/build_pricing_statistics.py`, `data/local_pricing_stats_temporal_v1.csv`, `data/remote_pricing_stats_temporal_v1.csv`.
+- AFFECTED_LAYERS: APPLICATION, DATA_ARTIFACTS, READINESS, API.
+- ROOT_CAUSE: Runtime statistics predated stable provider identity and conflated source ids with provider independence.
+- PRODUCT_IMPACT: Multi-page/provider acquisition can no longer inflate readiness by source cardinality alone.
+- DATA_RISK: Provider/source/observation/temporal independence are now separate published axes for runtime cohorts.
+- SAFETY_RISK: Lower; unknown or conflicted provider identity fails closed and does not fabricate independence.
+- MAINTENANCE_COST: LOW after remediation.
+- LIKELIHOOD: LOW after remediation.
+- BLAST_RADIUS: Future cohort confidence/readiness, runtime loader contract, API/probe evidence payloads.
 - DEPENDENCIES: TD-009.
-- PROPOSED_FIX: Carry provider_id and expose all independence axes separately; only stable provider id feeds `providers_n`.
-- REGRESSION_TEST_REQUIRED: Same provider across sources counts once; distinct providers count separately; UNKNOWN never fabricates independence.
+- IMPLEMENTED_FIX: Added `provider-independence-contract-v1`, split `source_count` from `providers_n`, passed provider dimensions into runtime cohort building, made runtime loading require the provider-independence schema/version, propagated the new fields through pricing evidence/API/probe boundaries, and updated empty runtime temporal artifact headers without changing acquisition or thresholds.
+- REGRESSION_TEST: Same provider across sources counts once; distinct providers count separately; same provider across snapshots counts once; UNKNOWN/CONFLICTED provider identity never creates independence; legacy runtime artifacts missing the provider-independence contract fail closed.
 - ESTIMATED_SCOPE: M.
-- BLOCKS_MARKET_ACQUISITION: true.
+- BLOCKS_MARKET_ACQUISITION: false.
 - BLOCKS_FIELD_TESTING: false.
-- BLOCKS_PROMOTION: true.
-- NOTES: Frequency is not independence.
+- BLOCKS_PROMOTION: false.
+- NOTES: Frequency is not independence. Closed without acquisition, HUMAN_REAL mutation, pricing threshold changes, runtime evidence additions or frontend changes.
 
 ### TD-011 — Price-scope parsing remains duplicated between user and source paths
 
@@ -528,7 +528,7 @@ TD-005 CLI contract ──────────> TD-015 dependency/config
 TD-013 boundary tests ────────> TD-016 legacy retirement
 ```
 
-All P0 debts are resolved. Market acquisition still requires TD-005/008/010. Promotion additionally requires TD-008/010/011/013.
+All P0 debts are resolved. Market acquisition still requires TD-008. Promotion additionally requires TD-008/011/013.
 
 ## Remediation waves
 
@@ -549,7 +549,7 @@ All P0 debts are resolved. Market acquisition still requires TD-005/008/010. Pro
 ### WAVE 2 — Provenance and data model
 
 1. **OFFER OBSERVATION IDENTITY v1 — COMPLETE** — TD-009; stable multi-price/snapshot identity with backwards-compatible loading.
-2. **PROVIDER INDEPENDENCE CONTRACT v1** — TD-010; dependency offer identity; risk high because readiness inputs change while thresholds remain untouched; provider/source/document/URL/observation/time axes become explicit.
+2. **PROVIDER INDEPENDENCE CONTRACT v1 — COMPLETE** — TD-010; stable provider ids feed `providers_n`, source cardinality is exposed separately, and UNKNOWN/CONFLICTED provider identity fails closed.
 3. **PRICE SCOPE SINGLE ENGINE v1** — TD-011; risk medium; one semantic engine with distinct origins and UNKNOWN fail-closed.
 
 ### WAVE 3 — Architecture and test consolidation
@@ -573,11 +573,11 @@ Estimated consolidation: **18 small causal sprints** (the broad interpretation i
 
 ### SAFE_FOR_MARKET_ACQUISITION_EXPANSION
 
-`NO`. Required closures: TD-005, TD-008 and TD-010. This is risk-based, not “debt zero”: corpus cleanup, documentation and legacy wrappers do not block acquisition.
+`NO`. Required closures: TD-008. This is risk-based, not “debt zero”: corpus cleanup, documentation and legacy wrappers do not block acquisition.
 
 ### SAFE_FOR_KNOWLEDGE_PROMOTION
 
-`NO`. Required closures: TD-008, TD-010, TD-011 and TD-013; additionally, the current candidate remains `FAIL_SHADOW_VALIDATION`. Existing currency conflicts remain preserved and no promotion is authorized.
+`NO`. Required closures: TD-008, TD-011 and TD-013; additionally, the current candidate remains `FAIL_SHADOW_VALIDATION`. Existing currency conflicts remain preserved and no promotion is authorized.
 
 ## Exact next remediation sprint
 

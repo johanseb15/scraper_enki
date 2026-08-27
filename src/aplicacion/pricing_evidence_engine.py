@@ -44,6 +44,8 @@ class CohortePricing:
     acquired_at_max: str | None = None
     freshness_policy_version: str | None = None
     observation_ids: tuple[str, ...] = ()
+    source_count: int = 0
+    provider_independence_version: str | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.commercial_context, CommercialContext):
@@ -96,6 +98,8 @@ class ResultadoEvidenciaPrecio:
     acquired_at_max: str | None = None
     freshness_policy_version: str | None = None
     observation_ids: tuple[str, ...] = ()
+    source_count: int = 0
+    provider_independence_version: str | None = None
 
 
 def evaluar_precio(
@@ -142,6 +146,8 @@ def evaluar_precio(
         canonical_service=canonical_service,
         observations_n=cohort.observations_n,
         providers_n=cohort.providers_n,
+        source_count=cohort.source_count,
+        provider_independence_version=cohort.provider_independence_version,
         min_ars=cohort.min_ars,
         q1_ars=cohort.q1_ars,
         median_ars=cohort.median_ars,

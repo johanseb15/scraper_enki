@@ -15,6 +15,8 @@ def _remote_hourly_cohort() -> CohortePricing:
         canonical_service="SOPORTE_REMOTO",
         observations_n=3,
         providers_n=3,
+        source_count=4,
+        provider_independence_version="provider-independence-contract-v1",
         min_ars=Decimal("28000"),
         q1_ars=Decimal("29000"),
         median_ars=Decimal("30000"),
@@ -101,6 +103,8 @@ def test_decision_pricing_returns_real_range_payload():
     assert body["evidence"]["max_ars"] == 40000
     assert body["evidence"]["observations_n"] == 3
     assert body["evidence"]["providers_n"] == 3
+    assert body["evidence"]["source_count"] == 4
+    assert body["evidence"]["provider_independence_version"] == "provider-independence-contract-v1"
     assert body["evidence"]["evidence_confidence"] == "LOW"
     assert body["evidence"]["price_scope"] == "PER_HOUR"
     assert body["evidence"]["commercial_context"] == "STANDARD"

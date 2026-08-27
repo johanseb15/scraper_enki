@@ -19,6 +19,7 @@ class EvidenceProbeResult:
     canonical_service: str | None = None
     observations_n: int = 0
     providers_n: int = 0
+    source_count: int = 0
     evidence_confidence: str = "NONE"
     observed_min: Decimal | None = None
     observed_max: Decimal | None = None
@@ -80,6 +81,7 @@ def probe_pricing_evidence(
         canonical_service=evidence.canonical_service,
         observations_n=evidence.observations_n,
         providers_n=evidence.providers_n,
+        source_count=evidence.source_count,
         evidence_confidence=evidence.evidence_confidence,
         observed_min=evidence.min_ars,
         observed_max=evidence.max_ars,

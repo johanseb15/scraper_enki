@@ -19,6 +19,7 @@ from src.aplicacion.pricing_dimensions import (
     infer_commercial_context,
     infer_price_scope,
 )
+from src.aplicacion.provider_independence import stable_provider_id
 from src.aplicacion.runtime_cohort_lineage_gate import (
     RuntimeCohortBuild,
     build_runtime_cohort_rows,
@@ -46,9 +47,15 @@ def _quantile_linear(values: list[float], q: float) -> float:
     return xs[lo] * (1 - weight) + xs[hi] * weight
 
 
-def _build(rows: list[dict[str, str]], *, market_scope: str) -> list[dict[str, object]]:
+def _build(
+    rows: list[dict[str, str]],
+    *,
+    market_scope: str,
+    provider_dimensions=None,
+) -> list[dict[str, object]]:
     prices: dict[tuple[str, str, str, object], list[float]] = defaultdict(list)
     sources: dict[tuple[str, str, str, object], set[str]] = defaultdict(set)
+    provider_ids: dict[tuple[str, str, str, object], set[str]] = defaultdict(set)
 
     for row in rows:
         if row["semantic_role"] != "SINGLE_SERVICE":
@@ -76,11 +83,26 @@ def _build(rows: list[dict[str, str]], *, market_scope: str) -> list[dict[str, o
         prices[key].append(price)
         sources[key].add(row["source"])
 
+        provider_id = stable_provider_id(
+            provider_dimensions.get(row["observation_id"])
+            if provider_dimensions is not None
+            else None
+        )
+        if provider_id is not None:
+            provider_ids[key].add(provider_id)
+
     result = []
     for (market, service, price_scope, commercial_context), vals in prices.items():
         vals = sorted(vals)
         n = len(vals)
-        providers_n = len(sources[(market, service, price_scope, commercial_context)])
+        key = (
+            market,
+            service,
+            price_scope,
+            commercial_context,
+        )
+        source_count = len(sources[key])
+        providers_n = len(provider_ids[key])
         q1 = _quantile_linear(vals, 0.25)
         median = statistics.median(vals)
         q3 = _quantile_linear(vals, 0.75)
@@ -100,6 +122,7 @@ def _build(rows: list[dict[str, str]], *, market_scope: str) -> list[dict[str, o
             "commercial_context": commercial_context.value.value,
             "observations_n": n,
             "providers_n": providers_n,
+            "source_count": source_count,
             "min_ars": min(vals),
             "q1_ars": q1,
             "median_ars": median,
@@ -121,7 +144,7 @@ def _build(rows: list[dict[str, str]], *, market_scope: str) -> list[dict[str, o
 def _write(path: str | Path, rows: list[dict[str, object]]) -> None:
     fields = [
         "market", "canonical_service", "price_scope", "commercial_context",
-        "observations_n", "providers_n",
+        "observations_n", "providers_n", "source_count",
         "min_ars", "q1_ars", "median_ars", "q3_ars", "max_ars",
         "spread_ratio", "evidence_confidence", "decision_ready", "range_ready",
     ]
@@ -136,9 +159,10 @@ def _write(path: str | Path, rows: list[dict[str, object]]) -> None:
 def _write_runtime(path: str | Path, rows: list[dict[str, object]]) -> None:
     fields = [
         "market", "canonical_service", "price_scope", "commercial_context",
-        "observations_n", "providers_n",
+        "observations_n", "providers_n", "source_count",
         "min_ars", "q1_ars", "median_ars", "q3_ars", "max_ars",
         "spread_ratio", "evidence_confidence", "decision_ready", "range_ready",
+        "provider_independence_version",
         "lineage_gate_version", "service_reach_gate_version",
         "temporal_gate_version", "temporal_state",
         "acquired_at_min", "acquired_at_max", "freshness_policy_version",
@@ -157,6 +181,7 @@ def build_pricing_statistics(
     *,
     local_out_path: str | Path,
     remote_out_path: str | Path,
+    dimensions_path: str | Path | None = None,
 ) -> tuple[list[dict[str, object]], list[dict[str, object]]]:
     """Build local and remote pricing cohorts from semantic normalization CSV."""
     with Path(normalization_path).open(
@@ -166,8 +191,22 @@ def build_pricing_statistics(
     ) as f:
         rows = list(csv.DictReader(f))
 
-    local = _build(rows, market_scope="LOCAL_SERVICE")
-    remote = _build(rows, market_scope="REMOTE_NATIONAL_SERVICE")
+    dimensions = (
+        load_economic_dimensions_v2_sidecar(dimensions_path)
+        if dimensions_path is not None
+        else None
+    )
+
+    local = _build(
+        rows,
+        market_scope="LOCAL_SERVICE",
+        provider_dimensions=dimensions,
+    )
+    remote = _build(
+        rows,
+        market_scope="REMOTE_NATIONAL_SERVICE",
+        provider_dimensions=dimensions,
+    )
     _write(local_out_path, local)
     _write(remote_out_path, remote)
     return local, remote
@@ -199,6 +238,7 @@ def build_runtime_pricing_statistics(
         market_scope="LOCAL_SERVICE",
         service_reach_dimensions=dimensions,
         temporal_evidence=temporal,
+        provider_dimensions=dimensions,
     )
     remote = build_runtime_cohort_rows(
         rows,
@@ -207,6 +247,7 @@ def build_runtime_pricing_statistics(
         market_scope="REMOTE_NATIONAL_SERVICE",
         service_reach_dimensions=dimensions,
         temporal_evidence=temporal,
+        provider_dimensions=dimensions,
     )
     _write_runtime(local_out_path, list(local.cohorts))
     _write_runtime(remote_out_path, list(remote.cohorts))
@@ -251,6 +292,7 @@ def main() -> None:
             args.normalization,
             local_out_path=args.local_out,
             remote_out_path=args.remote_out,
+            dimensions_path=args.dimensions,
         )
 
     print("ENKI PRICING STATISTICS v1")

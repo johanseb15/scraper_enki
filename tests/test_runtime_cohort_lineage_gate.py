@@ -19,7 +19,16 @@ from src.aplicacion.runtime_cohort_lineage_gate import (
     EXCLUSION_REASON_MISSING_REPRODUCIBLE_RAW_LINEAGE,
     build_runtime_cohort_rows,
 )
+from src.dominio.economic_evidence import (
+    DimensionClaim,
+    DimensionOrigin,
+    DimensionStatus,
+    DimensionValue,
+    EconomicEvidenceDimensionsV2,
+    ProviderIdentity,
+)
 from src.dominio.offer_evidence import EvidenceLineage, OfferReachChargedScopeEvidence
+from src.dominio.semantic_knowledge import KnowledgeProvenance
 from src.infraestructura.real_world_query_tracer import trace_real_world_query
 
 
@@ -143,7 +152,8 @@ def test_invalid_constituent_cannot_inflate_providers_or_statistics(tmp_path: Pa
     assert build.excluded == 1
     cohort = build.cohorts[0]
     assert cohort["observations_n"] == 2
-    assert cohort["providers_n"] == 2
+    assert cohort["source_count"] == 2
+    assert cohort["providers_n"] == 0
     assert cohort["median_ars"] == 150.0
     assert cohort["min_ars"] == 100.0
     assert cohort["max_ars"] == 200.0
@@ -271,3 +281,203 @@ def test_lineage_gate_historical_artifact_is_not_rewritten(
     assert generated["excluded_missing_lineage"] == 53
     assert generated["trace_engine_parity"]["value"] is True
     assert generated["historical_rows_rewritten"] is False
+
+
+def _provider_dimensions(provider_id: str | None, *, source="source"):
+    if provider_id is None:
+        return EconomicEvidenceDimensionsV2()
+    name = provider_id.rsplit(":", 1)[-1]
+    provider = ProviderIdentity(
+        provider_id=provider_id,
+        provider_name=name,
+        source=source,
+    )
+    return EconomicEvidenceDimensionsV2(
+        provider_identity=DimensionValue(
+            value=provider,
+            status=DimensionStatus.INFERRED,
+            claims=(
+                DimensionClaim(
+                    value=provider,
+                    origin=DimensionOrigin.REGISTRY_CLAIM,
+                    provenance=KnowledgeProvenance(
+                        "PROVIDER_SOURCE_REGISTRY",
+                        f"source={source};provider={name}",
+                        "pricing-source-registry-v1",
+                    ),
+                    raw_basis=f"registry source={source!r} provider={name!r}",
+                ),
+            ),
+        ),
+    )
+
+
+def _conflicted_provider_dimensions():
+    first = ProviderIdentity("provider:x:1", "Provider X", "source-a")
+    second = ProviderIdentity("provider:y:2", "Provider Y", "source-a")
+    return EconomicEvidenceDimensionsV2(
+        provider_identity=DimensionValue(
+            value=None,
+            status=DimensionStatus.CONFLICTED,
+            claims=(
+                DimensionClaim(
+                    value=first,
+                    origin=DimensionOrigin.REGISTRY_CLAIM,
+                    provenance=KnowledgeProvenance(
+                        "PROVIDER_SOURCE_REGISTRY",
+                        "source=source-a;provider=Provider X",
+                        "pricing-source-registry-v1",
+                    ),
+                    raw_basis="registry source='source-a' provider='Provider X'",
+                ),
+                DimensionClaim(
+                    value=second,
+                    origin=DimensionOrigin.NORMALIZED_FIELD,
+                    provenance=KnowledgeProvenance(
+                        "SEMANTIC_NORMALIZATION_FIELD",
+                        "source=source-a;provider=Provider Y",
+                        "semantic-normalization-v4",
+                    ),
+                    raw_basis="normalized provider='Provider Y'",
+                ),
+            ),
+        ),
+    )
+
+
+def test_same_provider_multi_source_counts_one_independent_provider(tmp_path: Path) -> None:
+    rows = (
+        _semantic_row("obs-1", "source-a", "100"),
+        _semantic_row("obs-2", "source-b", "120"),
+    )
+    evidence = {
+        "obs-1": _lineage(tmp_path, "obs-1", "source-a"),
+        "obs-2": _lineage(tmp_path, "obs-2", "source-b"),
+    }
+    dimensions = {
+        "obs-1": _provider_dimensions("provider:shared:abc", source="source-a"),
+        "obs-2": _provider_dimensions("provider:shared:abc", source="source-b"),
+    }
+
+    build = build_runtime_cohort_rows(
+        rows,
+        evidence,
+        tmp_path,
+        market_scope="REMOTE_NATIONAL_SERVICE",
+        provider_dimensions=dimensions,
+    )
+
+    cohort = build.cohorts[0]
+    assert cohort["observations_n"] == 2
+    assert cohort["source_count"] == 2
+    assert cohort["providers_n"] == 1
+    assert cohort["evidence_confidence"] == "INSUFFICIENT"
+    assert cohort["range_ready"] == "NO"
+
+
+def test_different_providers_count_as_independent(tmp_path: Path) -> None:
+    rows = (
+        _semantic_row("obs-1", "source-a", "100"),
+        _semantic_row("obs-2", "source-b", "120"),
+        _semantic_row("obs-3", "source-c", "130"),
+    )
+    evidence = {
+        "obs-1": _lineage(tmp_path, "obs-1", "source-a"),
+        "obs-2": _lineage(tmp_path, "obs-2", "source-b"),
+        "obs-3": _lineage(tmp_path, "obs-3", "source-c"),
+    }
+    dimensions = {
+        "obs-1": _provider_dimensions("provider:a:1", source="source-a"),
+        "obs-2": _provider_dimensions("provider:b:2", source="source-b"),
+        "obs-3": _provider_dimensions("provider:c:3", source="source-c"),
+    }
+
+    build = build_runtime_cohort_rows(
+        rows,
+        evidence,
+        tmp_path,
+        market_scope="REMOTE_NATIONAL_SERVICE",
+        provider_dimensions=dimensions,
+    )
+
+    cohort = build.cohorts[0]
+    assert cohort["observations_n"] == 3
+    assert cohort["source_count"] == 3
+    assert cohort["providers_n"] == 3
+    assert cohort["range_ready"] == "YES"
+
+
+def test_same_provider_multi_snapshot_counts_one_independent_provider(tmp_path: Path) -> None:
+    rows = (
+        _semantic_row("obs-1", "source-a", "100"),
+        _semantic_row("obs-2", "source-a", "120"),
+        _semantic_row("obs-3", "source-a", "130"),
+    )
+    evidence = {
+        "obs-1": _lineage(tmp_path, "obs-1", "source-a"),
+        "obs-2": _lineage(tmp_path, "obs-2", "source-a"),
+        "obs-3": _lineage(tmp_path, "obs-3", "source-a"),
+    }
+    dimensions = {
+        observation_id: _provider_dimensions("provider:a:1", source="source-a")
+        for observation_id in ("obs-1", "obs-2", "obs-3")
+    }
+
+    build = build_runtime_cohort_rows(
+        rows,
+        evidence,
+        tmp_path,
+        market_scope="REMOTE_NATIONAL_SERVICE",
+        provider_dimensions=dimensions,
+    )
+
+    cohort = build.cohorts[0]
+    assert cohort["observations_n"] == 3
+    assert cohort["source_count"] == 1
+    assert cohort["providers_n"] == 1
+    assert cohort["range_ready"] == "NO"
+
+
+def test_unknown_or_conflicted_provider_identity_does_not_invent_independence(tmp_path: Path) -> None:
+    rows = (
+        _semantic_row("obs-1", "source-a", "100"),
+        _semantic_row("obs-2", "source-b", "120"),
+    )
+    evidence = {
+        "obs-1": _lineage(tmp_path, "obs-1", "source-a"),
+        "obs-2": _lineage(tmp_path, "obs-2", "source-b"),
+    }
+    dimensions = {
+        "obs-1": _provider_dimensions(None),
+        "obs-2": _conflicted_provider_dimensions(),
+    }
+
+    build = build_runtime_cohort_rows(
+        rows,
+        evidence,
+        tmp_path,
+        market_scope="REMOTE_NATIONAL_SERVICE",
+        provider_dimensions=dimensions,
+    )
+
+    cohort = build.cohorts[0]
+    assert cohort["observations_n"] == 2
+    assert cohort["source_count"] == 2
+    assert cohort["providers_n"] == 0
+    assert cohort["range_ready"] == "NO"
+
+
+def test_runtime_loader_requires_provider_independence_contract(tmp_path: Path) -> None:
+    path = tmp_path / "legacy_runtime.csv"
+    path.write_text(
+        "market,canonical_service,observations_n,providers_n,min_ars,q1_ars,median_ars,q3_ars,max_ars,spread_ratio,evidence_confidence,decision_ready,range_ready,lineage_gate_version,observation_ids\n"
+        "AR,SOPORTE_REMOTO,3,3,100,110,120,130,140,1.4,LOW,NO,YES,runtime-cohort-lineage-gate-v1,obs-1|obs-2|obs-3\n",
+        encoding="utf-8-sig",
+    )
+
+    with pytest.raises(ValueError, match="provider-independence-contract-v1"):
+        cargar_cohortes_pricing(
+            path,
+            require_runtime_lineage_gate=True,
+            require_provider_independence=True,
+        )

@@ -69,25 +69,29 @@ def test_remote_support_is_split_by_price_scope_and_commercial_context(tmp_path)
 
     unknown = by_key[("UNKNOWN", "UNKNOWN")]
     assert unknown["observations_n"] == 1
-    assert unknown["providers_n"] == 1
+    assert unknown["source_count"] == 1
+    assert unknown["providers_n"] == 0
     assert unknown["evidence_confidence"] == "INSUFFICIENT"
+    assert unknown["range_ready"] == "NO"
     assert unknown["decision_ready"] == "NO"
 
     hourly = by_key[("PER_HOUR", "UNKNOWN")]
     assert hourly["observations_n"] == 3
-    assert hourly["providers_n"] == 3
+    assert hourly["source_count"] == 3
+    assert hourly["providers_n"] == 0
     assert hourly["min_ars"] == 28000
     assert hourly["q1_ars"] == 29000
     assert hourly["median_ars"] == 30000
     assert hourly["q3_ars"] == 35000
     assert hourly["max_ars"] == 40000
-    assert hourly["evidence_confidence"] == "LOW"
-    assert hourly["range_ready"] == "YES"
+    assert hourly["evidence_confidence"] == "INSUFFICIENT"
+    assert hourly["range_ready"] == "NO"
     assert hourly["decision_ready"] == "NO"
 
     urgency = by_key[("PER_HOUR", "URGENCY")]
     assert urgency["observations_n"] == 1
-    assert urgency["providers_n"] == 1
+    assert urgency["source_count"] == 1
+    assert urgency["providers_n"] == 0
     assert urgency["min_ars"] == 48000
     assert urgency["max_ars"] == 48000
     assert urgency["evidence_confidence"] == "INSUFFICIENT"

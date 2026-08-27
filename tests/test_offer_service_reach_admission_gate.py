@@ -266,7 +266,8 @@ def test_both_gates_pass_and_bad_reach_cannot_inflate_provider_count(tmp_path: P
     assert build.lineage_admitted == 3
     assert build.reach_admitted == 2
     assert build.admitted == 2
-    assert build.cohorts[0]["providers_n"] == 2
+    assert build.cohorts[0]["source_count"] == 2
+    assert build.cohorts[0]["providers_n"] == 0
     assert build.cohorts[0]["median_ars"] == 150.0
     assert build.cohorts[0]["max_ars"] == 200.0
 

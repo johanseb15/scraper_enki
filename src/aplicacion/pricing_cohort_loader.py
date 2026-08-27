@@ -6,6 +6,7 @@ from decimal import Decimal
 from pathlib import Path
 
 from src.aplicacion.pricing_evidence_engine import CohortePricing
+from src.aplicacion.provider_independence import PROVIDER_INDEPENDENCE_VERSION
 from src.aplicacion.runtime_cohort_lineage_gate import LINEAGE_GATE_VERSION
 from src.aplicacion.service_reach_admission_gate import SERVICE_REACH_GATE_VERSION
 from src.aplicacion.temporal_evidence_admission_gate import TEMPORAL_GATE_VERSION
@@ -29,6 +30,7 @@ def cargar_cohortes_pricing(
     require_runtime_lineage_gate: bool = False,
     require_service_reach_gate: bool = False,
     require_temporal_gate: bool = False,
+    require_provider_independence: bool = False,
 ) -> list[CohortePricing]:
     cohortes: list[CohortePricing] = []
 
@@ -39,6 +41,11 @@ def cargar_cohortes_pricing(
             required_fields.update({"lineage_gate_version", "observation_ids"})
         if require_service_reach_gate:
             required_fields.add("service_reach_gate_version")
+        if require_provider_independence:
+            required_fields.update({
+                "provider_independence_version",
+                "source_count",
+            })
         if require_temporal_gate:
             required_fields.update(
                 {
@@ -56,6 +63,7 @@ def cargar_cohortes_pricing(
                     (require_runtime_lineage_gate, LINEAGE_GATE_VERSION),
                     (require_service_reach_gate, SERVICE_REACH_GATE_VERSION),
                     (require_temporal_gate, TEMPORAL_GATE_VERSION),
+                    (require_provider_independence, PROVIDER_INDEPENDENCE_VERSION),
                 )
                 if required
             )
@@ -70,9 +78,19 @@ def cargar_cohortes_pricing(
             temporal_gate_version = (
                 (row.get("temporal_gate_version") or "").strip() or None
             )
+            provider_independence_version = (
+                (row.get("provider_independence_version") or "").strip()
+                or None
+            )
             observation_ids = tuple(
                 item for item in (row.get("observation_ids") or "").split("|") if item
             )
+            if require_provider_independence and (
+                provider_independence_version != PROVIDER_INDEPENDENCE_VERSION
+            ):
+                raise ValueError(
+                    f"Runtime pricing cohort lacks {PROVIDER_INDEPENDENCE_VERSION}: {path}"
+                )
             if require_runtime_lineage_gate and (
                 gate_version != LINEAGE_GATE_VERSION
                 or not observation_ids
@@ -104,6 +122,8 @@ def cargar_cohortes_pricing(
                     canonical_service=row["canonical_service"],
                     observations_n=int(row["observations_n"]),
                     providers_n=int(row["providers_n"]),
+                    source_count=int(row.get("source_count") or 0),
+                    provider_independence_version=provider_independence_version,
                     min_ars=_decimal(row["min_ars"]),
                     q1_ars=_decimal(row["q1_ars"]),
                     median_ars=_decimal(row["median_ars"]),
@@ -148,11 +168,13 @@ def cargar_cohortes_pricing_runtime() -> tuple[list[CohortePricing], list[Cohort
             require_runtime_lineage_gate=True,
             require_service_reach_gate=True,
             require_temporal_gate=True,
+            require_provider_independence=True,
         ),
         cargar_cohortes_pricing(
             remote_path,
             require_runtime_lineage_gate=True,
             require_service_reach_gate=True,
             require_temporal_gate=True,
+            require_provider_independence=True,
         ),
     )

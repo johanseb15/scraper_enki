@@ -8,6 +8,10 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Mapping, Sequence
 
+from src.aplicacion.provider_independence import (
+    PROVIDER_INDEPENDENCE_VERSION,
+    stable_provider_id,
+)
 from src.aplicacion.pricing_dimensions import (
     infer_commercial_context,
     infer_price_scope,
@@ -181,6 +185,7 @@ def _aggregate(
     *,
     service_reach_gated: bool,
     temporal_evidence: Mapping[str, TemporalEvidence] | None,
+    provider_dimensions: Mapping[str, EconomicEvidenceDimensionsV2] | None,
 ) -> list[dict[str, object]]:
     members: dict[tuple[str, str, str, object], list[Mapping[str, str]]] = defaultdict(list)
     for row in rows:
@@ -198,8 +203,18 @@ def _aggregate(
         ordered_rows = sorted(cohort_rows, key=lambda row: row["observation_id"])
         vals = sorted(float(row["price_value"]) for row in ordered_rows)
         sources = {row["source"] for row in ordered_rows}
+        provider_ids = {
+            provider_id
+            for row in ordered_rows
+            if (provider_id := stable_provider_id(
+                provider_dimensions.get(row["observation_id"])
+                if provider_dimensions is not None
+                else None
+            ))
+        }
         n = len(vals)
-        providers_n = len(sources)
+        source_count = len(sources)
+        providers_n = len(provider_ids)
         temporal_members = [
             temporal_evidence[row["observation_id"]]
             for row in ordered_rows
@@ -231,6 +246,8 @@ def _aggregate(
                 "commercial_context": commercial_context.value.value,
                 "observations_n": n,
                 "providers_n": providers_n,
+                "source_count": source_count,
+                "provider_independence_version": PROVIDER_INDEPENDENCE_VERSION,
                 "min_ars": min(vals),
                 "q1_ars": _quantile_linear(vals, 0.25),
                 "median_ars": statistics.median(vals),
@@ -270,6 +287,7 @@ def build_runtime_cohort_rows(
     market_scope: str,
     service_reach_dimensions: Mapping[str, EconomicEvidenceDimensionsV2] | None = None,
     temporal_evidence: Mapping[str, TemporalEvidence] | None = None,
+    provider_dimensions: Mapping[str, EconomicEvidenceDimensionsV2] | None = None,
 ) -> RuntimeCohortBuild:
     """Apply composable lineage/reach admission before runtime aggregation."""
     eligible = [row for row in rows if _eligible(row, market_scope)]
@@ -325,6 +343,7 @@ def build_runtime_cohort_rows(
                 market_scope,
                 service_reach_gated=service_reach_dimensions is not None,
                 temporal_evidence=temporal_evidence,
+                provider_dimensions=provider_dimensions,
             )
         ),
         decisions=decisions,
