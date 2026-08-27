@@ -3,12 +3,16 @@ from __future__ import annotations
 from dataclasses import dataclass
 from hashlib import sha256
 import json
+from typing import TYPE_CHECKING
 
 from src.dominio.price_scope_contract import (
     BillingPeriodMeaning,
     ChargedUnitMeaning,
     PriceBoundMeaning,
 )
+
+if TYPE_CHECKING:
+    from src.dominio.economic_evidence import EconomicEvidenceDimensionsV2
 
 
 class OfferObservationIdentityConflict(ValueError):
@@ -64,6 +68,7 @@ class OfferObservation:
     logical_offer_id: str
     price_expression_id: str
     snapshot_observation_id: str
+    economic_dimensions: EconomicEvidenceDimensionsV2 | None = None
 
     @classmethod
     def create(
@@ -75,6 +80,7 @@ class OfferObservation:
         raw_document_id: str,
         raw_expression: str,
         price_expression: PriceExpressionIdentity,
+        economic_dimensions: EconomicEvidenceDimensionsV2 | None = None,
     ) -> "OfferObservation":
         source_observation_id = _clean(source_observation_id)
         source_id = _clean(source_id)
@@ -128,6 +134,7 @@ class OfferObservation:
             logical_offer_id=logical_offer_id,
             price_expression_id=price_expression_id,
             snapshot_observation_id=snapshot_observation_id,
+            economic_dimensions=economic_dimensions,
         )
 
     @staticmethod

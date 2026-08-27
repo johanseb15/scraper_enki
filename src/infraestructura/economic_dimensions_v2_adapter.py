@@ -27,6 +27,8 @@ def derive_economic_dimensions_v2(
     row: Mapping[str, object],
     source_registry: Mapping[str, Mapping[str, object]],
     source_claims: tuple[SourceEconomicClaim, ...] = (),
+    *,
+    raw_document_id: str | None = None,
 ) -> EconomicEvidenceDimensionsV2:
     observation_id = _clean(row.get("observation_id")) or "UNKNOWN"
     source = _clean(row.get("source"))
@@ -34,9 +36,16 @@ def derive_economic_dimensions_v2(
     folded = _fold(raw)
 
     reference = f"source={source or 'UNKNOWN'};observation_id={observation_id}"
+    cleaned_raw_document_id = _clean(raw_document_id)
+    raw_reference = f"{reference};field=economic_object_raw"
+    if cleaned_raw_document_id:
+        raw_reference = (
+            f"{raw_reference};raw_document_id={cleaned_raw_document_id}"
+        )
+
     raw_provenance = KnowledgeProvenance(
         "RAW_SOURCE_EXPRESSION",
-        f"{reference};field=economic_object_raw",
+        raw_reference,
         _clean(row.get("extractor_version")) or None,
     )
     normalized_provenance = KnowledgeProvenance(
