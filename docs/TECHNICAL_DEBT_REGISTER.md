@@ -172,9 +172,9 @@ The six specifically incorrect clarifications have one control-flow family:
 - IMPLEMENTED_FIX: `CommercialContext` is the single typed identity for user and source claims, preserves distinct origin/raw basis, represents STANDARD/URGENCY/UNKNOWN/AMBIGUOUS, and is propagated without reinterpretation through parser, cohort selection, comparability, API and trace. UNKNOWN and AMBIGUOUS fail closed.
 - REGRESSION_TEST: End-to-end STANDARD/URGENCY/UNKNOWN/AMBIGUOUS, user/source provenance, mismatch/unknown-side safety, rq003/rq032, API boundary, corpus 50, HUMAN_REAL and exact engine/trace parity.
 - ESTIMATED_SCOPE: M.
-- BLOCKS_MARKET_ACQUISITION: false for TD-004; TD-008 still blocks the program gate.
+- BLOCKS_MARKET_ACQUISITION: false for TD-004; no remaining blocker is attributed to TD-008.
 - BLOCKS_FIELD_TESTING: false; supervised field testing remains non-promotional and the runtime currently has zero admitted evidence.
-- BLOCKS_PROMOTION: false for TD-004; TD-008, TD-011 and TD-013 still block the program gate.
+- BLOCKS_PROMOTION: false for TD-004; TD-011 and TD-013 still block the program gate.
 - NOTES: Closed without acquisition, thresholds, evidence additions, historical rewrites, HUMAN_REAL mutation, promotion or runtime learning writes. See `data/evaluation/commercial_context_single_truth_v1.json`.
 
 ### TD-005 — Repository-wide direct CLI/import contract is not defined or enforced
@@ -270,26 +270,26 @@ The six specifically incorrect clarifications have one control-flow family:
 - CATEGORY: REPRODUCIBILITY, OPERABILITY, DATA_MIGRATION_VERSIONING, IDEMPOTENCE.
 - SEVERITY: `P1`.
 - CONFIDENCE: HIGH.
-- STATUS: CONFIRMED.
-- EVIDENCE: Generators default to tracked versioned paths; trace rows contain latency outside their fingerprint; historical E2E/performance files have old HEAD/time/runtime results without a common run manifest; tests assert static fields rather than freshness.
-- REPRODUCTION: Inspect generator defaults/write helpers, build traces into two temp directories and compare timing-bearing outputs, then compare historical artifacts to current HEAD/replay.
-- AFFECTED_FILES: `src/infraestructura/real_world_query_tracer.py`, `src/infraestructura/real_world_trace_artifact.py`, `src/infraestructura/*_artifact.py`, `scripts/*.py`, `data/e2e/full_product_e2e_v1.json`.
+- STATUS: RESOLVED by `artifact-lifecycle-contract-v1`.
+- EVIDENCE: The repository now distinguishes immutable evidence, deterministic derived artifacts and telemetry; deterministic manifests carry commit, generator, input and output hashes; known mutating historical CLI entrypoints require explicit output destinations; semantic real-world traces exclude timing telemetry and replay byte-identically; HUMAN_REAL append-only paths remain protected.
+- REPRODUCTION: Run `test_artifact_lifecycle_contract.py`, `test_td008_explicit_historical_outputs.py`, `test_td008_manifest_destination.py` and `test_td008_trace_telemetry_split.py`; replay real-world trace artifacts into two distinct temporary destinations and compare deterministic outputs and manifests.
+- AFFECTED_FILES: `src/infraestructura/artifact_lifecycle.py`, `src/infraestructura/real_world_query_tracer.py`, `src/infraestructura/real_world_trace_artifact.py`, known mutating historical CLI entrypoints, and TD-008 regression tests.
 - AFFECTED_LAYERS: INFRASTRUCTURE, SCRIPTS_OPERABILITY, DATA_ARTIFACTS, TESTS.
-- ROOT_CAUSE: Per-sprint version/idempotence conventions lack repository-wide artifact classes.
-- PRODUCT_IMPACT: Operators cannot uniformly distinguish current, historical, reproducible and regenerable outputs.
-- DATA_RISK: Historical tracked artifacts can be overwritten or silently stale.
-- SAFETY_RISK: Conclusions can be attributed to the wrong code/input snapshot.
-- MAINTENANCE_COST: HIGH.
-- LIKELIHOOD: HIGH.
-- BLAST_RADIUS: Most artifact generators.
+- ROOT_CAUSE: Per-sprint version/idempotence conventions previously lacked repository-wide artifact classes and explicit output ownership.
+- PRODUCT_IMPACT: Operators can distinguish immutable evidence, deterministic derived output and telemetry, while historical generators do not silently own tracked output destinations.
+- DATA_RISK: Lower; deterministic artifacts are reproducibly manifested and HUMAN_REAL append-only evidence is protected from regenerable writers.
+- SAFETY_RISK: Lower; semantic conclusions no longer depend on nondeterministic timing telemetry and manifests identify code/input provenance.
+- MAINTENANCE_COST: LOW after remediation.
+- LIKELIHOOD: LOW after remediation.
+- BLAST_RADIUS: Artifact lifecycle, trace reproducibility and historical generation entrypoints.
 - DEPENDENCIES: TD-005.
-- PROPOSED_FIX: Define immutable evidence vs deterministic derived output vs telemetry; add commit/input/generator/output hashes; require explicit historical destinations.
-- REGRESSION_TEST_REQUIRED: Fixed inputs hash-identically across clean runs; immutable paths reject mutation; telemetry is separate.
+- IMPLEMENTED_FIX: Added `artifact-lifecycle-contract-v1`, explicit artifact classes, canonical deterministic serialization/hashing, reproducibility manifests, explicit historical output destinations, semantic/telemetry trace separation and append-only HUMAN_REAL guards.
+- REGRESSION_TEST: Fixed payloads and semantic traces replay byte-identically; manifests bind commit/generator/input/output hashes; known mutating historical CLIs require explicit destinations; telemetry is separate; regenerable writers reject HUMAN_REAL mutation.
 - ESTIMATED_SCOPE: L.
-- BLOCKS_MARKET_ACQUISITION: true.
+- BLOCKS_MARKET_ACQUISITION: false.
 - BLOCKS_FIELD_TESTING: false.
-- BLOCKS_PROMOTION: true.
-- NOTES: Append-only HUMAN_REAL is verified correct and excluded from this debt.
+- BLOCKS_PROMOTION: false.
+- NOTES: Closed without rewriting historical evidence, mutating HUMAN_REAL, acquisition, pricing threshold changes or promotion.
 
 ### TD-009 — Offer and price-expression identity is fragmented and incomplete
 
@@ -528,7 +528,7 @@ TD-005 CLI contract ──────────> TD-015 dependency/config
 TD-013 boundary tests ────────> TD-016 legacy retirement
 ```
 
-All P0 debts are resolved. Market acquisition still requires TD-008. Promotion additionally requires TD-008/011/013.
+All P0 debts are resolved. TD-008 no longer blocks market acquisition. Promotion still requires TD-011/013.
 
 ## Remediation waves
 
@@ -542,7 +542,7 @@ All P0 debts are resolved. Market acquisition still requires TD-008. Promotion a
 ### WAVE 1 — P1 operability and reproducibility
 
 1. **CLI EXECUTION CONTRACT v1** — TD-005; risk medium; all 45 surfaces explicitly classified and intended CLIs subprocess-green without PYTHONPATH.
-2. **ARTIFACT RUN MANIFEST v1** — TD-008; dependency CLI; risk medium; deterministic outputs have commit/input/output hashes and historical writes are explicit.
+2. **ARTIFACT RUN MANIFEST v1 ? COMPLETE** ? TD-008; deterministic outputs have commit/input/output hashes, telemetry is separated, historical writes are explicit, and HUMAN_REAL remains append-only.
 3. **QUERY GATE PRECEDENCE v1** — TD-007; risk medium; six known cases become safe unsupported without valid-clarification drift.
 4. **REAL QUERY CAUSAL RECOVERY v1-v3 — COMPLETED** — TD-006; dependencies gate precedence and scope engine resolved first; three causal remediation blocks completed with final official runtime replay at `0 WRONG_INTERPRETATION` and `0 UNSAFE_DECISION`.
 
@@ -573,15 +573,15 @@ Estimated consolidation: **18 small causal sprints** (the broad interpretation i
 
 ### SAFE_FOR_MARKET_ACQUISITION_EXPANSION
 
-`NO`. Required closures: TD-008. This is risk-based, not “debt zero”: corpus cleanup, documentation and legacy wrappers do not block acquisition.
+`NO`. TD-008 is closed; market acquisition remains disabled by the current program sequence rather than an unresolved TD-008 gate.
 
 ### SAFE_FOR_KNOWLEDGE_PROMOTION
 
-`NO`. Required closures: TD-008, TD-011 and TD-013; additionally, the current candidate remains `FAIL_SHADOW_VALIDATION`. Existing currency conflicts remain preserved and no promotion is authorized.
+`NO`. Required closures: TD-011 and TD-013; additionally, the current candidate remains `FAIL_SHADOW_VALIDATION`. Existing currency conflicts remain preserved and no promotion is authorized.
 
 ## Exact next remediation sprint
 
-**CLI EXECUTION CONTRACT v1**. It closes only TD-005. Select and enforce one installed/module execution contract, then boundary-test every intended CLI safely without `PYTHONPATH`. Do not implement TD-008 or any later debt in that sprint.
+**ACQUISITION FAILURE DIAGNOSTICS v1**. It closes only TD-012. Introduce typed, redacted acquisition failure records that preserve source, operation, retryability and causal failure category while keeping batch continuation. Do not expand acquisition volume, alter pricing thresholds, promote knowledge or modify HUMAN_REAL in this sprint.
 
 ## Explicitly not debt
 
