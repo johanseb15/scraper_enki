@@ -542,7 +542,7 @@ All P0 debts are resolved. TD-008 no longer blocks market acquisition. Promotion
 ### WAVE 1 — P1 operability and reproducibility
 
 1. **CLI EXECUTION CONTRACT v1** — TD-005; risk medium; all 45 surfaces explicitly classified and intended CLIs subprocess-green without PYTHONPATH.
-2. **ARTIFACT RUN MANIFEST v1 ? COMPLETE** ? TD-008; deterministic outputs have commit/input/output hashes, telemetry is separated, historical writes are explicit, and HUMAN_REAL remains append-only.
+2. **ARTIFACT RUN MANIFEST v1 - COMPLETE** - TD-008; deterministic outputs have commit/input/output hashes, telemetry is separated, historical writes are explicit, and HUMAN_REAL remains append-only.
 3. **QUERY GATE PRECEDENCE v1** — TD-007; risk medium; six known cases become safe unsupported without valid-clarification drift.
 4. **REAL QUERY CAUSAL RECOVERY v1-v3 — COMPLETED** — TD-006; dependencies gate precedence and scope engine resolved first; three causal remediation blocks completed with final official runtime replay at `0 WRONG_INTERPRETATION` and `0 UNSAFE_DECISION`.
 
