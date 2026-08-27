@@ -1,12 +1,13 @@
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from hashlib import sha256
 import csv
 import json
 from pathlib import Path
 from typing import Iterable
 
+from src.dominio.economic_evidence import EconomicEvidenceDimensionsV2
 from src.dominio.offer_observation import PriceExpressionIdentity
 from src.dominio.price_scope_contract import normalize_price_scope
 from src.infraestructura.artifact_lifecycle import (
@@ -14,7 +15,15 @@ from src.infraestructura.artifact_lifecycle import (
     build_manifest,
     write_manifest,
 )
+from src.infraestructura.economic_dimensions_v2_artifact import (
+    economic_dimensions_v2_from_payload,
+    economic_dimensions_v2_to_payload,
+    load_economic_dimensions_v2_sidecar,
+)
 
+from src.infraestructura.offer_snapshot_dimensions import (
+    compose_snapshot_economic_dimensions,
+)
 from src.infraestructura.offer_snapshot_projection import (
     OfferSnapshotProjection,
     OfferSnapshotProjectionStatus,
@@ -42,6 +51,9 @@ def build_offer_observation_projection_bundle(
     evidence_path = (
         root_path / "data/offer_evidence_v1.jsonl"
     )
+    dimensions_path = (
+        root_path / "data/economic_dimensions_v2.jsonl"
+    )
 
     with normalization_path.open(
         encoding="utf-8-sig",
@@ -58,6 +70,10 @@ def build_offer_observation_projection_bundle(
         row["observation_id"]: row
         for row in _read_jsonl(evidence_path)
     }
+
+    dimensions = load_economic_dimensions_v2_sidecar(
+        dimensions_path
+    )
 
     projection_rows: list[OfferSnapshotProjection] = []
 
@@ -104,14 +120,35 @@ def build_offer_observation_projection_bundle(
             price_bound=scope.price_bound,
         )
 
-        projection_rows.extend(
-            project_legacy_offer_snapshots(
-                identity_row=identity,
-                evidence_row=evidence_row,
-                raw_expression=raw_expression,
-                price_expression=price_expression,
+        if observation_id not in dimensions:
+            raise ValueError(
+                "Missing economic dimensions row for "
+                f"observation_id={observation_id}."
             )
-        )
+
+        for projection in project_legacy_offer_snapshots(
+            identity_row=identity,
+            evidence_row=evidence_row,
+            raw_expression=raw_expression,
+            price_expression=price_expression,
+        ):
+            snapshot_dimensions = compose_snapshot_economic_dimensions(
+                dimensions[observation_id],
+                raw_document_id=projection.raw_document_id,
+            )
+            observation = projection.observation
+            if observation is not None:
+                observation = replace(
+                    observation,
+                    economic_dimensions=snapshot_dimensions,
+                )
+            projection_rows.append(
+                replace(
+                    projection,
+                    observation=observation,
+                    economic_dimensions=snapshot_dimensions,
+                )
+            )
 
     artifact_path = (
         output / "offer_observations_v1.jsonl"
@@ -132,6 +169,7 @@ def build_offer_observation_projection_bundle(
             normalization_path,
             identities_path,
             evidence_path,
+            dimensions_path,
         ),
         output_path=artifact_path,
     )
@@ -157,6 +195,7 @@ class OfferObservationProjectionArtifactRow:
     logical_offer_id: str | None
     price_expression_id: str | None
     snapshot_observation_id: str | None
+    economic_dimensions: EconomicEvidenceDimensionsV2 | None = None
 
 
 def build_offer_observation_projection_artifact(
@@ -304,6 +343,13 @@ def load_offer_observation_projection_artifact(
             snapshot_observation_id=_optional(
                 payload.get("snapshot_observation_id")
             ),
+            economic_dimensions=(
+                economic_dimensions_v2_from_payload(
+                    payload["economic_dimensions"]
+                )
+                if payload.get("economic_dimensions") is not None
+                else None
+            ),
         )
 
         _validate_loaded_row(
@@ -376,6 +422,13 @@ def _projection_payload(
         "logical_offer_id": logical_offer_id,
         "price_expression_id": price_expression_id,
         "snapshot_observation_id": snapshot_observation_id,
+        "economic_dimensions": (
+            economic_dimensions_v2_to_payload(
+                row.economic_dimensions
+            )
+            if row.economic_dimensions is not None
+            else None
+        ),
     }
 
 

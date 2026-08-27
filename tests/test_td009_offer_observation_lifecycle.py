@@ -57,6 +57,7 @@ def test_real_projection_bundle_emits_artifact_and_lifecycle_manifest(tmp_path):
         "data/semantic_normalization_v4.csv",
         "data/offer_evidence_identities_v1.jsonl",
         "data/offer_evidence_v1.jsonl",
+        "data/economic_dimensions_v2.jsonl",
     }
 
     assert all(
@@ -130,3 +131,89 @@ def test_projection_cli_writes_only_to_explicit_destination(tmp_path):
     assert "TOTAL_ROWS=9" in process.stdout
     assert "RESOLVED=5" in process.stdout
     assert "UNRESOLVED=4" in process.stdout
+
+
+def test_real_projection_bundle_materializes_snapshot_safe_dimensions(tmp_path):
+    build_offer_observation_projection_bundle(
+        root=ROOT,
+        output_dir=tmp_path,
+    )
+
+    rows = [
+        json.loads(line)
+        for line in (tmp_path / "offer_observations_v1.jsonl")
+        .read_text(encoding="utf-8")
+        .splitlines()
+        if line.strip()
+    ]
+
+    assert len(rows) == 9
+    assert sum(row["status"] == "RESOLVED" for row in rows) == 5
+    assert sum(row["status"] == "UNRESOLVED" for row in rows) == 4
+    assert len({
+        row["snapshot_observation_id"]
+        for row in rows
+        if row["status"] == "RESOLVED"
+    }) == 5
+
+    assert all("economic_dimensions" in row for row in rows)
+
+    targeted_62 = next(
+        row for row in rows
+        if row["source_observation_id"] == "62"
+        and row["raw_document_id"].startswith("sha256:f043")
+    )
+    historical_62 = next(
+        row for row in rows
+        if row["source_observation_id"] == "62"
+        and row["raw_document_id"].startswith("sha256:d822")
+    )
+
+    assert targeted_62["status"] == "RESOLVED"
+    assert historical_62["status"] == "UNRESOLVED"
+
+    targeted_delivery = targeted_62["economic_dimensions"]["delivery_mode"]
+
+    assert targeted_delivery["status"] == "UNKNOWN"
+    assert all(
+        "raw_document_id=sha256:f043" in claim["provenance"]["origin_reference"]
+        for dimension in targeted_62["economic_dimensions"].values()
+        for claim in dimension["claims"]
+        if claim["origin"] == "RAW_SOURCE_OBSERVATION"
+    )
+    assert all(
+        "raw_document_id=sha256:d822" in claim["provenance"]["origin_reference"]
+        for dimension in historical_62["economic_dimensions"].values()
+        for claim in dimension["claims"]
+        if claim["origin"] == "RAW_SOURCE_OBSERVATION"
+    )
+
+    obs234 = next(
+        row for row in rows
+        if row["source_observation_id"] == "234"
+    )
+    assert all(
+        "raw_document_id=sha256:a0d741" in claim["provenance"]["origin_reference"]
+        for dimension in obs234["economic_dimensions"].values()
+        for claim in dimension["claims"]
+        if claim["origin"] == "RAW_SOURCE_OBSERVATION"
+    )
+
+
+def test_real_projection_manifest_includes_economic_dimensions_input(tmp_path):
+    build_offer_observation_projection_bundle(
+        root=ROOT,
+        output_dir=tmp_path,
+    )
+
+    manifest = json.loads(
+        (tmp_path / "offer_observations_manifest_v1.json")
+        .read_text(encoding="utf-8")
+    )
+
+    assert set(manifest["input_sha256"]) == {
+        "data/semantic_normalization_v4.csv",
+        "data/offer_evidence_identities_v1.jsonl",
+        "data/offer_evidence_v1.jsonl",
+        "data/economic_dimensions_v2.jsonl",
+    }

@@ -174,7 +174,7 @@ The six specifically incorrect clarifications have one control-flow family:
 - ESTIMATED_SCOPE: M.
 - BLOCKS_MARKET_ACQUISITION: false for TD-004; TD-005, TD-008 and TD-010 still block the program gate.
 - BLOCKS_FIELD_TESTING: false; supervised field testing remains non-promotional and the runtime currently has zero admitted evidence.
-- BLOCKS_PROMOTION: false for TD-004; TD-008, TD-009, TD-010, TD-011 and TD-013 still block the program gate.
+- BLOCKS_PROMOTION: false for TD-004; TD-008, TD-010, TD-011 and TD-013 still block the program gate.
 - NOTES: Closed without acquisition, thresholds, evidence additions, historical rewrites, HUMAN_REAL mutation, promotion or runtime learning writes. See `data/evaluation/commercial_context_single_truth_v1.json`.
 
 ### TD-005 — Repository-wide direct CLI/import contract is not defined or enforced
@@ -298,8 +298,8 @@ The six specifically incorrect clarifications have one control-flow family:
 - CATEGORY: DOMAIN_MODEL, DATA_LINEAGE, ARCHITECTURAL_CONSISTENCY.
 - SEVERITY: `P2`.
 - CONFIDENCE: HIGH.
-- STATUS: CONFIRMED.
-- EVIDENCE: 5 resolved offer identities for 273 observations; offer key, economic dimensions, RAW linkage and cohort membership live in separate partial contracts; runtime has no constituent identity.
+- STATUS: RESOLVED by `offer-observation-identity-v1`.
+- EVIDENCE: The official deterministic projection emits 9 offer snapshot rows: 5 targeted snapshots are `RESOLVED`, 4 historical snapshots are preserved as `UNRESOLVED`, and the 5 resolved rows have unique `snapshot_observation_id` values. `OfferObservation` composes logical offer, price expression, unit, period, bound, source observation, RAW snapshot and optional `EconomicEvidenceDimensionsV2`. Snapshot dimensions are materialized in `offer_observations_v1.jsonl`, loaded with typed status/claims/provenance, and filtered so RAW claims only survive when their `raw_document_id` matches the snapshot. Legacy projection rows without `economic_dimensions` remain loadable.
 - REPRODUCTION: Count `offer_evidence_identities_v1.jsonl` and trace one observation through identity, evidence, dimensions, scope sidecar and runtime cohort.
 - AFFECTED_FILES: `src/dominio/oferta.py`, `src/dominio/offer_evidence.py`, `src/dominio/price_scope_contract.py`, `data/offer_evidence_identities_v1.jsonl`, `data/economic_dimensions_v2.jsonl`, `data/pricing_cohort_scope_evidence_v1.jsonl`.
 - AFFECTED_LAYERS: DOMAIN, INFRASTRUCTURE, DATA_ARTIFACTS.
@@ -311,13 +311,13 @@ The six specifically incorrect clarifications have one control-flow family:
 - LIKELIHOOD: MEDIUM.
 - BLAST_RADIUS: Evidence, cohorts, temporal reconciliation and acquisition reuse.
 - DEPENDENCIES: None.
-- PROPOSED_FIX: Versioned OfferObservation composing offer, price expression, unit, period, bound, context, bundle/device, source observation and RAW snapshot without rewriting history.
-- REGRESSION_TEST_REQUIRED: Stable identity, multi-price separation, snapshot behavior and backwards-compatible loading.
+- IMPLEMENTED_FIX: Versioned `OfferObservation` and `PriceExpressionIdentity` provide stable logical offer, price-expression and snapshot identities without using economic dimensions as identity inputs. The projection artifact composes targeted and historical snapshots, preserves unresolved historical rows without strong identity, serializes snapshot-safe `EconomicEvidenceDimensionsV2`, includes `data/economic_dimensions_v2.jsonl` in the lifecycle manifest, and requires explicit output destinations.
+- REGRESSION_TEST: Fifty-seven TD-009 contracts cover stable identity, multi-price separation, source/RAW conflict detection, snapshot preservation, artifact determinism, typed dimension serialization/loading, legacy loading without dimensions, lifecycle manifest inputs, real 9-snapshot invariants and RAW-claim snapshot compatibility.
 - ESTIMATED_SCOPE: L.
 - BLOCKS_MARKET_ACQUISITION: false.
 - BLOCKS_FIELD_TESTING: false.
-- BLOCKS_PROMOTION: true.
-- NOTES: TD-001 is the immediate runtime gate; this is the durable model.
+- BLOCKS_PROMOTION: false.
+- NOTES: Closed without acquisition, pricing threshold changes, historical artifact rewrites, fabricated logical identities, fabricated provenance or runtime consumer migration. TD-010 remains the provider-independence follow-up.
 
 ### TD-010 — Runtime provider independence counts source ids instead of stable provider ids
 
@@ -528,7 +528,7 @@ TD-005 CLI contract ──────────> TD-015 dependency/config
 TD-013 boundary tests ────────> TD-016 legacy retirement
 ```
 
-All P0 debts are resolved. Market acquisition still requires TD-005/008/010. Promotion additionally requires TD-008/009/010/011/013.
+All P0 debts are resolved. Market acquisition still requires TD-005/008/010. Promotion additionally requires TD-008/010/011/013.
 
 ## Remediation waves
 
@@ -548,7 +548,7 @@ All P0 debts are resolved. Market acquisition still requires TD-005/008/010. Pro
 
 ### WAVE 2 — Provenance and data model
 
-1. **OFFER OBSERVATION IDENTITY v1** — TD-009; risk medium; stable multi-price/snapshot identity with backwards-compatible loading.
+1. **OFFER OBSERVATION IDENTITY v1 — COMPLETE** — TD-009; stable multi-price/snapshot identity with backwards-compatible loading.
 2. **PROVIDER INDEPENDENCE CONTRACT v1** — TD-010; dependency offer identity; risk high because readiness inputs change while thresholds remain untouched; provider/source/document/URL/observation/time axes become explicit.
 3. **PRICE SCOPE SINGLE ENGINE v1** — TD-011; risk medium; one semantic engine with distinct origins and UNKNOWN fail-closed.
 
@@ -577,7 +577,7 @@ Estimated consolidation: **18 small causal sprints** (the broad interpretation i
 
 ### SAFE_FOR_KNOWLEDGE_PROMOTION
 
-`NO`. Required closures: TD-008, TD-009, TD-010, TD-011 and TD-013; additionally, the current candidate remains `FAIL_SHADOW_VALIDATION`. Existing currency conflicts remain preserved and no promotion is authorized.
+`NO`. Required closures: TD-008, TD-010, TD-011 and TD-013; additionally, the current candidate remains `FAIL_SHADOW_VALIDATION`. Existing currency conflicts remain preserved and no promotion is authorized.
 
 ## Exact next remediation sprint
 

@@ -4,6 +4,8 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Mapping
 
+from src.dominio.economic_evidence import EconomicEvidenceDimensionsV2
+
 from src.dominio.offer_observation import (
     OfferObservation,
     PriceExpressionIdentity,
@@ -27,6 +29,7 @@ class OfferSnapshotProjection:
     status: OfferSnapshotProjectionStatus
     observation: OfferObservation | None
     reason: str | None
+    economic_dimensions: EconomicEvidenceDimensionsV2 | None = None
 
 
 def project_legacy_offer_snapshots(

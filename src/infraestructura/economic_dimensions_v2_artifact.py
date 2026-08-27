@@ -243,6 +243,14 @@ def _audit_entry(row: Mapping[str, object], value: DimensionValue[object]) -> di
     }
 
 
+def economic_dimensions_v2_to_payload(value: EconomicEvidenceDimensionsV2) -> dict[str, Any]:
+    return _dimensions_payload(value)
+
+
+def economic_dimensions_v2_from_payload(payload: Mapping[str, Any]) -> EconomicEvidenceDimensionsV2:
+    return _dimensions_from_payload(payload)
+
+
 def _dimensions_payload(value: EconomicEvidenceDimensionsV2) -> dict[str, Any]:
     return {
         name: _dimension_payload(dimension)

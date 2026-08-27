@@ -190,3 +190,141 @@ def test_loader_rejects_duplicate_projection_id(tmp_path):
 
     with pytest.raises(ValueError):
         load_offer_observation_projection_artifact(output)
+
+from src.dominio.economic_evidence import (
+    DimensionClaim,
+    DimensionOrigin,
+    DimensionStatus,
+    DimensionValue,
+    EconomicEvidenceDimensionsV2,
+)
+from src.dominio.semantic_knowledge import KnowledgeProvenance
+from src.infraestructura.offer_snapshot_projection import (
+    OfferSnapshotProjection,
+    OfferSnapshotProjectionStatus,
+)
+
+
+def _raw_claim(value, raw_document_id):
+    return DimensionClaim(
+        value=value,
+        origin=DimensionOrigin.RAW_SOURCE_OBSERVATION,
+        provenance=KnowledgeProvenance(
+            "RAW_SOURCE_EXPRESSION",
+            f"raw_document_id={raw_document_id};field=economic_object_raw",
+            "test-v1",
+        ),
+        raw_basis="raw basis",
+    )
+
+
+def _normalized_claim(value):
+    return DimensionClaim(
+        value=value,
+        origin=DimensionOrigin.NORMALIZED_FIELD,
+        provenance=KnowledgeProvenance(
+            "SEMANTIC_NORMALIZATION_FIELD",
+            "artifact=semantic_normalization_v4",
+            "semantic-normalization-v4",
+        ),
+        raw_basis="normalized field",
+    )
+
+
+def _dimensions(raw_document_id="sha256:reacquired"):
+    return EconomicEvidenceDimensionsV2(
+        price_scope=DimensionValue(
+            value="PER_UNIT",
+            status=DimensionStatus.OBSERVED,
+            claims=(
+                _raw_claim("PER_UNIT", raw_document_id),
+            ),
+        ),
+        currency=DimensionValue(
+            value="ARS",
+            status=DimensionStatus.INFERRED,
+            claims=(
+                _normalized_claim("ARS"),
+            ),
+        ),
+    )
+
+
+def _resolved_projection_with_dimensions():
+    row = next(
+        item for item in _rows()
+        if item.status is OfferSnapshotProjectionStatus.RESOLVED
+    )
+    observation = row.observation
+    assert observation is not None
+    return OfferSnapshotProjection(
+        source_observation_id=row.source_observation_id,
+        source_id=row.source_id,
+        raw_document_id=row.raw_document_id,
+        provenance_kind=row.provenance_kind,
+        status=row.status,
+        observation=observation,
+        reason=row.reason,
+        economic_dimensions=_dimensions(row.raw_document_id),
+    )
+
+
+def test_artifact_serializes_snapshot_economic_dimensions(tmp_path):
+    output = tmp_path / "artifact.jsonl"
+
+    build_offer_observation_projection_artifact(
+        rows=(_resolved_projection_with_dimensions(),),
+        output_path=output,
+    )
+
+    payload = json.loads(output.read_text(encoding="utf-8"))
+
+    assert payload["economic_dimensions"]["price_scope"]["status"] == "OBSERVED"
+    assert payload["economic_dimensions"]["price_scope"]["value"] == "PER_UNIT"
+    assert payload["economic_dimensions"]["currency"]["status"] == "INFERRED"
+
+
+def test_loader_round_trips_snapshot_economic_dimensions(tmp_path):
+    output = tmp_path / "artifact.jsonl"
+
+    build_offer_observation_projection_artifact(
+        rows=(_resolved_projection_with_dimensions(),),
+        output_path=output,
+    )
+
+    loaded = next(iter(load_offer_observation_projection_artifact(output).values()))
+
+    assert loaded.economic_dimensions is not None
+    assert loaded.economic_dimensions.price_scope.status is DimensionStatus.OBSERVED
+    assert loaded.economic_dimensions.price_scope.value == "PER_UNIT"
+    assert loaded.economic_dimensions.currency.status is DimensionStatus.INFERRED
+
+
+def test_loader_accepts_legacy_projection_without_dimensions(tmp_path):
+    output = tmp_path / "legacy.jsonl"
+
+    build_offer_observation_projection_artifact(
+        rows=_rows(),
+        output_path=output,
+    )
+
+    payloads = [
+        json.loads(line)
+        for line in output.read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+    for payload in payloads:
+        payload.pop("economic_dimensions", None)
+
+    output.write_text(
+        "\n".join(
+            json.dumps(payload, ensure_ascii=False, sort_keys=True)
+            for payload in payloads
+        ) + "\n",
+        encoding="utf-8",
+    )
+
+    loaded = load_offer_observation_projection_artifact(output)
+
+    assert loaded
+    assert all(row.economic_dimensions is None for row in loaded.values())
