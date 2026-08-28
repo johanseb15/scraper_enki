@@ -555,7 +555,7 @@ All P0 debts are resolved. TD-008 no longer blocks market acquisition. Promotion
 ### WAVE 3 — Architecture and test consolidation
 
 1. **ACQUISITION FAILURE TAXONOMY v1 - COMPLETE** - TD-012; typed/redacted causal failures preserve source, operation, retryability and failure category without collapsing rejected records or breaking batch continuation.
-2. **REAL BOUNDARY TEST MATRIX v1** — TD-013; dependencies CLI/artifact; risk low; CLI, API/frontend and artifact freshness failures cannot pass green.
+2. **REAL BOUNDARY TEST MATRIX v1 - COMPLETE** - TD-013; real subprocess execution, formal API/frontend schema parity and hash-based artifact freshness now fail closed while historical E2E evidence remains explicitly historical.
 
 ### WAVE 4 — Deprecations and maintenance
 
