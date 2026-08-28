@@ -431,7 +431,7 @@ The six specifically incorrect clarifications have one control-flow family:
 - BLOCKS_PROMOTION: false for TD-013 after remediation; promotion remains governed by the remaining program constraints.
 - NOTES: No acquisition volume was expanded, no pricing/readiness threshold changed, no knowledge was promoted, no HUMAN_REAL evidence was modified, and no historical artifact was rewritten or falsely rebound to the current HEAD. `ArtifactManifest.commit_sha` remains provenance; currentness is verified through reproducible generator/input/output identity rather than a circular same-commit SHA requirement.
 
-### TD-014 ? README and architecture baseline materially diverge from runtime
+### TD-014 — README and architecture baseline materially diverge from runtime
 
 - DEBT_ID: `TD-014`
 - TITLE: README and architecture baseline materially diverge from current runtime.
@@ -528,7 +528,7 @@ TD-005 CLI contract ──────────> TD-015 dependency/config
 TD-013 boundary tests ────────> TD-016 legacy retirement
 ```
 
-All P0 debts are resolved. TD-008 no longer blocks market acquisition. Promotion still requires TD-011/013.
+All P0 debts are resolved. TD-008 no longer blocks market acquisition. Promotion remains disabled; TD-013 is resolved, while TD-011 registry alignment and the existing candidate-validation constraints remain.
 
 ## Remediation waves
 
@@ -599,7 +599,7 @@ Estimated consolidation: **18 small causal sprints** (the broad interpretation i
 
 The register treats missing knowledge as UNKNOWN rather than false, preserves RAW/canonical and historical artifacts, requires provenance and independence, rejects silent geography/currency/bundle inference, keeps candidates shadow-only, changes no thresholds, and proposes reversible fail-closed contracts. The P0 prioritization follows the Rector: economic evidence must be comparable, recent and auditable before Enki exploits it.
 
-## Final validation
+## Historical audit validation baseline
 
 - Backend full suite: `844 passed, 0 failed, 1 warning in 35.53s` (`37.271s` wall clock). The warning is the recorded Starlette/httpx deprecation.
 - Compile: `python -m compileall src scripts` passed in `0.35s`.
