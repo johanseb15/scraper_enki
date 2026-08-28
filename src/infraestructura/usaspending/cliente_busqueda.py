@@ -101,4 +101,4 @@ class USASpendingClient:
                 if attempt >= self.retries:
                     break
                 time.sleep(0.5 * (attempt + 1))
-        raise RuntimeError(f"USASpending request failed: {last_error}")
+        raise RuntimeError(f"USASpending request failed: {last_error}") from last_error

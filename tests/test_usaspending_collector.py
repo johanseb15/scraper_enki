@@ -78,3 +78,70 @@ def test_usaspending_malformed_rejected_batch_continues(tmp_path):
     assert resultado.rejected == 1
     assert resultado.failed == 0
     assert repo.contar_documentos_raw(source="usaspending") == 1
+
+
+
+class ClienteUSAFailing:
+    def buscar_awards(self, *, limit: int):
+        raise ConnectionError(
+            "connection reset cookie=session-secret"
+        )
+
+
+def test_usaspending_operational_failure_preserves_diagnostic(tmp_path):
+    repo = RepositorioSQLiteEvidencia(
+        str(tmp_path / "evidence.db")
+    )
+
+    resultado = ColectorUSASpending(
+        ClienteUSAFailing(),
+        repo,
+    ).colectar(limit=25)
+
+    assert resultado.failed == 1
+    assert resultado.rejected == 0
+    assert len(resultado.failures) == 1
+
+    failure = resultado.failures[0]
+    assert failure.source == "usaspending"
+    assert failure.operation == "search_awards"
+    assert failure.category.value == "NETWORK"
+    assert failure.retryable is True
+    assert failure.exception_type == "ConnectionError"
+    assert "session-secret" not in failure.message_redacted
+
+
+
+class RepositorioUSAFailingPersistence:
+    def guardar_documento_raw(self, documento):
+        raise OSError(
+            "sqlite write failed api_key=usa-persistence-secret"
+        )
+
+    def guardar_fuente(self, fuente):
+        raise AssertionError(
+            "source must not be registered after persistence failure"
+        )
+
+
+def test_usaspending_persistence_failure_is_typed_and_batch_continues():
+    resultado = ColectorUSASpending(
+        ClienteUSAFake([
+            _award("CONT_AWD_FAIL"),
+            _award("CONT_AWD_AFTER"),
+        ]),
+        RepositorioUSAFailingPersistence(),
+    ).colectar(limit=2)
+
+    assert resultado.failed == 2
+    assert resultado.accepted == 0
+    assert resultado.rejected == 0
+    assert len(resultado.failures) == 2
+
+    first = resultado.failures[0]
+    assert first.source == "usaspending"
+    assert first.operation == "persist_raw_document"
+    assert first.resource_id == "CONT_AWD_FAIL"
+    assert first.category.value == "PERSISTENCE"
+    assert first.retryable is False
+    assert "usa-persistence-secret" not in first.message_redacted

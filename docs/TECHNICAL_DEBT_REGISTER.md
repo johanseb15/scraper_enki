@@ -375,33 +375,33 @@ The six specifically incorrect clarifications have one control-flow family:
 - BLOCKS_PROMOTION: true.
 - NOTES: Distinct provenance is correct; duplicate semantic rules are not.
 
-### TD-012 — Acquisition boundaries collapse exceptions into counters without causal diagnostics
+### TD-012 - Acquisition boundaries collapse exceptions into counters without causal diagnostics
 
 - DEBT_ID: `TD-012`
 - TITLE: Acquisition boundaries collapse exceptions into counters without causal diagnostics.
 - CATEGORY: OBSERVABILITY, OPERABILITY, EXCEPTION_HANDLING.
 - SEVERITY: `P2`.
 - CONFIDENCE: HIGH.
-- STATUS: CONFIRMED.
-- EVIDENCE: Raw/USASpending collectors return `failed=1` without cause; Argentina bulk drops exception detail; CompraGamer response JSON errors are silently passed.
-- REPRODUCTION: Inspect broad exception paths or inject a failing client and examine result diagnostics.
-- AFFECTED_FILES: `src/aplicacion/colector_documentos_raw.py`, `src/aplicacion/colector_argentina_bulk.py`, `src/aplicacion/colector_usaspending.py`, `src/infraestructura/scrapers/compragamer_playwright_scraper.py`.
+- STATUS: RESOLVED by `acquisition-failure-diagnostics-v1`.
+- EVIDENCE: Acquisition failures now preserve typed source/operation/category/retryability/exception diagnostics with credential-safe redaction. Raw and USASpending distinguish remote acquisition failures, rejected records and persistence failures; Argentina bulk distinguishes download, raw preparation, raw persistence, persisted-row inspection and extracted-row persistence while continuing across resources; CompraGamer no longer silently drops product JSON parse failures.
+- REPRODUCTION: Inject transport, HTTP/auth, parse and persistence failures through `tests/test_acquisition_failure_contract.py`, `tests/test_raw_document_collector.py`, `tests/test_usaspending_collector.py`, `tests/test_argentina_bulk_ingestion.py` and `tests/scrapers/test_compragamer_scraper.py`.
+- AFFECTED_FILES: `src/aplicacion/acquisition_failure.py`, `src/aplicacion/colector_documentos_raw.py`, `src/aplicacion/colector_argentina_bulk.py`, `src/aplicacion/colector_usaspending.py`, `src/infraestructura/ted/cliente_busqueda.py`, `src/infraestructura/usaspending/cliente_busqueda.py`, `src/infraestructura/scrapers/compragamer_playwright_scraper.py`.
 - AFFECTED_LAYERS: APPLICATION, INFRASTRUCTURE, ACQUISITION.
-- ROOT_CAUSE: Batch-continuation counters predate a typed failure contract.
-- PRODUCT_IMPACT: Operators cannot distinguish network, auth, schema, parse or persistence failure.
-- DATA_RISK: Empty acquisition can be mistaken for absent market evidence.
-- SAFETY_RISK: No fabricated data, but absence cause is obscured.
-- MAINTENANCE_COST: MEDIUM.
-- LIKELIHOOD: HIGH_DURING_ACQUISITION.
-- BLAST_RADIUS: Several external acquisition flows.
+- ROOT_CAUSE: Batch-continuation counters and scraper callbacks predated a shared typed causal failure contract; retry wrappers also discarded transport cause chaining.
+- PRODUCT_IMPACT: Operators can now distinguish network, auth, HTTP, parse/decode and persistence failures instead of treating empty acquisition as unexplained absence.
+- DATA_RISK: Reduced; failed acquisition remains distinguishable from absent market evidence.
+- SAFETY_RISK: Low; failures remain fail-closed and do not fabricate evidence.
+- MAINTENANCE_COST: LOW_POST_REMEDIATION.
+- LIKELIHOOD: CONTROLLED_BY_TYPED_BOUNDARY_CONTRACT.
+- BLAST_RADIUS: External acquisition flows now share one diagnostic contract without changing acquisition volume.
 - DEPENDENCIES: None.
-- PROPOSED_FIX: Typed, redacted failure records with source/operation/retryability/cause while preserving batch continuation.
-- REGRESSION_TEST_REQUIRED: Injected failures preserve type/cause and redact credentials/headers.
+- IMPLEMENTED_FIX: Added immutable `AcquisitionFailure` diagnostics with typed categories, retryability, exception-chain classification and secret redaction; preserved rejected-record semantics separately; added explicit persistence boundary diagnostics and batch continuation; preserved underlying TED/USASpending transport causes with exception chaining; CompraGamer propagates intercepted JSON parse failure diagnostics instead of swallowing them.
+- REGRESSION_TEST: Focused TD-012 suite passes 31/31 and injected failures cover redaction, HTTP/auth/network classification, exception chaining, persistence, batch continuation and CompraGamer callback parsing. Static audit reports `TD012_NO_SILENT_BROAD_EXCEPTIONS=PASS` and `TD012_COMPRAGAMER_TYPED_FAILURE=PASS`.
 - ESTIMATED_SCOPE: M.
 - BLOCKS_MARKET_ACQUISITION: false.
 - BLOCKS_FIELD_TESTING: false.
 - BLOCKS_PROMOTION: false.
-- NOTES: Broad exceptions that already preserve per-record reasons were not separately ticketed.
+- NOTES: `rejected_records`/rejected rows remain distinct from acquisition failures by design. This remediation does not expand acquisition, change pricing thresholds, promote knowledge or modify HUMAN_REAL.
 
 ### TD-013 — Green suites under-test real process and cross-stack boundaries
 
@@ -554,7 +554,7 @@ All P0 debts are resolved. TD-008 no longer blocks market acquisition. Promotion
 
 ### WAVE 3 — Architecture and test consolidation
 
-1. **ACQUISITION FAILURE TAXONOMY v1** — TD-012; risk low; typed/redacted causal failures replace unexplained counters.
+1. **ACQUISITION FAILURE TAXONOMY v1 - COMPLETE** - TD-012; typed/redacted causal failures preserve source, operation, retryability and failure category without collapsing rejected records or breaking batch continuation.
 2. **REAL BOUNDARY TEST MATRIX v1** — TD-013; dependencies CLI/artifact; risk low; CLI, API/frontend and artifact freshness failures cannot pass green.
 
 ### WAVE 4 — Deprecations and maintenance
@@ -581,7 +581,7 @@ Estimated consolidation: **18 small causal sprints** (the broad interpretation i
 
 ## Exact next remediation sprint
 
-**ACQUISITION FAILURE DIAGNOSTICS v1**. It closes only TD-012. Introduce typed, redacted acquisition failure records that preserve source, operation, retryability and causal failure category while keeping batch continuation. Do not expand acquisition volume, alter pricing thresholds, promote knowledge or modify HUMAN_REAL in this sprint.
+**REAL BOUNDARY TEST MATRIX v1**. It closes only TD-013. Add real process and cross-stack boundary coverage for CLI execution, API/frontend schema parity and artifact freshness. Do not expand acquisition volume, alter pricing thresholds, promote knowledge or modify HUMAN_REAL in this sprint.
 
 ## Explicitly not debt
 

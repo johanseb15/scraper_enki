@@ -4,6 +4,11 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Any, Callable, Protocol
 
+from src.aplicacion.acquisition_failure import (
+    AcquisitionFailure,
+    AcquisitionFailureCategory,
+    acquisition_failure_from_exception,
+)
 from src.aplicacion.puertos.repositorio_evidencia import RepositorioEvidencia
 from src.dominio.evidencia import DocumentoRaw, FuenteCandidata
 
@@ -34,6 +39,7 @@ class ResultadoUSASpending:
     rejected: int = 0
     failed: int = 0
     rejected_records: list[RegistroUSASpendingRechazado] = field(default_factory=list)
+    failures: list[AcquisitionFailure] = field(default_factory=list)
 
 
 class ColectorUSASpending:
@@ -50,12 +56,23 @@ class ColectorUSASpending:
     def colectar(self, *, limit: int) -> ResultadoUSASpending:
         try:
             awards = self.cliente.buscar_awards(limit=limit)
-        except Exception:
-            return ResultadoUSASpending(requested=limit, failed=1)
+        except Exception as exc:
+            return ResultadoUSASpending(
+                requested=limit,
+                failed=1,
+                failures=[
+                    acquisition_failure_from_exception(
+                        source="usaspending",
+                        operation="search_awards",
+                        exc=exc,
+                    )
+                ],
+            )
 
         accepted = 0
         duplicate = 0
         rejected_records: list[RegistroUSASpendingRechazado] = []
+        failures: list[AcquisitionFailure] = []
         for index, award in enumerate(awards, start=1):
             try:
                 documento = self._crear_documento(award)
@@ -64,7 +81,22 @@ class ColectorUSASpending:
                     RegistroUSASpendingRechazado(index=index, reason=str(exc))
                 )
                 continue
-            if self.repositorio.guardar_documento_raw(documento):
+            try:
+                inserted = self.repositorio.guardar_documento_raw(documento)
+            except Exception as exc:
+                failures.append(
+                    acquisition_failure_from_exception(
+                        source="usaspending",
+                        operation="persist_raw_document",
+                        exc=exc,
+                        resource_id=documento.source_record_id,
+                        category_override=AcquisitionFailureCategory.PERSISTENCE,
+                        retryable_override=False,
+                    )
+                )
+                continue
+
+            if inserted:
                 accepted += 1
             else:
                 duplicate += 1
@@ -78,8 +110,9 @@ class ColectorUSASpending:
             accepted=accepted,
             duplicate=duplicate,
             rejected=len(rejected_records),
-            failed=0,
+            failed=len(failures),
             rejected_records=rejected_records,
+            failures=failures,
         )
 
     def _crear_documento(self, award: dict[str, Any]) -> DocumentoRaw:

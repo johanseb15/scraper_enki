@@ -4,6 +4,11 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Any, Callable, Protocol
 
+from src.aplicacion.acquisition_failure import (
+    AcquisitionFailure,
+    AcquisitionFailureCategory,
+    acquisition_failure_from_exception,
+)
 from src.aplicacion.puertos.repositorio_evidencia import RepositorioEvidencia
 from src.dominio.evidencia import DocumentoRaw, FuenteCandidata
 
@@ -29,6 +34,7 @@ class ResultadoColeccion:
     failed: int = 0
     elapsed_seconds: float = 0.0
     rejected_records: list[RegistroRechazadoColeccion] = field(default_factory=list)
+    failures: list[AcquisitionFailure] = field(default_factory=list)
 
 
 class ColectorDocumentosRaw:
@@ -48,12 +54,23 @@ class ColectorDocumentosRaw:
         inicio = datetime.now(timezone.utc)
         try:
             registros = self.cliente.buscar(query=query, limit=limit)
-        except Exception:
-            return ResultadoColeccion(requested=limit, failed=1)
+        except Exception as exc:
+            return ResultadoColeccion(
+                requested=limit,
+                failed=1,
+                failures=[
+                    acquisition_failure_from_exception(
+                        source=self.fuente,
+                        operation="search",
+                        exc=exc,
+                    )
+                ],
+            )
 
         accepted = 0
         duplicate = 0
         rejected_records: list[RegistroRechazadoColeccion] = []
+        failures: list[AcquisitionFailure] = []
         for index, registro in enumerate(registros, start=1):
             try:
                 documento = self._crear_documento(registro, query=query)
@@ -63,7 +80,22 @@ class ColectorDocumentosRaw:
                 )
                 continue
 
-            if self.repositorio.guardar_documento_raw(documento):
+            try:
+                inserted = self.repositorio.guardar_documento_raw(documento)
+            except Exception as exc:
+                failures.append(
+                    acquisition_failure_from_exception(
+                        source=self.fuente,
+                        operation="persist_raw_document",
+                        exc=exc,
+                        resource_id=documento.source_record_id,
+                        category_override=AcquisitionFailureCategory.PERSISTENCE,
+                        retryable_override=False,
+                    )
+                )
+                continue
+
+            if inserted:
                 accepted += 1
             else:
                 duplicate += 1
@@ -78,9 +110,10 @@ class ColectorDocumentosRaw:
             accepted=accepted,
             duplicate=duplicate,
             rejected=len(rejected_records),
-            failed=0,
+            failed=len(failures),
             elapsed_seconds=elapsed,
             rejected_records=rejected_records,
+            failures=failures,
         )
 
     def _crear_documento(self, registro: dict[str, Any], *, query: str) -> DocumentoRaw:

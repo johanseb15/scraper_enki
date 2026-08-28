@@ -90,3 +90,65 @@ def test_compragamer_playwright_scraper_obtener_ofertas(mock_playwright):
     assert len(resultado) == 1
     assert resultado[0].servicio_raw == "Placa de Video RX 6600"
     assert resultado[0].precio == 300000
+
+
+
+@patch(
+    "src.infraestructura.scrapers.compragamer_playwright_scraper.sync_playwright"
+)
+def test_compragamer_invalid_product_json_preserves_typed_failure(
+    mock_playwright,
+):
+    mock_browser = MagicMock()
+    mock_context = MagicMock()
+    mock_page = MagicMock()
+
+    mock_playwright.return_value.__enter__.return_value.chromium.launch.return_value = (
+        mock_browser
+    )
+    mock_browser.new_context.return_value = mock_context
+    mock_context.new_page.return_value = mock_page
+
+    def fake_goto(url, **kwargs):
+        callback = None
+
+        for call in mock_page.on.call_args_list:
+            if call[0][0] == "response":
+                callback = call[0][1]
+                break
+
+        assert callback is not None
+
+        fake_response = MagicMock()
+        fake_response.status = 200
+        fake_response.url = "https://static.compragamer.com/productos"
+        fake_response.json.side_effect = ValueError(
+            "invalid JSON token=compragamer-secret"
+        )
+
+        callback(fake_response)
+
+    mock_page.goto.side_effect = fake_goto
+
+    scraper = CompraGamerPlaywrightScraperOficial()
+
+    try:
+        scraper.obtener_servicios(date(2026, 8, 4))
+    except RuntimeError as exc:
+        failure = getattr(
+            exc,
+            "acquisition_failure",
+            None,
+        )
+    else:
+        raise AssertionError(
+            "invalid product JSON must not be silently treated as no products"
+        )
+
+    assert failure is not None
+    assert failure.source == "compragamer"
+    assert failure.operation == "parse_product_response"
+    assert failure.category.value == "PARSE"
+    assert failure.retryable is False
+    assert failure.exception_type == "ValueError"
+    assert "compragamer-secret" not in failure.message_redacted

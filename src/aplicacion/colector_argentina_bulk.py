@@ -6,6 +6,11 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Any, Protocol
 
+from src.aplicacion.acquisition_failure import (
+    AcquisitionFailure,
+    AcquisitionFailureCategory,
+    acquisition_failure_from_exception,
+)
 from src.aplicacion.puertos.repositorio_evidencia import RepositorioEvidencia
 from src.dominio.evidencia import DocumentoRaw, RegistroFilaArgentinaObservada
 
@@ -46,6 +51,7 @@ class ResultadoArgentinaBulk:
     rows_accepted: int = 0
     rows_rejected: int = 0
     rejected_rows: list[FilaArgentinaRechazada] = field(default_factory=list)
+    failures: list[AcquisitionFailure] = field(default_factory=list)
 
 
 class ColectorArgentinaBulk:
@@ -66,26 +72,116 @@ class ColectorArgentinaBulk:
         for recurso in recursos:
             try:
                 payload, headers = self.cliente.descargar(recurso)
-                documento, decoded = self._documento_raw(recurso, payload, headers)
-            except Exception:
+            except Exception as exc:
                 resultado.failed += 1
+                resultado.failures.append(
+                    acquisition_failure_from_exception(
+                        source=SOURCE,
+                        operation="download_resource",
+                        exc=exc,
+                        resource_id=recurso.resource_id,
+                    )
+                )
                 continue
 
-            inserted = self.repositorio.guardar_documento_raw(documento)
-            stored_doc = self._latest_raw_document(recurso.resource_id, documento.content_hash)
+            try:
+                documento, decoded = self._documento_raw(
+                    recurso,
+                    payload,
+                    headers,
+                )
+            except Exception as exc:
+                resultado.failed += 1
+                resultado.failures.append(
+                    acquisition_failure_from_exception(
+                        source=SOURCE,
+                        operation="prepare_raw_document",
+                        exc=exc,
+                        resource_id=recurso.resource_id,
+                    )
+                )
+                continue
+
+            try:
+                inserted = self.repositorio.guardar_documento_raw(documento)
+                stored_doc = self._latest_raw_document(
+                    recurso.resource_id,
+                    documento.content_hash,
+                )
+            except Exception as exc:
+                resultado.failed += 1
+                resultado.failures.append(
+                    acquisition_failure_from_exception(
+                        source=SOURCE,
+                        operation="persist_raw_document",
+                        exc=exc,
+                        resource_id=recurso.resource_id,
+                        category_override=AcquisitionFailureCategory.PERSISTENCE,
+                        retryable_override=False,
+                    )
+                )
+                continue
             if not inserted:
                 resultado.duplicates += 1
-                if self.repositorio.contar_filas_argentina(raw_document_id=stored_doc.storage_id) > 0:
+
+                try:
+                    has_rows = (
+                        self.repositorio.contar_filas_argentina(
+                            raw_document_id=stored_doc.storage_id
+                        )
+                        > 0
+                    )
+                except Exception as exc:
+                    resultado.failed += 1
+                    resultado.failures.append(
+                        acquisition_failure_from_exception(
+                            source=SOURCE,
+                            operation="inspect_persisted_rows",
+                            exc=exc,
+                            resource_id=recurso.resource_id,
+                            category_override=AcquisitionFailureCategory.PERSISTENCE,
+                            retryable_override=False,
+                        )
+                    )
+                    continue
+
+                if has_rows:
                     continue
             else:
                 resultado.files_downloaded += 1
                 resultado.bytes_downloaded += len(payload)
 
-            parse_result = self._parse_rows(recurso, stored_doc, decoded)
+            parse_result = self._parse_rows(
+                recurso,
+                stored_doc,
+                decoded,
+            )
+
             resultado.rows_seen += parse_result.rows_seen
             resultado.rows_rejected += parse_result.rows_rejected
-            resultado.rejected_rows.extend(parse_result.rejected_rows)
-            resultado.rows_accepted += self.repositorio.guardar_filas_argentina(parse_result.rows)
+            resultado.rejected_rows.extend(
+                parse_result.rejected_rows
+            )
+
+            try:
+                rows_accepted = self.repositorio.guardar_filas_argentina(
+                    parse_result.rows
+                )
+            except Exception as exc:
+                resultado.failed += 1
+                resultado.failures.append(
+                    acquisition_failure_from_exception(
+                        source=SOURCE,
+                        operation="persist_extracted_rows",
+                        exc=exc,
+                        resource_id=recurso.resource_id,
+                        category_override=AcquisitionFailureCategory.PERSISTENCE,
+                        retryable_override=False,
+                    )
+                )
+                continue
+
+            resultado.rows_accepted += rows_accepted
         return resultado
 
     def _latest_raw_document(self, resource_id: str, content_hash: str) -> DocumentoRaw:

@@ -96,3 +96,72 @@ def test_registros_distintos_se_guardan_por_source_record_id(tmp_path):
 
     assert resultado.accepted == 2
     assert repo.contar_documentos_raw(source="ted") == 2
+
+
+
+class ClienteFailing:
+    def buscar(self, *, query: str, limit: int):
+        raise TimeoutError(
+            "TED timeout Authorization: Bearer raw-secret-token"
+        )
+
+
+def test_operational_failure_preserves_typed_diagnostic(tmp_path):
+    repo = RepositorioSQLiteEvidencia(
+        ruta_db=str(tmp_path / "evidence.db")
+    )
+
+    resultado = ColectorDocumentosRaw(
+        cliente=ClienteFailing(),
+        repositorio=repo,
+        fuente="ted",
+    ).colectar(
+        query="classification-cpv = 72000000",
+        limit=10,
+    )
+
+    assert resultado.failed == 1
+    assert resultado.rejected == 0
+    assert len(resultado.failures) == 1
+
+    failure = resultado.failures[0]
+    assert failure.source == "ted"
+    assert failure.operation == "search"
+    assert failure.category.value == "NETWORK"
+    assert failure.retryable is True
+    assert failure.exception_type == "TimeoutError"
+    assert "raw-secret-token" not in failure.message_redacted
+
+
+
+class RepositorioFailingPersistence:
+    def guardar_documento_raw(self, documento):
+        raise OSError(
+            "database write failed token=persistence-secret"
+        )
+
+    def guardar_fuente(self, fuente):
+        raise AssertionError("source must not be registered after persistence failure")
+
+
+def test_persistence_failure_is_typed_instead_of_escaping():
+    resultado = ColectorDocumentosRaw(
+        cliente=ClienteFake([_ted_record()]),
+        repositorio=RepositorioFailingPersistence(),
+        fuente="ted",
+    ).colectar(
+        query="classification-cpv = 72000000",
+        limit=1,
+    )
+
+    assert resultado.failed == 1
+    assert resultado.accepted == 0
+    assert resultado.rejected == 0
+    assert len(resultado.failures) == 1
+
+    failure = resultado.failures[0]
+    assert failure.source == "ted"
+    assert failure.operation == "persist_raw_document"
+    assert failure.category.value == "PERSISTENCE"
+    assert failure.retryable is False
+    assert "persistence-secret" not in failure.message_redacted
