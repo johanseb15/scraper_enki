@@ -153,26 +153,46 @@ Antes de aprobar cualquier sprint se debe responder:
 
 Si la respuesta es no, va a backlog salvo que elimine un riesgo técnico que bloquee directamente esa capacidad.
 
-El cuello de botella actual es:
+La ejecución del programa está gobernada por:
 
-> **Economic Evidence Acquisition**
+docs/ENKI_ARCHIVO_RECTOR.md
 
-La prioridad es descubrir qué servicios y productos tecnológicos tienen **precios públicos adquiribles, trazables y suficientemente comparables en Internet**.
+Orden ejecutivo vigente:
+
+1. ENTENDER
+2. CONECTAR
+3. APRENDER
+4. EXPLOTAR ECONÓMICAMENTE
+
+La adquisición y explotación económica no deben adelantarse a las etapas anteriores ni usarse para fabricar readiness.
 
 ---
 
 ## 6. Estado actual
 
-Baseline técnico:
+El estado técnico no se fija mediante SHA o conteos de tests escritos a mano. Se verifica contra el repositorio actual.
 
-```text
-branch: main
-HEAD: 40624fd4bdea4a35b6fb5e5fb5df1bddd79e1cab
-backend: 252 tests GREEN
-frontend: lint GREEN
-frontend: 9 tests GREEN
-frontend: build GREEN
-```
+Desde la raíz:
+
+    git rev-parse HEAD
+    git status --short
+    python -m pytest -q
+
+Frontend:
+
+    cd frontend
+    pnpm exec tsc --noEmit
+    pnpm test -- --run
+    pnpm build
+
+Runtime público actual:
+
+- API FastAPI;
+- endpoint POST /decision/pricing;
+- contrato explícito DecisionPricingResponse;
+- interpretación semántica, resolución de mercado, readiness y evidence probe;
+- evidencia económica fail-closed cuando no existe soporte admisible.
+
 
 ### Integridad técnica cerrada
 
@@ -670,36 +690,7 @@ Tests:
 python -m pytest -q
 ```
 
-Baseline conocido:
-
-```text
-252 passed
-```
-
-### Frontend
-
-Referencia:
-
-- Next.js 16.3
-- React 19.2
-- TypeScript 6
-- pnpm 11
-
-```powershell
-cd frontend
-corepack pnpm install
-corepack pnpm lint
-corepack pnpm test
-corepack pnpm build
-```
-
-Baseline conocido:
-
-```text
-lint GREEN
-9 tests GREEN
-build GREEN
-```
+Validación vigente: ejecutar los comandos anteriores contra el checkout actual; no mantener conteos de tests manuales en esta documentación.
 
 ---
 

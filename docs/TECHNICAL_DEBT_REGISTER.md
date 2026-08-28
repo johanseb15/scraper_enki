@@ -431,33 +431,33 @@ The six specifically incorrect clarifications have one control-flow family:
 - BLOCKS_PROMOTION: false for TD-013 after remediation; promotion remains governed by the remaining program constraints.
 - NOTES: No acquisition volume was expanded, no pricing/readiness threshold changed, no knowledge was promoted, no HUMAN_REAL evidence was modified, and no historical artifact was rewritten or falsely rebound to the current HEAD. `ArtifactManifest.commit_sha` remains provenance; currentness is verified through reproducible generator/input/output identity rather than a circular same-commit SHA requirement.
 
-### TD-014 — README and architecture baseline materially diverge from runtime
+### TD-014 ? README and architecture baseline materially diverge from runtime
 
 - DEBT_ID: `TD-014`
 - TITLE: README and architecture baseline materially diverge from current runtime.
 - CATEGORY: DOCUMENTATION, ARCHITECTURAL_CONSISTENCY, DEVELOPER_EXPERIENCE.
 - SEVERITY: `P3`.
 - CONFIDENCE: HIGH.
-- STATUS: CONFIRMED.
-- EVIDENCE: README says HEAD `40624fd`/252 tests and describes pricing engine as future; current HEAD is `b03e65e`/844 tests with a decision runtime. ARCHITECTURE names README as highest source while governance uses the Rector.
-- REPRODUCTION: Compare README sections 6/14/17, ARCHITECTURE introduction, current Git/test/runtime and Rector.
-- AFFECTED_FILES: `README.md`, `ARCHITECTURE.md`, `docs/ENKI_ARCHIVO_RECTOR.md`.
+- STATUS: RESOLVED by `current-state-documentation-v1`.
+- EVIDENCE: README no longer encodes a fixed HEAD or hand-maintained backend/frontend test counts as current state. It now points to `docs/ENKI_ARCHIVO_RECTOR.md` as governance authority, preserves the executive sequence ENTENDER -> CONECTAR -> APRENDER -> EXPLOTAR ECONOMICAMENTE and gives commands that verify the actual checkout. ARCHITECTURE no longer claims README is the highest strategic source, now declares Rector precedence, documents the live `POST /decision/pricing` boundary and `DecisionPricingResponse`, and no longer lists the pricing engine as future/unimplemented.
+- REPRODUCTION: `tests/test_td014_current_state_documentation.py` asserts verifiable current-state commands, Rector precedence, the current decision runtime and removal of volatile/stale baselines. A focused stale-document audit confirms the old HEAD/test-count and obsolete architecture claims are absent from README/ARCHITECTURE.
+- AFFECTED_FILES: `README.md`, `ARCHITECTURE.md`, `docs/TECHNICAL_DEBT_REGISTER.md`, `tests/test_td014_current_state_documentation.py`.
 - AFFECTED_LAYERS: DOCUMENTATION, REPOSITORY.
-- ROOT_CAUSE: Causal sprint narratives accumulated without a maintained current-state index.
-- PRODUCT_IMPACT: Operators select stale commands, priorities and baselines.
+- ROOT_CAUSE: Causal sprint narratives accumulated without a maintained current-state index, so volatile prose and historical architecture statements outlived the runtime they described.
+- PRODUCT_IMPACT: Resolved. Operators and contributors now verify repository state from commands and follow the Rector for governance instead of stale prose.
 - DATA_RISK: LOW.
 - SAFETY_RISK: LOW.
-- MAINTENANCE_COST: MEDIUM.
-- LIKELIHOOD: HIGH.
-- BLAST_RADIUS: Onboarding and planning.
+- MAINTENANCE_COST: Reduced by removing manually maintained SHA/test-count baselines and clarifying document authority.
+- LIKELIHOOD: LOW after remediation; the regression contract rejects the known stale baseline classes.
+- BLAST_RADIUS: Onboarding, planning and architectural orientation.
 - DEPENDENCIES: None.
-- PROPOSED_FIX: Explicit Rector precedence; separate current state from history; prefer verifiable commands over volatile prose counts.
-- REGRESSION_TEST_REQUIRED: Documentation path/command smoke; avoid volatile count assertions.
+- IMPLEMENTED_FIX: Declared `docs/ENKI_ARCHIVO_RECTOR.md` as governance authority; replaced volatile README baselines with executable verification commands; aligned README with the current program sequence; documented the real decision API/runtime in ARCHITECTURE; and removed obsolete future-pricing claims.
+- REGRESSION_TEST: `tests/test_td014_current_state_documentation.py` passed `4/4`; the focused stale-document audit passed all checks.
 - ESTIMATED_SCOPE: S.
 - BLOCKS_MARKET_ACQUISITION: false.
 - BLOCKS_FIELD_TESTING: false.
 - BLOCKS_PROMOTION: false.
-- NOTES: Documentation-only remediation.
+- NOTES: Documentation-only remediation. No runtime behavior, evidence, thresholds, HUMAN_REAL data, acquisition volume or promotion state changed.
 
 ### TD-015 — Dependency and test configuration carry duplicated and deprecated surfaces
 
@@ -559,7 +559,7 @@ All P0 debts are resolved. TD-008 no longer blocks market acquisition. Promotion
 
 ### WAVE 4 — Deprecations and maintenance
 
-1. **CURRENT STATE DOCUMENTATION v1** — TD-014; risk low; Rector precedence/current state are unambiguous.
+1. **CURRENT STATE DOCUMENTATION v1 - COMPLETE** - TD-014; Rector precedence, verifiable current-state commands and the live decision runtime are now documented without volatile baselines.
 2. **DEPENDENCY CONFIG CONSOLIDATION v1** — TD-015; dependency CLI; risk medium; direct dependencies/package metadata/one pytest authority and causal deprecation upgrades.
 3. **LEGACY SURFACE RETIREMENT v1** — TD-016; dependency boundary tests; risk low; one canonical scraper namespace and no unused fixture adapter.
 
@@ -577,11 +577,12 @@ Estimated consolidation: **18 small causal sprints** (the broad interpretation i
 
 ### SAFE_FOR_KNOWLEDGE_PROMOTION
 
-`NO`. Required closures: TD-011 and TD-013; additionally, the current candidate remains `FAIL_SHADOW_VALIDATION`. Existing currency conflicts remain preserved and no promotion is authorized.
+`NO`. TD-013 is resolved. TD-011 still requires registry alignment with its completed functional remediation; additionally, the current candidate remains `FAIL_SHADOW_VALIDATION`. Existing currency conflicts remain preserved and no promotion is authorized.
 
 ## Exact next remediation sprint
 
-**REAL BOUNDARY TEST MATRIX v1**. It closes only TD-013. Add real process and cross-stack boundary coverage for CLI execution, API/frontend schema parity and artifact freshness. Do not expand acquisition volume, alter pricing thresholds, promote knowledge or modify HUMAN_REAL in this sprint.
+**DEPENDENCY CONFIG CONSOLIDATION v1**. It closes only TD-015. Prove direct dependencies, establish one pytest configuration authority, add explicit package metadata and isolate deprecation remediation without mixing unrelated upgrades.
+
 
 ## Explicitly not debt
 

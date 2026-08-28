@@ -1,14 +1,27 @@
 # Arquitectura de Enki
 
-`README.md` es la fuente de orientacion estrategica de mayor nivel. Esta arquitectura describe el sistema real actual y sus limites: Enki existe para ayudar a decidir cuanto cobrar o pagar por trabajos, servicios y hardware tecnologico con evidencia comparable, trazable y reciente.
+La autoridad de gobernanza del proyecto es `docs/ENKI_ARCHIVO_RECTOR.md`. El README resume producto y operacion; este documento describe la arquitectura real actual y sus limites.
 
-El cuello de botella actual del producto es **Economic Evidence Acquisition**: descubrir y preservar observaciones economicas utiles. Procurement, normalizacion, scraping y frontend son capacidades habilitadoras, no fines en si mismas.
+La secuencia ejecutiva vigente es ENTENDER -> CONECTAR -> APRENDER -> EXPLOTAR ECONOMICAMENTE. La adquisicion economica es una capacidad posterior dentro de esa secuencia, no una prioridad que pueda adelantar los contratos de comprension, conocimiento o provenance.
 
 ## Jerarquia de producto
 
 - **Primary: Enki Decision.** Responde si un precio de trabajo, servicio, producto o hardware es bajo, razonable o alto.
 - **Secondary: Enki Market.** Usa el mismo corpus para inteligencia de mercado: proveedores, compradores, demanda, recurrencia y lenguaje.
 - **Future: Enki Data.** API, datasets, feeds e integraciones, cuando exista evidencia suficiente para sostenerlos.
+
+## Runtime de decision actual
+
+La frontera publica de decision existe actualmente:
+
+    POST /decision/pricing
+      -> parser / semantic interpretation
+      -> market resolution
+      -> pricing readiness
+      -> evidence probe / pricing evidence
+      -> DecisionPricingResponse
+
+`DecisionPricingResponse` es el contrato explicito de respuesta publicado por FastAPI/OpenAPI. El runtime puede responder con evidencia, clarificacion, unsupported o insuficiencia; la ausencia de evidencia admisible no se convierte en un rango inventado.
 
 ## Pipelines actuales
 
@@ -141,7 +154,6 @@ No son arquitectura productiva actual:
 - PostgreSQL;
 - microservices;
 - provider graph productivo;
-- pricing engine completo;
 - estadisticas finales de mercado;
 - international pricing pipeline.
 
