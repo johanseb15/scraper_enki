@@ -1,0 +1,1123 @@
+{
+  "$defs": {
+    "CommercialContextResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "origin": {
+          "title": "Origin",
+          "type": "string"
+        },
+        "raw_basis": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Raw Basis",
+          "type": "array"
+        },
+        "resolution_method": {
+          "title": "Resolution Method",
+          "type": "string"
+        },
+        "status": {
+          "title": "Status",
+          "type": "string"
+        },
+        "value": {
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "status",
+        "origin",
+        "raw_basis",
+        "resolution_method"
+      ],
+      "title": "CommercialContextResponse",
+      "type": "object"
+    },
+    "DecisionPricingEvidenceResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "acquired_at_max": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Acquired At Max"
+        },
+        "acquired_at_min": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Acquired At Min"
+        },
+        "canonical_service": {
+          "title": "Canonical Service",
+          "type": "string"
+        },
+        "commercial_context": {
+          "title": "Commercial Context",
+          "type": "string"
+        },
+        "commercial_context_provenance": {
+          "$ref": "#/$defs/CommercialContextResponse"
+        },
+        "decision_label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Decision Label"
+        },
+        "evidence_commercial_context": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/CommercialContextResponse"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "evidence_confidence": {
+          "title": "Evidence Confidence",
+          "type": "string"
+        },
+        "freshness_policy_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Freshness Policy Version"
+        },
+        "lineage_gate_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Lineage Gate Version"
+        },
+        "market": {
+          "title": "Market",
+          "type": "string"
+        },
+        "max_ars": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Max Ars"
+        },
+        "median_ars": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Median Ars"
+        },
+        "min_ars": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Min Ars"
+        },
+        "observation_ids": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Observation Ids",
+          "type": "array"
+        },
+        "observations_n": {
+          "title": "Observations N",
+          "type": "integer"
+        },
+        "price_position": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Price Position"
+        },
+        "price_scope": {
+          "title": "Price Scope",
+          "type": "string"
+        },
+        "provider_independence_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Provider Independence Version"
+        },
+        "providers_n": {
+          "title": "Providers N",
+          "type": "integer"
+        },
+        "q1_ars": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Q1 Ars"
+        },
+        "q3_ars": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Q3 Ars"
+        },
+        "service_reach_gate_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Service Reach Gate Version"
+        },
+        "source_count": {
+          "title": "Source Count",
+          "type": "integer"
+        },
+        "temporal_gate_version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Temporal Gate Version"
+        },
+        "temporal_state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Temporal State"
+        }
+      },
+      "required": [
+        "market",
+        "canonical_service",
+        "observations_n",
+        "providers_n",
+        "source_count",
+        "provider_independence_version",
+        "min_ars",
+        "q1_ars",
+        "median_ars",
+        "q3_ars",
+        "max_ars",
+        "evidence_confidence",
+        "price_position",
+        "decision_label",
+        "price_scope",
+        "commercial_context",
+        "commercial_context_provenance",
+        "evidence_commercial_context",
+        "lineage_gate_version",
+        "service_reach_gate_version",
+        "temporal_gate_version",
+        "temporal_state",
+        "acquired_at_min",
+        "acquired_at_max",
+        "freshness_policy_version",
+        "observation_ids"
+      ],
+      "title": "DecisionPricingEvidenceResponse",
+      "type": "object"
+    },
+    "DecisionPricingGeographyResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "city": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "City"
+        },
+        "province": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Province"
+        }
+      },
+      "required": [
+        "province",
+        "city"
+      ],
+      "title": "DecisionPricingGeographyResponse",
+      "type": "object"
+    },
+    "DecisionPricingParsedResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "canonical_services": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Canonical Services",
+          "type": "array"
+        },
+        "clarification_question": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Clarification Question"
+        },
+        "clarification_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Clarification Reason"
+        },
+        "clarification_required": {
+          "title": "Clarification Required",
+          "type": "boolean"
+        },
+        "commercial_context": {
+          "$ref": "#/$defs/CommercialContextResponse"
+        },
+        "condition": {
+          "title": "Condition",
+          "type": "string"
+        },
+        "device_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Device Type"
+        },
+        "economic_object_kind": {
+          "title": "Economic Object Kind",
+          "type": "string"
+        },
+        "geography": {
+          "$ref": "#/$defs/DecisionPricingGeographyResponse"
+        },
+        "intent_action": {
+          "title": "Intent Action",
+          "type": "string"
+        },
+        "intent_side": {
+          "title": "Intent Side",
+          "type": "string"
+        },
+        "is_bundle": {
+          "title": "Is Bundle",
+          "type": "boolean"
+        },
+        "market_scope": {
+          "title": "Market Scope",
+          "type": "string"
+        },
+        "modality": {
+          "title": "Modality",
+          "type": "string"
+        },
+        "parts_scope": {
+          "title": "Parts Scope",
+          "type": "string"
+        },
+        "price": {
+          "$ref": "#/$defs/DecisionPricingPriceResponse"
+        },
+        "query_kind": {
+          "title": "Query Kind",
+          "type": "string"
+        },
+        "technical_need": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/TechnicalNeedResponse"
+            },
+            {
+              "type": "null"
+            }
+          ]
+        }
+      },
+      "required": [
+        "query_kind",
+        "intent_action",
+        "intent_side",
+        "economic_object_kind",
+        "canonical_services",
+        "market_scope",
+        "modality",
+        "price",
+        "geography",
+        "device_type",
+        "condition",
+        "is_bundle",
+        "parts_scope",
+        "commercial_context",
+        "clarification_required",
+        "clarification_reason",
+        "clarification_question",
+        "technical_need"
+      ],
+      "title": "DecisionPricingParsedResponse",
+      "type": "object"
+    },
+    "DecisionPricingPriceResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "currency": {
+          "title": "Currency",
+          "type": "string"
+        },
+        "is_approximate": {
+          "title": "Is Approximate",
+          "type": "boolean"
+        },
+        "max": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Max"
+        },
+        "min": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Min"
+        },
+        "type": {
+          "title": "Type",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Value"
+        }
+      },
+      "required": [
+        "type",
+        "value",
+        "min",
+        "max",
+        "currency",
+        "is_approximate"
+      ],
+      "title": "DecisionPricingPriceResponse",
+      "type": "object"
+    },
+    "EvidenceProbeItemResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "canonical_service": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Canonical Service"
+        },
+        "evidence_confidence": {
+          "title": "Evidence Confidence",
+          "type": "string"
+        },
+        "market": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Market"
+        },
+        "median": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Median"
+        },
+        "observations_n": {
+          "title": "Observations N",
+          "type": "integer"
+        },
+        "observed_max": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Observed Max"
+        },
+        "observed_min": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Observed Min"
+        },
+        "providers_n": {
+          "title": "Providers N",
+          "type": "integer"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Reason"
+        },
+        "route": {
+          "title": "Route",
+          "type": "string"
+        },
+        "source_count": {
+          "title": "Source Count",
+          "type": "integer"
+        },
+        "status": {
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "route",
+        "status",
+        "market",
+        "canonical_service",
+        "observations_n",
+        "providers_n",
+        "source_count",
+        "evidence_confidence",
+        "observed_min",
+        "observed_max",
+        "median",
+        "reason"
+      ],
+      "title": "EvidenceProbeItemResponse",
+      "type": "object"
+    },
+    "EvidenceProbeResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "probes": {
+          "items": {
+            "$ref": "#/$defs/EvidenceProbeItemResponse"
+          },
+          "title": "Probes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "probes"
+      ],
+      "title": "EvidenceProbeResponse",
+      "type": "object"
+    },
+    "MarketResolutionItemResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "canonical_service": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Canonical Service"
+        },
+        "economic_object_kind": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Economic Object Kind"
+        },
+        "market": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Market"
+        },
+        "market_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Market Key"
+        },
+        "market_scope": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Market Scope"
+        },
+        "market_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Market Status"
+        },
+        "resolution_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Resolution Reason"
+        },
+        "route": {
+          "title": "Route",
+          "type": "string"
+        },
+        "status": {
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "route",
+        "status",
+        "canonical_service",
+        "economic_object_kind",
+        "market_scope",
+        "market",
+        "market_key",
+        "market_status",
+        "resolution_reason"
+      ],
+      "title": "MarketResolutionItemResponse",
+      "type": "object"
+    },
+    "MarketResolutionResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "clarification_question": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Clarification Question"
+        },
+        "clarification_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Clarification Reason"
+        },
+        "clarification_required": {
+          "title": "Clarification Required",
+          "type": "boolean"
+        },
+        "resolutions": {
+          "items": {
+            "$ref": "#/$defs/MarketResolutionItemResponse"
+          },
+          "title": "Resolutions",
+          "type": "array"
+        }
+      },
+      "required": [
+        "clarification_required",
+        "clarification_reason",
+        "clarification_question",
+        "resolutions"
+      ],
+      "title": "MarketResolutionResponse",
+      "type": "object"
+    },
+    "PricingReadinessItemResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "canonical_service": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Canonical Service"
+        },
+        "market": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Market"
+        },
+        "market_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Market Key"
+        },
+        "market_scope": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Market Scope"
+        },
+        "pricing_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Pricing Status"
+        },
+        "ready": {
+          "title": "Ready",
+          "type": "boolean"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Reason"
+        },
+        "route": {
+          "title": "Route",
+          "type": "string"
+        },
+        "status": {
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "route",
+        "status",
+        "ready",
+        "canonical_service",
+        "market_scope",
+        "market",
+        "market_key",
+        "reason",
+        "pricing_status"
+      ],
+      "title": "PricingReadinessItemResponse",
+      "type": "object"
+    },
+    "PricingReadinessResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "blocked_routes": {
+          "items": {
+            "$ref": "#/$defs/PricingReadinessItemResponse"
+          },
+          "title": "Blocked Routes",
+          "type": "array"
+        },
+        "ready_routes": {
+          "items": {
+            "$ref": "#/$defs/PricingReadinessItemResponse"
+          },
+          "title": "Ready Routes",
+          "type": "array"
+        },
+        "routes": {
+          "items": {
+            "$ref": "#/$defs/PricingReadinessItemResponse"
+          },
+          "title": "Routes",
+          "type": "array"
+        }
+      },
+      "required": [
+        "routes",
+        "ready_routes",
+        "blocked_routes"
+      ],
+      "title": "PricingReadinessResponse",
+      "type": "object"
+    },
+    "TechnicalNeedResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "candidate_routes": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Candidate Routes",
+          "type": "array"
+        },
+        "clarification_required": {
+          "title": "Clarification Required",
+          "type": "boolean"
+        },
+        "domain": {
+          "title": "Domain",
+          "type": "string"
+        },
+        "economic_intent_explicit": {
+          "title": "Economic Intent Explicit",
+          "type": "boolean"
+        },
+        "product_purchase_recommendation": {
+          "title": "Product Purchase Recommendation",
+          "type": "string"
+        },
+        "technical_problem": {
+          "title": "Technical Problem",
+          "type": "string"
+        }
+      },
+      "required": [
+        "domain",
+        "technical_problem",
+        "economic_intent_explicit",
+        "candidate_routes",
+        "product_purchase_recommendation",
+        "clarification_required"
+      ],
+      "title": "TechnicalNeedResponse",
+      "type": "object"
+    }
+  },
+  "additionalProperties": false,
+  "properties": {
+    "caveat": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Caveat"
+    },
+    "clarification_question": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Clarification Question"
+    },
+    "clarification_reason": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Clarification Reason"
+    },
+    "evidence": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DecisionPricingEvidenceResponse"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "evidence_line": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Evidence Line"
+    },
+    "evidence_probe": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/EvidenceProbeResponse"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "headline": {
+      "title": "Headline",
+      "type": "string"
+    },
+    "market_resolution": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MarketResolutionResponse"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "parsed": {
+      "$ref": "#/$defs/DecisionPricingParsedResponse"
+    },
+    "pricing_readiness": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PricingReadinessResponse"
+        },
+        {
+          "type": "null"
+        }
+      ]
+    },
+    "status": {
+      "title": "Status",
+      "type": "string"
+    },
+    "summary": {
+      "title": "Summary",
+      "type": "string"
+    },
+    "unsupported_reason": {
+      "anyOf": [
+        {
+          "type": "string"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "title": "Unsupported Reason"
+    }
+  },
+  "required": [
+    "status",
+    "headline",
+    "summary",
+    "evidence_line",
+    "caveat",
+    "clarification_reason",
+    "clarification_question",
+    "unsupported_reason",
+    "market_resolution",
+    "pricing_readiness",
+    "evidence_probe",
+    "parsed",
+    "evidence"
+  ],
+  "title": "DecisionPricingResponse",
+  "type": "object"
+}

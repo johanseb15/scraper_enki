@@ -15,20 +15,42 @@ IGNORAR = {
     "node_modules", ".mypy_cache", ".coverage"
 }
 
-def imprimir_arbol(dir_path: Path, prefix: str = ""):
-    items = sorted([p for p in dir_path.iterdir() if p.name not in IGNORAR])
+def imprimir_arbol(
+    dir_path: Path,
+    prefix: str = "",
+):
+    items = sorted(
+        [
+            p
+            for p in dir_path.iterdir()
+            if p.name not in IGNORAR
+        ]
+    )
     entries_count = len(items)
-    
+
     for index, path in enumerate(items):
-        is_last = (index == entries_count - 1)
-        connector = "└── " if is_last else "├── "
-        
+        is_last = index == entries_count - 1
+        connector = "`-- " if is_last else "|-- "
+
         if path.is_dir():
-            print(f"{prefix}{connector}📁 {path.name}/")
-            extension = "    " if is_last else "│   "
-            imprimir_arbol(path, prefix + extension)
+            print(
+                f"{prefix}{connector}"
+                f"[DIR] {path.name}/"
+            )
+            extension = (
+                "    "
+                if is_last
+                else "|   "
+            )
+            imprimir_arbol(
+                path,
+                prefix + extension,
+            )
         else:
-            print(f"{prefix}{connector}📄 {path.name}")
+            print(
+                f"{prefix}{connector}"
+                f"[FILE] {path.name}"
+            )
 
 if __name__ == "__main__":
     raiz = Path.cwd()

@@ -16,6 +16,12 @@ class ArtifactClass(str, Enum):
 
 
 @dataclass(frozen=True)
+class ArtifactFreshnessResult:
+    current: bool
+    reasons: tuple[str, ...]
+
+
+@dataclass(frozen=True)
 class ArtifactManifest:
     schema_version: str
     artifact_class: ArtifactClass
@@ -170,3 +176,73 @@ def build_manifest(
 
 def write_manifest(path: str | Path, manifest: ArtifactManifest, *, root: str | Path) -> str:
     return write_deterministic_json(path, manifest.as_dict(), root=root, pretty=True)
+
+
+def verify_artifact_freshness(
+    manifest: ArtifactManifest,
+    *,
+    root: str | Path,
+) -> ArtifactFreshnessResult:
+    root_path = Path(root).resolve()
+    reasons: list[str] = []
+
+    generator = (
+        root_path
+        / manifest.generator_path
+    )
+
+    if not generator.is_file():
+        reasons.append(
+            "GENERATOR_MISSING"
+        )
+    elif (
+        sha256_file(generator)
+        != manifest.generator_sha256
+    ):
+        reasons.append(
+            "GENERATOR_HASH_MISMATCH"
+        )
+
+    for relative, expected_hash in sorted(
+        manifest.input_sha256.items()
+    ):
+        input_path = (
+            root_path
+            / relative
+        )
+
+        if not input_path.is_file():
+            reasons.append(
+                "INPUT_MISSING"
+            )
+            continue
+
+        if (
+            sha256_file(input_path)
+            != expected_hash
+        ):
+            reasons.append(
+                "INPUT_HASH_MISMATCH"
+            )
+
+    output = (
+        root_path
+        / manifest.output_path
+    )
+
+    if not output.is_file():
+        reasons.append(
+            "OUTPUT_MISSING"
+        )
+    elif (
+        sha256_file(output)
+        != manifest.output_sha256
+    ):
+        reasons.append(
+            "OUTPUT_HASH_MISMATCH"
+        )
+
+    return ArtifactFreshnessResult(
+        current=not reasons,
+        reasons=tuple(reasons),
+    )

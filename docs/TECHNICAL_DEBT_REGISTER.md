@@ -403,33 +403,33 @@ The six specifically incorrect clarifications have one control-flow family:
 - BLOCKS_PROMOTION: false.
 - NOTES: `rejected_records`/rejected rows remain distinct from acquisition failures by design. This remediation does not expand acquisition, change pricing thresholds, promote knowledge or modify HUMAN_REAL.
 
-### TD-013 — Green suites under-test real process and cross-stack boundaries
+### TD-013 ? Green suites under-test real process and cross-stack boundaries
 
 - DEBT_ID: `TD-013`
 - TITLE: Green suites under-test real process and cross-stack boundaries.
 - CATEGORY: TESTABILITY, REPRODUCIBILITY, DEVELOPER_EXPERIENCE.
 - SEVERITY: `P2`.
 - CONFIDENCE: HIGH.
-- STATUS: CONFIRMED.
-- EVIDENCE: One true no-PYTHONPATH CLI subprocess regression; most script tests import helpers; frontend mocks a hand-maintained API object; E2E artifact test is not bound to current HEAD/input hashes.
-- REPRODUCTION: Compare CLI tests, frontend decision tests and `test_full_product_e2e_artifact.py` with the actual boundaries.
-- AFFECTED_FILES: `tests/`, `frontend/src/features/decision/__tests__/decision-flow.test.tsx`, `pytest.ini`, `pyproject.toml`.
-- AFFECTED_LAYERS: TESTS, API_FRONTEND, SCRIPTS_OPERABILITY.
-- ROOT_CAUSE: Helper/sprint artifact tests grew faster than executable and schema-contract tests.
-- PRODUCT_IMPACT: Full green coexists with 34 broken CLIs and schema-drift risk.
-- DATA_RISK: Stale historical artifacts can be validated as current.
-- SAFETY_RISK: Indirect escape path for future drift.
-- MAINTENANCE_COST: HIGH.
-- LIKELIHOOD: HIGH.
-- BLAST_RADIUS: Developer workflow, release and operational commands.
-- DEPENDENCIES: TD-005, TD-008.
-- PROPOSED_FIX: Parameterized CLI subprocess matrix, generated/shared API contract, local cross-stack smoke and artifact freshness hashes.
-- REGRESSION_TEST_REQUIRED: Boundary suite must reproduce a known pre-fix failure and protect external contracts.
+- STATUS: RESOLVED by `real-boundary-test-matrix-v1`.
+- EVIDENCE: Repository-wide direct CLI coverage now executes every argparse `__main__` surface as a real subprocess from repository root with `PYTHONPATH` removed; non-argparse entrypoints are explicitly classified and the safe `estado_repo.py` boundary is executed directly. This matrix reproduced a real Windows `cp1252` `UnicodeEncodeError` that the prior green suite did not detect and the CLI was made encoding-safe. `/decision/pricing` now has an explicit Pydantic response contract and FastAPI `response_model`, producing a concrete OpenAPI schema instead of `{}`. A deterministic frontend JSON Schema projection and parity tests bind the frontend boundary to that backend contract, while the TypeScript response surface includes the current nested API fields. Artifact lifecycle now exposes hash-based freshness verification for generator, inputs and output; the pre-existing `full_product_e2e_v1.json` is explicitly treated as historical evidence rather than current-HEAD proof.
+- REPRODUCTION: `tests/test_td013_cli_boundary_matrix.py` executes the direct CLI boundary; `tests/test_td013_decision_api_contract.py`, `tests/test_td013_frontend_api_schema_parity.py` and `tests/test_td013_frontend_type_surface.py` protect API/frontend parity; `tests/test_td013_artifact_freshness.py`, `tests/test_full_product_e2e_artifact.py` and `tests/test_full_product_e2e.py` distinguish reproducible current-state checks from historical snapshots.
+- AFFECTED_FILES: `scripts/estado_repo.py`, `scripts/export_decision_pricing_schema.py`, `src/api/decision_pricing_contract.py`, `src/api/main.py`, `frontend/src/features/decision/types.ts`, `frontend/src/features/decision/decision-pricing.schema.json`, `src/infraestructura/artifact_lifecycle.py`, `tests/test_td013_cli_boundary_matrix.py`, `tests/test_td013_decision_api_contract.py`, `tests/test_td013_frontend_api_schema_parity.py`, `tests/test_td013_frontend_type_surface.py`, `tests/test_td013_artifact_freshness.py`, `tests/test_full_product_e2e_artifact.py`, `tests/test_full_product_e2e.py`.
+- AFFECTED_LAYERS: TESTS, API_FRONTEND, SCRIPTS_OPERABILITY, ARTIFACT_LIFECYCLE.
+- ROOT_CAUSE: Helper/import-level and manually duplicated contract tests grew faster than true executable-process, HTTP-schema and artifact-freshness boundaries, allowing a fully green suite to coexist with broken direct execution, cross-stack schema drift or stale historical artifacts.
+- PRODUCT_IMPACT: Resolved. A green suite now exercises the operator-facing CLI boundary, binds the public pricing response to a formal backend schema and frontend parity contract, and distinguishes historical E2E evidence from current executable product behavior.
+- DATA_RISK: Reduced. Historical artifacts cannot silently satisfy currentness semantics, and modified/missing generator, input or output files fail freshness verification.
+- SAFETY_RISK: Reduced; boundary failures are fail-closed and no pricing threshold, evidence admission, promotion policy or economic truth was changed.
+- MAINTENANCE_COST: Reduced by repository-discovered CLI coverage, one backend schema authority and reusable artifact-freshness verification.
+- LIKELIHOOD: LOW after remediation; new argparse entrypoints enter the process matrix automatically and unclassified non-argparse entrypoints fail the classification contract.
+- BLAST_RADIUS: CLI operability, `/decision/pricing`, frontend decision types/schema and deterministic artifact verification.
+- DEPENDENCIES: TD-005 and TD-008, both resolved before this remediation.
+- IMPLEMENTED_FIX: Added a real subprocess CLI matrix with `PYTHONPATH` removed and explicit side-effectful entrypoint classification; fixed the Windows console boundary exposed by that matrix; introduced strict Pydantic pricing-response models and FastAPI `response_model`; exported a deterministic backend-derived JSON Schema to the frontend and protected exact schema/type parity; added reusable generator/input/output hash freshness verification; and classified the legacy full-product E2E JSON as a historical snapshot with valid Git provenance rather than a current manifest.
+- REGRESSION_TEST: TD-013 integrated focused suite passed `82/82`; final backend suite passed `1137/1137`; frontend TypeScript check passed, Vitest passed `10/10`, and Next.js production build completed successfully. Artifact lifecycle compatibility remained green with existing TD-008 contracts.
 - ESTIMATED_SCOPE: L.
-- BLOCKS_MARKET_ACQUISITION: false.
+- BLOCKS_MARKET_ACQUISITION: false for TD-013 after remediation; remaining technical debt still controls the program-level acquisition gate.
 - BLOCKS_FIELD_TESTING: false.
-- BLOCKS_PROMOTION: true.
-- NOTES: The 844-test breadth is useful; boundary selection is the debt.
+- BLOCKS_PROMOTION: false for TD-013 after remediation; promotion remains governed by the remaining program constraints.
+- NOTES: No acquisition volume was expanded, no pricing/readiness threshold changed, no knowledge was promoted, no HUMAN_REAL evidence was modified, and no historical artifact was rewritten or falsely rebound to the current HEAD. `ArtifactManifest.commit_sha` remains provenance; currentness is verified through reproducible generator/input/output identity rather than a circular same-commit SHA requirement.
 
 ### TD-014 — README and architecture baseline materially diverge from runtime
 

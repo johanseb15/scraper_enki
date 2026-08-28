@@ -4,6 +4,7 @@ from fastapi import Depends, FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
 
+from src.api.decision_pricing_contract import DecisionPricingResponse
 from src.aplicacion.enki_pricing_query_service import resolver_consulta_pricing
 from src.aplicacion.enki_pricing_response import presentar_resultado_pricing
 from src.aplicacion.pricing_cohort_loader import cargar_cohortes_pricing_runtime
@@ -200,7 +201,10 @@ def _serialize_decision_result(result):
     }
 
 
-@app.post("/decision/pricing")
+@app.post(
+    "/decision/pricing",
+    response_model=DecisionPricingResponse,
+)
 def decision_pricing(
     payload: DecisionPricingRequest,
     cohortes: tuple[list[CohortePricing], list[CohortePricing]] = Depends(obtener_cohortes_pricing),
