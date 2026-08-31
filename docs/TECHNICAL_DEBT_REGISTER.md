@@ -466,26 +466,26 @@ The six specifically incorrect clarifications have one control-flow family:
 - CATEGORY: DEPENDENCIES, DEPRECATIONS, DEVELOPER_EXPERIENCE, CONFIGURATION.
 - SEVERITY: `P3`.
 - CONFIDENCE: HIGH.
-- STATUS: CONFIRMED.
-- EVIDENCE: pytest ignores pyproject pytest config because pytest.ini wins; backend emits Starlette/asyncio deprecation; frontend emits Vite CJS deprecation; full transitive requirements include unreferenced `httpx2`; pyproject lacks project/build metadata. `pip check` is green.
-- REPRODUCTION: Run backend/frontend tests, inspect both pytest configs and search imports for `httpx2`.
-- AFFECTED_FILES: `requirements.txt`, `pyproject.toml`, `pytest.ini`, `frontend/package.json`, `frontend/vitest.config.ts`, `frontend/pnpm-lock.yaml`.
+- STATUS: RESOLVED by `dependency-config-consolidation-v1`.
+- EVIDENCE: `pyproject.toml` is now the only pytest authority and exposes explicit build/project metadata. The dead hidden pytest coverage options were removed instead of activated without `pytest-cov`. Frontend Vitest no longer emits the Vite CJS Node API deprecation after declaring the frontend package as ESM. `httpx2` was retained because `starlette.testclient` imports it in this environment; `pip check` remains green.
+- REPRODUCTION: Run `python -m pytest tests/test_td015_dependency_configuration.py -q`, `python -m pytest -q`, `corepack pnpm test -- --run`, `corepack pnpm lint`, `corepack pnpm build`, dependency metadata probes for FastAPI/Starlette/httpx/httpx2 and `python -m pip check`.
+- AFFECTED_FILES: `pyproject.toml`, `pytest.ini`, `frontend/package.json`, `tests/test_td015_dependency_configuration.py`.
 - AFFECTED_LAYERS: CONFIGURATION, TESTS, FRONTEND, PACKAGING.
-- ROOT_CAUSE: Incremental environment snapshots without direct dependency ownership or a single config authority.
-- PRODUCT_IMPACT: Warnings mask future incompatibility and packaging stays implicit.
+- ROOT_CAUSE: Incremental environment snapshots left a hidden pytest authority, implicit package metadata and a frontend CJS module boundary.
+- PRODUCT_IMPACT: Test configuration is explicit, package metadata exists, and the verified frontend deprecation warning no longer masks future incompatibility.
 - DATA_RISK: NONE.
 - SAFETY_RISK: LOW.
-- MAINTENANCE_COST: MEDIUM.
-- LIKELIHOOD: MEDIUM.
+- MAINTENANCE_COST: LOW after remediation.
+- LIKELIHOOD: LOW after remediation.
 - BLAST_RADIUS: Setup, tests and upgrades.
 - DEPENDENCIES: TD-005.
-- PROPOSED_FIX: Prove direct dependencies, remove unused entries, establish package metadata/one pytest authority, then isolate upgrades.
-- REGRESSION_TEST_REQUIRED: `pip check`, full backend, frontend lint/test/build and CLI/package smoke.
+- IMPLEMENTED_FIX: Removed `pytest.ini`, kept effective pytest behavior in `pyproject.toml` with `addopts = "-v"`, added `[build-system]` and `[project]` metadata, removed inactive coverage configuration, declared `frontend/package.json` as ESM, and preserved `requirements.txt` because the suspected `httpx2` removal was refuted by runtime metadata/import probes.
+- REGRESSION_TEST: TD-015 configuration test asserts one pytest authority, explicit backend metadata, absence of inactive coverage config and frontend ESM declaration. Full backend suite, frontend lint/test/build and `pip check` are green.
 - ESTIMATED_SCOPE: M.
 - BLOCKS_MARKET_ACQUISITION: false.
 - BLOCKS_FIELD_TESTING: false.
 - BLOCKS_PROMOTION: false.
-- NOTES: No dependency update is part of this audit.
+- NOTES: Closed without dependency upgrades, lockfile churn, acquisition, HUMAN_REAL mutation, pricing threshold changes, knowledge promotion or frontend product behavior changes.
 
 ### TD-016 — Legacy compatibility modules and unused fixture adapters obscure canonical ownership
 
@@ -560,7 +560,7 @@ All P0 debts are resolved. TD-008 no longer blocks market acquisition. Promotion
 ### WAVE 4 — Deprecations and maintenance
 
 1. **CURRENT STATE DOCUMENTATION v1 - COMPLETE** - TD-014; Rector precedence, verifiable current-state commands and the live decision runtime are now documented without volatile baselines.
-2. **DEPENDENCY CONFIG CONSOLIDATION v1** — TD-015; dependency CLI; risk medium; direct dependencies/package metadata/one pytest authority and causal deprecation upgrades.
+2. **DEPENDENCY CONFIG CONSOLIDATION v1 - COMPLETE** - TD-015; pyproject is the single pytest authority, backend metadata is explicit, `httpx2` ownership is documented, and the frontend Vite CJS warning is gone.
 3. **LEGACY SURFACE RETIREMENT v1** — TD-016; dependency boundary tests; risk low; one canonical scraper namespace and no unused fixture adapter.
 
 Estimated consolidation: **18 small causal sprints** (the broad interpretation item is explicitly split into three). No wave is authorized by this document.
@@ -581,7 +581,7 @@ Estimated consolidation: **18 small causal sprints** (the broad interpretation i
 
 ## Exact next remediation sprint
 
-**DEPENDENCY CONFIG CONSOLIDATION v1**. It closes only TD-015. Prove direct dependencies, establish one pytest configuration authority, add explicit package metadata and isolate deprecation remediation without mixing unrelated upgrades.
+**PRICE SCOPE REGISTRY ALIGNMENT v1**. It closes only the remaining TD-011 registry/documentation alignment; do not reopen functional scope parsing without fresh evidence of a runtime defect.
 
 
 ## Explicitly not debt
