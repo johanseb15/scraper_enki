@@ -174,7 +174,7 @@ The six specifically incorrect clarifications have one control-flow family:
 - ESTIMATED_SCOPE: M.
 - BLOCKS_MARKET_ACQUISITION: false for TD-004; no remaining blocker is attributed to TD-008.
 - BLOCKS_FIELD_TESTING: false; supervised field testing remains non-promotional and the runtime currently has zero admitted evidence.
-- BLOCKS_PROMOTION: false for TD-004; TD-011 and TD-013 still block the program gate.
+- BLOCKS_PROMOTION: false for TD-004; candidate-validation constraints still block the program gate.
 - NOTES: Closed without acquisition, thresholds, evidence additions, historical rewrites, HUMAN_REAL mutation, promotion or runtime learning writes. See `data/evaluation/commercial_context_single_truth_v1.json`.
 
 ### TD-005 — Repository-wide direct CLI/import contract is not defined or enforced
@@ -354,26 +354,26 @@ The six specifically incorrect clarifications have one control-flow family:
 - CATEGORY: DUPLICATED_LOGIC, ARCHITECTURAL_CONSISTENCY, MAINTAINABILITY.
 - SEVERITY: `P2`.
 - CONFIDENCE: HIGH.
-- STATUS: CONFIRMED.
-- EVIDENCE: User input uses typed `normalize_price_scope`; source/cohort/adapters use overlapping but different `infer_price_scope` regexes.
-- REPRODUCTION: Search all consumers and compare the two implementations/pattern sets.
+- STATUS: RESOLVED by `price-scope-single-engine-v1`.
+- EVIDENCE: Functional remediation is present and green: parser/extractor/context, adapter projection and single scope engine tests all pass against the current runtime. TD-006 already records TD-011 as resolved before final interpretation recovery.
+- REPRODUCTION: Run `python -m pytest tests/test_td011_adapter_projection.py tests/test_td011_parser_extractor_context.py tests/test_td011_single_scope_engine.py -q`.
 - AFFECTED_FILES: `src/dominio/price_scope_contract.py`, `src/aplicacion/pricing_dimensions.py`, `src/aplicacion/parser_consulta_pricing.py`, `scripts/build_pricing_statistics.py`, `src/infraestructura/economic_dimensions_v2_adapter.py`.
 - AFFECTED_LAYERS: DOMAIN, APPLICATION, INFRASTRUCTURE.
 - ROOT_CAUSE: Source cadence inference survived introduction of the typed user contract.
-- PRODUCT_IMPACT: Equivalent phrases can normalize differently by origin.
-- DATA_RISK: Cohort keys drift after vocabulary changes.
-- SAFETY_RISK: Current UNKNOWN behavior fails closed; no new unsafe decision demonstrated.
-- MAINTENANCE_COST: HIGH.
-- LIKELIHOOD: MEDIUM.
-- BLAST_RADIUS: Parser, dimensions, cohorts and reconciliation.
+- PRODUCT_IMPACT: Equivalent phrases normalize through one scope contract instead of drifting by origin.
+- DATA_RISK: UNKNOWN behavior remains fail-closed and no scope fact is fabricated.
+- SAFETY_RISK: LOW after remediation.
+- MAINTENANCE_COST: LOW after remediation.
+- LIKELIHOOD: LOW after remediation.
+- BLAST_RADIUS: User parsing, source dimensions, cohort keys and adapter projection.
 - DEPENDENCIES: None.
-- PROPOSED_FIX: One typed semantic engine with origin-specific provenance/raw basis.
-- REGRESSION_TEST_REQUIRED: Shared phrase matrix and origin provenance; UNKNOWN remains insufficient.
+- IMPLEMENTED_FIX: Price scope normalization is centralized in the typed scope contract with distinct origins and UNKNOWN fail-closed behavior preserved across parser, extractor context and adapter projection.
+- REGRESSION_TEST: TD-011 adapter projection, parser/extractor context and single scope engine suites cover scope parity and fail-closed boundaries.
 - ESTIMATED_SCOPE: M.
 - BLOCKS_MARKET_ACQUISITION: false.
 - BLOCKS_FIELD_TESTING: false.
-- BLOCKS_PROMOTION: true.
-- NOTES: Distinct provenance is correct; duplicate semantic rules are not.
+- BLOCKS_PROMOTION: false.
+- NOTES: This is formal registry alignment only; no runtime TD-011 code was reopened in this alignment commit.
 
 ### TD-012 - Acquisition boundaries collapse exceptions into counters without causal diagnostics
 
@@ -528,7 +528,7 @@ TD-005 CLI contract ──────────> TD-015 dependency/config
 TD-013 boundary tests ────────> TD-016 legacy retirement
 ```
 
-All P0 debts are resolved. TD-008 no longer blocks market acquisition. Promotion remains disabled; TD-013 is resolved, while TD-011 registry alignment and the existing candidate-validation constraints remain.
+All P0 debts are resolved. TD-008, TD-011, TD-013 and TD-015 are resolved. Promotion remains disabled by candidate-validation constraints, not by unresolved technical-debt gates.
 
 ## Remediation waves
 
@@ -550,7 +550,7 @@ All P0 debts are resolved. TD-008 no longer blocks market acquisition. Promotion
 
 1. **OFFER OBSERVATION IDENTITY v1 — COMPLETE** — TD-009; stable multi-price/snapshot identity with backwards-compatible loading.
 2. **PROVIDER INDEPENDENCE CONTRACT v1 — COMPLETE** — TD-010; stable provider ids feed `providers_n`, source cardinality is exposed separately, and UNKNOWN/CONFLICTED provider identity fails closed.
-3. **PRICE SCOPE SINGLE ENGINE v1** — TD-011; risk medium; one semantic engine with distinct origins and UNKNOWN fail-closed.
+3. **PRICE SCOPE SINGLE ENGINE v1 - COMPLETE** - TD-011; one semantic engine with distinct origins and UNKNOWN fail-closed, formally aligned in the register.
 
 ### WAVE 3 — Architecture and test consolidation
 
@@ -577,11 +577,11 @@ Estimated consolidation: **18 small causal sprints** (the broad interpretation i
 
 ### SAFE_FOR_KNOWLEDGE_PROMOTION
 
-`NO`. TD-013 is resolved. TD-011 still requires registry alignment with its completed functional remediation; additionally, the current candidate remains `FAIL_SHADOW_VALIDATION`. Existing currency conflicts remain preserved and no promotion is authorized.
+`NO`. TD-011 and TD-013 are resolved; promotion remains disabled because the current candidate remains `FAIL_SHADOW_VALIDATION`. Existing currency conflicts remain preserved and no promotion is authorized.
 
 ## Exact next remediation sprint
 
-**PRICE SCOPE REGISTRY ALIGNMENT v1**. It closes only the remaining TD-011 registry/documentation alignment; do not reopen functional scope parsing without fresh evidence of a runtime defect.
+**LEGACY SURFACE RETIREMENT v1**. It closes only TD-016. Prove real consumers, declare canonical ownership and remove only surfaces demonstrated as dead or test-only after migration.
 
 
 ## Explicitly not debt
