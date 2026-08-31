@@ -1,5 +1,5 @@
 from unittest.mock import Mock
-from src.scrapers.baires_cloud import BairesCloudScraper
+from src.infraestructura.scrapers.baires_cloud import BairesCloudScraper
 
 
 def test_bairescloud_scraper_descarga_y_extrae_servicios():

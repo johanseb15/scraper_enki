@@ -4,7 +4,7 @@ from src.aplicacion.procesador_ofertas import ProcesadorOfertas
 from src.infraestructura.sqlite.repositorio_sqlite_ofertas import (
     RepositorioSQLiteOfertas,
 )
-from src.scrapers.baires_cloud import extraer_precios_bairescloud
+from src.infraestructura.scrapers.baires_cloud import extraer_precios_bairescloud
 
 
 def test_bairescloud_puede_guardarse_en_sqlite(tmp_path):

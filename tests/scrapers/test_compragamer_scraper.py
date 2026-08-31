@@ -5,8 +5,8 @@ from src.aplicacion.dto.oferta_dto import OfertaDTO
 from src.infraestructura.scrapers.compragamer_playwright_scraper import (
     CompraGamerPlaywrightScraper as CompraGamerPlaywrightScraperOficial,
 )
-from src.scrapers.compragamer_parser import parsear_ofertas_compragamer
-from src.scrapers.compragamer_playwright_scraper import (
+from src.infraestructura.scrapers.compragamer_parser import parsear_ofertas_compragamer
+from src.infraestructura.scrapers.compragamer_playwright_scraper import (
     CompraGamerPlaywrightScraper as CompraGamerPlaywrightScraperLegacy,
 )
 

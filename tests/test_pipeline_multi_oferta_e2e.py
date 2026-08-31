@@ -3,7 +3,7 @@ from pathlib import Path
 from src.aplicacion.procesador_ofertas import ProcesadorOfertas
 from src.dominio.servicios import ServicioCanonico
 from src.infraestructura.sqlite.repositorio_sqlite_ofertas import RepositorioSQLiteOfertas
-from src.scrapers.vida_informatica import VidaInformaticaScraper
+from src.infraestructura.scrapers.vida_informatica import VidaInformaticaScraper
 
 
 class FakeDownloader:

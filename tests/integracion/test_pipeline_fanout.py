@@ -8,7 +8,7 @@ from src.infraestructura.sqlite.repositorio_sqlite_ofertas import (
 )
 from src.pipeline import PipelineOfertas
 from src.reporte import generar_resumen_servicio
-from src.scrapers.base import BaseScraper
+from src.infraestructura.scrapers.base import BaseScraper
 
 
 class ScraperFilaConModalidades(BaseScraper):

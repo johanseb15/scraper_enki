@@ -3,7 +3,7 @@ from datetime import date
 from src.aplicacion.dto.oferta_dto import OfertaDTO
 from src.metricas import MetricasEjecucion
 from src.pipeline import PipelineOfertas
-from src.scrapers.base import BaseScraper
+from src.infraestructura.scrapers.base import BaseScraper
 
 
 class RepositorioEnMemoria:

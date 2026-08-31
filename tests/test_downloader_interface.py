@@ -1,6 +1,6 @@
 from unittest.mock import Mock
 
-from src.scrapers.vida_informatica import VidaInformaticaScraper
+from src.infraestructura.scrapers.vida_informatica import VidaInformaticaScraper
 
 
 def test_scraper_utiliza_un_downloader_inyectado():

@@ -494,26 +494,26 @@ The six specifically incorrect clarifications have one control-flow family:
 - CATEGORY: MAINTAINABILITY, DEAD_CODE, PARALLEL_SOURCES_OF_TRUTH.
 - SEVERITY: `P3`.
 - CONFIDENCE: HIGH.
-- STATUS: CONFIRMED.
-- EVIDENCE: `src/scrapers` wraps `src/infraestructura/scrapers` with wildcard exports/fallback; tests use both paths; frontend `interpret-quote.ts` returns fixtures and has no live consumer.
-- REPRODUCTION: Inventory wrappers and search consumers of `src.scrapers`, `interpretQuoteForReview` and `createDecisionReadout`.
-- AFFECTED_FILES: `src/scrapers/`, `src/infraestructura/scrapers/`, `tests/`, `frontend/src/features/decision/interpret-quote.ts`, `frontend/src/features/decision/fixtures/support-quote.ts`.
+- STATUS: RESOLVED by `legacy-surface-retirement-v1`.
+- EVIDENCE: Runtime and scripts already used the canonical `src.infraestructura.scrapers` namespace. Remaining `src.scrapers` consumers were tests, so they were migrated to the canonical namespace before deleting the legacy wrappers. Frontend `interpret-quote.ts` had no live consumer and was removed; `support-quote.ts` is still consumed by review page/flow as explicit demo input and was preserved.
+- REPRODUCTION: Run `python -m pytest tests/test_td016_legacy_surface_retirement.py -q`, search for `src.scrapers`, `interpretQuoteForReview` and `createDecisionReadout`, and run affected scraper/pipeline plus frontend lint/test/build suites.
+- AFFECTED_FILES: `src/scrapers/`, `tests/`, `frontend/src/features/decision/interpret-quote.ts`, `frontend/src/features/decision/fixtures/support-quote.ts`, `docs/TECHNICAL_DEBT_REGISTER.md`.
 - AFFECTED_LAYERS: INFRASTRUCTURE, TESTS, FRONTEND.
-- ROOT_CAUSE: Brownfield compatibility lacks a retirement ledger; prototype adapters remained after API integration.
-- PRODUCT_IMPACT: Developers can extend the wrong namespace or mistake fixtures for product logic.
+- ROOT_CAUSE: Brownfield compatibility lacked a retirement ledger; prototype adapters remained after API integration.
+- PRODUCT_IMPACT: Developers now have one scraper namespace to extend, and the frontend no longer carries an unused fixture adapter that can be mistaken for product logic.
 - DATA_RISK: NONE.
 - SAFETY_RISK: LOW.
-- MAINTENANCE_COST: MEDIUM.
-- LIKELIHOOD: MEDIUM.
-- BLAST_RADIUS: Scraper maintenance and frontend navigation.
+- MAINTENANCE_COST: LOW after remediation.
+- LIKELIHOOD: LOW after remediation.
+- BLAST_RADIUS: Scraper maintenance and frontend review flow defaults.
 - DEPENDENCIES: TD-013.
-- PROPOSED_FIX: Prove consumers, declare canonical ownership, use explicit temporary deprecations, migrate tests, remove only proven-dead code.
-- REGRESSION_TEST_REQUIRED: Canonical/temporary compatibility imports and frontend build/dead-code checks.
+- IMPLEMENTED_FIX: Migrated tests from `src.scrapers` to `src.infraestructura.scrapers`, removed the legacy wrapper package, removed the dead frontend interpretation adapter, preserved the live support quote fixture, and added a TD-016 contract test that prevents reintroducing those legacy surfaces.
+- REGRESSION_TEST: TD-016 retirement contract, architecture checks, affected scraper/pipeline tests, frontend lint/test/build and full backend suite.
 - ESTIMATED_SCOPE: S.
 - BLOCKS_MARKET_ACQUISITION: false.
 - BLOCKS_FIELD_TESTING: false.
 - BLOCKS_PROMOTION: false.
-- NOTES: No compatibility file is removed during this audit.
+- NOTES: Closed without changing scraper behavior, acquisition, HUMAN_REAL, pricing thresholds, evidence admission, knowledge promotion or frontend API/schema contracts.
 
 ## Dependency graph
 
@@ -528,7 +528,7 @@ TD-005 CLI contract ──────────> TD-015 dependency/config
 TD-013 boundary tests ────────> TD-016 legacy retirement
 ```
 
-All P0 debts are resolved. TD-008, TD-011, TD-013 and TD-015 are resolved. Promotion remains disabled by candidate-validation constraints, not by unresolved technical-debt gates.
+TECHNICAL_DEBT_PROGRAM=CLOSED. TD-001 through TD-016 are resolved. Promotion remains disabled by candidate-validation constraints, not by unresolved technical-debt gates.
 
 ## Remediation waves
 
@@ -561,7 +561,7 @@ All P0 debts are resolved. TD-008, TD-011, TD-013 and TD-015 are resolved. Promo
 
 1. **CURRENT STATE DOCUMENTATION v1 - COMPLETE** - TD-014; Rector precedence, verifiable current-state commands and the live decision runtime are now documented without volatile baselines.
 2. **DEPENDENCY CONFIG CONSOLIDATION v1 - COMPLETE** - TD-015; pyproject is the single pytest authority, backend metadata is explicit, `httpx2` ownership is documented, and the frontend Vite CJS warning is gone.
-3. **LEGACY SURFACE RETIREMENT v1** — TD-016; dependency boundary tests; risk low; one canonical scraper namespace and no unused fixture adapter.
+3. **LEGACY SURFACE RETIREMENT v1 - COMPLETE** - TD-016; one canonical scraper namespace remains and the unused frontend fixture adapter is retired.
 
 Estimated consolidation: **18 small causal sprints** (the broad interpretation item is explicitly split into three). No wave is authorized by this document.
 
@@ -581,7 +581,7 @@ Estimated consolidation: **18 small causal sprints** (the broad interpretation i
 
 ## Exact next remediation sprint
 
-**LEGACY SURFACE RETIREMENT v1**. It closes only TD-016. Prove real consumers, declare canonical ownership and remove only surfaces demonstrated as dead or test-only after migration.
+**END-TO-END UNDERSTANDING MODEL v1**. Start phase 2: complete the real-input understanding model end to end before any economic acquisition, pricing expansion or knowledge promotion.
 
 
 ## Explicitly not debt

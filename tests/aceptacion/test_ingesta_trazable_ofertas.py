@@ -14,7 +14,7 @@ from src.infraestructura.sqlite.repositorio_sqlite_ofertas import (
     RepositorioSQLiteOfertas,
 )
 from src.pipeline import PipelineOfertas
-from src.scrapers.base import BaseScraper
+from src.infraestructura.scrapers.base import BaseScraper
 
 
 def test_extraer_una_fila_sin_perder_sus_precios_originales():

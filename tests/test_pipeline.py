@@ -6,7 +6,7 @@ from src.infraestructura.sqlite.repositorio_sqlite_ofertas import (
 from src.pipeline import PipelineOfertas
 from src.presentacion import generar_reporte_texto
 from src.reporte import generar_resumen_servicio
-from src.scrapers.vida_informatica import VidaInformaticaScraper
+from src.infraestructura.scrapers.vida_informatica import VidaInformaticaScraper
 
 
 class DownloaderFixture:

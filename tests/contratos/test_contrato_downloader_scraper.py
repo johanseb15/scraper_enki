@@ -1,6 +1,6 @@
-from src.scrapers.vida_informatica import VidaInformaticaScraper
-from src.scrapers.venex import VenexScraper
-from src.scrapers.baires_cloud import BairesCloudScraper
+from src.infraestructura.scrapers.vida_informatica import VidaInformaticaScraper
+from src.infraestructura.scrapers.venex import VenexScraper
+from src.infraestructura.scrapers.baires_cloud import BairesCloudScraper
 
 
 class FakeDownloader:

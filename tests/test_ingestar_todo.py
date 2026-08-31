@@ -8,7 +8,7 @@ from src.dominio.oferta import Oferta
 from src.infraestructura.sqlite.repositorio_sqlite_ofertas import (
     RepositorioSQLiteOfertas,
 )
-from src.scrapers.base import BaseScraper
+from src.infraestructura.scrapers.base import BaseScraper
 
 
 class ScraperCompraGamerFixture(BaseScraper):

@@ -1,4 +1,4 @@
-from src.scrapers.venex import VenexScraper
+from src.infraestructura.scrapers.venex import VenexScraper
 from src.aplicacion.dto.oferta_dto import OfertaDTO
 
 

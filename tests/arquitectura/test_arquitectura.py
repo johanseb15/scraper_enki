@@ -81,7 +81,7 @@ def test_aplicacion_no_depende_de_sqlite_directamente():
 
 def test_pipeline_usa_ofertadto_como_contrato():
     from src.infraestructura.scrapers.base import BaseScraper as BaseScraperOficial
-    from src.scrapers.base import BaseScraper as BaseScraperLegacy
+    from src.infraestructura.scrapers.base import BaseScraper as BaseScraperLegacy
 
     assert BaseScraperLegacy is BaseScraperOficial
 
