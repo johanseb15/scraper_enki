@@ -575,9 +575,17 @@ def parse_pricing_query(raw_text:str,*,language_evidence_type:str="UNKNOWN")->Pa
         if item.origin
         is UserQueryMonetaryComponentOrigin.EXPLICIT
     )
+    monetary_composition_resolved = {
+        UserQueryMonetaryComponentRole.TOTAL_CHARGED,
+        UserQueryMonetaryComponentRole.MATERIAL_COST,
+        UserQueryMonetaryComponentRole.LABOR,
+    } <= component_roles
     if (
-        _has_multiple_monetary_mentions(raw_text)
-        or len(explicit_components) > 1
+        (
+            _has_multiple_monetary_mentions(raw_text)
+            or len(explicit_components) > 1
+        )
+        and not monetary_composition_resolved
     ):
         reasons+=["MULTIPLE_MONETARY_MENTIONS"]
         question="Detecté más de un monto en la consulta. ¿Qué importe querés evaluar y a qué unidad de cobro corresponde?"

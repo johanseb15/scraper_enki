@@ -60,7 +60,7 @@ def test_human_real_query_preserves_total_material_and_derived_labor():
 
     assert parsed.price.currency == "UNKNOWN"
     assert parsed.metadata.clarification_required is True
-    assert "MULTIPLE_MONETARY_MENTIONS" in (
+    assert "MULTIPLE_MONETARY_MENTIONS" not in (
         parsed.metadata.clarification_reason or ""
     )
     assert "UNKNOWN_CURRENCY" in (
@@ -285,3 +285,57 @@ def test_public_api_uses_total_but_remains_fail_closed():
     ]
 
     assert body["evidence"] is None
+
+def test_resolved_composition_does_not_raise_false_multiple_money_ambiguity():
+    parsed = parse_pricing_query(
+        HUMAN_REAL_COMPOSITION_QUERY,
+        language_evidence_type="OBSERVED_USER",
+    )
+
+    roles = {
+        item.role.value
+        for item in parsed.monetary_components
+    }
+
+    assert roles == {
+        "TOTAL_CHARGED",
+        "MATERIAL_COST",
+        "LABOR",
+    }
+
+    reasons = tuple(
+        item
+        for item in (
+            parsed.metadata.clarification_reason
+            or ""
+        ).split("|")
+        if item
+    )
+
+    assert (
+        "MULTIPLE_MONETARY_MENTIONS"
+        not in reasons
+    )
+
+    assert "MISSING_PROVINCE" in reasons
+    assert "UNKNOWN_CURRENCY" in reasons
+
+    assert parsed.metadata.clarification_question == (
+        "\u00bfEn qu\u00e9 provincia se realiza el servicio?"
+    )
+
+    envelope = project_user_query_understanding(
+        parsed,
+    )
+
+    assert envelope.status.value == "PARTIAL"
+
+    assert (
+        "MULTIPLE_MONETARY_MENTIONS"
+        not in envelope.clarification_reasons
+    )
+
+    assert envelope.clarification_reasons == (
+        "MISSING_PROVINCE",
+        "UNKNOWN_CURRENCY",
+    )
