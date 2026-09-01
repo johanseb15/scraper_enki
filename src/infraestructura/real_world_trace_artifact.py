@@ -29,7 +29,7 @@ def build_real_world_trace_artifacts(root, output_dir):
         root / "data/remote_pricing_stats_lineage_v1.csv",
         require_runtime_lineage_gate=True,
     )
-    trace_path = output / "real_world_query_traces_v1.jsonl"
+    trace_path = output / "real_world_query_traces_v2.jsonl"
     intake_by_id = {}
     telemetry_by_id = {}
     for record in corpus:

@@ -64,8 +64,8 @@ def test_real_world_artifact_build_separates_deterministic_trace_and_telemetry(t
     first_metrics = build_real_world_trace_artifacts(ROOT, first)
     second_metrics = build_real_world_trace_artifacts(ROOT, second)
 
-    first_trace = first / "real_world_query_traces_v1.jsonl"
-    second_trace = second / "real_world_query_traces_v1.jsonl"
+    first_trace = first / "real_world_query_traces_v2.jsonl"
+    second_trace = second / "real_world_query_traces_v2.jsonl"
     first_telemetry = first / "real_world_query_trace_telemetry_v1.jsonl"
     second_telemetry = second / "real_world_query_trace_telemetry_v1.jsonl"
 
@@ -76,7 +76,7 @@ def test_real_world_artifact_build_separates_deterministic_trace_and_telemetry(t
     telemetry = [json.loads(line) for line in first_telemetry.read_text(encoding="utf-8").splitlines()]
 
     assert len(traces) == len(telemetry) == 50
-    assert all(item["schema_version"] == "real-world-query-trace-semantic-v1" for item in traces)
+    assert all(item["schema_version"] == "real-world-query-trace-semantic-v2" for item in traces)
     assert all("total_latency_ms" not in item for item in traces)
     assert all("trace_overhead_ms" not in item for item in traces)
     assert all("elapsed_ms" not in stage for item in traces for stage in item["stages"])

@@ -50,7 +50,7 @@ def test_trace_cli_writes_only_to_explicit_destination(tmp_path):
         cwd=ROOT, text=True, capture_output=True,
     )
     assert process.returncode == 0, process.stderr
-    assert (tmp_path / "real_world_query_traces_v1.jsonl").exists()
+    assert (tmp_path / "real_world_query_traces_v2.jsonl").exists()
     assert (tmp_path / "real_world_artifact_manifest_v1.json").exists()
     assert (tmp_path / "real_world_query_trace_telemetry_v1.jsonl").exists()
     assert (tmp_path / "real_world_telemetry_manifest_v1.json").exists()

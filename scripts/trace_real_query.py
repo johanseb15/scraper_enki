@@ -20,7 +20,7 @@ def main():
     parser.add_argument("--founder-note")
     parser.add_argument("--expected-intent")
     parser.add_argument("--observed-problem")
-    parser.add_argument("--out", default="data/field/human_real_query_traces_v1.jsonl")
+    parser.add_argument("--out", default="data/field/human_real_query_traces_v2.jsonl")
     parser.add_argument("--cases-out", default="data/field/human_real_cases_v1.jsonl")
     args = parser.parse_args()
     local, remote = cargar_cohortes_pricing_runtime()

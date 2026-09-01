@@ -10,7 +10,7 @@ ROOT = Path(__file__).parents[1]
 
 def test_real_pipeline_corpus_builds_labeled_append_only_traces(tmp_path):
     metrics = build_real_world_trace_artifacts(ROOT, tmp_path)
-    traces = [json.loads(line) for line in (tmp_path / "real_world_query_traces_v1.jsonl").read_text(encoding="utf-8").splitlines()]
+    traces = [json.loads(line) for line in (tmp_path / "real_world_query_traces_v2.jsonl").read_text(encoding="utf-8").splitlines()]
     assert metrics["TOTAL_TRACES"] == 50
     assert metrics["TOTAL_REAL_TRACES"] == 0
     assert metrics["TRACE_ORIGINS"] == {
@@ -20,7 +20,7 @@ def test_real_pipeline_corpus_builds_labeled_append_only_traces(tmp_path):
     assert len({item["trace_id"] for item in traces}) == 50
     assert all(item["real_world_outcome"] == {"status": "UNKNOWN", "feedback": None} for item in traces)
     build_real_world_trace_artifacts(ROOT, tmp_path)
-    assert len((tmp_path / "real_world_query_traces_v1.jsonl").read_text(encoding="utf-8").splitlines()) == 50
+    assert len((tmp_path / "real_world_query_traces_v2.jsonl").read_text(encoding="utf-8").splitlines()) == 50
 
 
 def test_summary_uses_percentiles_only_with_sufficient_sample_and_no_promotion(tmp_path):

@@ -39,9 +39,11 @@ def test_canonical_json_is_order_independent():
 
 def test_human_real_paths_are_explicitly_append_only():
     case_path = ROOT / "data/field/human_real_cases_v1.jsonl"
-    trace_path = ROOT / "data/field/human_real_query_traces_v1.jsonl"
+    trace_path_v1 = ROOT / "data/field/human_real_query_traces_v1.jsonl"
+    trace_path_v2 = ROOT / "data/field/human_real_query_traces_v2.jsonl"
     assert is_human_real_append_only(case_path, root=ROOT)
-    assert is_human_real_append_only(trace_path, root=ROOT)
+    assert is_human_real_append_only(trace_path_v1, root=ROOT)
+    assert is_human_real_append_only(trace_path_v2, root=ROOT)
 
 
 def test_regenerable_writer_rejects_human_real_evidence():

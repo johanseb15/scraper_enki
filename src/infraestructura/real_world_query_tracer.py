@@ -9,6 +9,12 @@ from time import perf_counter_ns
 from src.aplicacion.enki_pricing_query_service import resolver_consulta_pricing
 from src.aplicacion.enki_pricing_response import presentar_resultado_pricing
 from src.aplicacion.parser_consulta_pricing import parse_pricing_query
+from src.aplicacion.user_query_understanding_projector import (
+    project_user_query_understanding,
+)
+from src.aplicacion.user_query_understanding_serializer import (
+    serialize_user_query_understanding,
+)
 from src.aplicacion.pricing_cohort_loader import DEFAULT_LOCAL_STATS, DEFAULT_REMOTE_STATS
 from src.dominio.real_world_query_trace import (
     EvidenceDecisionTrace,
@@ -29,7 +35,7 @@ from src.dominio.commercial_context import (
 )
 
 
-TRACE_VERSION = "real-world-query-trace-v1"
+TRACE_VERSION = "real-world-query-trace-v2"
 PARSER_VERSION = "pricing-query-parser-v1"
 RUNTIME_VERSION = "enki-decision-runtime-v1"
 
@@ -110,10 +116,12 @@ def trace_real_world_query(
     ambiguities = _ambiguities(parsed)
     learning_yield = _learning_yield(normalized, unknown_dimensions, ambiguities, conflicts, evidence_candidates, accepted, failures)
     parser_result = _parser_payload(parsed)
-    semantic = {
-        "canonical_services": list(parsed.canonical_services), "economic_object_kind": parsed.economic_object_kind.value,
-        "query_kind": parsed.query_kind.value, "confidence": parsed.metadata.confidence,
-    }
+    understanding = project_user_query_understanding(
+        parsed,
+    )
+    semantic = serialize_user_query_understanding(
+        understanding,
+    )
     stable_payload = {
         "raw_user_input": raw_user_input, "parser_result": parser_result, "intent_result": intent,
         "technical_need_result": technical, "semantic_result": semantic, "economic_dimensions": economic,
@@ -142,7 +150,7 @@ def trace_real_world_query(
 
 def semantic_trace_payload(trace):
     payload = _json_value(asdict(trace))
-    payload["schema_version"] = "real-world-query-trace-semantic-v1"
+    payload["schema_version"] = "real-world-query-trace-semantic-v2"
     payload.pop("total_latency_ms", None)
     payload.pop("trace_overhead_ms", None)
     for stage in payload["stages"]:

@@ -100,5 +100,5 @@ def test_known_historical_generators_require_explicit_output_destination():
 def test_human_real_append_only_cli_defaults_are_preserved():
     scripts = ROOT / "scripts"
     trace = dict(_argparse_calls(scripts / "trace_real_query.py"))
-    assert _literal(trace["--out"]["default"]) == "data/field/human_real_query_traces_v1.jsonl"
+    assert _literal(trace["--out"]["default"]) == "data/field/human_real_query_traces_v2.jsonl"
     assert _literal(trace["--cases-out"]["default"]) == "data/field/human_real_cases_v1.jsonl"
