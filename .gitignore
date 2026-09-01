@@ -9,6 +9,9 @@ __pycache__/
 
 # Pytest
 .pytest_cache/
+.pytest_tmp/
+.pytest_tmp_*/
+
 
 # Bases de datos locales
 *.db

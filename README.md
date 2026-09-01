@@ -553,7 +553,10 @@ SQLite continúa hasta que exista un cuello de botella demostrado.
 
 ---
 
-## 14. Recuperación del proyecto — nuevo Sprint 0
+## 14. HISTORICAL - Project recovery - Sprint 0
+
+> **Historical note:** this section preserves decisions from an earlier project stage. It does not define current governance, priority or next sprint. Current authority is `docs/ENKI_ARCHIVO_RECTOR.md`.
+
 
 El proyecto entra en una nueva etapa de recuperación y reorganización.
 
@@ -581,7 +584,7 @@ No se mezcla este sprint con nuevas features.
 
 ---
 
-## 15. Qué sigue después del Sprint 0
+## 15. HISTORICAL - What followed Sprint 0
 
 ### Economic Evidence Viability Gauntlet
 

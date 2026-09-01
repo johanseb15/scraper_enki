@@ -1,6 +1,6 @@
-# Enki Project Status
+# Enki Project Status - HISTORICAL SNAPSHOT
 
-Este documento captura el estado operativo actual de Enki antes de iniciar la expansión nacional de fuentes comerciales. `README.md` sigue siendo la fuente estratégica superior; este archivo resume el baseline técnico, las capacidades validadas, los activos de datos y el punto exacto del MVP.
+HISTORICAL SNAPSHOT. This document preserves a historical project state and does not define the current runtime, priorities or technical baseline. Current governance authority is `docs/ENKI_ARCHIVO_RECTOR.md`. Verify current technical state against the active checkout and current architecture documentation.
 
 ## 1. Producto y norte
 

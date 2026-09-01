@@ -3,7 +3,7 @@
 Version: 2.0
 Estado: Oficial
 
-Este documento define como trabajar tecnicamente sobre Enki. `README.md` define la orientacion estrategica superior; este manifiesto traduce esa orientacion en guardarrails de ingenieria.
+Este documento define como trabajar tecnicamente sobre Enki. La autoridad de gobernanza del proyecto es `docs/ENKI_ARCHIVO_RECTOR.md`; este manifiesto traduce esa gobernanza en guardarrails de ingenieria. README y documentos de estado no pueden sobreescribir al Rector.
 
 ## Identidad
 
@@ -25,7 +25,7 @@ Enki es una plataforma para reducir incertidumbre economica al comprar, vender o
 
 El nucleo del producto es **Enki Decision**. **Enki Market** es secundario. **Enki Data** es futuro.
 
-El cuello de botella actual es **Economic Evidence Acquisition**: conseguir observaciones economicas reales, trazables y comparables. Scraping, normalizacion, procurement, frontend y catalogos son capacidades habilitadoras.
+La secuencia ejecutiva vigente es ENTENDER -> CONECTAR -> APRENDER -> EXPLOTAR ECONOMICAMENTE. La ingenieria debe respetar ese orden. Adquisicion economica, scraping, procurement y pricing son capacidades subordinadas y no pueden adelantarse a una comprension, conexion y trazabilidad suficientes.
 
 ## Objetivo final
 

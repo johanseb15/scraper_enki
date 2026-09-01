@@ -375,7 +375,7 @@ The six specifically incorrect clarifications have one control-flow family:
 - BLOCKS_PROMOTION: false.
 - NOTES: This is formal registry alignment only; no runtime TD-011 code was reopened in this alignment commit.
 
-### TD-012 - Acquisition boundaries collapse exceptions into counters without causal diagnostics
+### TD-012 — Acquisition boundaries collapse exceptions into counters without causal diagnostics
 
 - DEBT_ID: `TD-012`
 - TITLE: Acquisition boundaries collapse exceptions into counters without causal diagnostics.
@@ -403,7 +403,7 @@ The six specifically incorrect clarifications have one control-flow family:
 - BLOCKS_PROMOTION: false.
 - NOTES: `rejected_records`/rejected rows remain distinct from acquisition failures by design. This remediation does not expand acquisition, change pricing thresholds, promote knowledge or modify HUMAN_REAL.
 
-### TD-013 ? Green suites under-test real process and cross-stack boundaries
+### TD-013 — Green suites under-test real process and cross-stack boundaries
 
 - DEBT_ID: `TD-013`
 - TITLE: Green suites under-test real process and cross-stack boundaries.
