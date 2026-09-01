@@ -23,6 +23,58 @@ class UserQueryFactOrigin(str, Enum):
     PARSER_CLASSIFICATION = "PARSER_CLASSIFICATION"
 
 
+class UserQueryMonetaryComponentRole(str, Enum):
+    TOTAL_CHARGED = "TOTAL_CHARGED"
+    MATERIAL_COST = "MATERIAL_COST"
+    LABOR = "LABOR"
+
+
+class UserQueryMonetaryComponentOrigin(str, Enum):
+    EXPLICIT = "EXPLICIT"
+    DERIVED = "DERIVED"
+
+
+@dataclass(frozen=True)
+class UserQueryMonetaryComponent:
+    role: UserQueryMonetaryComponentRole
+    value: float
+    currency: str
+    origin: UserQueryMonetaryComponentOrigin
+    raw_expression: str | None = None
+    derivation_method: str | None = None
+    derived_from: tuple[
+        UserQueryMonetaryComponentRole,
+        ...,
+    ] = ()
+
+    def __post_init__(self) -> None:
+        if self.value < 0:
+            raise ValueError(
+                "UserQueryMonetaryComponent requires non-negative value."
+            )
+
+        if (
+            self.origin
+            is UserQueryMonetaryComponentOrigin.EXPLICIT
+            and not self.raw_expression
+        ):
+            raise ValueError(
+                "Explicit monetary component requires raw_expression."
+            )
+
+        if (
+            self.origin
+            is UserQueryMonetaryComponentOrigin.DERIVED
+            and (
+                not self.derivation_method
+                or not self.derived_from
+            )
+        ):
+            raise ValueError(
+                "Derived monetary component requires derivation lineage."
+            )
+
+
 @dataclass(frozen=True)
 class UserQuerySemanticFact:
     field: str

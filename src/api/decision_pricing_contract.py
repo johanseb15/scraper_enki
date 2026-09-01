@@ -48,6 +48,18 @@ class TechnicalNeedResponse(
     clarification_required: bool
 
 
+class UserQueryMonetaryComponentResponse(
+    _StrictContractModel
+):
+    role: str
+    value: int | float
+    currency: str
+    origin: str
+    raw_expression: str | None
+    derivation_method: str | None
+    derived_from: list[str]
+
+
 class DecisionPricingParsedResponse(
     _StrictContractModel
 ):
@@ -69,6 +81,9 @@ class DecisionPricingParsedResponse(
     clarification_reason: str | None
     clarification_question: str | None
     technical_need: TechnicalNeedResponse | None
+    monetary_components: list[
+        UserQueryMonetaryComponentResponse
+    ]
 
 
 class MarketResolutionItemResponse(

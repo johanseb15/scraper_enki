@@ -6,6 +6,11 @@ from src.dominio.commercial_context import (
     CommercialContextOrigin,
     resolve_commercial_context,
 )
+from src.dominio.user_query_understanding import (
+    UserQueryMonetaryComponent,
+    UserQueryMonetaryComponentOrigin,
+    UserQueryMonetaryComponentRole,
+)
 
 RULES=[
 ("FORMATEO_INSTALACION_SO",(r"\bformate",r"\binstal(?:ar|acion de) windows\b",r"\breinstalar windows\b")),
@@ -74,7 +79,7 @@ PRICE_SCOPE_REQUIRED_SERVICES = frozenset({
 PROV={"caba":"CABA","capital federal":"CABA","capital":"CABA","buenos aires":"Buenos Aires","bs as":"Buenos Aires","cordoba":"Córdoba","santa fe":"Santa Fe","mendoza":"Mendoza","tucuman":"Tucumán","salta":"Salta","jujuy":"Jujuy","chaco":"Chaco","corrientes":"Corrientes","entre rios":"Entre Ríos","neuquen":"Neuquén","rio negro":"Río Negro","chubut":"Chubut","santa cruz":"Santa Cruz","tierra del fuego":"Tierra del Fuego","la pampa":"La Pampa","san juan":"San Juan","san luis":"San Luis","la rioja":"La Rioja","catamarca":"Catamarca","formosa":"Formosa","misiones":"Misiones","santiago del estero":"Santiago del Estero"}
 CITIES={"rosario":("Santa Fe","Rosario"),"la plata":("Buenos Aires","La Plata"),"mar del plata":("Buenos Aires","Mar del Plata"),"lanus":("Buenos Aires","Lanús"),"quilmes":("Buenos Aires","Quilmes"),"moreno":("Buenos Aires","Moreno"),"posadas":("Misiones","Posadas"),"comodoro rivadavia":("Chubut","Comodoro Rivadavia"),"zona norte":("Buenos Aires","Zona Norte"),"zona oeste":("Buenos Aires","Zona Oeste"),"zona sur":("Buenos Aires","Zona Sur"),"gba":("Buenos Aires","GBA"),"gran buenos aires":("Buenos Aires","GBA")}
 BUY=(r"\bme quieren cobrar\b",r"\bme cobran\b",r"\bme cobraron\b",r"\bme pasaron\b",r"\bme presupuestaron\b",r"\bme cotizaron\b",r"\bme dijeron\b",r"\bpagar\b",r"\bme ofrecieron\b",r"\bme ofrecen\b")
-SELL=(r"\bquiero cobrar\b",r"\bcuanto cobrar\b",r"\bcuanto cobro\b",r"\bcuanto le cobro\b",r"\bcuanto puedo cobrar\b",r"\ble puedo cobrar\b",r"\bdeberia cobrar\b",r"\bestoy cobrando\b",r"\bcuanto pedir\b",r"\bquiero vender\b",r"\bvoy a vender\b",r"\bvendo\b")
+SELL=(r"\bquiero cobrar\b",r"\bcuanto cobrar\b",r"\bcuanto cobro\b",r"\bcuanto le cobro\b",r"\bcuanto puedo cobrar\b",r"\ble puedo cobrar\b",r"\bdeberia cobrar\b",r"\bestoy cobrando\b",r"\byo cobre\b",r"\bcuanto pedir\b",r"\bquiero vender\b",r"\bvoy a vender\b",r"\bvendo\b")
 EVAL=(r"\besta bien\b",r"\bte parece bien\b",r"\bconviene\b",r"\bes mucho\b",r"\bes caro\b",r"\besta caro\b",r"\bes barato\b",r"\bme estan matando\b",r"\bme estan afanando\b",r"\bme quedo corto\b",r"\bme estoy pasando\b",r"\brazonable\b")
 HW=(r"\b(?:rtx|gtx|rx)\s?\d{3,4}\b",r"\bryzen\s+[3579]\b",r"\bcore\s+i[3579]\b",r"\bi[3579]\b",r"\bssd\b",r"\bnvme\b",r"\bmemoria ram\b",r"\bnotebook\b.*\b(?:nueva|usada|precio|sale|vender|vendo)\b",r"\bpc armada\b",r"\b(?:una|la) pc\s+(?:para|con)\b")
 
@@ -199,6 +204,174 @@ def price(t):
             return PriceMention()
         return PriceMention(PriceType.EXACT,money_num(m.group(1)),currency="UNKNOWN",raw_expression=m.group(0))
     return PriceMention()
+
+
+_CONTEXTUAL_MONEY_PATTERN = re.compile(
+    r"(?<!\w)"
+    r"(\d{1,3}(?:[.,]\d{3})+(?:,\d{1,2})?"
+    r"|\d{2,}(?:[.,]\d+)?)\b"
+)
+
+
+def _component_currency(
+    text: str,
+    match: re.Match,
+) -> str:
+    before = fold(
+        text[max(0, match.start() - 12):match.start()]
+    )
+    after = fold(
+        text[match.end():match.end() + 16]
+    )
+
+    if re.search(r"\$\s*$", before):
+        return "ARS"
+
+    if re.match(
+        r"\s*(?:usd|u\$s|dolares?)\b",
+        after,
+    ):
+        return "USD"
+
+    return "UNKNOWN"
+
+
+def _component_role(
+    text: str,
+    match: re.Match,
+) -> UserQueryMonetaryComponentRole | None:
+    before = fold(
+        text[max(0, match.start() - 64):match.start()]
+    )
+    role_before = re.sub(
+        r"(?:\$|ars|usd|u\$s)\s*$",
+        "",
+        before,
+    ).rstrip()
+    around = fold(
+        text[
+            max(0, match.start() - 72):
+            min(len(text), match.end() + 40)
+        ]
+    )
+
+    if re.search(
+        r"\b(?:yo\s+)?cobre\s*$|\btotal\s*$",
+        role_before,
+    ):
+        return UserQueryMonetaryComponentRole.TOTAL_CHARGED
+
+    has_material = bool(
+        re.search(
+            r"\b(?:pendrive|repuesto|materiales?|ssd|disco|"
+            r"fuente|teclado|pantalla)\b",
+            around,
+        )
+    )
+
+    if has_material and re.search(
+        r"\b(?:sale|cuesta|costo|vale)\s*$",
+        role_before,
+    ):
+        return UserQueryMonetaryComponentRole.MATERIAL_COST
+
+    return None
+
+
+def _monetary_composition(
+    text: str,
+) -> tuple[UserQueryMonetaryComponent, ...]:
+    if not re.search(
+        r"\bmano de obra\b",
+        fold(text),
+    ):
+        return ()
+
+    by_role: dict[
+        UserQueryMonetaryComponentRole,
+        list[UserQueryMonetaryComponent],
+    ] = {}
+
+    for match in _CONTEXTUAL_MONEY_PATTERN.finditer(text):
+        if _naked_number_is_non_price_context(
+            text,
+            match,
+        ):
+            continue
+
+        role = _component_role(
+            text,
+            match,
+        )
+
+        if role is None:
+            continue
+
+        by_role.setdefault(
+            role,
+            [],
+        ).append(
+            UserQueryMonetaryComponent(
+                role=role,
+                value=money_num(match.group(1)),
+                currency=_component_currency(
+                    text,
+                    match,
+                ),
+                origin=(
+                    UserQueryMonetaryComponentOrigin.EXPLICIT
+                ),
+                raw_expression=match.group(1),
+            )
+        )
+
+    total_items = by_role.get(
+        UserQueryMonetaryComponentRole.TOTAL_CHARGED,
+        [],
+    )
+    material_items = by_role.get(
+        UserQueryMonetaryComponentRole.MATERIAL_COST,
+        [],
+    )
+
+    if (
+        len(total_items) != 1
+        or len(material_items) != 1
+    ):
+        return ()
+
+    total = total_items[0]
+    material = material_items[0]
+    components = [
+        total,
+        material,
+    ]
+
+    if (
+        total.currency == material.currency
+        and total.value >= material.value
+    ):
+        components.append(
+            UserQueryMonetaryComponent(
+                role=UserQueryMonetaryComponentRole.LABOR,
+                value=total.value - material.value,
+                currency=total.currency,
+                origin=(
+                    UserQueryMonetaryComponentOrigin.DERIVED
+                ),
+                derivation_method=(
+                    "TOTAL_CHARGED_MINUS_MATERIAL_COST"
+                ),
+                derived_from=(
+                    UserQueryMonetaryComponentRole.TOTAL_CHARGED,
+                    UserQueryMonetaryComponentRole.MATERIAL_COST,
+                ),
+            )
+        )
+
+    return tuple(components)
+
+
 def geo(t):
     x=fold(t)
     for raw,(p,c) in CITIES.items():
@@ -307,7 +480,35 @@ def parse_pricing_query(raw_text:str,*,language_evidence_type:str="UNKNOWN")->Pa
             query_kind=QueryKind.TECHNICAL_NEED,
             technical_need=tech,
         )
+    components = _monetary_composition(
+        raw_text,
+    )
     p=price(raw_text); g=geo(raw_text); sv=services(raw_text); dev=device(raw_text); ps=parts(raw_text)
+    total_component = next(
+        (
+            item
+            for item in components
+            if item.role
+            is UserQueryMonetaryComponentRole.TOTAL_CHARGED
+        ),
+        None,
+    )
+    if total_component is not None:
+        p = PriceMention(
+            PriceType.EXACT,
+            total_component.value,
+            currency=total_component.currency,
+            raw_expression=total_component.raw_expression,
+        )
+    component_roles = {
+        item.role
+        for item in components
+    }
+    if {
+        UserQueryMonetaryComponentRole.MATERIAL_COST,
+        UserQueryMonetaryComponentRole.LABOR,
+    } <= component_roles:
+        ps = PartsScope.PARTS_INCLUDED
     explicit=[]; inferred=[]; derived=[]
     has_price=p.value is not None or p.min is not None
     scope=normalize_price_scope(
@@ -316,6 +517,18 @@ def parse_pricing_query(raw_text:str,*,language_evidence_type:str="UNKNOWN")->Pa
         is_range=p.type is PriceType.RANGE,
     )
     if has_price: explicit.append("price")
+    for component in components:
+        field = (
+            "monetary_component."
+            + component.role.value.lower()
+        )
+        if (
+            component.origin
+            is UserQueryMonetaryComponentOrigin.EXPLICIT
+        ):
+            explicit.append(field)
+        else:
+            derived.append(field)
     if p.currency=="ARS" and re.search(r"\b(?:lucas?|mil|k|palos?)\b|\$",raw_text,re.I): inferred.append("price.currency")
     if g.raw_location:
         explicit.append("geography.raw_location")
@@ -331,6 +544,12 @@ def parse_pricing_query(raw_text:str,*,language_evidence_type:str="UNKNOWN")->Pa
         action=IntentAction.SUGGEST_PRICE
     elif re.search(r"\bcuanto(?: le)? cobro\b",x): action=IntentAction.SUGGEST_PRICE
     elif side==IntentSide.SELL and not has_price: action=IntentAction.SUGGEST_PRICE
+    elif (
+        side==IntentSide.SELL
+        and has_price
+        and re.search(r"\byo cobre\b",x)
+    ):
+        action=IntentAction.EVALUATE_PRICE
     elif re.search(r"\bcompar",x): action=IntentAction.COMPARE
     elif re.search(
         r"\bcuanto (?:(?:sale|cuesta|esta)|(?:se )?esta cobrando|estan cobrando|se cobra|cobran)\b"
@@ -350,7 +569,16 @@ def parse_pricing_query(raw_text:str,*,language_evidence_type:str="UNKNOWN")->Pa
         if mod!=ServiceModality.UNKNOWN: explicit.append("modality")
     else: market=MarketScope.UNKNOWN; mod=ServiceModality.UNKNOWN
     reasons=[]; question=None
-    if _has_multiple_monetary_mentions(raw_text):
+    explicit_components = tuple(
+        item
+        for item in components
+        if item.origin
+        is UserQueryMonetaryComponentOrigin.EXPLICIT
+    )
+    if (
+        _has_multiple_monetary_mentions(raw_text)
+        or len(explicit_components) > 1
+    ):
         reasons+=["MULTIPLE_MONETARY_MENTIONS"]
         question="Detecté más de un monto en la consulta. ¿Qué importe querés evaluar y a qué unidad de cobro corresponde?"
     if market==MarketScope.LOCAL and not g.province: reasons+=["MISSING_PROVINCE"]; question=question or "¿En qué provincia se realiza el servicio?"
@@ -384,4 +612,4 @@ def parse_pricing_query(raw_text:str,*,language_evidence_type:str="UNKNOWN")->Pa
         raw_text,
         origin=CommercialContextOrigin.USER_CLAIM,
     ).with_parts_scope(ps)
-    return ParsedPricingQuery(raw_text,x,action,side,kind,sv,market,mod,p,g,dev,"USED" if re.search(r"\busad[oa]\b",x) else "NEW" if re.search(r"\bnuev[oa]\b",x) else "UNKNOWN",kind==EconomicObjectKind.BUNDLE,commercial_context,ParseMetadata(conf,clar,"|".join(reasons) if reasons else None,question,tuple(dict.fromkeys(explicit)),tuple(dict.fromkeys(inferred)),tuple(dict.fromkeys(derived))),language_evidence_type,price_scope=scope)
+    return ParsedPricingQuery(raw_text,x,action,side,kind,sv,market,mod,p,g,dev,"USED" if re.search(r"\busad[oa]\b",x) else "NEW" if re.search(r"\bnuev[oa]\b",x) else "UNKNOWN",kind==EconomicObjectKind.BUNDLE,commercial_context,ParseMetadata(conf,clar,"|".join(reasons) if reasons else None,question,tuple(dict.fromkeys(explicit)),tuple(dict.fromkeys(inferred)),tuple(dict.fromkeys(derived))),language_evidence_type,price_scope=scope,monetary_components=components)

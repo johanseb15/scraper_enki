@@ -59,6 +59,16 @@ export type TechnicalNeedContract = {
   clarification_required: boolean;
 };
 
+export type UserQueryMonetaryComponentContract = {
+  role: string;
+  value: number;
+  currency: string;
+  origin: string;
+  raw_expression: string | null;
+  derivation_method: string | null;
+  derived_from: string[];
+};
+
 export type DecisionPricingParsed = {
   query_kind: string;
   intent_action: string;
@@ -78,6 +88,7 @@ export type DecisionPricingParsed = {
   clarification_reason: string | null;
   clarification_question: string | null;
   technical_need: TechnicalNeedContract | null;
+  monetary_components: UserQueryMonetaryComponentContract[];
 };
 
 export type MarketResolutionItem = {

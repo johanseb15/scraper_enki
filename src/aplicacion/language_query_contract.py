@@ -3,6 +3,9 @@ from dataclasses import dataclass, field
 from enum import Enum
 from src.dominio.price_scope_contract import PriceScopeMeaning
 from src.dominio.commercial_context import CommercialContext, PartsScope
+from src.dominio.user_query_understanding import (
+    UserQueryMonetaryComponent,
+)
 
 class QueryKind(str, Enum):
     ECONOMIC_QUERY="ECONOMIC_QUERY"; TECHNICAL_NEED="TECHNICAL_NEED"; UNKNOWN="UNKNOWN"
@@ -74,3 +77,7 @@ class ParsedPricingQuery:
     query_kind: QueryKind=QueryKind.ECONOMIC_QUERY
     technical_need: TechnicalNeed|None=None
     price_scope: PriceScopeMeaning=field(default_factory=PriceScopeMeaning)
+    monetary_components: tuple[
+        UserQueryMonetaryComponent,
+        ...,
+    ]=()

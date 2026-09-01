@@ -12,6 +12,8 @@ from src.dominio.semantic_knowledge import (
 )
 from src.dominio.user_query_understanding import (
     UserQueryFactOrigin,
+    UserQueryMonetaryComponentOrigin,
+    UserQueryMonetaryComponentRole,
     UserQuerySemanticFact,
     UserQuerySemanticRelation,
     UserQueryUnderstandingEnvelope,
@@ -19,7 +21,7 @@ from src.dominio.user_query_understanding import (
 )
 
 
-PROJECTOR_VERSION = "user-query-understanding-v1"
+PROJECTOR_VERSION = "user-query-understanding-v2"
 PARSER_VERSION = "pricing-query-parser-v1"
 
 
@@ -302,6 +304,40 @@ def _facts(
             )
         )
 
+    for component in parsed.monetary_components:
+        origin = (
+            UserQueryFactOrigin.EXPLICIT
+            if component.origin
+            is UserQueryMonetaryComponentOrigin.EXPLICIT
+            else UserQueryFactOrigin.DERIVED
+        )
+
+        facts.append(
+            UserQuerySemanticFact(
+                field=(
+                    "monetary_component."
+                    + component.role.value.lower()
+                ),
+                value={
+                    "role": component.role.value,
+                    "amount": component.value,
+                    "currency": component.currency,
+                    "raw_expression": (
+                        component.raw_expression
+                    ),
+                    "derivation_method": (
+                        component.derivation_method
+                    ),
+                    "derived_from": tuple(
+                        item.value
+                        for item in component.derived_from
+                    ),
+                },
+                origin=origin,
+                provenance=provenance,
+            )
+        )
+
     return tuple(facts)
 
 
@@ -373,6 +409,31 @@ def _relations(
                 provenance=provenance,
             )
         )
+
+    monetary_roles = {
+        item.role
+        for item in parsed.monetary_components
+    }
+
+    if (
+        UserQueryMonetaryComponentRole.TOTAL_CHARGED
+        in monetary_roles
+    ):
+        for component_role in (
+            UserQueryMonetaryComponentRole.MATERIAL_COST,
+            UserQueryMonetaryComponentRole.LABOR,
+        ):
+            if component_role not in monetary_roles:
+                continue
+
+            relations.append(
+                UserQuerySemanticRelation(
+                    subject="TOTAL_CHARGED",
+                    predicate="INCLUDES_COMPONENT",
+                    object=component_role.value,
+                    provenance=provenance,
+                )
+            )
 
     return tuple(relations)
 

@@ -165,6 +165,21 @@ def _serialize_decision_result(result):
                 "product_purchase_recommendation": parsed.technical_need.product_purchase_recommendation,
                 "clarification_required": parsed.technical_need.clarification_required,
             },
+            "monetary_components": [
+                {
+                    "role": item.role.value,
+                    "value": item.value,
+                    "currency": item.currency,
+                    "origin": item.origin.value,
+                    "raw_expression": item.raw_expression,
+                    "derivation_method": item.derivation_method,
+                    "derived_from": [
+                        role.value
+                        for role in item.derived_from
+                    ],
+                }
+                for item in parsed.monetary_components
+            ],
         },
         "evidence": None if evidence is None else {
             "market": evidence.market,

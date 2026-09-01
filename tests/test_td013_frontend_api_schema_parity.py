@@ -60,6 +60,7 @@ def test_frontend_schema_contains_current_boundary_fields():
         "query_kind",
         "commercial_context",
         "technical_need",
+        "monetary_components",
     } <= set(parsed["required"])
 
     evidence = definitions[

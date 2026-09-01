@@ -21,6 +21,7 @@ def test_frontend_decision_types_cover_backend_boundary_fields():
         "query_kind:",
         "commercial_context:",
         "technical_need:",
+        "monetary_components:",
         "market_resolution:",
         "pricing_readiness:",
         "evidence_probe:",

@@ -418,6 +418,13 @@
           "title": "Modality",
           "type": "string"
         },
+        "monetary_components": {
+          "items": {
+            "$ref": "#/$defs/UserQueryMonetaryComponentResponse"
+          },
+          "title": "Monetary Components",
+          "type": "array"
+        },
         "parts_scope": {
           "title": "Parts Scope",
           "type": "string"
@@ -458,7 +465,8 @@
         "clarification_required",
         "clarification_reason",
         "clarification_question",
-        "technical_need"
+        "technical_need",
+        "monetary_components"
       ],
       "title": "DecisionPricingParsedResponse",
       "type": "object"
@@ -987,6 +995,74 @@
         "clarification_required"
       ],
       "title": "TechnicalNeedResponse",
+      "type": "object"
+    },
+    "UserQueryMonetaryComponentResponse": {
+      "additionalProperties": false,
+      "properties": {
+        "currency": {
+          "title": "Currency",
+          "type": "string"
+        },
+        "derivation_method": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Derivation Method"
+        },
+        "derived_from": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Derived From",
+          "type": "array"
+        },
+        "origin": {
+          "title": "Origin",
+          "type": "string"
+        },
+        "raw_expression": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Raw Expression"
+        },
+        "role": {
+          "title": "Role",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "number"
+            }
+          ],
+          "title": "Value"
+        }
+      },
+      "required": [
+        "role",
+        "value",
+        "currency",
+        "origin",
+        "raw_expression",
+        "derivation_method",
+        "derived_from"
+      ],
+      "title": "UserQueryMonetaryComponentResponse",
       "type": "object"
     }
   },

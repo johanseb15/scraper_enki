@@ -281,7 +281,7 @@ def test_projection_provenance_is_explicit_and_stable():
 
     assert (
         first.projection_provenance.origin_version
-        == "user-query-understanding-v1"
+        == "user-query-understanding-v2"
     )
 
     assert (
