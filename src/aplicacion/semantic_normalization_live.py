@@ -88,6 +88,25 @@ def classify_new_observation(
             market_scope="GOODS_MARKET",
         )
 
+    # Explicitly bundled OS installation + backup is not a unitary price.
+    # Preserve the two economic services without fabricating a price allocation.
+    if (
+        re.search(
+            r"\b(?:instalacion|instalar)\b.*\b(?:sistema operativo|windows|so)\b",
+            x,
+        )
+        and re.search(
+            r"\b(?:con|incluye|incluyendo)\s+"
+            r"(?:back[ -]?up|backup|respaldo|copia de seguridad)\b",
+            x,
+        )
+    ):
+        return SemanticClassification(
+            semantic_role="COMPOSITE_SERVICE",
+            market_scope="MIXED_OR_UNKNOWN",
+            matched_services="FORMATEO_INSTALACION_SO|BACKUP_DATOS",
+        )
+
     # OS installation maps to the canonical used by semantic_normalization_v4.
     if re.search(
         r"\b(?:instalacion|instalar)\b.*\b(?:sistema operativo|windows|so)\b",
