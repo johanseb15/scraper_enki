@@ -7,7 +7,7 @@ from src.aplicacion.dto.oferta_dto import OfertaDTO
 from src.infraestructura.scrapers.base import BaseScraper
 from src.infraestructura.scrapers.compragamer_parser import parsear_ofertas_compragamer
 
-URL_COMPRAGAMER_API = "https://compragamer.com/api/v1/productos"
+URL_COMPRAGAMER_API = "https://static.compragamer.com/productos"
 
 
 class CompraGamerScraper(BaseScraper):

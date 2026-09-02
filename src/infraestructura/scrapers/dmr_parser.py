@@ -64,12 +64,15 @@ def extraer_contexto_dmr(html: str) -> ContextoDMR:
     textos_temporales = tuple(
         dict.fromkeys(
             _texto(nodo)
-            for nodo in soup.select(".page-hero p, .section-title, .note-card")
+            for nodo in soup.select(
+                ".page-hero p, .section-title, .note-card, "
+                "#precios h2, #precios .section-sub, #precios .note"
+            )
             if re.search(r"abril\s+2026", _texto(nodo), re.IGNORECASE)
         )
     )
     coincidencia_fecha = re.search(r"abril\s+2026", " ".join(textos_temporales), re.IGNORECASE)
-    hero_ubicacion = _texto(soup.select_one(".hero-badge"))
+    hero_ubicacion = _texto(soup.select_one(".hero-badge, .hero-tag"))
     provincia = "Mendoza" if re.search(r"Mendoza", texto_pagina, re.IGNORECASE) else ""
     ciudad = "Mendoza Capital" if re.search(
         r"Mendoza\s+Capital", hero_ubicacion, re.IGNORECASE
@@ -84,9 +87,15 @@ def extraer_contexto_dmr(html: str) -> ContextoDMR:
             "lista_de_precios" if coincidencia_fecha else "no_determinado"
         ),
         textos_temporales_raw=textos_temporales,
-        aviso_precio_raw=_texto(soup.select_one(".note-card")),
+        aviso_precio_raw=_texto(
+            soup.select_one(
+                ".note-card, #precios .section-sub, #precios .note"
+            )
+        ),
         modalidades_raw=tuple(
-            _texto(nodo) for nodo in soup.select(".modality-title") if _texto(nodo)
+            _texto(nodo)
+            for nodo in soup.select(".modality-title, .fcard h4")
+            if _texto(nodo)
         ),
     )
 
@@ -121,11 +130,15 @@ def extraer_candidatos_dmr(
     contexto = extraer_contexto_dmr(html)
     candidatos: list[CandidatoDMR] = []
 
-    for tarjeta in soup.select(".service-card"):
-        servicio_raw = _texto(tarjeta.select_one(".service-name"))
+    for tarjeta in soup.select(".service-card, .svc"):
+        servicio_raw = _texto(
+            tarjeta.select_one(".service-name, .svc-name")
+        )
         if not servicio_raw:
             continue
-        precio_raw = _texto(tarjeta.select_one(".service-price"))
+        precio_raw = _texto(
+            tarjeta.select_one(".service-price, .svc-price")
+        )
         semantica, valor, _ = _semantica_precio(precio_raw)
         candidatos.append(
             CandidatoDMR(
@@ -133,7 +146,9 @@ def extraer_candidatos_dmr(
                 servicio_raw=servicio_raw,
                 equipos_raw=tuple(
                     _texto(nodo)
-                    for nodo in tarjeta.select(".device-tag")
+                    for nodo in tarjeta.select(
+                        ".device-tag, .svc-tags span"
+                    )
                     if _texto(nodo)
                 ),
                 precio_raw=precio_raw,

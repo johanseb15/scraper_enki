@@ -2,6 +2,10 @@ from datetime import date
 from unittest.mock import MagicMock, patch
 
 from src.aplicacion.dto.oferta_dto import OfertaDTO
+from src.infraestructura.scrapers.compragamer_scraper import (
+    URL_COMPRAGAMER_API,
+    CompraGamerScraper,
+)
 from src.infraestructura.scrapers.compragamer_playwright_scraper import (
     CompraGamerPlaywrightScraper as CompraGamerPlaywrightScraperOficial,
 )
@@ -46,6 +50,27 @@ def test_parsear_ofertas_compragamer_exito():
     assert ofertas[0].precio_raw == "215000.00"
     assert ofertas[0].moneda == "ARS"
     assert ofertas[0].fuente == "compragamer_playwright"
+
+
+@patch("src.infraestructura.scrapers.compragamer_scraper.requests.get")
+def test_compragamer_http_usa_endpoint_json_publico_actual(mock_get):
+    response = MagicMock()
+    response.headers = {"Content-Type": "application/json"}
+    response.json.return_value = [
+        {
+            "id_producto": 100,
+            "nombre": "AMD Ryzen 5 5600X",
+            "precioEspecial": 215000,
+        }
+    ]
+    mock_get.return_value = response
+
+    ofertas = CompraGamerScraper().obtener_servicios(date(2026, 9, 2))
+
+    assert URL_COMPRAGAMER_API == "https://static.compragamer.com/productos"
+    assert len(ofertas) == 1
+    mock_get.assert_called_once()
+    assert mock_get.call_args.args[0] == URL_COMPRAGAMER_API
 
 
 @patch(
