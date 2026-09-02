@@ -6,7 +6,7 @@ import statistics
 from collections import defaultdict
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Mapping, Sequence
+from typing import Mapping, Protocol, Sequence
 
 from src.aplicacion.provider_independence import (
     PROVIDER_INDEPENDENCE_VERSION,
@@ -26,6 +26,7 @@ from src.aplicacion.temporal_evidence_admission_gate import (
     TemporalAdmissionDecision,
     evaluate_temporal_admission,
 )
+from src.dominio.evidencia import DocumentoRaw
 from src.dominio.economic_evidence import EconomicEvidenceDimensionsV2
 from src.dominio.offer_evidence import OfferReachChargedScopeEvidence
 from src.dominio.temporal_evidence import TemporalEvidence
@@ -35,6 +36,17 @@ LINEAGE_GATE_VERSION = "runtime-cohort-lineage-gate-v1"
 EXCLUSION_REASON_MISSING_REPRODUCIBLE_RAW_LINEAGE = (
     "MISSING_REPRODUCIBLE_RAW_LINEAGE"
 )
+
+
+class RawDocumentRepository(Protocol):
+    """Read access to authoritative RAW documents, independent of storage."""
+
+    def listar_documentos_raw(
+        self,
+        source: str | None = None,
+        limit: int | None = None,
+    ) -> list[DocumentoRaw]:
+        ...
 
 
 @dataclass(frozen=True)
@@ -90,57 +102,180 @@ def evaluate_runtime_lineage(
     row: Mapping[str, str],
     evidence: OfferReachChargedScopeEvidence | None,
     repository_root: str | Path,
+    *,
+    raw_repository: RawDocumentRepository | None = None,
 ) -> RuntimeLineageDecision:
-    """Admit a constituent only when its RAW identity is reproducible locally."""
+    """Admit only when the authoritative RAW identity is reproducible."""
     observation_id = row.get("observation_id", "").strip()
     source_id = row.get("source", "").strip()
+
     if evidence is None:
-        return _excluded(observation_id, source_id, "EVIDENCE_RECORD_MISSING", None)
+        return _excluded(
+            observation_id,
+            source_id,
+            "EVIDENCE_RECORD_MISSING",
+            None,
+        )
 
     lineage = evidence.lineage
-    if evidence.observation_id != observation_id or lineage.observation_id != observation_id:
-        return _excluded(observation_id, source_id, "OBSERVATION_ID_MISMATCH", evidence)
+
+    if (
+        evidence.observation_id != observation_id
+        or lineage.observation_id != observation_id
+    ):
+        return _excluded(
+            observation_id,
+            source_id,
+            "OBSERVATION_ID_MISMATCH",
+            evidence,
+        )
+
     if lineage.source_id != source_id:
-        return _excluded(observation_id, source_id, "SOURCE_ID_MISMATCH", evidence)
+        return _excluded(
+            observation_id,
+            source_id,
+            "SOURCE_ID_MISMATCH",
+            evidence,
+        )
+
     if lineage.linkage_status != "TRACEABLE_RAW":
         return _excluded(
             observation_id,
             source_id,
-            lineage.no_linkage_reason or "RAW_LINKAGE_NOT_TRACEABLE",
+            lineage.no_linkage_reason
+            or "RAW_LINKAGE_NOT_TRACEABLE",
             evidence,
         )
-    if not row.get("extractor_version", "").strip() or not lineage.extractor_version.strip():
-        return _excluded(observation_id, source_id, "EXTRACTOR_VERSION_MISSING", evidence)
+
+    if (
+        not row.get("extractor_version", "").strip()
+        or not lineage.extractor_version.strip()
+    ):
+        return _excluded(
+            observation_id,
+            source_id,
+            "EXTRACTOR_VERSION_MISSING",
+            evidence,
+        )
+
     if not lineage.provenance.strip():
-        return _excluded(observation_id, source_id, "PROVENANCE_MISSING", evidence)
-    if not lineage.raw_document_id or not lineage.raw_document_path or not lineage.raw_document_hash:
-        return _excluded(observation_id, source_id, "RAW_IDENTITY_INCOMPLETE", evidence)
+        return _excluded(
+            observation_id,
+            source_id,
+            "PROVENANCE_MISSING",
+            evidence,
+        )
 
-    root = Path(repository_root).resolve()
-    raw_path = (root / lineage.raw_document_path).resolve()
-    try:
-        raw_path.relative_to(root)
-    except ValueError:
-        return _excluded(observation_id, source_id, "RAW_PATH_OUTSIDE_REPOSITORY", evidence)
-    if not raw_path.is_file():
-        return _excluded(observation_id, source_id, "RAW_DOCUMENT_MISSING", evidence)
+    if (
+        not lineage.raw_document_id
+        or not lineage.raw_document_hash
+    ):
+        return _excluded(
+            observation_id,
+            source_id,
+            "RAW_IDENTITY_INCOMPLETE",
+            evidence,
+        )
 
-    try:
-        raw_text = raw_path.read_text(encoding="utf-8")
-    except (OSError, UnicodeError):
-        return _excluded(observation_id, source_id, "RAW_DOCUMENT_UNREADABLE", evidence)
-    digest = hashlib.sha256(raw_text.encode("utf-8")).hexdigest()
+    if raw_repository is not None:
+        documents = raw_repository.listar_documentos_raw(
+            source=source_id,
+        )
+
+        raw_document = next(
+            (
+                document
+                for document in documents
+                if document.content_hash
+                == lineage.raw_document_hash
+            ),
+            None,
+        )
+
+        if raw_document is None:
+            return _excluded(
+                observation_id,
+                source_id,
+                "RAW_DOCUMENT_MISSING",
+                evidence,
+            )
+
+        digest = hashlib.sha256(
+            raw_document.raw_content.encode("utf-8")
+        ).hexdigest()
+
+    else:
+        if not lineage.raw_document_path:
+            return _excluded(
+                observation_id,
+                source_id,
+                "RAW_IDENTITY_INCOMPLETE",
+                evidence,
+            )
+
+        root = Path(repository_root).resolve()
+        raw_path = (
+            root / lineage.raw_document_path
+        ).resolve()
+
+        try:
+            raw_path.relative_to(root)
+        except ValueError:
+            return _excluded(
+                observation_id,
+                source_id,
+                "RAW_PATH_OUTSIDE_REPOSITORY",
+                evidence,
+            )
+
+        if not raw_path.is_file():
+            return _excluded(
+                observation_id,
+                source_id,
+                "RAW_DOCUMENT_MISSING",
+                evidence,
+            )
+
+        try:
+            raw_text = raw_path.read_text(
+                encoding="utf-8"
+            )
+        except (OSError, UnicodeError):
+            return _excluded(
+                observation_id,
+                source_id,
+                "RAW_DOCUMENT_UNREADABLE",
+                evidence,
+            )
+
+        digest = hashlib.sha256(
+            raw_text.encode("utf-8")
+        ).hexdigest()
+
     if digest != lineage.raw_document_hash:
-        return _excluded(observation_id, source_id, "RAW_HASH_MISMATCH", evidence)
+        return _excluded(
+            observation_id,
+            source_id,
+            "RAW_HASH_MISMATCH",
+            evidence,
+        )
+
     if lineage.raw_document_id != f"sha256:{digest}":
-        return _excluded(observation_id, source_id, "RAW_DOCUMENT_ID_MISMATCH", evidence)
+        return _excluded(
+            observation_id,
+            source_id,
+            "RAW_DOCUMENT_ID_MISMATCH",
+            evidence,
+        )
 
     return RuntimeLineageDecision(
         observation_id=observation_id,
         source_id=source_id,
         admitted=True,
         lineage_status=(
-            "REPRODUCIBLE" if lineage.acquired_at else "HISTORICAL_WITH_LINEAGE"
+            "REPRODUCIBLE"
+            if lineage.acquired_at
+            else "HISTORICAL_WITH_LINEAGE"
         ),
         exclusion_reason=None,
         exclusion_detail=None,
