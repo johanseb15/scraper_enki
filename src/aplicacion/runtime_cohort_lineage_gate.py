@@ -423,6 +423,7 @@ def build_runtime_cohort_rows(
     service_reach_dimensions: Mapping[str, EconomicEvidenceDimensionsV2] | None = None,
     temporal_evidence: Mapping[str, TemporalEvidence] | None = None,
     provider_dimensions: Mapping[str, EconomicEvidenceDimensionsV2] | None = None,
+    raw_repository: RawDocumentRepository | None = None,
 ) -> RuntimeCohortBuild:
     """Apply composable lineage/reach admission before runtime aggregation."""
     eligible = [row for row in rows if _eligible(row, market_scope)]
@@ -431,6 +432,7 @@ def build_runtime_cohort_rows(
             row,
             evidence_by_observation.get(row["observation_id"]),
             repository_root,
+            raw_repository=raw_repository,
         )
         for row in eligible
     )
