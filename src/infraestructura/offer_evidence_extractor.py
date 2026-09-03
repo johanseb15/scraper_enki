@@ -79,6 +79,19 @@ def extract_claims_from_explicit_basis(
         text,
     ):
         add("geographic_reach", "NAMED_AREA:CABA")
+    elif (
+        re.search(
+            r"\bservicio\b"
+            r"[^.;]{0,40}\ben\s+toda\s+"
+            r"(?:caba|capital federal)\b",
+            text,
+        )
+        and not re.search(
+            r"\b(?:envio|enviamos|correo|despacho)\b",
+            text,
+        )
+    ):
+        add("geographic_reach", "NAMED_AREA:CABA")
     elif re.search(r"\b(?:atendemos|zona de atencion|cobertura)\b[^.;]{0,50}\bcordoba capital\b", text):
         add("geographic_reach", "CITY:Córdoba Capital")
     elif re.search(r"\b(?:atendemos|zona de atencion|cobertura)\b[^.;]{0,50}\bprovincia de cordoba\b", text):
