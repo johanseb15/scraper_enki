@@ -1,6 +1,7 @@
-﻿from __future__ import annotations
+from __future__ import annotations
 
 import hashlib
+import unicodedata
 from typing import Protocol
 
 from bs4 import BeautifulSoup, Tag
@@ -12,6 +13,8 @@ from src.dominio.evidencia import (
 from src.dominio.offer_evidence import (
     EvidenceLineage,
     OfferReachChargedScopeEvidence,
+    PageScopeEconomicClaim,
+    RawDocumentPageScopeEvidence,
 )
 from src.infraestructura.offer_evidence_extractor import (
     extract_claims_from_explicit_basis,
@@ -46,6 +49,23 @@ _CONTEXT_CONTAINER_NAMES = {
     "li",
 }
 
+_PAGE_SCOPE_CONTAINER_NAMES = {
+    "section",
+    "article",
+    "main",
+}
+
+_PAGE_SCOPE_LOCATION_CONTAINER_MARKERS = {
+    "contact",
+    "contacto",
+    "location",
+    "ubicacion",
+    "sede",
+    "sedes",
+    "sucursal",
+    "sucursales",
+}
+
 
 def _normalized_text(value: object) -> str:
     return " ".join(
@@ -69,6 +89,225 @@ def _same_offer(
         and str(candidate.currency_raw).strip()
         == str(observation.currency_raw).strip()
     )
+
+
+def _observations_in_container(
+    container: Tag,
+    *,
+    raw_document: DocumentoRaw,
+) -> list[RegistroPrecioComercialObservado]:
+    return extraer_observaciones_precio_genericas(
+        str(container),
+        source=raw_document.source,
+        provider="UNKNOWN",
+        source_url=raw_document.source_url,
+        raw_document_id=raw_document.storage_id,
+        retrieved_at=raw_document.retrieved_at,
+        content_hash=raw_document.content_hash,
+    )
+
+
+def _fold_page_scope_text(value: str) -> str:
+    normalized = unicodedata.normalize("NFKD", value or "")
+    return " ".join(
+        "".join(
+            ch
+            for ch in normalized
+            if not unicodedata.combining(ch)
+        )
+        .casefold()
+        .split()
+    )
+
+
+def _is_logistics_page_scope(raw_basis: str) -> bool:
+    text = _fold_page_scope_text(raw_basis)
+    return any(
+        token in text
+        for token in (
+            "cadeteria",
+            "distribucion",
+            "entrega",
+            "entregas",
+            "envio",
+            "envios",
+            "mensajeria",
+            "despacho",
+            "despachos",
+            "encomienda",
+            "encomiendas",
+            "flete",
+        )
+    )
+
+
+def _is_provider_location_container(container: Tag) -> bool:
+    values = [
+        str(container.get("id") or ""),
+    ]
+
+    classes = container.get("class") or ()
+    values.extend(str(value) for value in classes)
+
+    normalized = {
+        _fold_page_scope_text(value)
+        for value in values
+        if str(value).strip()
+    }
+
+    return any(
+        marker in value
+        for value in normalized
+        for marker in _PAGE_SCOPE_LOCATION_CONTAINER_MARKERS
+    )
+
+
+def _page_scope_claims(
+    *,
+    raw_document: DocumentoRaw,
+    raw_document_id: str,
+) -> tuple[PageScopeEconomicClaim, ...]:
+    """Preserve bounded document-level service reach without offer fan-out."""
+
+    if (
+        "html"
+        not in str(
+            raw_document.content_type or ""
+        ).casefold()
+    ):
+        return ()
+
+    if raw_document.storage_id is None:
+        return ()
+
+    soup = BeautifulSoup(
+        raw_document.raw_content,
+        "html.parser",
+    )
+
+    result: list[PageScopeEconomicClaim] = []
+    seen: set[tuple[str, str]] = set()
+
+    for container in soup.find_all(
+        sorted(_PAGE_SCOPE_CONTAINER_NAMES)
+    ):
+        if not isinstance(container, Tag):
+            continue
+
+        if _is_provider_location_container(container):
+            continue
+
+        if _observations_in_container(
+            container,
+            raw_document=raw_document,
+        ):
+            continue
+
+        raw_basis = container.get_text(
+            " ",
+            strip=True,
+        )
+
+        if not raw_basis:
+            continue
+
+        if _is_logistics_page_scope(raw_basis):
+            continue
+
+        extracted = extract_claims_from_explicit_basis(
+            observation_id=(
+                f"raw-document:{raw_document.storage_id}"
+            ),
+            raw_basis=raw_basis,
+            raw_document_id=raw_document_id,
+            provenance=(
+                "sqlite:raw_documents/"
+                f"{raw_document.storage_id}"
+                f"#{container.name}-page-scope"
+            ),
+        )
+
+        for claim in extracted:
+            if claim.dimension != "geographic_reach":
+                continue
+
+            identity = (
+                claim.dimension,
+                claim.value,
+            )
+
+            if identity in seen:
+                continue
+
+            seen.add(identity)
+
+            result.append(
+                PageScopeEconomicClaim(
+                    dimension=claim.dimension,
+                    value=claim.value,
+                    raw_basis=claim.raw_basis,
+                    raw_document_id=claim.raw_document_id,
+                    extraction_method=claim.extraction_method,
+                    provenance=claim.provenance,
+                    status=claim.status,
+                    qualifiers=claim.qualifiers,
+                )
+            )
+
+    reach_values = {
+        claim.value
+        for claim in result
+        if claim.dimension == "geographic_reach"
+    }
+
+    if len(reach_values) > 1:
+        return ()
+
+    return tuple(result)
+
+
+def build_live_page_scope_evidence(
+    *,
+    repository: LiveEvidenceRepository,
+) -> dict[str, RawDocumentPageScopeEvidence]:
+    """Project bounded page-level service scope once per exact RAW document."""
+
+    result: dict[
+        str,
+        RawDocumentPageScopeEvidence,
+    ] = {}
+
+    for raw_document in repository.listar_documentos_raw():
+        if raw_document.storage_id is None:
+            continue
+
+        digest = hashlib.sha256(
+            raw_document.raw_content.encode("utf-8")
+        ).hexdigest()
+
+        if digest != raw_document.content_hash:
+            continue
+
+        raw_document_id = f"sha256:{digest}"
+
+        claims = _page_scope_claims(
+            raw_document=raw_document,
+            raw_document_id=raw_document_id,
+        )
+
+        result[raw_document_id] = (
+            RawDocumentPageScopeEvidence(
+                raw_document_id=raw_document_id,
+                source_id=raw_document.source,
+                source_url=raw_document.source_url,
+                acquired_at=(
+                    raw_document.retrieved_at.isoformat()
+                ),
+                claims=claims,
+            )
+        )
+
+    return result
 
 
 def _offer_applicable_context_claims(

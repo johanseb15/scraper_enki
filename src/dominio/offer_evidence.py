@@ -67,7 +67,47 @@ class SourceEconomicClaim:
         if not self.raw_basis.strip():
             raise ValueError("SourceEconomicClaim requires raw_basis.")
         if not self.raw_document_id.strip():
-            raise ValueError("SourceEconomicClaim requires a raw document reference.")
+            raise ValueError(
+                "SourceEconomicClaim requires a raw document reference."
+            )
+
+
+@dataclass(frozen=True)
+class PageScopeEconomicClaim:
+    dimension: str
+    value: str
+    raw_basis: str
+    raw_document_id: str
+    extraction_method: SourceClaimMethod
+    provenance: str
+    status: SourceClaimStatus = SourceClaimStatus.OBSERVED
+    version: str = "page-service-scope-evidence-v1"
+    qualifiers: tuple[str, ...] = ()
+
+    def __post_init__(self) -> None:
+        if not self.raw_basis.strip():
+            raise ValueError("PageScopeEconomicClaim requires raw_basis.")
+        if not self.raw_document_id.strip():
+            raise ValueError(
+                "PageScopeEconomicClaim requires a raw document reference."
+            )
+
+
+@dataclass(frozen=True)
+class RawDocumentPageScopeEvidence:
+    raw_document_id: str
+    source_id: str
+    source_url: str | None
+    acquired_at: str | None
+    claims: tuple[PageScopeEconomicClaim, ...] = field(
+        default_factory=tuple
+    )
+
+    def __post_init__(self) -> None:
+        if not self.raw_document_id.strip():
+            raise ValueError(
+                "RawDocumentPageScopeEvidence requires raw_document_id."
+            )
 
 
 @dataclass(frozen=True)
