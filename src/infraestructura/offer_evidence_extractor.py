@@ -73,6 +73,12 @@ def extract_claims_from_explicit_basis(
     ):
         areas = "|".join(" ".join(value.split()).title() for value in match.groups())
         add("geographic_reach", f"NAMED_AREAS:{areas}")
+    elif re.search(
+        r"\b(?:servicio|soporte|asistencia)\s+tecnic[oa]\b"
+        r"[^.;]{0,80}\ben\s+(?:caba|capital federal)\b",
+        text,
+    ):
+        add("geographic_reach", "NAMED_AREA:CABA")
     elif re.search(r"\b(?:atendemos|zona de atencion|cobertura)\b[^.;]{0,50}\bcordoba capital\b", text):
         add("geographic_reach", "CITY:Córdoba Capital")
     elif re.search(r"\b(?:atendemos|zona de atencion|cobertura)\b[^.;]{0,50}\bprovincia de cordoba\b", text):
