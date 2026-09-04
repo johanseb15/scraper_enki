@@ -9,12 +9,22 @@ except ModuleNotFoundError:
 activate_repo_root(__file__)
 
 import argparse
+import csv
 from datetime import datetime
 from pathlib import Path
 
-from scripts.build_pricing_statistics import build_pricing_statistics
+from scripts.build_pricing_statistics import (
+    build_runtime_pricing_statistics_from_objects,
+)
 from src.aplicacion.pricing_live_pipeline import ejecutar_pipeline_pricing_live
+from src.aplicacion.pricing_source_registry import cargar_registry_pricing_csv
 from src.infraestructura.downloader import descargar_html
+from src.infraestructura.economic_dimensions_v2_adapter import (
+    derive_economic_dimensions_v2,
+)
+from src.infraestructura.live_offer_evidence_bridge import (
+    build_live_offer_evidence,
+)
 from src.infraestructura.http_tls import crear_session_system_trust
 from src.infraestructura.scrapers.generic_price_extractor import (
     extraer_observaciones_precio_genericas,
@@ -70,11 +80,97 @@ def main() -> None:
         extractor=extraer_observaciones_precio_genericas,
     )
 
-    local, remote = build_pricing_statistics(
-        semantic,
-        local_out_path=local_stats,
-        remote_out_path=remote_stats,
+    with semantic.open(
+        "r",
+        encoding="utf-8-sig",
+        newline="",
+    ) as handle:
+        rows = list(csv.DictReader(handle))
+
+    registry = {
+        item.source: {
+            "source": item.source,
+            "provider": item.provider,
+            "url": item.url,
+            "province": item.province,
+            "city": item.city,
+            "discovery_status": item.discovery_status,
+            "price_visibility": item.price_visibility,
+            "source_kind": item.source_kind,
+            "notes": item.notes,
+        }
+        for item in cargar_registry_pricing_csv(args.sources)
+    }
+
+    evidence_by_observation = build_live_offer_evidence(
+        repository=repo,
     )
+
+    dimensions = {}
+    seen_observation_ids = set()
+
+    for row in rows:
+        observation_id = str(
+            row.get("observation_id") or ""
+        ).strip()
+
+        if not observation_id:
+            raise ValueError(
+                "Every live runtime row requires observation_id."
+            )
+
+        if observation_id in seen_observation_ids:
+            raise ValueError(
+                "Duplicate live runtime observation_id: "
+                f"{observation_id}"
+            )
+
+        seen_observation_ids.add(observation_id)
+
+        evidence = evidence_by_observation.get(
+            observation_id
+        )
+        claims = (
+            evidence.claims
+            if evidence is not None
+            else ()
+        )
+        raw_document_id = (
+            evidence.lineage.raw_document_id
+            if evidence is not None
+            else None
+        )
+
+        dimensions[observation_id] = (
+            derive_economic_dimensions_v2(
+                row,
+                registry,
+                claims,
+                raw_document_id=raw_document_id,
+            )
+        )
+
+    # Acquisition time is not price validity. Until a live temporal projection
+    # can prove CURRENT pricing under an explicit freshness policy, keep the
+    # temporal gate enabled with no admissible live temporal evidence.
+    temporal_evidence = {}
+
+    local_build, remote_build = (
+        build_runtime_pricing_statistics_from_objects(
+            rows,
+            evidence_by_observation,
+            repository_root=Path.cwd(),
+            local_out_path=local_stats,
+            remote_out_path=remote_stats,
+            service_reach_dimensions=dimensions,
+            temporal_evidence=temporal_evidence,
+            provider_dimensions=dimensions,
+            raw_repository=repo,
+        )
+    )
+
+    local = list(local_build.cohorts)
+    remote = list(remote_build.cohorts)
 
     a = result.acquisition
 

@@ -12,6 +12,7 @@ import argparse
 import csv
 import math
 import statistics
+from collections.abc import Mapping, Sequence
 from collections import defaultdict
 from pathlib import Path
 
@@ -21,9 +22,13 @@ from src.aplicacion.pricing_dimensions import (
 )
 from src.aplicacion.provider_independence import stable_provider_id
 from src.aplicacion.runtime_cohort_lineage_gate import (
+    RawDocumentRepository,
     RuntimeCohortBuild,
     build_runtime_cohort_rows,
 )
+from src.dominio.economic_evidence import EconomicEvidenceDimensionsV2
+from src.dominio.offer_evidence import OfferReachChargedScopeEvidence
+from src.dominio.temporal_evidence import TemporalEvidence
 from src.infraestructura.offer_evidence_artifact import load_offer_evidence_sidecar
 from src.infraestructura.economic_dimensions_v2_artifact import (
     load_economic_dimensions_v2_sidecar,
@@ -209,6 +214,62 @@ def build_pricing_statistics(
     )
     _write(local_out_path, local)
     _write(remote_out_path, remote)
+    return local, remote
+
+
+def build_runtime_pricing_statistics_from_objects(
+    rows: Sequence[Mapping[str, str]],
+    evidence_by_observation: Mapping[
+        str,
+        OfferReachChargedScopeEvidence,
+    ],
+    *,
+    repository_root: str | Path,
+    local_out_path: str | Path,
+    remote_out_path: str | Path,
+    service_reach_dimensions: Mapping[
+        str,
+        EconomicEvidenceDimensionsV2,
+    ],
+    temporal_evidence: Mapping[str, TemporalEvidence],
+    provider_dimensions: Mapping[
+        str,
+        EconomicEvidenceDimensionsV2,
+    ],
+    raw_repository: RawDocumentRepository | None = None,
+) -> tuple[RuntimeCohortBuild, RuntimeCohortBuild]:
+    """Build rigorous runtime cohorts from already-projected evidence."""
+
+    local = build_runtime_cohort_rows(
+        rows,
+        evidence_by_observation,
+        repository_root,
+        market_scope="LOCAL_SERVICE",
+        service_reach_dimensions=service_reach_dimensions,
+        temporal_evidence=temporal_evidence,
+        provider_dimensions=provider_dimensions,
+        raw_repository=raw_repository,
+    )
+    remote = build_runtime_cohort_rows(
+        rows,
+        evidence_by_observation,
+        repository_root,
+        market_scope="REMOTE_NATIONAL_SERVICE",
+        service_reach_dimensions=service_reach_dimensions,
+        temporal_evidence=temporal_evidence,
+        provider_dimensions=provider_dimensions,
+        raw_repository=raw_repository,
+    )
+
+    _write_runtime(
+        local_out_path,
+        list(local.cohorts),
+    )
+    _write_runtime(
+        remote_out_path,
+        list(remote.cohorts),
+    )
+
     return local, remote
 
 
