@@ -25,6 +25,9 @@ from src.infraestructura.economic_dimensions_v2_adapter import (
 from src.infraestructura.live_offer_evidence_bridge import (
     build_live_offer_evidence,
 )
+from src.infraestructura.live_temporal_evidence_bridge import (
+    build_live_temporal_evidence,
+)
 from src.infraestructura.http_tls import crear_session_system_trust
 from src.infraestructura.scrapers.generic_price_extractor import (
     extraer_observaciones_precio_genericas,
@@ -150,10 +153,9 @@ def main() -> None:
             )
         )
 
-    # Acquisition time is not price validity. Until a live temporal projection
-    # can prove CURRENT pricing under an explicit freshness policy, keep the
-    # temporal gate enabled with no admissible live temporal evidence.
-    temporal_evidence = {}
+    temporal_evidence = build_live_temporal_evidence(
+        repository=repo,
+    )
 
     local_build, remote_build = (
         build_runtime_pricing_statistics_from_objects(

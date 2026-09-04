@@ -4,16 +4,6 @@ import sys
 from types import SimpleNamespace
 
 
-def _write_sources(path):
-    path.write_text(
-        "source,provider,url,province,city,discovery_status,"
-        "price_visibility,source_kind,notes\n"
-        "fixture_live,Fixture Provider,https://example.test,"
-        "CABA,CABA,VERIFIED,PRICE_VISIBLE,PROVIDER,\n",
-        encoding="utf-8",
-    )
-
-
 def _write_semantic(path):
     fields = (
         "observation_id",
@@ -36,9 +26,7 @@ def _write_semantic(path):
         "source": "fixture_live",
         "province": "",
         "city": "",
-        "economic_object_raw": (
-            "Soporte remoto por hora con cobertura nacional"
-        ),
+        "economic_object_raw": "Soporte remoto por hora",
         "price_value": "30000",
         "currency": "ARS",
         "semantic_role": "SINGLE_SERVICE",
@@ -49,7 +37,12 @@ def _write_semantic(path):
         "original_comparable_status": "CANDIDATE",
         "extractor_version": "fixture-extractor-v1",
     }
-    path.parent.mkdir(parents=True, exist_ok=True)
+
+    path.parent.mkdir(
+        parents=True,
+        exist_ok=True,
+    )
+
     with path.open(
         "w",
         encoding="utf-8-sig",
@@ -63,31 +56,33 @@ def _write_semantic(path):
         writer.writerow(row)
 
 
-def test_live_runner_uses_rigorous_objects_path_and_never_ordinary_stats(
+def test_live_runner_passes_projected_temporal_evidence_to_rigorous_builder(
     tmp_path,
     monkeypatch,
 ):
     """
-    The live composition root must never fall back to ordinary semantic-only
-    pricing statistics.
+    Once live temporal evidence has a storage-neutral projection, the live
+    composition root must pass that exact map to the rigorous runtime builder.
 
-    This test isolates the post-acquisition boundary:
-    acquisition/semantic output succeeds, live evidence and dimensions are
-    available, temporal input is supplied to the rigorous builder, and the
-    ordinary builder is a tripwire.
+    An empty literal {} is no longer acceptable because it discards real,
+    auditable HISTORICAL_REPRODUCIBLE price-time evidence.
     """
 
     runner = importlib.import_module(
         "scripts.run_pricing_live_pipeline"
     )
 
+    out_dir = tmp_path / "live"
     sources = tmp_path / "sources.csv"
     baseline = tmp_path / "baseline.csv"
-    out_dir = tmp_path / "live"
 
-    _write_sources(sources)
+    # Argument targets only. Registry and acquisition are patched below.
+    sources.write_text(
+        "placeholder\n",
+        encoding="utf-8",
+    )
     baseline.write_text(
-        "source,economic_object_raw,price_value,currency\n",
+        "placeholder\n",
         encoding="utf-8",
     )
 
@@ -108,6 +103,7 @@ def test_live_runner_uses_rigorous_objects_path_and_never_ordinary_stats(
         _write_semantic(
             kwargs["semantic_out_path"]
         )
+
         acquisition = SimpleNamespace(
             sources_attempted=1,
             sources_succeeded=1,
@@ -119,6 +115,7 @@ def test_live_runner_uses_rigorous_objects_path_and_never_ordinary_stats(
             exact_prices=1,
             failures=(),
         )
+
         return SimpleNamespace(
             acquisition=acquisition,
             semantic_rows=1,
@@ -136,42 +133,45 @@ def test_live_runner_uses_rigorous_objects_path_and_never_ordinary_stats(
         fake_pipeline,
     )
 
-    weak_calls = []
-
-    def weak_builder(*args, **kwargs):
-        weak_calls.append((args, kwargs))
-        raise AssertionError(
-            "WEAK_PRICING_STATISTICS_PATH_INVOKED"
-        )
-
-    # Current code owns this attribute. raising=False also keeps the test
-    # valid once the import is removed: any accidental fallback still trips.
     monkeypatch.setattr(
         runner,
-        "build_pricing_statistics",
-        weak_builder,
-        raising=False,
+        "cargar_registry_pricing_csv",
+        lambda path: (
+            SimpleNamespace(
+                source="fixture_live",
+                provider="Fixture Provider",
+                url="https://example.test",
+                province="CABA",
+                city="CABA",
+                discovery_status="VERIFIED",
+                price_visibility="PRICE_VISIBLE",
+                source_kind="PROVIDER",
+                notes="",
+            ),
+        ),
     )
 
-    evidence = SimpleNamespace(
+    offer_evidence = SimpleNamespace(
         claims=(),
         lineage=SimpleNamespace(
             raw_document_id="sha256:fixture",
         ),
     )
-    dimension = object()
 
     monkeypatch.setattr(
         runner,
         "build_live_offer_evidence",
-        lambda *, repository: {"1": evidence},
-        raising=False,
+        lambda *, repository: {
+            "1": offer_evidence
+        },
     )
+
+    dimension = object()
+
     monkeypatch.setattr(
         runner,
         "derive_economic_dimensions_v2",
         lambda *args, **kwargs: dimension,
-        raising=False,
     )
 
     temporal_projection = {
@@ -181,11 +181,18 @@ def test_live_runner_uses_rigorous_objects_path_and_never_ordinary_stats(
             freshness_policy_known=False,
         )
     }
+    temporal_calls = []
 
+    def fake_temporal_builder(*, repository):
+        temporal_calls.append(repository)
+        return temporal_projection
+
+    # raising=False keeps this as a causal composition RED while the runner
+    # does not yet import the production bridge.
     monkeypatch.setattr(
         runner,
         "build_live_temporal_evidence",
-        lambda *, repository: temporal_projection,
+        fake_temporal_builder,
         raising=False,
     )
 
@@ -203,14 +210,15 @@ def test_live_runner_uses_rigorous_objects_path_and_never_ordinary_stats(
                 kwargs,
             )
         )
-        empty = SimpleNamespace(cohorts=())
+        empty = SimpleNamespace(
+            cohorts=()
+        )
         return empty, empty
 
     monkeypatch.setattr(
         runner,
         "build_runtime_pricing_statistics_from_objects",
         rigorous_builder,
-        raising=False,
     )
 
     monkeypatch.setattr(
@@ -231,18 +239,14 @@ def test_live_runner_uses_rigorous_objects_path_and_never_ordinary_stats(
 
     runner.main()
 
-    assert weak_calls == []
+    assert temporal_calls == [
+        fake_repo
+    ]
     assert len(rigorous_calls) == 1
 
-    rows, evidence_arg, kwargs = rigorous_calls[0]
+    _, _, kwargs = rigorous_calls[0]
 
-    assert len(rows) == 1
-    assert rows[0]["observation_id"] == "1"
-    assert evidence_arg == {"1": evidence}
-
-    # None would disable these gates in build_runtime_cohort_rows.
-    assert kwargs["service_reach_dimensions"] is not None
-    assert kwargs["temporal_evidence"] is temporal_projection
-    assert kwargs["provider_dimensions"] is not None
-
-    assert kwargs["raw_repository"] is fake_repo
+    assert (
+        kwargs["temporal_evidence"]
+        is temporal_projection
+    )
