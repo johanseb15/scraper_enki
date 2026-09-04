@@ -254,19 +254,77 @@ def _scoped_context_text(
     )
 
 
+def _tag_depth(tag: Tag) -> int:
+    depth = 0
+    parent = tag.parent
+
+    while isinstance(parent, Tag):
+        depth += 1
+        parent = parent.parent
+
+    return depth
+
+
+def _candidate_text_can_reproduce_offer(
+    candidate_text: str,
+    *,
+    observation: RegistroPrecioComercialObservado,
+) -> bool:
+    """Cheap fail-closed prefilter before exact generic re-extraction.
+
+    Persisted economic_object_raw may omit the primary price even when that
+    exact price is physically interleaved inside the DOM row. Permit only that
+    one known transformation: remove one exact folded price_raw occurrence and
+    test the persisted object again.
+
+    Final acceptance still requires exact _same_offer() after re-extraction.
+    """
+
+    target = _fold(
+        observation.economic_object_raw
+    )
+    if not target:
+        return False
+
+    if target in candidate_text:
+        return True
+
+    primary_price = _fold(
+        observation.price_raw
+    )
+    if not primary_price:
+        return False
+
+    if primary_price not in candidate_text:
+        return False
+
+    without_primary_price = " ".join(
+        candidate_text.replace(
+            primary_price,
+            "",
+            1,
+        ).split()
+    )
+
+    return target in without_primary_price
+
+
 def _find_offer_anchor(
     observation: RegistroPrecioComercialObservado,
     *,
     raw_document: DocumentoRaw,
     soup: BeautifulSoup,
 ) -> Tag | None:
-    """Find a bounded DOM node that reproduces the persisted offer exactly."""
+    """Find the most specific DOM node reproducing the persisted offer."""
 
     target = _fold(
         observation.economic_object_raw
     )
     if not target:
         return None
+
+    best_candidate: Tag | None = None
+    best_depth = -1
 
     for candidate in soup.find_all(True):
         if not isinstance(candidate, Tag):
@@ -285,7 +343,10 @@ def _find_offer_anchor(
             )
         )
 
-        if target not in candidate_text:
+        if not _candidate_text_can_reproduce_offer(
+            candidate_text,
+            observation=observation,
+        ):
             continue
 
         observed = _observations_in_container(
@@ -303,10 +364,18 @@ def _find_offer_anchor(
             )
         ]
 
-        if len(matches) == 1:
-            return candidate
+        if len(matches) != 1:
+            continue
 
-    return None
+        candidate_depth = _tag_depth(
+            candidate
+        )
+
+        if candidate_depth > best_depth:
+            best_candidate = candidate
+            best_depth = candidate_depth
+
+    return best_candidate
 
 
 def _price_time_from_offer_context(
