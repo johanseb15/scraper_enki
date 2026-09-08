@@ -163,6 +163,23 @@ class RegistroFilaArgentinaObservada:
 
 
 @dataclass(frozen=True)
+class RegistroPrecioReferenciaObservado:
+    """Reference price with canonical RAW SHA identity, independent of SQLite."""
+
+    raw_document_identity: str
+    source: str
+    source_id: str
+    source_url: str | None
+    extractor_version: str
+    economic_object_raw: str
+    price_raw: str
+    price_value: int
+    currency_raw: str
+    unit_raw: str
+    price_semantics: str = field(default="PROFESSIONAL_REFERENCE", init=False)
+
+
+@dataclass(frozen=True)
 class RegistroPrecioComercialObservado:
     raw_document_id: int
     source: str
