@@ -283,9 +283,13 @@ function InterpretationSummary({
 
       <aside className="space-y-5">
         <PriceDisplay label={priceLabel(result)} />
-        <DecisionState state={readoutState(result)} />
+        {result.status !== "RANGE_READY" ? (
+          <DecisionState state={readoutState(result)} />
+        ) : null}
         <div className="grid gap-3">
-          <Button onClick={onConfirm}>Ver resultado</Button>
+          {result.status !== "CLARIFICATION_REQUIRED" ? (
+            <Button onClick={onConfirm}>Ver resultado</Button>
+          ) : null}
           <Button variant="secondary" onClick={onCorrect}>
             Corregir consulta
           </Button>
@@ -304,14 +308,24 @@ function DecisionReadout({
 }) {
   const evidence = result.evidence;
   const known: InterpretationAttribute[] = [];
+  const benchmarkAuthorized =
+    result.status === "RANGE_READY" || result.status === "DECISION_READY";
 
   if (evidence) {
+    if (benchmarkAuthorized) {
+      known.push(
+        { label: `Rango observado: ${money(evidence.min_ars)} – ${money(evidence.max_ars)}` },
+        { label: `Mediana: ${money(evidence.median_ars)}` },
+      );
+    }
+
     known.push(
-      { label: `Rango observado: ${money(evidence.min_ars)} – ${money(evidence.max_ars)}` },
-      { label: `Mediana: ${money(evidence.median_ars)}` },
       { label: `${evidence.observations_n} precios de ${evidence.providers_n} proveedores` },
-      { label: `Confianza: ${evidence.evidence_confidence}` },
     );
+
+    if (result.status !== "INSUFFICIENT_EVIDENCE") {
+      known.push({ label: `Confianza: ${evidence.evidence_confidence}` });
+    }
   } else {
     known.push(...buildUnderstood(result));
   }
@@ -339,7 +353,13 @@ function DecisionReadout({
         </section>
 
         <DimensionList
-          title={evidence ? "Evidencia comparable" : "Qué entendimos"}
+          title={
+            evidence
+              ? result.status === "INSUFFICIENT_EVIDENCE"
+                ? "Evidencia observada"
+                : "Evidencia comparable"
+              : "Qué entendimos"
+          }
           dimensions={known}
         />
 
@@ -353,10 +373,12 @@ function DecisionReadout({
       </div>
 
       <aside className="space-y-5">
-        <DecisionState
-          state={readoutState(result)}
-          description={`Estado: ${result.status}.`}
-        />
+        {result.status !== "RANGE_READY" ? (
+          <DecisionState
+            state={readoutState(result)}
+            description={`Estado: ${result.status}.`}
+          />
+        ) : null}
         <PriceDisplay eyebrow="Precio consultado" label={priceLabel(result)} />
         <EvidenceMeta
           sourceLabel={

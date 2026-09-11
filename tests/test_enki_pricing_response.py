@@ -62,6 +62,7 @@ def test_insufficient_never_invents_decision():
     r = presentar_resultado_pricing(result("INSUFFICIENT_EVIDENCE", e))
     assert r.headline == "Evidencia insuficiente"
     assert "retiene la decisión" in r.caveat
+    assert r.evidence_line is None
 
 
 def test_clarification_uses_parser_question():

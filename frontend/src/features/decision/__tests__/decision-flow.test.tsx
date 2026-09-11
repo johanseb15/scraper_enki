@@ -2,6 +2,7 @@ import { render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import Home from "@/app/page";
 import { DecisionReviewFlow } from "@/features/decision/components/DecisionReviewFlow";
+import type { DecisionPricingResponse } from "@/features/decision/types";
 
 const hourlyQuery =
   "me quieren cobrar 35 lucas la hora por soporte remoto, está bien?";
@@ -17,7 +18,11 @@ const rangeReadyResponse = {
   clarification_reason: null,
   clarification_question: null,
   unsupported_reason: null,
+  market_resolution: null,
+  pricing_readiness: null,
+  evidence_probe: null,
   parsed: {
+    query_kind: "ECONOMIC_QUERY",
     intent_action: "EVALUATE_PRICE",
     intent_side: "BUY",
     economic_object_kind: "SERVICE",
@@ -37,15 +42,26 @@ const rangeReadyResponse = {
     condition: "UNKNOWN",
     is_bundle: false,
     parts_scope: "UNKNOWN",
+    commercial_context: {
+      value: "STANDARD",
+      status: "OBSERVED",
+      origin: "CONTROLLED_FIXTURE",
+      raw_basis: [],
+      resolution_method: "commercial-context-v1",
+    },
     clarification_required: false,
     clarification_reason: null,
     clarification_question: null,
+    technical_need: null,
+    monetary_components: [],
   },
   evidence: {
     market: "AR",
     canonical_service: "SOPORTE_REMOTO",
     observations_n: 3,
     providers_n: 3,
+    source_count: 4,
+    provider_independence_version: null,
     min_ars: 28000,
     q1_ars: 29000,
     median_ars: 30000,
@@ -56,8 +72,70 @@ const rangeReadyResponse = {
     decision_label: null,
     price_scope: "PER_HOUR",
     commercial_context: "STANDARD",
+    commercial_context_provenance: {
+      value: "STANDARD",
+      status: "OBSERVED",
+      origin: "CONTROLLED_FIXTURE",
+      raw_basis: [],
+      resolution_method: "commercial-context-v1",
+    },
+    evidence_commercial_context: null,
+    lineage_gate_version: null,
+    service_reach_gate_version: null,
+    temporal_gate_version: null,
+    temporal_state: null,
+    acquired_at_min: null,
+    acquired_at_max: null,
+    freshness_policy_version: null,
+    observation_ids: [],
   },
-};
+} satisfies DecisionPricingResponse;
+
+const clarificationQuestion =
+  "¿Ese precio corresponde a una hora, una visita o al trabajo completo?";
+
+const clarificationResponse = {
+  ...rangeReadyResponse,
+  status: "CLARIFICATION_REQUIRED",
+  headline: "Necesito una aclaración",
+  summary: clarificationQuestion,
+  evidence_line: null,
+  caveat: "PRICE_SCOPE_REQUIRED",
+  clarification_reason: "PRICE_SCOPE_REQUIRED",
+  clarification_question: clarificationQuestion,
+  parsed: {
+    ...rangeReadyResponse.parsed,
+    price: {
+      ...rangeReadyResponse.parsed.price,
+      type: "EXACT",
+    },
+    clarification_required: true,
+    clarification_reason: "PRICE_SCOPE_REQUIRED",
+    clarification_question: clarificationQuestion,
+  },
+  evidence: null,
+} satisfies DecisionPricingResponse;
+
+const insufficientEvidenceResponse = {
+  ...rangeReadyResponse,
+  status: "INSUFFICIENT_EVIDENCE",
+  headline: "Evidencia insuficiente",
+  summary:
+    "Hay precios observados, pero la muestra o diversidad de proveedores todavía no alcanza para una decisión confiable.",
+  evidence_line: null,
+  caveat: "Enki retiene la decisión en lugar de sobreinterpretar la muestra.",
+  clarification_reason: null,
+  clarification_question: null,
+  unsupported_reason: null,
+  evidence: {
+    ...rangeReadyResponse.evidence,
+    observations_n: 3,
+    providers_n: 1,
+    evidence_confidence: "INSUFFICIENT",
+    price_position: null,
+    decision_label: null,
+  },
+} satisfies DecisionPricingResponse;
 
 describe("Decision review flow", () => {
   beforeEach(() => {
@@ -117,6 +195,43 @@ describe("Decision review flow", () => {
     );
   });
 
+  it("blocks pricing readout while CLARIFICATION_REQUIRED", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => clarificationResponse,
+      }),
+    );
+
+    const user = userEvent.setup();
+
+    render(
+      <DecisionReviewFlow
+        initialIntent="received_quote"
+        initialQuoteText="me quieren cobrar 35 lucas por soporte remoto, está bien?"
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: /analizar/i }));
+
+    await screen.findByText(/esto es lo que Enki entendió/i);
+
+    expect(screen.getByText(clarificationQuestion)).toBeVisible();
+
+    expect(
+      screen.getByRole("button", { name: /corregir consulta/i }),
+    ).toBeEnabled();
+
+    expect(
+      screen.queryByRole("button", { name: /ver resultado/i }),
+    ).not.toBeInTheDocument();
+
+    expect(
+      screen.queryByText(/resultado Enki/i),
+    ).not.toBeInTheDocument();
+  });
+
   it("shows evidence after confirming the interpretation", async () => {
     const user = userEvent.setup();
     render(
@@ -138,6 +253,138 @@ describe("Decision review flow", () => {
       screen.getAllByText(/3 precios de 3 proveedores/i),
     ).toHaveLength(2);
     expect(screen.getByText(/confianza: low/i)).toBeInTheDocument();
+  });
+
+  it("does not present RANGE_READY as decision-oriented guidance", async () => {
+    const user = userEvent.setup();
+
+    render(
+      <DecisionReviewFlow
+        initialIntent="received_quote"
+        initialQuoteText={hourlyQuery}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: /analizar/i }));
+    await screen.findByText(/esto es lo que Enki entendió/i);
+    await user.click(screen.getByRole("button", { name: /ver resultado/i }));
+
+    expect(
+      screen.getByText("Rango de mercado disponible"),
+    ).toBeInTheDocument();
+
+    expect(
+      screen.queryByText(/^(BAJO|RAZONABLE|ALTO)$/i),
+    ).not.toBeInTheDocument();
+
+    expect(
+      screen.queryByText(/^orientación posible$/i),
+    ).not.toBeInTheDocument();
+  });
+
+  it("does not turn INSUFFICIENT_EVIDENCE into a benchmark from structured evidence", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => insufficientEvidenceResponse,
+      }),
+    );
+
+    const user = userEvent.setup();
+
+    render(
+      <DecisionReviewFlow
+        initialIntent="received_quote"
+        initialQuoteText={hourlyQuery}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: /analizar/i }));
+    await screen.findByText(/esto es lo que Enki entendió/i);
+    await user.click(screen.getByRole("button", { name: /ver resultado/i }));
+
+    expect(
+      screen.getByRole("heading", { name: /evidencia insuficiente/i }),
+    ).toBeInTheDocument();
+
+    expect(
+      screen.queryByText(/rango observado:/i),
+    ).not.toBeInTheDocument();
+
+    expect(
+      screen.queryByText(/mediana:/i),
+    ).not.toBeInTheDocument();
+  });
+
+  it("does not describe INSUFFICIENT_EVIDENCE as comparable evidence", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => insufficientEvidenceResponse,
+      }),
+    );
+
+    const user = userEvent.setup();
+
+    render(
+      <DecisionReviewFlow
+        initialIntent="received_quote"
+        initialQuoteText={hourlyQuery}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: /analizar/i }));
+    await screen.findByText(/esto es lo que Enki entendió/i);
+    await user.click(screen.getByRole("button", { name: /ver resultado/i }));
+
+    expect(
+      screen.getByRole("heading", { name: /evidencia insuficiente/i }),
+    ).toBeInTheDocument();
+
+    expect(
+      screen.getByText(/3 precios de 1 proveedores/i),
+    ).toBeInTheDocument();
+
+    expect(
+      screen.queryByText(/^evidencia comparable$/i),
+    ).not.toBeInTheDocument();
+  });
+
+  it("does not expose the raw INSUFFICIENT confidence enum to users", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => insufficientEvidenceResponse,
+      }),
+    );
+
+    const user = userEvent.setup();
+
+    render(
+      <DecisionReviewFlow
+        initialIntent="received_quote"
+        initialQuoteText={hourlyQuery}
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: /analizar/i }));
+    await screen.findByText(/esto es lo que Enki entendió/i);
+    await user.click(screen.getByRole("button", { name: /ver resultado/i }));
+
+    expect(
+      screen.getByRole("heading", { name: /evidencia insuficiente/i }),
+    ).toBeInTheDocument();
+
+    expect(
+      screen.getByText(/3 precios de 1 proveedores/i),
+    ).toBeInTheDocument();
+
+    expect(
+      screen.queryByText(/^confianza:\s*insufficient$/i),
+    ).not.toBeInTheDocument();
   });
 
   it("returns to the original query when the user corrects it", async () => {

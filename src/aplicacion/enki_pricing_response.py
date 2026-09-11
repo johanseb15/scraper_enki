@@ -99,7 +99,6 @@ def presentar_resultado_pricing(result: EnkiPricingQueryResult) -> EnkiUserRespo
                 "Hay precios observados, pero la muestra o diversidad de proveedores "
                 "todavía no alcanza para una decisión confiable."
             ),
-            evidence_line=evidence_line,
             caveat="Enki retiene la decisión en lugar de sobreinterpretar la muestra.",
         )
 
