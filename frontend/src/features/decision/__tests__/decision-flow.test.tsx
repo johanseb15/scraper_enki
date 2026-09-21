@@ -137,6 +137,52 @@ const insufficientEvidenceResponse = {
   },
 } satisfies DecisionPricingResponse;
 
+const decisionReadyResponse = {
+  ...rangeReadyResponse,
+  status: "DECISION_READY",
+  headline: "ALTO",
+  summary:
+    "El precio consultado está alto para esta cohorte. El cuartil superior comienza por encima de $75.000.",
+  evidence_line:
+    "Rango observado $45.000–$95.000; mediana $65.000; 6 precios de 4 proveedores.",
+  caveat: "Confianza de evidencia: MEDIUM.",
+  clarification_reason: null,
+  clarification_question: null,
+  unsupported_reason: null,
+  parsed: {
+    ...rangeReadyResponse.parsed,
+    canonical_services: ["FORMATEO_NOTEBOOK"],
+    market_scope: "LOCAL",
+    modality: "ONSITE",
+    price: {
+      ...rangeReadyResponse.parsed.price,
+      type: "EXACT",
+      value: 80000,
+    },
+    geography: {
+      province: "Córdoba",
+      city: "Córdoba",
+    },
+  },
+  evidence: {
+    ...rangeReadyResponse.evidence,
+    canonical_service: "FORMATEO_NOTEBOOK",
+    observations_n: 6,
+    providers_n: 4,
+    source_count: 4,
+    min_ars: 45000,
+    q1_ars: 55000,
+    median_ars: 65000,
+    q3_ars: 75000,
+    max_ars: 95000,
+    evidence_confidence: "MEDIUM",
+    price_position: "WITHIN_OBSERVED_RANGE",
+    decision_label: "ALTO",
+    price_scope: "TOTAL",
+    temporal_state: "CURRENT_REPRODUCIBLE",
+  },
+} satisfies DecisionPricingResponse;
+
 describe("Decision review flow", () => {
   beforeEach(() => {
     vi.stubGlobal(
@@ -385,6 +431,36 @@ describe("Decision review flow", () => {
     expect(
       screen.queryByText(/^confianza:\s*insufficient$/i),
     ).not.toBeInTheDocument();
+  });
+
+  it("presents DECISION_READY with a human classification distinct from observed-range position", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => decisionReadyResponse,
+      }),
+    );
+
+    const user = userEvent.setup();
+
+    render(
+      <DecisionReviewFlow
+        initialIntent="received_quote"
+        initialQuoteText="Me quieren cobrar $80.000 por formatear una notebook en Córdoba. ¿Está bien?"
+      />,
+    );
+
+    await user.click(screen.getByRole("button", { name: /analizar/i }));
+    await screen.findByText(/esto es lo que Enki entendió/i);
+    await user.click(screen.getByRole("button", { name: /ver resultado/i }));
+
+    expect(screen.getByText("Precio consultado")).toBeInTheDocument();
+    expect(screen.getAllByText(/\$80\.000/i).length).toBeGreaterThan(0);
+
+    expect(
+      screen.getByText("Por encima del intervalo central observado"),
+    ).toBeInTheDocument();
   });
 
   it("returns to the original query when the user corrects it", async () => {

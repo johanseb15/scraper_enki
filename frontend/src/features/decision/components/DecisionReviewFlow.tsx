@@ -10,6 +10,7 @@ import { PriceDisplay } from "@/components/enki/price-display";
 import { decisionIntentLabels } from "@/features/decision/decision-intent";
 import { supportQuoteText } from "@/features/decision/fixtures/support-quote";
 import { QuoteComposer } from "@/features/decision/components/QuoteComposer";
+import { BenchmarkRail } from "@/features/decision/components/BenchmarkRail";
 import { analyzePricingQuery } from "@/features/decision/decision-api";
 import type {
   DecisionIntent,
@@ -310,9 +311,22 @@ function DecisionReadout({
   const known: InterpretationAttribute[] = [];
   const benchmarkAuthorized =
     result.status === "RANGE_READY" || result.status === "DECISION_READY";
+  const benchmarkUserPrice =
+    result.parsed.price.type === "EXACT" &&
+    result.parsed.price.currency === "ARS"
+      ? result.parsed.price.value
+      : null;
+  const hasBenchmarkRail =
+    benchmarkAuthorized &&
+    evidence != null &&
+    evidence.min_ars != null &&
+    evidence.q1_ars != null &&
+    evidence.median_ars != null &&
+    evidence.q3_ars != null &&
+    evidence.max_ars != null;
 
   if (evidence) {
-    if (benchmarkAuthorized) {
+    if (benchmarkAuthorized && !hasBenchmarkRail) {
       known.push(
         { label: `Rango observado: ${money(evidence.min_ars)} – ${money(evidence.max_ars)}` },
         { label: `Mediana: ${money(evidence.median_ars)}` },
@@ -329,7 +343,6 @@ function DecisionReadout({
   } else {
     known.push(...buildUnderstood(result));
   }
-
   const missing = buildMissing(result);
 
   return (
@@ -352,6 +365,16 @@ function DecisionReadout({
           ) : null}
         </section>
 
+        {hasBenchmarkRail && evidence ? (
+          <BenchmarkRail
+            min={evidence.min_ars!}
+            q1={evidence.q1_ars!}
+            median={evidence.median_ars!}
+            q3={evidence.q3_ars!}
+            max={evidence.max_ars!}
+            userPrice={benchmarkUserPrice}
+          />
+        ) : null}
         <DimensionList
           title={
             evidence
@@ -379,17 +402,19 @@ function DecisionReadout({
             description={`Estado: ${result.status}.`}
           />
         ) : null}
-        <PriceDisplay eyebrow="Precio consultado" label={priceLabel(result)} />
+        {!(hasBenchmarkRail && benchmarkUserPrice != null) ? (
+          <PriceDisplay eyebrow="Precio consultado" label={priceLabel(result)} />
+        ) : null}
         <EvidenceMeta
           sourceLabel={
             evidence
               ? `${evidence.providers_n} proveedores · ${evidence.observations_n} observaciones`
               : "Sin cohorte comparable"
           }
-          freshnessLabel={
-            evidence
-              ? `${evidence.price_scope} · ${evidence.commercial_context}`
-              : "Enki retuvo la decisión"
+          temporalLabel={
+            evidence?.temporal_state === "CURRENT_REPRODUCIBLE"
+              ? "Actual y reproducible"
+              : "No determinada"
           }
         />
         {result.caveat ? (
