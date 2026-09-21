@@ -37,3 +37,10 @@ frontend/.next/
 frontend/out/
 frontend/AGENTS.md
 frontend/CLAUDE.md
+
+# Live run artifacts
+data/live/
+data/live_diagnostics/
+data/live_specific/
+data/live_temporal_strong/
+scraper_enki.xml
