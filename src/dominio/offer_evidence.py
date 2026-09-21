@@ -115,3 +115,4 @@ class OfferReachChargedScopeEvidence:
     observation_id: str
     lineage: EvidenceLineage
     claims: tuple[SourceEconomicClaim, ...] = field(default_factory=tuple)
+    page_scope_claims: tuple[PageScopeEconomicClaim, ...] = field(default_factory=tuple)

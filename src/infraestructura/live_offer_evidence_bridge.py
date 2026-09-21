@@ -584,6 +584,10 @@ def build_live_offer_evidence(
 
     raw_documents = repository.listar_documentos_raw()
 
+    page_scope_by_raw_id = build_live_page_scope_evidence(
+        repository=repository,
+    )
+
     raw_by_storage_id = {
         document.storage_id: document
         for document in raw_documents
@@ -648,6 +652,13 @@ def build_live_offer_evidence(
             raw_document_id=raw_id,
         )
 
+        page_scope_evidence = page_scope_by_raw_id.get(raw_id)
+        page_scope_claims = (
+            page_scope_evidence.claims
+            if page_scope_evidence is not None
+            else ()
+        )
+
         result[observation_id] = (
             OfferReachChargedScopeEvidence(
                 observation_id=observation_id,
@@ -671,6 +682,7 @@ def build_live_offer_evidence(
                     linkage_status="TRACEABLE_RAW",
                 ),
                 claims=claims,
+                page_scope_claims=page_scope_claims,
             )
         )
 
