@@ -124,6 +124,13 @@ class UserQuerySemanticRelation:
 
 
 @dataclass(frozen=True)
+class UserQueryClarification:
+    reason: str
+    target_field: str
+    question: str
+
+
+@dataclass(frozen=True)
 class UserQueryUnderstandingEnvelope:
     raw_text: str
     status: UserQueryUnderstandingStatus
@@ -135,6 +142,7 @@ class UserQueryUnderstandingEnvelope:
     interpretation_provenance: KnowledgeProvenance
     projection_provenance: KnowledgeProvenance
     context: SemanticContext = SemanticContext.USER_QUERY
+    clarifications: tuple[UserQueryClarification, ...] = ()
 
     def __post_init__(self) -> None:
         if not self.raw_text or not self.raw_text.strip():

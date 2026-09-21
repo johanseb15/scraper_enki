@@ -11,6 +11,7 @@ from src.dominio.semantic_knowledge import (
     KnowledgeProvenance,
 )
 from src.dominio.user_query_understanding import (
+    UserQueryClarification,
     UserQueryFactOrigin,
     UserQueryMonetaryComponentOrigin,
     UserQueryMonetaryComponentRole,
@@ -67,6 +68,10 @@ def project_user_query_understanding(
         parsed,
     )
 
+    clarifications = _clarifications(
+        clarification_reasons,
+    )
+
     status = _status(
         parsed,
         unknowns=unknowns,
@@ -83,6 +88,7 @@ def project_user_query_understanding(
         raw_provenance=raw_provenance,
         interpretation_provenance=interpretation_provenance,
         projection_provenance=projection_provenance,
+        clarifications=clarifications,
     )
 
 
@@ -505,6 +511,31 @@ def _clarification_reasons(
             for item in raw.split("|")
             if item
         )
+    )
+
+
+def _clarifications(
+    clarification_reasons: tuple[str, ...],
+) -> tuple[UserQueryClarification, ...]:
+    specifications = {
+        "MISSING_PROVINCE": (
+            "geography.province",
+            "\u00bfEn qu\u00e9 provincia se realiza el servicio?",
+        ),
+        "UNKNOWN_CURRENCY": (
+            "price.currency",
+            "\u00bfEse monto est\u00e1 expresado en pesos argentinos o en otra moneda?",
+        ),
+    }
+
+    return tuple(
+        UserQueryClarification(
+            reason=reason,
+            target_field=specifications[reason][0],
+            question=specifications[reason][1],
+        )
+        for reason in clarification_reasons
+        if reason in specifications
     )
 
 
