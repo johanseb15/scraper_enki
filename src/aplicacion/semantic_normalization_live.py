@@ -178,6 +178,30 @@ def load_frozen_baseline(path: str | Path) -> dict[tuple[str, str, str, str], di
     return {_baseline_key(row): row for row in rows}
 
 
+def _frozen_conflicts_with_explicit_backup_exclusion(
+    frozen: dict[str, str],
+    economic_object_raw: str,
+) -> bool:
+    """Reject only an explicit historical/live contradiction for backup scope."""
+    matched_services = {
+        item.strip()
+        for item in str(frozen.get("matched_services") or "").split("|")
+        if item.strip()
+    }
+    if "BACKUP_DATOS" not in matched_services:
+        return False
+
+    x = _clean_for_semantics(economic_object_raw)
+    return bool(
+        re.search(
+            r"\b(?:sin|no\s+incluye|no\s+incluido|no\s+incluida)\s+"
+            r"(?:el\s+|la\s+|los\s+|las\s+)?"
+            r"(?:back[ -]?up|backup|respaldo|copia de seguridad)\b",
+            x,
+        )
+    )
+
+
 def _normalize_number_for_key(value) -> str:
     if value is None:
         return ""
@@ -254,7 +278,10 @@ def build_semantic_rows(
         )
 
         frozen = baseline.get(key)
-        if frozen is not None:
+        if frozen is not None and not _frozen_conflicts_with_explicit_backup_exclusion(
+            frozen,
+            economic_object,
+        ):
             reused += 1
             out = dict(frozen)
             # The live observation id is authoritative for this live export.
