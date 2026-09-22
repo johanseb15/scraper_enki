@@ -243,3 +243,23 @@ def test_no_acepta_precio_partido_por_markup_como_escalar_menor():
 
     assert observaciones == []
 
+def test_preserva_expresion_raw_de_precio_desde_en_scope():
+    html = """
+    <div class="mbs-price-row">
+        <span>Formateo + sistema operativo</span>
+        <strong>desde $85.000</strong>
+    </div>
+    """
+
+    observaciones = _extraer(html)
+
+    assert len(observaciones) == 1
+
+    observacion = observaciones[0]
+
+    assert observacion.economic_object_raw == "Formateo + sistema operativo"
+    assert observacion.price_raw == "$85.000"
+    assert observacion.price_value == 85000
+    assert observacion.scope_raw["raw_context"] == "Formateo + sistema operativo"
+    assert observacion.scope_raw["price_expression_raw"] == "desde $85.000"
+

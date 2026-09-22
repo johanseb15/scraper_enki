@@ -437,6 +437,17 @@ def extraer_observaciones_precio_genericas(
 
         seen.add(identity)
 
+        scope_raw = {
+            "raw_context": economic_object_raw,
+        }
+
+        price_expression_raw = _normalizar_espacios(texto)
+
+        if price_expression_raw != price_raw:
+            scope_raw["price_expression_raw"] = (
+                price_expression_raw
+            )
+
         metadata = {
             "retrieved_at": (
                 retrieved_at.isoformat()
@@ -471,11 +482,7 @@ def extraer_observaciones_precio_genericas(
                 economic_object_raw=(
                     economic_object_raw
                 ),
-                scope_raw={
-                    "raw_context": (
-                        economic_object_raw
-                    ),
-                },
+                scope_raw=scope_raw,
                 price_raw=price_raw,
                 price_value=price_value,
                 currency_raw=currency,
