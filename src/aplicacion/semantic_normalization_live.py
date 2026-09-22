@@ -9,6 +9,8 @@ import unicodedata
 from pathlib import Path
 from typing import Iterable
 
+from src.dominio.service_polarity import explicit_backup_excluded
+
 
 OUTPUT_FIELDS = (
     "observation_id",
@@ -188,16 +190,10 @@ def _frozen_conflicts_with_explicit_backup_exclusion(
         for item in str(frozen.get("matched_services") or "").split("|")
         if item.strip()
     }
-    if "BACKUP_DATOS" not in matched_services:
-        return False
-
-    x = _clean_for_semantics(economic_object_raw)
-    return bool(
-        re.search(
-            r"\b(?:sin|no\s+incluye|no\s+incluido|no\s+incluida)\s+"
-            r"(?:el\s+|la\s+|los\s+|las\s+)?"
-            r"(?:back[ -]?up|backup|respaldo|copia de seguridad)\b",
-            x,
+    return (
+        "BACKUP_DATOS" in matched_services
+        and explicit_backup_excluded(
+            _clean_for_semantics(economic_object_raw)
         )
     )
 

@@ -2,6 +2,7 @@ from __future__ import annotations
 import re, unicodedata
 from src.aplicacion.language_query_contract import *
 from src.dominio.price_scope_contract import normalize_price_scope
+from src.dominio.service_polarity import explicit_backup_excluded
 from src.dominio.commercial_context import (
     CommercialContextOrigin,
     resolve_commercial_context,
@@ -386,7 +387,10 @@ def geo(t):
 def services(t):
     x=fold(t); out=[]
     for c,ps in RULES:
-        if any(re.search(p,x,re.I) for p in ps): out.append(c)
+        if any(re.search(p,x,re.I) for p in ps):
+            if c=="BACKUP_DATOS" and explicit_backup_excluded(t):
+                continue
+            out.append(c)
     out=list(dict.fromkeys(out))
 
     if "UPGRADE_HARDWARE" in out and "CLONADO_DISCO" in out:

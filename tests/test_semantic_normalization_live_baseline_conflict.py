@@ -4,6 +4,7 @@ from datetime import datetime, timezone
 
 from src.aplicacion.semantic_normalization_live import (
     OUTPUT_FIELDS,
+    _frozen_conflicts_with_explicit_backup_exclusion,
     build_semantic_rows,
 )
 from src.dominio.evidencia import (
@@ -137,3 +138,15 @@ def test_frozen_composite_conflict_yields_to_explicit_sin_backup_live_semantics(
     assert row["matched_services"] == "FORMATEO_INSTALACION_SO"
     assert row["canonical_service"] == "FORMATEO_INSTALACION_SO"
     assert row["comparability_key"] == "CABA::FORMATEO_INSTALACION_SO"
+
+
+def test_presentation_badge_does_not_hide_explicit_backup_exclusion():
+    frozen = {
+        "matched_services": "FORMATEO_INSTALACION_SO|BACKUP_DATOS",
+    }
+
+    assert _frozen_conflicts_with_explicit_backup_exclusion(
+        frozen,
+        "Formateo e instalación de Sistema Operativo sin Más popular BackUp",
+    ) is True
+

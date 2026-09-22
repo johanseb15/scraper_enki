@@ -81,3 +81,16 @@ def test_windows_installation_failure_is_technical_need_not_pricing():
     assert r.technical_need.product_purchase_recommendation=="NONE_YET"
     assert r.technical_need.clarification_required is True
     assert r.price.value is None
+
+def test_explicit_sin_backup_does_not_include_backup_service():
+    r = parse_pricing_query(
+        "Me salió una changa para instalar Windows 10. "
+        "Sería solamente una instalación limpia, sin backup. "
+        "¿Cuánto debería cobrar?"
+    )
+
+    assert "FORMATEO_INSTALACION_SO" in r.canonical_services
+    assert "BACKUP_DATOS" not in r.canonical_services
+    assert r.economic_object_kind == EconomicObjectKind.SERVICE
+    assert r.is_bundle is False
+
