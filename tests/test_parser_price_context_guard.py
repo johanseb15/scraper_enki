@@ -38,3 +38,24 @@ def test_temporal_guard_remains_intact():
     r=parse_pricing_query("precio de un SSD de hace 45 días")
     assert r.price.type==PriceType.UNKNOWN
     assert r.price.value is None
+
+def test_windows_version_number_is_not_price_and_preserves_suggest_price_intent():
+    r = parse_pricing_query(
+        "Me salió una changa para instalar Windows 10. "
+        "¿Cuánto debería cobrar?"
+    )
+
+    assert r.price.type == PriceType.UNKNOWN
+    assert r.price.value is None
+    assert r.intent_action.value == "SUGGEST_PRICE"
+
+def test_windows_version_guard_is_contextual_not_specific_to_version_10():
+    for text in (
+        "instalar Windows 11",
+        "configurar Windows Server 2022",
+    ):
+        r = parse_pricing_query(text)
+
+        assert r.price.type == PriceType.UNKNOWN
+        assert r.price.value is None
+

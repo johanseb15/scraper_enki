@@ -122,6 +122,10 @@ def _naked_number_is_non_price_context(x:str,m:re.Match)->bool:
     if re.search(r"\b(?:rtx|gtx|rx)\s*$",before):
         return True
 
+    # Software/OS version identifiers: Windows 10, Windows 11, Windows Server 2022.
+    if re.search(r"\bwindows(?:\s+server)?\s*$",before):
+        return True
+
     # Quantities and technical specifications are not monetary amounts.
     if re.match(
         r"\s*(?:puestos?|camaras?|equipos?|unidades?|usuarios?|licencias?|"
