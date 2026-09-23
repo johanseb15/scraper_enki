@@ -293,3 +293,25 @@ def test_projection_provenance_is_explicit_and_stable():
         first.projection_provenance
         == second.projection_provenance
     )
+
+def test_composite_service_components_are_projected_with_derived_origin():
+    parsed = parse_pricing_query(
+        "Me pidieron instalar Windows y Office. "
+        "¿Cuánto debería cobrar?"
+    )
+
+    envelope = project_user_query_understanding(parsed)
+
+    fact = _fact(envelope, "service_components")
+
+    assert fact.value == (
+        {
+            "canonical_service": "FORMATEO_INSTALACION_SO",
+            "matched_expression": "instalar windows",
+        },
+        {
+            "canonical_service": "INSTALACION_PROGRAMAS",
+            "matched_expression": "instalar windows y office",
+        },
+    )
+    assert fact.origin is UserQueryFactOrigin.DERIVED

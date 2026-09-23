@@ -11,6 +11,7 @@ from src.dominio.user_query_understanding import (
     UserQueryMonetaryComponent,
     UserQueryMonetaryComponentOrigin,
     UserQueryMonetaryComponentRole,
+    UserQueryServiceComponent,
 )
 
 RULES=[
@@ -388,24 +389,66 @@ def geo(t):
     for raw,p in PROV.items():
         if re.search(rf"\b{re.escape(raw)}\b",x): return Geography(raw,p,None)
     return Geography()
-def services(t):
+def service_components(t):
     x=fold(t); out=[]
     for c,ps in RULES:
-        if any(re.search(p,x,re.I) for p in ps):
-            if c=="BACKUP_DATOS" and explicit_backup_excluded(t):
-                continue
-            out.append(c)
-    out=list(dict.fromkeys(out))
+        match = next(
+            (
+                found
+                for p in ps
+                if (found := re.search(p,x,re.I)) is not None
+            ),
+            None,
+        )
+        if match is None:
+            continue
+        if c=="BACKUP_DATOS" and explicit_backup_excluded(t):
+            continue
+        if any(item.canonical_service==c for item in out):
+            continue
+        out.append(
+            UserQueryServiceComponent(
+                canonical_service=c,
+                matched_expression=match.group(0),
+            )
+        )
 
-    if "UPGRADE_HARDWARE" in out and "CLONADO_DISCO" in out:
-        out=[c for c in out if c!="UPGRADE_HARDWARE"]
+    canonical = {
+        item.canonical_service
+        for item in out
+    }
+
+    if "UPGRADE_HARDWARE" in canonical and "CLONADO_DISCO" in canonical:
+        out=[
+            item
+            for item in out
+            if item.canonical_service!="UPGRADE_HARDWARE"
+        ]
 
     # A domicile visit is a standalone service only when it is the economic
     # object itself. When another concrete local service is present, domicilio
     # is delivery/modality scope, not a second priced service.
-    if "VISITA_TECNICA_DOMICILIO" in out and len(out)>1:
-        out=[c for c in out if c!="VISITA_TECNICA_DOMICILIO"]
+    if (
+        any(
+            item.canonical_service=="VISITA_TECNICA_DOMICILIO"
+            for item in out
+        )
+        and len(out)>1
+    ):
+        out=[
+            item
+            for item in out
+            if item.canonical_service!="VISITA_TECNICA_DOMICILIO"
+        ]
+
     return tuple(out)
+
+
+def services(t):
+    return tuple(
+        item.canonical_service
+        for item in service_components(t)
+    )
 def device(t):
     x=fold(t)
     for d,ps in [("NOTEBOOK",(r"\bnotebook\b",r"\blaptop\b",r"\bnote\b")),("PC",(r"\bpc\b",r"\bcompu\b",r"\bcomputadora\b")),("CELULAR",(r"\bcelular\b",r"\bcelu\b")),("IMPRESORA",(r"\bimpresora\b",)),("GPU",(r"\bplaca de video\b",r"\bgpu\b",r"\b(?:rtx|gtx|rx)\s?\d{3,4}\b")),("STORAGE",(r"\bssd\b",r"\bnvme\b",r"\bdisco\b",r"\bpendrive\b"))]:
@@ -495,7 +538,9 @@ def parse_pricing_query(raw_text:str,*,language_evidence_type:str="UNKNOWN")->Pa
     components = _monetary_composition(
         raw_text,
     )
-    p=price(raw_text); g=geo(raw_text); sv=services(raw_text); dev=device(raw_text); ps=parts(raw_text)
+    service_items=service_components(raw_text)
+    sv=tuple(item.canonical_service for item in service_items)
+    p=price(raw_text); g=geo(raw_text); dev=device(raw_text); ps=parts(raw_text)
     total_component = next(
         (
             item
@@ -546,7 +591,10 @@ def parse_pricing_query(raw_text:str,*,language_evidence_type:str="UNKNOWN")->Pa
         explicit.append("geography.raw_location")
         if g.city: inferred.append("geography.province")
     if dev: explicit.append("device_type")
-    if sv: derived.append("canonical_services")
+    if sv:
+        derived.extend(
+            ("canonical_services", "service_components")
+        )
     side=IntentSide.SELL if has(raw_text,SELL) else IntentSide.BUY if (has(raw_text,BUY) or (has_price and re.search(r"\bme piden\b",x))) else IntentSide.UNKNOWN
     if has(raw_text,EVAL) and has_price: action=IntentAction.EVALUATE_PRICE
     elif (
@@ -632,4 +680,4 @@ def parse_pricing_query(raw_text:str,*,language_evidence_type:str="UNKNOWN")->Pa
         raw_text,
         origin=CommercialContextOrigin.USER_CLAIM,
     ).with_parts_scope(ps)
-    return ParsedPricingQuery(raw_text,x,action,side,kind,sv,market,mod,p,g,dev,"USED" if re.search(r"\busad[oa]\b",x) else "NEW" if re.search(r"\bnuev[oa]\b",x) else "UNKNOWN",kind==EconomicObjectKind.BUNDLE,commercial_context,ParseMetadata(conf,clar,"|".join(reasons) if reasons else None,question,tuple(dict.fromkeys(explicit)),tuple(dict.fromkeys(inferred)),tuple(dict.fromkeys(derived))),language_evidence_type,price_scope=scope,monetary_components=components)
+    return ParsedPricingQuery(raw_text,x,action,side,kind,sv,market,mod,p,g,dev,"USED" if re.search(r"\busad[oa]\b",x) else "NEW" if re.search(r"\bnuev[oa]\b",x) else "UNKNOWN",kind==EconomicObjectKind.BUNDLE,commercial_context,ParseMetadata(conf,clar,"|".join(reasons) if reasons else None,question,tuple(dict.fromkeys(explicit)),tuple(dict.fromkeys(inferred)),tuple(dict.fromkeys(derived))),language_evidence_type,price_scope=scope,monetary_components=components,service_components=service_items)

@@ -1,3 +1,5 @@
+import pytest
+from dataclasses import replace
 from src.aplicacion.language_query_contract import EconomicObjectKind,IntentAction,IntentSide,MarketScope,PartsScope,QueryKind,ServiceModality
 from src.aplicacion.parser_consulta_pricing import parse_pricing_query
 
@@ -113,4 +115,47 @@ def test_windows_and_office_mention_without_install_action_does_not_invent_progr
     )
 
     assert "INSTALACION_PROGRAMAS" not in r.canonical_services
+
+def test_composite_query_preserves_structured_service_components():
+    r = parse_pricing_query(
+        "Me pidieron instalar Windows y Office. "
+        "¿Cuánto debería cobrar?"
+    )
+
+    assert tuple(
+        component.canonical_service
+        for component in r.service_components
+    ) == r.canonical_services
+
+    assert [
+        (
+            component.canonical_service,
+            component.matched_expression,
+        )
+        for component in r.service_components
+    ] == [
+        (
+            "FORMATEO_INSTALACION_SO",
+            "instalar windows",
+        ),
+        (
+            "INSTALACION_PROGRAMAS",
+            "instalar windows y office",
+        ),
+    ]
+
+def test_service_components_cannot_diverge_from_canonical_services():
+    parsed = parse_pricing_query(
+        "Me pidieron instalar Windows y Office. "
+        "¿Cuánto debería cobrar?"
+    )
+
+    with pytest.raises(
+        ValueError,
+        match="service_components.*canonical_services",
+    ):
+        replace(
+            parsed,
+            canonical_services=("FORMATEO_INSTALACION_SO",),
+        )
 

@@ -5,6 +5,7 @@ from src.dominio.price_scope_contract import PriceScopeMeaning
 from src.dominio.commercial_context import CommercialContext, PartsScope
 from src.dominio.user_query_understanding import (
     UserQueryMonetaryComponent,
+    UserQueryServiceComponent,
 )
 
 class QueryKind(str, Enum):
@@ -81,3 +82,18 @@ class ParsedPricingQuery:
         UserQueryMonetaryComponent,
         ...,
     ]=()
+    service_components: tuple[
+        UserQueryServiceComponent,
+        ...,
+    ]=()
+
+    def __post_init__(self) -> None:
+        if self.service_components:
+            projected = tuple(
+                item.canonical_service
+                for item in self.service_components
+            )
+            if projected != self.canonical_services:
+                raise ValueError(
+                    "service_components must project exactly to canonical_services."
+                )

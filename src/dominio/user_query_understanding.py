@@ -76,6 +76,22 @@ class UserQueryMonetaryComponent:
 
 
 @dataclass(frozen=True)
+class UserQueryServiceComponent:
+    canonical_service: str
+    matched_expression: str
+
+    def __post_init__(self) -> None:
+        if not self.canonical_service or not self.canonical_service.strip():
+            raise ValueError(
+                "UserQueryServiceComponent requires canonical_service."
+            )
+        if not self.matched_expression or not self.matched_expression.strip():
+            raise ValueError(
+                "UserQueryServiceComponent requires matched_expression."
+            )
+
+
+@dataclass(frozen=True)
 class UserQuerySemanticFact:
     field: str
     value: object

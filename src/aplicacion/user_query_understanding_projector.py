@@ -191,6 +191,22 @@ def _facts(
             )
         )
 
+    if parsed.service_components:
+        facts.append(
+            _fact(
+                parsed,
+                provenance,
+                "service_components",
+                tuple(
+                    {
+                        "canonical_service": item.canonical_service,
+                        "matched_expression": item.matched_expression,
+                    }
+                    for item in parsed.service_components
+                ),
+            )
+        )
+
     if parsed.market_scope is not MarketScope.UNKNOWN:
         facts.append(
             _fact(

@@ -300,3 +300,32 @@ def test_trace_identity_remains_case_identity_not_schema_identity():
     trace = _trace(raw)
 
     assert trace.trace_id == expected
+
+def test_trace_preserves_structured_composite_service_components():
+    trace = _trace(
+        "Me pidieron instalar Windows y Office. "
+        "¿Cuánto debería cobrar?"
+    )
+
+    facts = {
+        item["field"]: item
+        for item in trace.semantic_result["facts"]
+    }
+
+    assert facts["service_components"]["value"] == [
+        {
+            "canonical_service": "FORMATEO_INSTALACION_SO",
+            "matched_expression": "instalar windows",
+        },
+        {
+            "canonical_service": "INSTALACION_PROGRAMAS",
+            "matched_expression": "instalar windows y office",
+        },
+    ]
+
+    assert facts["service_components"]["origin"] == "DERIVED"
+
+    assert facts["canonical_services"]["value"] == [
+        "FORMATEO_INSTALACION_SO",
+        "INSTALACION_PROGRAMAS",
+    ]
