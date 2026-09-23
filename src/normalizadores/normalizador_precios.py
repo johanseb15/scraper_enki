@@ -43,7 +43,7 @@ class NormalizadorPrecios:
             return None
 
         texto = str(valor_crudo).upper()
-        moneda = "USD" if "USD" in texto or "US$" in texto else "ARS"
+        moneda = "USD" if "USD" in texto or "US$" in texto or "U$S" in texto else "ARS"
         numeros = re.sub(r"[^\d]", "", texto)
         valor = int(numeros) if numeros else 0
         periodo = "mensual" if "MES" in texto else None

@@ -18,3 +18,9 @@ def test_normaliza_precio_mensual():
     assert resultado.valor == 250
     assert resultado.moneda == "USD"
     assert resultado.periodo == "mensual"
+
+
+def test_normaliza_marcador_u_dolar_s_como_usd():
+    resultado = NormalizadorPrecios.normalizar("U$S 250")
+
+    assert resultado.moneda == "USD"
