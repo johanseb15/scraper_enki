@@ -24,6 +24,7 @@ def imprimir_arbol(
             p
             for p in dir_path.iterdir()
             if p.name not in IGNORAR
+            and not (p.is_dir() and p.name.startswith(".pytest_tmp_"))
         ]
     )
     entries_count = len(items)

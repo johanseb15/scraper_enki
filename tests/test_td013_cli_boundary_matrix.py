@@ -178,3 +178,21 @@ def test_safe_non_argparse_entrypoint_runs_without_pythonpath():
         f"STDOUT:\n{stdout}\n"
         f"STDERR:\n{stderr}"
     )
+
+
+def test_estado_repo_excludes_pytest_tmp_directories(tmp_path):
+    generated = tmp_path / ".pytest_tmp_contract_probe"
+    generated.mkdir()
+    (generated / "generated.txt").write_text("temporary", encoding="utf-8")
+
+    completed = subprocess.run(
+        [sys.executable, str(SCRIPTS / "estado_repo.py")],
+        cwd=tmp_path,
+        capture_output=True,
+        timeout=30,
+    )
+    stdout = completed.stdout.decode("utf-8", errors="replace")
+    stderr = completed.stderr.decode("utf-8", errors="replace")
+
+    assert completed.returncode == 0, stderr
+    assert generated.name not in stdout
