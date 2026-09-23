@@ -94,3 +94,23 @@ def test_explicit_sin_backup_does_not_include_backup_service():
     assert r.economic_object_kind == EconomicObjectKind.SERVICE
     assert r.is_bundle is False
 
+def test_coordinated_windows_and_office_preserves_both_services():
+    r = parse_pricing_query(
+        "Me pidieron instalar Windows y Office. "
+        "¿Cuánto debería cobrar?"
+    )
+
+    assert r.canonical_services == (
+        "FORMATEO_INSTALACION_SO",
+        "INSTALACION_PROGRAMAS",
+    )
+    assert r.economic_object_kind == EconomicObjectKind.BUNDLE
+    assert r.is_bundle is True
+
+def test_windows_and_office_mention_without_install_action_does_not_invent_program_installation():
+    r = parse_pricing_query(
+        "Tengo Windows y Office en la notebook."
+    )
+
+    assert "INSTALACION_PROGRAMAS" not in r.canonical_services
+

@@ -20,7 +20,11 @@ RULES=[
 ("LIMPIEZA_MANTENIMIENTO",(r"\blimpieza\b",r"\bpasta termica\b",r"\brepaste",r"\bmantenimiento preventivo\b")),
 ("ELIMINACION_MALWARE",(r"\bmalware\b",r"\bvirus\b",r"\bspyware\b")),
 ("INSTALACION_DRIVERS",(r"\bdrivers?\b",r"\bcontroladores\b")),
-("INSTALACION_PROGRAMAS",(r"\binstalar (?:programas?|office|antivirus)\b",r"\bprogramas? basicos\b")),
+("INSTALACION_PROGRAMAS",(
+    r"\binstalar (?:programas?|office|antivirus)\b",
+    r"\bprogramas? basicos\b",
+    r"\binstalar windows\b[^.!?]{0,40}\by office\b",
+)),
 ("SOPORTE_REMOTO",(r"\bsoporte remoto\b",r"\basistencia remota\b",r"\ba distancia\b",r"\bteamviewer\b",r"\banydesk\b",r"\bacceso remoto\b")),
 ("ARMADO_PC",(
     r"\barmado de pc\b",
