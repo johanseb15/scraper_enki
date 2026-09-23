@@ -4,6 +4,7 @@ from enum import Enum
 from src.dominio.price_scope_contract import PriceScopeMeaning
 from src.dominio.commercial_context import CommercialContext, PartsScope
 from src.dominio.user_query_understanding import (
+    UserQueryHardwareComposition,
     UserQueryMonetaryComponent,
     UserQueryServiceComponent,
 )
@@ -86,6 +87,7 @@ class ParsedPricingQuery:
         UserQueryServiceComponent,
         ...,
     ]=()
+    hardware_composition: UserQueryHardwareComposition | None = None
 
     def __post_init__(self) -> None:
         if self.service_components:

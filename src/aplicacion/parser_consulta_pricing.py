@@ -3,6 +3,7 @@ import re, unicodedata
 from src.aplicacion.language_query_contract import *
 from src.dominio.price_scope_contract import normalize_price_scope
 from src.dominio.service_polarity import explicit_backup_excluded
+from src.dominio.hardware_signals import extract_hardware_signals
 from src.dominio.commercial_context import (
     CommercialContextOrigin,
     resolve_commercial_context,
@@ -12,6 +13,7 @@ from src.dominio.user_query_understanding import (
     UserQueryMonetaryComponentOrigin,
     UserQueryMonetaryComponentRole,
     UserQueryServiceComponent,
+    UserQueryHardwareComposition,
 )
 
 RULES=[
@@ -621,6 +623,28 @@ def parse_pricing_query(raw_text:str,*,language_evidence_type:str="UNKNOWN")->Pa
     else: action=IntentAction.UNKNOWN
     hardware=has(raw_text,HW) and not sv
     kind=EconomicObjectKind.HARDWARE if hardware else EconomicObjectKind.BUNDLE if len(sv)>1 else EconomicObjectKind.SERVICE if len(sv)==1 else EconomicObjectKind.UNKNOWN
+
+    hardware_composition = None
+    if kind is EconomicObjectKind.HARDWARE:
+        hardware_signals = extract_hardware_signals(raw_text)
+        if any(
+            (
+                hardware_signals.families,
+                hardware_signals.brand_signals,
+                hardware_signals.variant_signals,
+                hardware_signals.spec_signals,
+            )
+        ):
+            hardware_composition = UserQueryHardwareComposition(
+                families=hardware_signals.families,
+                brand_signals=hardware_signals.brand_signals,
+                variant_signals=hardware_signals.variant_signals,
+                spec_signals=hardware_signals.spec_signals,
+            )
+
+    if hardware_composition is not None:
+        derived.append("hardware_composition")
+
     if hardware: market=MarketScope.GOODS; mod=ServiceModality.UNKNOWN
     elif sv and all(s in REMOTE for s in sv): market=MarketScope.REMOTE_NATIONAL; mod=ServiceModality.REMOTE; derived+=["market_scope","modality"]
     elif sv:
@@ -680,4 +704,4 @@ def parse_pricing_query(raw_text:str,*,language_evidence_type:str="UNKNOWN")->Pa
         raw_text,
         origin=CommercialContextOrigin.USER_CLAIM,
     ).with_parts_scope(ps)
-    return ParsedPricingQuery(raw_text,x,action,side,kind,sv,market,mod,p,g,dev,"USED" if re.search(r"\busad[oa]\b",x) else "NEW" if re.search(r"\bnuev[oa]\b",x) else "UNKNOWN",kind==EconomicObjectKind.BUNDLE,commercial_context,ParseMetadata(conf,clar,"|".join(reasons) if reasons else None,question,tuple(dict.fromkeys(explicit)),tuple(dict.fromkeys(inferred)),tuple(dict.fromkeys(derived))),language_evidence_type,price_scope=scope,monetary_components=components,service_components=service_items)
+    return ParsedPricingQuery(raw_text,x,action,side,kind,sv,market,mod,p,g,dev,"USED" if re.search(r"\busad[oa]\b",x) else "NEW" if re.search(r"\bnuev[oa]\b",x) else "UNKNOWN",kind==EconomicObjectKind.BUNDLE,commercial_context,ParseMetadata(conf,clar,"|".join(reasons) if reasons else None,question,tuple(dict.fromkeys(explicit)),tuple(dict.fromkeys(inferred)),tuple(dict.fromkeys(derived))),language_evidence_type,price_scope=scope,monetary_components=components,service_components=service_items,hardware_composition=hardware_composition)

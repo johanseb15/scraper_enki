@@ -28,3 +28,26 @@ def test_existing_pc_armada_hardware_behavior_is_preserved():
     r=parse_pricing_query("cuánto sale una pc armada nueva?")
     assert r.economic_object_kind==EconomicObjectKind.HARDWARE
     assert r.market_scope==MarketScope.GOODS
+
+def test_pc_with_specs_preserves_hardware_composition():
+    r = parse_pricing_query(
+        "cuánto sale una PC con Ryzen 7 y 32GB de RAM?"
+    )
+
+    assert r.hardware_composition is not None
+    assert r.hardware_composition.families == (
+        "CPU",
+        "MEMORY",
+    )
+    assert r.hardware_composition.spec_signals == (
+        "32GB",
+    )
+
+def test_hardware_without_composition_keeps_composition_unknown():
+    r = parse_pricing_query("cuánto sale una pc armada nueva?")
+    assert r.hardware_composition is None
+
+
+def test_service_device_does_not_create_hardware_composition():
+    r = parse_pricing_query("quiero cobrar por formatear una notebook")
+    assert r.hardware_composition is None

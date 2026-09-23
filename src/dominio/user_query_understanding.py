@@ -92,6 +92,14 @@ class UserQueryServiceComponent:
 
 
 @dataclass(frozen=True)
+class UserQueryHardwareComposition:
+    families: tuple[str, ...] = ()
+    brand_signals: tuple[str, ...] = ()
+    variant_signals: tuple[str, ...] = ()
+    spec_signals: tuple[str, ...] = ()
+
+
+@dataclass(frozen=True)
 class UserQuerySemanticFact:
     field: str
     value: object

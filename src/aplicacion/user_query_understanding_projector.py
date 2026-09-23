@@ -207,6 +207,27 @@ def _facts(
             )
         )
 
+    if parsed.hardware_composition is not None:
+        facts.append(
+            _fact(
+                parsed,
+                provenance,
+                "hardware_composition",
+                {
+                    "families": parsed.hardware_composition.families,
+                    "brand_signals": (
+                        parsed.hardware_composition.brand_signals
+                    ),
+                    "variant_signals": (
+                        parsed.hardware_composition.variant_signals
+                    ),
+                    "spec_signals": (
+                        parsed.hardware_composition.spec_signals
+                    ),
+                },
+            )
+        )
+
     if parsed.market_scope is not MarketScope.UNKNOWN:
         facts.append(
             _fact(

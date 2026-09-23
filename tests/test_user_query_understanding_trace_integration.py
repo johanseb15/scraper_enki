@@ -329,3 +329,21 @@ def test_trace_preserves_structured_composite_service_components():
         "FORMATEO_INSTALACION_SO",
         "INSTALACION_PROGRAMAS",
     ]
+
+def test_trace_preserves_structured_hardware_composition():
+    trace = _trace(
+        "cuánto sale una PC con Ryzen 7 y 32GB de RAM?"
+    )
+
+    facts = {
+        item["field"]: item
+        for item in trace.semantic_result["facts"]
+    }
+
+    assert facts["hardware_composition"]["value"] == {
+        "families": ["CPU", "MEMORY"],
+        "brand_signals": [],
+        "variant_signals": [],
+        "spec_signals": ["32GB"],
+    }
+    assert facts["hardware_composition"]["origin"] == "DERIVED"

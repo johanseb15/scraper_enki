@@ -315,3 +315,24 @@ def test_composite_service_components_are_projected_with_derived_origin():
         },
     )
     assert fact.origin is UserQueryFactOrigin.DERIVED
+
+
+def test_hardware_composition_is_projected_with_derived_origin():
+    parsed = parse_pricing_query(
+        "cuánto sale una PC con Ryzen 7 y 32GB de RAM?"
+    )
+
+    envelope = project_user_query_understanding(parsed)
+
+    fact = _fact(
+        envelope,
+        "hardware_composition",
+    )
+
+    assert fact.value == {
+        "families": ("CPU", "MEMORY"),
+        "brand_signals": (),
+        "variant_signals": (),
+        "spec_signals": ("32GB",),
+    }
+    assert fact.origin is UserQueryFactOrigin.DERIVED
