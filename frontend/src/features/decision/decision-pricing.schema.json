@@ -398,6 +398,13 @@
         "geography": {
           "$ref": "#/$defs/DecisionPricingGeographyResponse"
         },
+        "goods_components": {
+          "items": {
+            "type": "string"
+          },
+          "title": "Goods Components",
+          "type": "array"
+        },
         "intent_action": {
           "title": "Intent Action",
           "type": "string"
@@ -460,6 +467,7 @@
         "device_type",
         "condition",
         "is_bundle",
+        "goods_components",
         "parts_scope",
         "commercial_context",
         "clarification_required",

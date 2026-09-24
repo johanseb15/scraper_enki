@@ -159,3 +159,8 @@ def test_service_components_cannot_diverge_from_canonical_services():
             canonical_services=("FORMATEO_INSTALACION_SO",),
         )
 
+
+def test_ars_price_with_trailing_dot_dash_preserves_amount():
+    r = parse_pricing_query("me ofrecieron todo por $580.000.-")
+    assert r.price.value == 580000
+    assert r.price.currency == "ARS"

@@ -150,6 +150,7 @@ def _serialize_decision_result(result):
             "device_type": parsed.device_type,
             "condition": parsed.condition,
             "is_bundle": parsed.is_bundle,
+            "goods_components": list(parsed.goods_components),
             "parts_scope": parsed.commercial_context.parts_scope.value,
             "commercial_context": serialize_commercial_context(
                 parsed.commercial_context

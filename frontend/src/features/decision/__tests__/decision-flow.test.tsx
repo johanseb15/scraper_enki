@@ -41,6 +41,7 @@ const rangeReadyResponse = {
     device_type: null,
     condition: "UNKNOWN",
     is_bundle: false,
+    goods_components: [],
     parts_scope: "UNKNOWN",
     commercial_context: {
       value: "STANDARD",

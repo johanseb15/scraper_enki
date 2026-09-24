@@ -197,7 +197,7 @@ def price(t):
     if m:
         pt=_price_type_from_scope(t)
         return PriceMention(pt,money_num(m.group(1)),currency="USD",raw_expression=m.group(0))
-    m=re.search(r"(?<!\w)\$\s*([\d.]+(?:,\d+)?)",x)
+    m=re.search(r"(?<!\w)\$\s*(\d+(?:\.\d+)*(?:,\d+)?)",x)
     if m: return PriceMention(PriceType.EXACT,money_num(m.group(1)),currency="ARS",raw_expression=m.group(0))
     m=re.search(
         r"(?<![\w$])(\d{1,3}(?:[.,]\d{3})+(?:,\d{1,2})?|\d{2,}(?:[.,]\d+)?)\b",
@@ -621,11 +621,38 @@ def parse_pricing_query(raw_text:str,*,language_evidence_type:str="UNKNOWN")->Pa
         action=IntentAction.MARKET_REFERENCE
     elif has_price and side in {IntentSide.BUY,IntentSide.SELL}: action=IntentAction.EVALUATE_PRICE
     else: action=IntentAction.UNKNOWN
-    hardware=has(raw_text,HW) and not sv
-    kind=EconomicObjectKind.HARDWARE if hardware else EconomicObjectKind.BUNDLE if len(sv)>1 else EconomicObjectKind.SERVICE if len(sv)==1 else EconomicObjectKind.UNKNOWN
+    goods_relation=re.search(
+        r"\bpc\b[^.!?]{0,80}\b(?:extras?\s+como|incluye|junto con|con)\s+"
+        r"(?P<listed_goods>(?:(?:el|la|un|una)\s+)?(?:monitor|mouse)\b"
+        r"(?:\s*(?:\+|y|e)\s*(?:(?:el|la|un|una)\s+)?(?:monitor|mouse)\b)*)"
+        r"|\bpc\s*\+\s*(?P<plus_goods>(?:monitor|mouse)\b"
+        r"(?:\s*\+\s*(?:monitor|mouse)\b)*)",
+        x,
+    ) if not sv and has_price else None
+    goods_expression=(
+        goods_relation.group("listed_goods") or goods_relation.group("plus_goods")
+        if goods_relation else ""
+    )
+    goods_components=(
+        ("PC",) + tuple(
+            name
+            for name,token in (("MONITOR","monitor"),("MOUSE","mouse"))
+            if re.search(rf"\b{token}\b",goods_expression)
+            and not re.search(
+                rf"\b{token}\b[^.!?]{{0,40}}\b(?:aparte|por separado)\b",
+                x,
+            )
+        )
+        if goods_relation else ()
+    )
+    goods_bundle=len(goods_components)>1
+    if not goods_bundle:
+        goods_components=()
+    hardware=(has(raw_text,HW) or goods_bundle) and not sv
+    kind=EconomicObjectKind.BUNDLE if goods_bundle else EconomicObjectKind.HARDWARE if hardware else EconomicObjectKind.BUNDLE if len(sv)>1 else EconomicObjectKind.SERVICE if len(sv)==1 else EconomicObjectKind.UNKNOWN
 
     hardware_composition = None
-    if kind is EconomicObjectKind.HARDWARE:
+    if hardware:
         hardware_signals = extract_hardware_signals(raw_text)
         if any(
             (
@@ -644,6 +671,8 @@ def parse_pricing_query(raw_text:str,*,language_evidence_type:str="UNKNOWN")->Pa
 
     if hardware_composition is not None:
         derived.append("hardware_composition")
+    if goods_components:
+        derived.append("goods_components")
 
     if hardware: market=MarketScope.GOODS; mod=ServiceModality.UNKNOWN
     elif sv and all(s in REMOTE for s in sv): market=MarketScope.REMOTE_NATIONAL; mod=ServiceModality.REMOTE; derived+=["market_scope","modality"]
@@ -704,4 +733,4 @@ def parse_pricing_query(raw_text:str,*,language_evidence_type:str="UNKNOWN")->Pa
         raw_text,
         origin=CommercialContextOrigin.USER_CLAIM,
     ).with_parts_scope(ps)
-    return ParsedPricingQuery(raw_text,x,action,side,kind,sv,market,mod,p,g,dev,"USED" if re.search(r"\busad[oa]\b",x) else "NEW" if re.search(r"\bnuev[oa]\b",x) else "UNKNOWN",kind==EconomicObjectKind.BUNDLE,commercial_context,ParseMetadata(conf,clar,"|".join(reasons) if reasons else None,question,tuple(dict.fromkeys(explicit)),tuple(dict.fromkeys(inferred)),tuple(dict.fromkeys(derived))),language_evidence_type,price_scope=scope,monetary_components=components,service_components=service_items,hardware_composition=hardware_composition)
+    return ParsedPricingQuery(raw_text,x,action,side,kind,sv,market,mod,p,g,dev,"USED" if re.search(r"\busad[oa]\b",x) else "NEW" if re.search(r"\bnuev[oa]\b",x) else "UNKNOWN",kind==EconomicObjectKind.BUNDLE,commercial_context,ParseMetadata(conf,clar,"|".join(reasons) if reasons else None,question,tuple(dict.fromkeys(explicit)),tuple(dict.fromkeys(inferred)),tuple(dict.fromkeys(derived))),language_evidence_type,price_scope=scope,monetary_components=components,service_components=service_items,hardware_composition=hardware_composition,goods_components=goods_components)

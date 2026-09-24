@@ -75,6 +75,7 @@ class DecisionPricingParsedResponse(
     device_type: str | None
     condition: str
     is_bundle: bool
+    goods_components: list[str]
     parts_scope: str
     commercial_context: CommercialContextResponse
     clarification_required: bool

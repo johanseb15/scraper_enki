@@ -1,4 +1,6 @@
+import json
 from decimal import Decimal
+from pathlib import Path
 
 from fastapi.testclient import TestClient
 
@@ -7,6 +9,34 @@ from src.aplicacion.pricing_evidence_engine import CohortePricing
 
 
 client = TestClient(app)
+
+
+def test_decision_pricing_exposes_real_goods_bundle_members():
+    corpus = Path("data/language/observed_user_raw_v1.jsonl")
+    row = next(
+        row
+        for row in (
+            json.loads(line)
+            for line in corpus.read_text(encoding="utf-8").splitlines()
+        )
+        if row["metadata"]["legacy_case_id"] == "WEB_REAL_006"
+    )
+
+    app.dependency_overrides[obtener_cohortes_pricing] = lambda: ([], [])
+    try:
+        response = client.post(
+            "/decision/pricing",
+            json={"query": row["raw_text"]},
+        )
+    finally:
+        app.dependency_overrides.clear()
+
+    assert response.status_code == 200
+    parsed = response.json()["parsed"]
+    assert parsed["economic_object_kind"] == "BUNDLE"
+    assert parsed["is_bundle"] is True
+    assert parsed["goods_components"] == ["PC", "MONITOR", "MOUSE"]
+    assert parsed["canonical_services"] == []
 
 
 def _remote_hourly_cohort() -> CohortePricing:

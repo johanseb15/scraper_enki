@@ -82,6 +82,7 @@ export type DecisionPricingParsed = {
   device_type: string | null;
   condition: string;
   is_bundle: boolean;
+  goods_components: string[];
   parts_scope: string;
   commercial_context: CommercialContextContract;
   clarification_required: boolean;

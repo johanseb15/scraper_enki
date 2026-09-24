@@ -207,6 +207,16 @@ def _facts(
             )
         )
 
+    if parsed.goods_components:
+        facts.append(
+            _fact(
+                parsed,
+                provenance,
+                "goods_components",
+                parsed.goods_components,
+            )
+        )
+
     if parsed.hardware_composition is not None:
         facts.append(
             _fact(

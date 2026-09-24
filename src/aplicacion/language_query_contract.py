@@ -88,6 +88,7 @@ class ParsedPricingQuery:
         ...,
     ]=()
     hardware_composition: UserQueryHardwareComposition | None = None
+    goods_components: tuple[str, ...] = ()
 
     def __post_init__(self) -> None:
         if self.service_components:
