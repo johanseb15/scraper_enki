@@ -451,11 +451,142 @@ def services(t):
         item.canonical_service
         for item in service_components(t)
     )
-def device(t):
+DEVICE_PATTERNS = (
+    ("NOTEBOOK", (r"\bnotebook\b", r"\blaptop\b", r"\bnote\b")),
+    ("PC", (r"\bpc\b", r"\bcompu\b", r"\bcomputadora\b")),
+    ("CELULAR", (r"\bcelular\b", r"\bcelu\b")),
+    ("IMPRESORA", (r"\bimpresora\b",)),
+    ("GPU", (r"\bplaca de video\b", r"\bgpu\b", r"\b(?:rtx|gtx|rx)\s?\d{3,4}\b")),
+    ("STORAGE", (r"\bssd\b", r"\bnvme\b", r"\bdisco\b", r"\bpendrive\b")),
+)
+
+
+def _detected_device_types(t: str) -> tuple[str, ...]:
     x=fold(t)
-    for d,ps in [("NOTEBOOK",(r"\bnotebook\b",r"\blaptop\b",r"\bnote\b")),("PC",(r"\bpc\b",r"\bcompu\b",r"\bcomputadora\b")),("CELULAR",(r"\bcelular\b",r"\bcelu\b")),("IMPRESORA",(r"\bimpresora\b",)),("GPU",(r"\bplaca de video\b",r"\bgpu\b",r"\b(?:rtx|gtx|rx)\s?\d{3,4}\b")),("STORAGE",(r"\bssd\b",r"\bnvme\b",r"\bdisco\b",r"\bpendrive\b"))]:
-        if any(re.search(p,x) for p in ps): return d
-    return None
+    return tuple(
+        kind for kind, patterns in DEVICE_PATTERNS
+        if any(re.search(pattern, x) for pattern in patterns)
+    )
+
+
+def device(t):
+    return next(iter(_detected_device_types(t)), None)
+
+
+def _economic_clauses(text: str) -> list[str]:
+    return re.split(
+        r"(?<=[.!?])\s+(?=[a-z])|,\s*pero\s+|,\s*(?=me (?:ofrecieron|ofrecen)\b)",
+        fold(text),
+    )
+
+
+def _resolve_target_device(text: str) -> str | None:
+    clauses = _economic_clauses(text)
+    economic_types = set()
+    has_economic_clause = False
+    for clause in clauses:
+        if not _has_explicit_economic_intent(clause):
+            continue
+        has_economic_clause = True
+        detected = _detected_device_types(clause)
+        if len(detected) > 1:
+            offer = re.search(r"\bme (?:ofrecieron|ofrecen)\b", clause)
+            offer_target_found = False
+            if offer:
+                offer_text = clause[offer.start():]
+                quoted_amount = re.search(r"\bpor\s+\$\s*\d[\d.,]*", offer_text)
+                if quoted_amount:
+                    before_amount = _detected_device_types(
+                        offer_text[:quoted_amount.end()]
+                    )
+                    if before_amount:
+                        detected = before_amount
+                        offer_target_found = True
+                    elif re.fullmatch(
+                        r"me (?:ofrecieron|ofrecen)\s+por\s+\$\s*\d[\d.,]*",
+                        offer_text[:quoted_amount.end()],
+                    ):
+                        after_amount = _detected_device_types(
+                            offer_text[quoted_amount.end():]
+                        )
+                        if after_amount:
+                            detected = after_amount
+                            offer_target_found = True
+                elif re.search(
+                    r"\bpor\s+\$\s*\d[\d.,]*\s*$",
+                    clause[:offer.start()],
+                ):
+                    after_offer = _detected_device_types(offer_text)
+                    if after_offer:
+                        detected = after_offer
+                        offer_target_found = True
+                if not offer_target_found:
+                    detected = ()
+        economic_types.update(detected)
+    if economic_types:
+        return next(iter(economic_types)) if len(economic_types) == 1 else None
+    if has_economic_clause:
+        return None
+    detected = _detected_device_types(text)
+    return detected[0] if len(detected) == 1 else None
+
+
+def _resolve_condition(text: str, device_type: str | None) -> str:
+    clauses = _economic_clauses(text)
+    nouns = {
+        "PC": r"(?:pc|compu|computadora)",
+        "NOTEBOOK": r"(?:notebook|laptop|note)",
+        "CELULAR": r"(?:celular|celu)",
+        "IMPRESORA": r"impresora",
+        "GPU": r"(?:placa de video|gpu|(?:rtx|gtx|rx)\s?\d{3,4})",
+        "STORAGE": r"(?:ssd|nvme|disco|pendrive)",
+    }
+    noun = nouns.get(device_type)
+    if noun is None:
+        return "UNKNOWN"
+    condition_phrase = (
+        rf"\b{noun}\b(?:\s+(?:armad[oa]|(?:de\s+)?\d+(?:gb|tb)))?"
+        r"\s+(?P<condition>nuev[oa]|usad[oa])\b"
+    )
+    economic_device_clauses = tuple(
+        clause
+        for clause in clauses
+        if _has_explicit_economic_intent(clause)
+        and re.search(rf"\b{noun}\b", clause)
+    )
+    target_clauses = economic_device_clauses or clauses
+    matches = tuple(
+        match
+        for clause in target_clauses
+        for match in re.finditer(condition_phrase, clause)
+    )
+    if not matches:
+        return "UNKNOWN"
+    linked_peripheral_condition = (
+        r"(?:\b(?:con|incluye|junto con|extras? como)|\+)\s+"
+        r"(?:(?:el|la|un|una)\s+)?(?:monitor|mouse)\s+"
+        r"(?:nuev[oa]|usad[oa])\b"
+    )
+    if any(
+        re.search(condition_phrase, clause)
+        and re.search(linked_peripheral_condition, clause)
+        for clause in target_clauses
+    ):
+        return "UNKNOWN"
+    conditions = {
+        "NEW" if match.group("condition").startswith("nuev") else "USED"
+        for match in matches
+    }
+    if len(conditions) != 1:
+        return "UNKNOWN"
+    if (
+        any(_has_explicit_economic_intent(clause) and re.search(r"\b(?:monitor|mouse)\b", clause)
+            for clause in clauses)
+        and not any(_has_explicit_economic_intent(clause) and re.search(condition_phrase, clause)
+                    for clause in clauses)
+    ):
+        return "UNKNOWN"
+    return conditions.pop()
 def parts(t):
     x=fold(t)
     if re.search(r"\b(?:solo|solamente) (?:de )?(?:la )?mano de obra\b|\bsin repuesto\b",x): return PartsScope.LABOR_ONLY
@@ -542,7 +673,7 @@ def parse_pricing_query(raw_text:str,*,language_evidence_type:str="UNKNOWN")->Pa
     )
     service_items=service_components(raw_text)
     sv=tuple(item.canonical_service for item in service_items)
-    p=price(raw_text); g=geo(raw_text); dev=device(raw_text); ps=parts(raw_text)
+    p=price(raw_text); g=geo(raw_text); dev=_resolve_target_device(raw_text); ps=parts(raw_text)
     total_component = next(
         (
             item
@@ -733,4 +864,4 @@ def parse_pricing_query(raw_text:str,*,language_evidence_type:str="UNKNOWN")->Pa
         raw_text,
         origin=CommercialContextOrigin.USER_CLAIM,
     ).with_parts_scope(ps)
-    return ParsedPricingQuery(raw_text,x,action,side,kind,sv,market,mod,p,g,dev,"USED" if re.search(r"\busad[oa]\b",x) else "NEW" if re.search(r"\bnuev[oa]\b",x) else "UNKNOWN",kind==EconomicObjectKind.BUNDLE,commercial_context,ParseMetadata(conf,clar,"|".join(reasons) if reasons else None,question,tuple(dict.fromkeys(explicit)),tuple(dict.fromkeys(inferred)),tuple(dict.fromkeys(derived))),language_evidence_type,price_scope=scope,monetary_components=components,service_components=service_items,hardware_composition=hardware_composition,goods_components=goods_components)
+    return ParsedPricingQuery(raw_text,x,action,side,kind,sv,market,mod,p,g,dev,_resolve_condition(raw_text,dev),kind==EconomicObjectKind.BUNDLE,commercial_context,ParseMetadata(conf,clar,"|".join(reasons) if reasons else None,question,tuple(dict.fromkeys(explicit)),tuple(dict.fromkeys(inferred)),tuple(dict.fromkeys(derived))),language_evidence_type,price_scope=scope,monetary_components=components,service_components=service_items,hardware_composition=hardware_composition,goods_components=goods_components)
