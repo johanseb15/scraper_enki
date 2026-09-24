@@ -4,7 +4,7 @@ from src.aplicacion.parser_consulta_pricing import parse_pricing_query
 def test_cuanto_se_esta_cobrando_is_market_reference():
     r=parse_pricing_query("soporte remoto cuanto se esta cobrando la hora")
     assert r.intent_action==IntentAction.MARKET_REFERENCE
-    assert r.market_scope==MarketScope.REMOTE_NATIONAL
+    assert r.market_scope==MarketScope.UNKNOWN
 
 def test_cuanto_estan_cobrando_is_market_reference():
     r=parse_pricing_query("en la plata cuanto estan cobrando el formateo de notebook")

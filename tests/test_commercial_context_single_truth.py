@@ -56,7 +56,7 @@ def test_parser_resolves_typed_commercial_context_once(query, expected):
 
 
 def test_urgency_parser_runtime_and_trace_share_one_context():
-    query = "me quieren cobrar 48 lucas la hora por soporte remoto de urgencia, esta bien?"
+    query = "me quieren cobrar 48 lucas la hora por soporte remoto a todo el país de urgencia, esta bien?"
     cohorts = (_cohort("STANDARD"), _cohort("URGENCY"))
 
     result = resolver_consulta_pricing(query, local_cohortes=(), remote_cohortes=cohorts)
@@ -75,7 +75,7 @@ def test_urgency_parser_runtime_and_trace_share_one_context():
 
 
 def test_absent_user_context_does_not_default_to_standard_cohort():
-    query = "cuanto se cobra por hora por soporte remoto?"
+    query = "cuanto se cobra por hora por soporte remoto a todo el país?"
 
     result = resolver_consulta_pricing(
         query,
@@ -89,7 +89,7 @@ def test_absent_user_context_does_not_default_to_standard_cohort():
 
 
 def test_ambiguous_user_context_is_not_compatible_with_standard_or_urgency():
-    query = "cuanto se cobra por hora por soporte remoto normal de urgencia?"
+    query = "cuanto se cobra por hora por soporte remoto normal de urgencia a todo el país?"
 
     result = resolver_consulta_pricing(
         query,
@@ -142,4 +142,6 @@ def test_known_standard_urgency_regressions_preserve_unknown_without_default(cas
     )
 
     assert result.parsed.commercial_context.value.value == "UNKNOWN"
-    assert result.status == "NO_EVIDENCE"
+    assert result.status == "UNSUPPORTED_QUERY"
+    assert result.unsupported_reason == "UNSUPPORTED_MARKET_SCOPE"
+    assert result.evidence is None

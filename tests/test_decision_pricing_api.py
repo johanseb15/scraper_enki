@@ -109,7 +109,7 @@ def test_decision_pricing_returns_real_range_payload():
     try:
         response = client.post(
             "/decision/pricing",
-            json={"query": "me quieren cobrar 35 lucas la hora por soporte remoto en horario habitual, está bien?"},
+            json={"query": "me quieren cobrar 35 lucas la hora por soporte remoto a todo el país en horario habitual, está bien?"},
         )
     finally:
         app.dependency_overrides.clear()

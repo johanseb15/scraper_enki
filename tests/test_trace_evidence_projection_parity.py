@@ -49,7 +49,7 @@ def assert_engine_trace_parity(query, cohorts, *, case_id):
 
 
 def test_standard_engine_selection_does_not_project_urgency_as_accepted():
-    query = "quiero cobrar 30 lucas la hora de soporte remoto en horario habitual, me quedo corto?"
+    query = "quiero cobrar 30 lucas la hora de soporte remoto a todo el país en horario habitual, me quedo corto?"
     cohorts = (cohort(context="STANDARD"), cohort(context="URGENCY"))
     engine, trace = assert_engine_trace_parity(
         query, cohorts, case_id="projection:standard"
@@ -64,7 +64,7 @@ def test_standard_engine_selection_does_not_project_urgency_as_accepted():
 
 
 def test_urgency_engine_selection_does_not_project_standard_as_accepted():
-    query = "quiero cobrar 30 lucas por hora de soporte remoto de urgencia"
+    query = "quiero cobrar 30 lucas por hora de soporte remoto a todo el país de urgencia"
     cohorts = (cohort(context="STANDARD"), cohort(context="URGENCY"))
     engine, trace = assert_engine_trace_parity(query, cohorts, case_id="projection:urgency")
     assert engine.evidence.commercial_context.value.value == "URGENCY"
@@ -74,7 +74,7 @@ def test_urgency_engine_selection_does_not_project_standard_as_accepted():
 
 
 def test_market_mismatch_keeps_exact_exclusion_and_engine_parity():
-    query = "cuanto se cobra por hora por soporte remoto en horario habitual?"
+    query = "cuanto se cobra por hora por soporte remoto a todo el país en horario habitual?"
     cohorts = (cohort(), cohort(market="Córdoba"))
     _, trace = assert_engine_trace_parity(query, cohorts, case_id="projection:market")
     mismatch = next(item for item in trace.evidence_candidates if ":Córdoba:" in item.evidence_id)
@@ -82,7 +82,7 @@ def test_market_mismatch_keeps_exact_exclusion_and_engine_parity():
 
 
 def test_price_scope_mismatch_keeps_exact_exclusion_and_engine_parity():
-    query = "cuanto se cobra por hora por soporte remoto en horario habitual?"
+    query = "cuanto se cobra por hora por soporte remoto a todo el país en horario habitual?"
     cohorts = (cohort(scope="PER_HOUR"), cohort(scope="PER_MONTH"))
     _, trace = assert_engine_trace_parity(query, cohorts, case_id="projection:scope")
     mismatch = next(item for item in trace.evidence_candidates if ":PER_MONTH:" in item.evidence_id)
@@ -90,7 +90,7 @@ def test_price_scope_mismatch_keeps_exact_exclusion_and_engine_parity():
 
 
 def test_unknown_side_is_excluded_not_mismatch_or_accepted():
-    query = "cuanto se cobra por hora por soporte remoto en horario habitual?"
+    query = "cuanto se cobra por hora por soporte remoto a todo el país en horario habitual?"
     cohorts = (cohort(scope="PER_HOUR"), cohort(scope="UNKNOWN"))
     _, trace = assert_engine_trace_parity(query, cohorts, case_id="projection:unknown")
     unknown = next(item for item in trace.evidence_candidates if ":UNKNOWN:" in item.evidence_id)
@@ -98,14 +98,14 @@ def test_unknown_side_is_excluded_not_mismatch_or_accepted():
 
 
 def test_single_comparable_evidence_has_exact_engine_trace_parity():
-    query = "cuanto se cobra por hora por soporte remoto en horario habitual?"
+    query = "cuanto se cobra por hora por soporte remoto a todo el país en horario habitual?"
     engine, trace = assert_engine_trace_parity(query, (cohort(),), case_id="projection:comparable")
     assert trace.accepted_evidence == (engine.evidence.evidence_id,)
     assert trace.excluded_evidence == ()
 
 
 def test_zero_engine_evidence_never_projects_candidate_as_accepted():
-    query = "cuanto se cobra por hora por soporte remoto en horario habitual?"
+    query = "cuanto se cobra por hora por soporte remoto a todo el país en horario habitual?"
     engine, trace = assert_engine_trace_parity(
         query, (cohort(scope="PER_MONTH"),), case_id="projection:zero"
     )

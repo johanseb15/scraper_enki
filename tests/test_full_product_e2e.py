@@ -25,7 +25,7 @@ API_CASES = {
         "CLARIFICATION_REQUIRED",
     ),
     "D_KNOWN_EVIDENCE": (
-        "Cuánto se está cobrando por hora por soporte remoto?",
+        "Cuánto se está cobrando por hora por soporte remoto a todo el país?",
         "NO_EVIDENCE",
     ),
     "E_UNSUPPORTED_BUNDLE": (
@@ -75,7 +75,7 @@ def test_real_api_cases_have_schema_no_exception_and_trace_semantic_parity():
 def test_current_real_cohorts_do_not_manufacture_decision_ready():
     response = CLIENT.post(
         "/decision/pricing",
-        json={"query": "Cuánto se está cobrando por hora por soporte remoto?"},
+        json={"query": "Cuánto se está cobrando por hora por soporte remoto a todo el país?"},
     )
     assert response.status_code == 200
     body = response.json()

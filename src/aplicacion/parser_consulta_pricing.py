@@ -806,7 +806,30 @@ def parse_pricing_query(raw_text:str,*,language_evidence_type:str="UNKNOWN")->Pa
         derived.append("goods_components")
 
     if hardware: market=MarketScope.GOODS; mod=ServiceModality.UNKNOWN
-    elif sv and all(s in REMOTE for s in sv): market=MarketScope.REMOTE_NATIONAL; mod=ServiceModality.REMOTE; derived+=["market_scope","modality"]
+    elif sv and all(s in REMOTE for s in sv):
+        mod=ServiceModality.REMOTE
+        remote_clauses=[
+            clause for clause in _economic_clauses(raw_text)
+            if any(service in REMOTE for service in services(clause))
+        ]
+        economic_remote_clauses=[
+            clause for clause in remote_clauses
+            if _has_explicit_economic_intent(clause)
+        ]
+        national_reach=any(
+            not re.search(
+                r"\b(?:no|sin|nunca|tampoco)\b(?:\s+\w+){0,3}\s*$",
+                clause[:match.start()],
+            )
+            for clause in (economic_remote_clauses or remote_clauses)
+            for match in re.finditer(
+                r"\btodo el pais\b|\ben todo el pais\b|\bcobertura nacional\b|\ba nivel nacional\b",
+                clause,
+            )
+        )
+        market=MarketScope.REMOTE_NATIONAL if national_reach else MarketScope.UNKNOWN
+        derived.append("modality")
+        if national_reach: derived.append("market_scope")
     elif sv:
         market=MarketScope.LOCAL; derived.append("market_scope")
         mod=ServiceModality.ONSITE if re.search(r"\ba domicilio\b|\btecnico a casa\b|\ben (?:mi|el) domicilio\b",x) else ServiceModality.WORKSHOP if re.search(r"\ben taller\b|\ben el local\b|\blo llevo\b",x) else ServiceModality.UNKNOWN

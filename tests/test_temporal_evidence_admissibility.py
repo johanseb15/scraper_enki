@@ -293,7 +293,7 @@ def test_temporal_exclusion_reason_survives_runtime_gate_trace(tmp_path: Path):
 
 def test_public_runtime_remains_fail_closed_and_trace_aligned():
     local, remote = cargar_cohortes_pricing_runtime()
-    query = "Cuánto se cobra por hora por soporte remoto?"
+    query = "Cuánto se cobra por hora por soporte remoto a todo el país?"
     response = TestClient(app).post("/decision/pricing", json={"query": query})
     trace = trace_real_world_query(
         query,

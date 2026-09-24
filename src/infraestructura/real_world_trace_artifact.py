@@ -16,6 +16,15 @@ from src.infraestructura.real_world_query_tracer import append_trace, build_lear
 from src.infraestructura.artifact_lifecycle import ArtifactClass, build_manifest, write_deterministic_json
 
 
+REMOTE_REACH_SAFETY_CHANGES_V1 = {
+    "rq001": "me quieren cobrar 35 lucas por soporte remoto, está bien?",
+    "rq003": "quiero cobrar 30 lucas la hora de soporte remoto, me quedo corto?",
+    "rq012": "cuánto cobrar por hacer una landing page?",
+    "rq032": "me quieren cobrar 35 lucas la hora por soporte remoto, está bien?",
+    "rq048": "me cobran 35 lucas al mes por mantenimiento web",
+}
+
+
 def build_real_world_trace_artifacts(root, output_dir):
     root, output = Path(root), Path(output_dir)
     output.mkdir(parents=True, exist_ok=True)
@@ -250,17 +259,36 @@ def adjudicate_trace(record, trace):
     adjudication = record["adjudication"]
     behavior = adjudication["expected_behavior"]
     errors = []
-    expected_safety_change = False
+    unknown_remote_reach = (
+        record.get("id") in REMOTE_REACH_SAFETY_CHANGES_V1
+        and record.get("query_raw") == REMOTE_REACH_SAFETY_CHANGES_V1[record["id"]]
+        and trace.raw_user_input == record["query_raw"]
+        and trace.parser_result["modality"] == "REMOTE"
+        and trace.parser_result["market_scope"] == "UNKNOWN"
+        and (
+            (
+                behavior == "PARSE"
+                and trace.readiness == "UNSUPPORTED_QUERY"
+                and trace.public_response["caveat"] == "UNSUPPORTED_MARKET_SCOPE"
+            )
+            or (
+                behavior == "CLARIFICATION"
+                and trace.readiness == "CLARIFICATION_REQUIRED"
+                and adjudication.get("expected_fields", {}).get("market_scope") == "REMOTE_NATIONAL"
+            )
+        )
+    )
+    expected_safety_change = unknown_remote_reach
     if behavior == "CLARIFICATION" and trace.readiness != "CLARIFICATION_REQUIRED":
         errors.append(f"expected CLARIFICATION_REQUIRED, got {trace.readiness}")
     if behavior == "SAFE_UNSUPPORTED" and trace.readiness != "UNSUPPORTED_QUERY":
         errors.append(f"expected UNSUPPORTED_QUERY, got {trace.readiness}")
     if behavior == "PARSE":
-        if trace.readiness in {"CLARIFICATION_REQUIRED", "UNSUPPORTED_QUERY"}:
+        if trace.readiness in {"CLARIFICATION_REQUIRED", "UNSUPPORTED_QUERY"} and not unknown_remote_reach:
             errors.append(f"expected evidence path, got {trace.readiness}")
         expected_status = adjudication.get("expected_resolution_status")
         if expected_status and trace.readiness != expected_status:
-            if (
+            if not unknown_remote_reach and (
                 expected_status in {
                     "INSUFFICIENT_EVIDENCE",
                     "RANGE_READY",
@@ -269,7 +297,7 @@ def adjudicate_trace(record, trace):
                 and trace.readiness in {"INSUFFICIENT_EVIDENCE", "NO_EVIDENCE"}
             ):
                 expected_safety_change = True
-            else:
+            elif not unknown_remote_reach:
                 errors.append(f"expected {expected_status}, got {trace.readiness}")
     actual = {
         "intent_action": trace.intent_result["action"], "intent_side": trace.intent_result["side"],
@@ -282,7 +310,8 @@ def adjudicate_trace(record, trace):
     }
     for field, expected in adjudication.get("expected_fields", {}).items():
         if field in actual and actual[field] != expected:
-            errors.append(f"{field}: expected={expected!r} actual={actual[field]!r}")
+            if not (unknown_remote_reach and field == "market_scope" and expected == "REMOTE_NATIONAL"):
+                errors.append(f"{field}: expected={expected!r} actual={actual[field]!r}")
     if errors:
         return "WRONG_INTERPRETATION", errors
     if expected_safety_change:

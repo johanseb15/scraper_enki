@@ -66,7 +66,7 @@ def test_evidence_exclusions_and_reasons_are_preserved():
     })
     other = CohortePricing(**{**asdict(matching), "price_scope": "PER_MONTH"})
     trace = trace_real_world_query(
-        "quiero cobrar 30 lucas la hora de soporte remoto en horario habitual, me quedo corto?",
+        "quiero cobrar 30 lucas la hora de soporte remoto a todo el país en horario habitual, me quedo corto?",
         local_cohortes=(), remote_cohortes=(matching, other), source_case_id="case:2",
         case_origin="CURATED_ENKI", input_modality=InputModality.TEXT,
     )

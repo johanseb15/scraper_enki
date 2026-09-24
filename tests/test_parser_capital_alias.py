@@ -15,7 +15,7 @@ def test_caba_explicit_still_maps_to_caba():
     r=parse_pricing_query("cuánto sale formatear en CABA?")
     assert r.geography.province=="CABA"
 
-def test_capital_does_not_change_remote_market_scope():
+def test_capital_does_not_establish_remote_national_reach():
     r=parse_pricing_query("soporte remoto desde capital")
     assert r.geography.province=="CABA"
-    assert r.market_scope==MarketScope.REMOTE_NATIONAL
+    assert r.market_scope==MarketScope.UNKNOWN

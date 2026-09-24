@@ -129,7 +129,7 @@ def test_insufficient_to_no_evidence_is_expected_safety_change_in_trace_audit():
 
 def test_remote_service_fragment_without_pricing_intent_stays_unsupported():
     result = resolver_consulta_pricing(
-        "remoto por TeamViewer",
+        "remoto por TeamViewer a todo el país",
         local_cohortes=(),
         remote_cohortes=(cohort(),),
     )

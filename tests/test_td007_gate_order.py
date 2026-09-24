@@ -34,6 +34,6 @@ def test_recovered_td006_bundle_families_now_reach_terminal_gate():
         assert result.unsupported_reason == "SINGLE_CANONICAL_SERVICE_REQUIRED"
 
 def test_non_actionable_fragment_keeps_existing_terminal_behavior():
-    r = resolve("remoto por TeamViewer")
+    r = resolve("remoto por TeamViewer a todo el país")
     assert r.status == "UNSUPPORTED_QUERY"
     assert r.unsupported_reason == "UNSUPPORTED_INTENT"

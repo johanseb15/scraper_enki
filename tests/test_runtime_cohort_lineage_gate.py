@@ -246,7 +246,7 @@ def test_real_p0_cohort_is_rebuilt_without_mutating_historical_inputs(tmp_path: 
 
 def test_runtime_api_and_trace_do_not_reintroduce_lineage_only_members() -> None:
     local, remote = cargar_cohortes_pricing_runtime()
-    query = "Cuánto se está cobrando por hora por soporte remoto?"
+    query = "Cuánto se está cobrando por hora por soporte remoto a todo el país?"
     response = TestClient(app).post("/decision/pricing", json={"query": query})
     trace = trace_real_world_query(
         query,

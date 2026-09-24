@@ -10,14 +10,14 @@ def test_fullstack_development_maps_to_canonical_hourly_service():
     r=parse_pricing_query("cuánto se está cobrando la hora de desarrollo Fullstack Node/React?")
     assert r.canonical_services==("DESARROLLO_SOFTWARE_HORA",)
     assert r.economic_object_kind==EconomicObjectKind.SERVICE
-    assert r.market_scope==MarketScope.REMOTE_NATIONAL
+    assert r.market_scope==MarketScope.UNKNOWN
     assert r.modality==ServiceModality.REMOTE
     assert r.intent_action==IntentAction.MARKET_REFERENCE
 
 def test_frontend_development_maps_to_same_canonical_service():
     r=parse_pricing_query("cuánto se cobra la hora de desarrollo frontend?")
     assert r.canonical_services==("DESARROLLO_SOFTWARE_HORA",)
-    assert r.market_scope==MarketScope.REMOTE_NATIONAL
+    assert r.market_scope==MarketScope.UNKNOWN
 
 def test_backend_development_maps_to_same_canonical_service():
     r=parse_pricing_query("precio de referencia para desarrollo backend")

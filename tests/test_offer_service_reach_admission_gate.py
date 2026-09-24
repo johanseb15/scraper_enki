@@ -274,7 +274,7 @@ def test_both_gates_pass_and_bad_reach_cannot_inflate_provider_count(tmp_path: P
 
 def test_runtime_trace_and_public_api_fail_closed_with_no_admissible_reach():
     local, remote = cargar_cohortes_pricing_runtime()
-    query = "Cuánto se cobra por hora por soporte remoto?"
+    query = "Cuánto se cobra por hora por soporte remoto a todo el país?"
     response = TestClient(app).post("/decision/pricing", json={"query": query})
     trace = trace_real_world_query(
         query,

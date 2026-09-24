@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 def test_commercial_context_artifact_is_deterministic_and_closes_td004():
     generated = build_artifact(ROOT)
     committed = json.loads(
-        (ROOT / "data/evaluation/commercial_context_single_truth_v1.json").read_text(
+        (ROOT / "data/evaluation/commercial_context_single_truth_v2.json").read_text(
             encoding="utf-8"
         )
     )

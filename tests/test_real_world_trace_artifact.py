@@ -1,11 +1,95 @@
 import hashlib
 import json
+from dataclasses import replace
 from pathlib import Path
 
-from src.infraestructura.real_world_trace_artifact import build_real_world_trace_artifacts
+import pytest
+
+from src.aplicacion.pricing_cohort_loader import cargar_cohortes_pricing_runtime
+from src.infraestructura.real_world_query_tracer import trace_real_world_query
+from src.infraestructura.real_world_trace_artifact import adjudicate_trace, build_real_world_trace_artifacts
 
 
 ROOT = Path(__file__).parents[1]
+
+
+@pytest.mark.parametrize("case_id", ("rq001", "rq003", "rq012", "rq032", "rq048"))
+def test_unknown_national_reach_is_expected_safety_change_in_audit(case_id):
+    records = (
+        json.loads(line)
+        for line in (ROOT / "data/language/real_query_corpus_v1.jsonl").read_text(
+            encoding="utf-8"
+        ).splitlines()
+    )
+    record = next(row for row in records if row["id"] == case_id)
+    local, remote = cargar_cohortes_pricing_runtime()
+    trace = trace_real_world_query(
+        record["query_raw"], local_cohortes=local, remote_cohortes=remote,
+        source_case_id=case_id, case_origin=record["provenance"],
+    )
+
+    assert trace.parser_result["modality"] == "REMOTE"
+    assert trace.parser_result["market_scope"] == "UNKNOWN"
+    assert adjudicate_trace(record, trace) == ("EXPECTED_SAFETY_CHANGE", [])
+    if case_id == "rq003":
+        record["adjudication"]["expected_fields"]["price_value"] = 123
+        outcome, errors = adjudicate_trace(record, trace)
+        assert outcome == "WRONG_INTERPRETATION"
+        assert any(error.startswith("price_value:") for error in errors)
+
+
+def test_new_remote_scope_failure_is_not_a_historical_safety_change():
+    query = "quiero cobrar 30 lucas la hora por soporte remoto, me quedo corto?"
+    record = {
+        "id": "rq_future_remote",
+        "query_raw": query,
+        "adjudication": {
+            "expected_behavior": "PARSE",
+            "expected_resolution_status": "RANGE_READY",
+            "expected_fields": {"modality": "REMOTE", "price_value": 30000},
+        },
+    }
+    local, remote = cargar_cohortes_pricing_runtime()
+    trace = trace_real_world_query(
+        query, local_cohortes=local, remote_cohortes=remote,
+        source_case_id=record["id"], case_origin="CURATED_ENKI",
+    )
+
+    assert trace.parser_result["market_scope"] == "UNKNOWN"
+    assert trace.readiness == "UNSUPPORTED_QUERY"
+    assert trace.public_response["caveat"] == "UNSUPPORTED_MARKET_SCOPE"
+    outcome, errors = adjudicate_trace(record, trace)
+    assert outcome == "WRONG_INTERPRETATION"
+    assert "expected evidence path, got UNSUPPORTED_QUERY" in errors
+
+
+def test_explicit_national_reach_misparsed_as_unknown_is_wrong_interpretation():
+    query = "quiero cobrar 30 lucas la hora por soporte remoto a todo el país, me quedo corto?"
+    record = {
+        "id": "rq003",
+        "query_raw": query,
+        "adjudication": {
+            "expected_behavior": "PARSE",
+            "expected_resolution_status": "RANGE_READY",
+            "expected_fields": {"market_scope": "REMOTE_NATIONAL", "modality": "REMOTE"},
+        },
+    }
+    local, remote = cargar_cohortes_pricing_runtime()
+    correct_trace = trace_real_world_query(
+        query, local_cohortes=local, remote_cohortes=remote,
+        source_case_id=record["id"], case_origin="CURATED_ENKI",
+    )
+    assert correct_trace.parser_result["market_scope"] == "REMOTE_NATIONAL"
+    broken_trace = replace(
+        correct_trace,
+        parser_result={**correct_trace.parser_result, "market_scope": "UNKNOWN"},
+        readiness="UNSUPPORTED_QUERY",
+        public_response={**correct_trace.public_response, "caveat": "UNSUPPORTED_MARKET_SCOPE"},
+    )
+
+    outcome, errors = adjudicate_trace(record, broken_trace)
+    assert outcome == "WRONG_INTERPRETATION"
+    assert any(error.startswith("market_scope:") for error in errors)
 
 
 def test_real_pipeline_corpus_builds_labeled_append_only_traces(tmp_path):

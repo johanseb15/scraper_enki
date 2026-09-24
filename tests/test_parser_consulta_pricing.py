@@ -11,9 +11,64 @@ def test_evaluate_buy_local():
 def test_sell_suggest_remote():
     r=parse_pricing_query("cuánto debería cobrar por soporte remoto?")
     assert r.intent_action==IntentAction.SUGGEST_PRICE and r.intent_side==IntentSide.SELL
-    assert r.market_scope==MarketScope.REMOTE_NATIONAL
+    assert r.market_scope==MarketScope.UNKNOWN
     assert r.metadata.clarification_required
     assert r.metadata.clarification_reason=="PRICE_SCOPE_REQUIRED"
+
+
+def test_remote_modality_does_not_imply_national_market_scope():
+    parsed = parse_pricing_query(
+        "cuánto debería cobrar por soporte remoto por hora?"
+    )
+
+    assert parsed.modality is ServiceModality.REMOTE
+    assert parsed.market_scope is MarketScope.UNKNOWN
+
+
+def test_remote_service_from_capital_does_not_imply_national_reach():
+    parsed = parse_pricing_query("soporte remoto desde capital")
+
+    assert parsed.geography.province == "CABA"
+    assert parsed.modality is ServiceModality.REMOTE
+    assert parsed.market_scope is MarketScope.UNKNOWN
+
+
+def test_explicit_national_remote_service_keeps_remote_national_scope():
+    parsed = parse_pricing_query(
+        "cuánto debería cobrar por soporte remoto a todo el país por hora?"
+    )
+
+    assert parsed.modality is ServiceModality.REMOTE
+    assert parsed.market_scope is MarketScope.REMOTE_NATIONAL
+
+
+def test_negated_national_reach_does_not_become_remote_national():
+    parsed = parse_pricing_query(
+        "me ofrecieron soporte remoto por 50 lucas al mes, "
+        "pero no tiene cobertura nacional"
+    )
+
+    assert parsed.modality is ServiceModality.REMOTE
+    assert parsed.market_scope is MarketScope.UNKNOWN
+
+
+def test_unrelated_national_context_does_not_leak_into_remote_offer():
+    parsed = parse_pricing_query(
+        "La empresa entrega equipos a todo el país. "
+        "Me ofrecieron soporte remoto por 50 lucas al mes"
+    )
+
+    assert parsed.modality is ServiceModality.REMOTE
+    assert parsed.market_scope is MarketScope.UNKNOWN
+
+
+def test_explicit_national_coverage_on_remote_service_is_remote_national():
+    parsed = parse_pricing_query("soporte remoto con cobertura nacional")
+
+    assert parsed.modality is ServiceModality.REMOTE
+    assert parsed.market_scope is MarketScope.REMOTE_NATIONAL
+
+
 def test_remote_evaluate():
     r=parse_pricing_query("quiero cobrar 35 lucas por soporte remoto, está bien?")
     assert r.price.value==35000 and r.modality==ServiceModality.REMOTE
