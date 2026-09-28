@@ -39,6 +39,12 @@ class PartsScope(str, Enum):
     UNKNOWN = "UNKNOWN"
 
 
+PARTS_SCOPE_SENSITIVE_SERVICES = frozenset({
+    "UPGRADE_HARDWARE",
+    "REPARACION_HARDWARE",
+})
+
+
 @dataclass(frozen=True)
 class CommercialContext:
     value: CommercialContextValue = CommercialContextValue.UNKNOWN
@@ -150,14 +156,21 @@ def commercial_context_from_value(
 def compare_commercial_contexts(
     left: CommercialContext,
     right: CommercialContext,
+    *,
+    canonical_service: str | None = None,
 ) -> CommercialContextCompatibility:
     if CommercialContextValue.AMBIGUOUS in {left.value, right.value}:
         return CommercialContextCompatibility.AMBIGUOUS_SIDE
     if CommercialContextValue.UNKNOWN in {left.value, right.value}:
         return CommercialContextCompatibility.UNKNOWN_SIDE
-    if left.value is right.value:
-        return CommercialContextCompatibility.COMPATIBLE
-    return CommercialContextCompatibility.MISMATCH
+    if left.value is not right.value:
+        return CommercialContextCompatibility.MISMATCH
+    if canonical_service in PARTS_SCOPE_SENSITIVE_SERVICES:
+        if PartsScope.UNKNOWN in {left.parts_scope, right.parts_scope}:
+            return CommercialContextCompatibility.UNKNOWN_SIDE
+        if left.parts_scope is not right.parts_scope:
+            return CommercialContextCompatibility.MISMATCH
+    return CommercialContextCompatibility.COMPATIBLE
 
 
 def serialize_commercial_context(context: CommercialContext) -> dict[str, object]:

@@ -325,6 +325,7 @@ def _evidence_projection(parsed, result, local, remote):
             context_compatibility = compare_commercial_contexts(
                 item.commercial_context,
                 commercial_context,
+                canonical_service=item.canonical_service,
             )
             if context_compatibility is CommercialContextCompatibility.MISMATCH:
                 reasons.append("COMMERCIAL_CONTEXT_MISMATCH")
