@@ -293,7 +293,7 @@ describe("Decision review flow", () => {
     await user.click(screen.getByRole("button", { name: /ver resultado/i }));
 
     expect(
-      screen.getByText("Rango de mercado disponible"),
+      screen.getByText("Hay evidencia suficiente para mostrar un rango empírico, pero no para emitir BAJO/RAZONABLE/ALTO."),
     ).toBeInTheDocument();
     expect(screen.getByText(/mediana: \$30\.000/i)).toBeInTheDocument();
     expect(
@@ -317,16 +317,64 @@ describe("Decision review flow", () => {
     await user.click(screen.getByRole("button", { name: /ver resultado/i }));
 
     expect(
-      screen.getByText("Rango de mercado disponible"),
+      screen.getByText("Hay evidencia suficiente para mostrar un rango empírico, pero no para emitir BAJO/RAZONABLE/ALTO."),
     ).toBeInTheDocument();
 
     expect(
       screen.queryByText(/^(BAJO|RAZONABLE|ALTO)$/i),
     ).not.toBeInTheDocument();
+    expect(
+      screen.getByText(/pero no para emitir BAJO\/RAZONABLE\/ALTO\./i),
+    ).toBeInTheDocument();
 
     expect(
       screen.queryByText(/^orientación posible$/i),
     ).not.toBeInTheDocument();
+  });
+
+  it("fails closed for an unknown future status without affirmative wording", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => ({ ...rangeReadyResponse, status: "FUTURE_READY", headline: "RAZONABLE" }),
+      }),
+    );
+    const user = userEvent.setup();
+    render(<DecisionReviewFlow initialIntent="received_quote" initialQuoteText={hourlyQuery} />);
+
+    await user.click(screen.getByRole("button", { name: /analizar/i }));
+
+    expect(await screen.findByText("No puedo interpretar este resultado con seguridad.")).toBeVisible();
+    expect(screen.queryByText(/razonable/i)).not.toBeInTheDocument();
+  });
+
+  it("shows a neutral abstention before React can dereference a missing parsed price", async () => {
+    const malformed = structuredClone(rangeReadyResponse) as Record<string, unknown>;
+    delete ((malformed.parsed as Record<string, unknown>).price);
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: true, json: async () => malformed }));
+    const user = userEvent.setup();
+    render(<DecisionReviewFlow initialIntent="received_quote" initialQuoteText={hourlyQuery} />);
+
+    await user.click(screen.getByRole("button", { name: /analizar/i }));
+
+    expect(await screen.findByText("No puedo interpretar este resultado con seguridad.")).toBeVisible();
+    expect(screen.queryByText(/rango observado/i)).not.toBeInTheDocument();
+  });
+
+  it("clears abstention when correcting while preserving the original query", async () => {
+    const malformed = structuredClone(rangeReadyResponse) as Record<string, unknown>;
+    (malformed.evidence as Record<string, unknown>).observation_ids = "invalid";
+    vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: true, json: async () => malformed }));
+    const user = userEvent.setup();
+    render(<DecisionReviewFlow initialIntent="received_quote" initialQuoteText={hourlyQuery} />);
+
+    await user.click(screen.getByRole("button", { name: /analizar/i }));
+    expect(await screen.findByText("No puedo interpretar este resultado con seguridad.")).toBeVisible();
+    await user.click(screen.getByRole("button", { name: /corregir consulta/i }));
+
+    expect(screen.getByRole("textbox")).toHaveValue(hourlyQuery);
+    expect(screen.queryByText("No puedo interpretar este resultado con seguridad.")).not.toBeInTheDocument();
   });
 
   it("does not turn INSUFFICIENT_EVIDENCE into a benchmark from structured evidence", async () => {
@@ -352,7 +400,7 @@ describe("Decision review flow", () => {
     await user.click(screen.getByRole("button", { name: /ver resultado/i }));
 
     expect(
-      screen.getByRole("heading", { name: /evidencia insuficiente/i }),
+      screen.getByRole("heading", { name: /muestra o diversidad de proveedores todavía no alcanza/i }),
     ).toBeInTheDocument();
 
     expect(
@@ -387,7 +435,7 @@ describe("Decision review flow", () => {
     await user.click(screen.getByRole("button", { name: /ver resultado/i }));
 
     expect(
-      screen.getByRole("heading", { name: /evidencia insuficiente/i }),
+      screen.getByRole("heading", { name: /muestra o diversidad de proveedores todavía no alcanza/i }),
     ).toBeInTheDocument();
 
     expect(
@@ -422,7 +470,7 @@ describe("Decision review flow", () => {
     await user.click(screen.getByRole("button", { name: /ver resultado/i }));
 
     expect(
-      screen.getByRole("heading", { name: /evidencia insuficiente/i }),
+      screen.getByRole("heading", { name: /muestra o diversidad de proveedores todavía no alcanza/i }),
     ).toBeInTheDocument();
 
     expect(
@@ -462,6 +510,9 @@ describe("Decision review flow", () => {
     expect(
       screen.getByText("Por encima del intervalo central observado"),
     ).toBeInTheDocument();
+    const conclusion = screen.getByRole("heading", { name: /el precio consultado está alto/i });
+    const classification = screen.getByText("ALTO");
+    expect(conclusion.compareDocumentPosition(classification) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
   it("returns to the original query when the user corrects it", async () => {

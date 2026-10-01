@@ -13,6 +13,10 @@ import { QuoteComposer } from "@/features/decision/components/QuoteComposer";
 import { BenchmarkRail } from "@/features/decision/components/BenchmarkRail";
 import { analyzePricingQuery } from "@/features/decision/decision-api";
 import type {
+  AcceptedDecisionPresentation,
+  DecisionPresentationState,
+} from "@/features/decision/decision-presentation-contract";
+import type {
   DecisionIntent,
   DecisionPricingResponse,
   DecisionReadoutState,
@@ -100,11 +104,11 @@ function priceLabel(result: DecisionPricingResponse) {
   return "Precio no identificado";
 }
 
-function readoutState(result: DecisionPricingResponse): DecisionReadoutState {
-  if (result.status === "DECISION_READY" || result.status === "RANGE_READY") {
+function readoutState(state: DecisionPresentationState): DecisionReadoutState {
+  if (state === "DECISION_READY" || state === "RANGE_READY") {
     return "potentially_comparable";
   }
-  if (result.status === "NO_EVIDENCE" || result.status === "UNSUPPORTED_QUERY") {
+  if (state === "NO_EVIDENCE" || state === "UNSUPPORTED_QUERY") {
     return "not_comparable";
   }
   return "indeterminate";
@@ -116,7 +120,7 @@ export function DecisionReviewFlow({
 }: DecisionReviewFlowProps) {
   const [step, setStep] = useState<FlowStep>("quote");
   const [quoteText, setQuoteText] = useState(initialQuoteText);
-  const [result, setResult] = useState<DecisionPricingResponse | null>(null);
+  const [presentation, setPresentation] = useState<Awaited<ReturnType<typeof analyzePricingQuery>> | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [apiError, setApiError] = useState<string | null>(null);
 
@@ -127,7 +131,7 @@ export function DecisionReviewFlow({
 
     try {
       const nextResult = await analyzePricingQuery(nextQuoteText);
-      setResult(nextResult);
+      setPresentation(nextResult);
       setStep("interpretation");
     } catch (error) {
       setApiError(
@@ -155,17 +159,26 @@ export function DecisionReviewFlow({
           />
         ) : null}
 
-        {step === "interpretation" && result ? (
+        {presentation?.kind === "abstention" ? (
+          <section className="rounded-[18px] border border-[var(--enki-line)] bg-[var(--enki-white)] p-5 shadow-[var(--enki-shadow-soft)]">
+            <h2 className="text-xl font-bold">{presentation.conclusion}</h2>
+            <Button className="mt-4" variant="secondary" onClick={() => { setPresentation(null); setStep("quote"); }}>
+              Corregir consulta
+            </Button>
+          </section>
+        ) : null}
+
+        {step === "interpretation" && presentation?.kind === "accepted" ? (
           <InterpretationSummary
-            result={result}
+            presentation={presentation}
             onConfirm={() => setStep("readout")}
             onCorrect={() => setStep("quote")}
           />
         ) : null}
 
-        {step === "readout" && result ? (
+        {step === "readout" && presentation?.kind === "accepted" ? (
           <DecisionReadout
-            result={result}
+            presentation={presentation}
             onReviewAgain={() => setStep("quote")}
           />
         ) : null}
@@ -245,14 +258,15 @@ function QuoteInput({
 }
 
 function InterpretationSummary({
-  result,
+  presentation,
   onConfirm,
   onCorrect,
 }: {
-  result: DecisionPricingResponse;
+  presentation: AcceptedDecisionPresentation;
   onConfirm: () => void;
   onCorrect: () => void;
 }) {
+  const result = presentation.response;
   const understood = buildUnderstood(result);
   const missing = buildMissing(result);
 
@@ -284,11 +298,11 @@ function InterpretationSummary({
 
       <aside className="space-y-5">
         <PriceDisplay label={priceLabel(result)} />
-        {result.status !== "RANGE_READY" ? (
-          <DecisionState state={readoutState(result)} />
+        {presentation.state !== "RANGE_READY" ? (
+          <DecisionState state={readoutState(presentation.state)} />
         ) : null}
         <div className="grid gap-3">
-          {result.status !== "CLARIFICATION_REQUIRED" ? (
+          {presentation.readoutAllowed ? (
             <Button onClick={onConfirm}>Ver resultado</Button>
           ) : null}
           <Button variant="secondary" onClick={onCorrect}>
@@ -301,16 +315,16 @@ function InterpretationSummary({
 }
 
 function DecisionReadout({
-  result,
+  presentation,
   onReviewAgain,
 }: {
-  result: DecisionPricingResponse;
+  presentation: AcceptedDecisionPresentation;
   onReviewAgain: () => void;
 }) {
+  const result = presentation.response;
   const evidence = result.evidence;
   const known: InterpretationAttribute[] = [];
-  const benchmarkAuthorized =
-    result.status === "RANGE_READY" || result.status === "DECISION_READY";
+  const benchmarkAuthorized = presentation.benchmarkAllowed;
   const benchmarkUserPrice =
     result.parsed.price.type === "EXACT" &&
     result.parsed.price.currency === "ARS"
@@ -353,11 +367,13 @@ function DecisionReadout({
             Resultado Enki
           </p>
           <h2 className="mt-3 text-[32px] font-extrabold leading-[38px]">
-            {result.headline}
-          </h2>
-          <p className="mt-3 text-base leading-7 text-[var(--enki-ink-600)]">
-            {result.summary}
-          </p>
+          {presentation.conclusion}
+        </h2>
+          {presentation.decisionLabel ? (
+            <p className="mt-3 inline-flex rounded-full bg-[var(--enki-teal-50)] px-3 py-1 text-sm font-bold" aria-label="Clasificación económica">
+              {presentation.decisionLabel}
+            </p>
+          ) : null}
           {result.evidence_line ? (
             <p className="mt-4 text-sm font-bold leading-6">
               {result.evidence_line}
@@ -378,7 +394,7 @@ function DecisionReadout({
         <DimensionList
           title={
             evidence
-              ? result.status === "INSUFFICIENT_EVIDENCE"
+              ? presentation.state === "INSUFFICIENT_EVIDENCE"
                 ? "Evidencia observada"
                 : "Evidencia comparable"
               : "Qué entendimos"
@@ -396,10 +412,9 @@ function DecisionReadout({
       </div>
 
       <aside className="space-y-5">
-        {result.status !== "RANGE_READY" ? (
+        {presentation.state !== "RANGE_READY" ? (
           <DecisionState
-            state={readoutState(result)}
-            description={`Estado: ${result.status}.`}
+            state={readoutState(presentation.state)}
           />
         ) : null}
         {!(hasBenchmarkRail && benchmarkUserPrice != null) ? (
