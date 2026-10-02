@@ -1,4 +1,5 @@
 from decimal import Decimal
+from dataclasses import replace
 from types import SimpleNamespace
 
 from src.aplicacion.enki_pricing_response import presentar_resultado_pricing
@@ -86,3 +87,20 @@ def test_unsupported_is_explicit():
     )
     assert "Todavía no puedo" in r.headline
     assert r.caveat == "SINGLE_CANONICAL_SERVICE_REQUIRED"
+
+
+def test_range_response_preserves_cents_in_backend_reference_text():
+    e = replace(evidence(), min_ars=Decimal("28000.10"),
+                median_ars=Decimal("35000.50"), max_ars=Decimal("48000.99"))
+    response = presentar_resultado_pricing(result("RANGE_READY", e))
+    assert response.evidence_line == (
+        "Rango observado $28.000,10–$48.000,99; mediana $35.000,50; "
+        "5 precios de 4 proveedores."
+    )
+
+
+def test_decision_response_preserves_cents_in_authorized_quartiles():
+    e = replace(evidence(decision="RAZONABLE"),
+                q1_ars=Decimal("30000.25"), q3_ars=Decimal("40000.75"))
+    response = presentar_resultado_pricing(result("DECISION_READY", e))
+    assert "$30.000,25–$40.000,75" in response.summary

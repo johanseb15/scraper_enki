@@ -1,3 +1,5 @@
+import { formatDecisionMoney as money } from "@/features/decision/format-money";
+
 type BenchmarkRailProps = {
   min: number;
   q1: number;
@@ -6,10 +8,6 @@ type BenchmarkRailProps = {
   max: number;
   userPrice?: number | null;
 };
-
-function money(value: number) {
-  return `$${Math.round(value).toLocaleString("es-AR")}`;
-}
 
 function clampPercent(value: number, min: number, max: number) {
   if (max <= min) return 50;

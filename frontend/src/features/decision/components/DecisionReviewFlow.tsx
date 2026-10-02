@@ -12,6 +12,7 @@ import { supportQuoteText } from "@/features/decision/fixtures/support-quote";
 import { QuoteComposer } from "@/features/decision/components/QuoteComposer";
 import { BenchmarkRail } from "@/features/decision/components/BenchmarkRail";
 import { analyzePricingQuery } from "@/features/decision/decision-api";
+import { formatDecisionMoney as money } from "@/features/decision/format-money";
 import type {
   DecisionIntent,
   DecisionPricingResponse,
@@ -25,12 +26,6 @@ type DecisionReviewFlowProps = {
   initialIntent: DecisionIntent;
   initialQuoteText?: string;
 };
-
-function money(value: number | null | undefined, currency = "ARS") {
-  if (value == null) return "—";
-  if (currency !== "ARS") return `${value.toLocaleString("es-AR")} ${currency}`;
-  return `$${Math.round(value).toLocaleString("es-AR")}`;
-}
 
 function humanize(value: string | null | undefined) {
   if (!value || value === "UNKNOWN") return null;
@@ -85,7 +80,7 @@ function buildMissing(result: DecisionPricingResponse): InterpretationAttribute[
   if (question) return [{ label: question }];
 
   if (result.status === "UNSUPPORTED_QUERY" && result.unsupported_reason) {
-    return [{ label: `Fuera del alcance actual: ${humanize(result.unsupported_reason)}` }];
+    return [{ label: result.summary }];
   }
 
   return [];
@@ -104,9 +99,13 @@ function readoutState(result: DecisionPricingResponse): DecisionReadoutState {
   if (result.status === "DECISION_READY" || result.status === "RANGE_READY") {
     return "potentially_comparable";
   }
-  if (result.status === "NO_EVIDENCE" || result.status === "UNSUPPORTED_QUERY") {
-    return "not_comparable";
+  switch (result.status) {
+    case "NO_EVIDENCE": return "no_evidence";
+    case "UNSUPPORTED_QUERY": return "unsupported_query";
+    case "CLARIFICATION_REQUIRED": return "clarification_required";
+    case "INSUFFICIENT_EVIDENCE": return "insufficient_evidence";
   }
+  // The current API has no status proving incompatibility between proposals.
   return "indeterminate";
 }
 
@@ -285,7 +284,7 @@ function InterpretationSummary({
       <aside className="space-y-5">
         <PriceDisplay label={priceLabel(result)} />
         {result.status !== "RANGE_READY" ? (
-          <DecisionState state={readoutState(result)} />
+          <DecisionState state={readoutState(result)} description={result.summary} />
         ) : null}
         <div className="grid gap-3">
           {result.status !== "CLARIFICATION_REQUIRED" ? (
@@ -337,7 +336,7 @@ function DecisionReadout({
       { label: `${evidence.observations_n} precios de ${evidence.providers_n} proveedores` },
     );
 
-    if (result.status !== "INSUFFICIENT_EVIDENCE") {
+    if (benchmarkAuthorized) {
       known.push({ label: `Confianza: ${evidence.evidence_confidence}` });
     }
   } else {
@@ -378,9 +377,7 @@ function DecisionReadout({
         <DimensionList
           title={
             evidence
-              ? result.status === "INSUFFICIENT_EVIDENCE"
-                ? "Evidencia observada"
-                : "Evidencia comparable"
+              ? benchmarkAuthorized ? "Evidencia comparable" : "Evidencia observada"
               : "Qué entendimos"
           }
           dimensions={known}
@@ -399,7 +396,7 @@ function DecisionReadout({
         {result.status !== "RANGE_READY" ? (
           <DecisionState
             state={readoutState(result)}
-            description={`Estado: ${result.status}.`}
+            description={result.summary}
           />
         ) : null}
         {!(hasBenchmarkRail && benchmarkUserPrice != null) ? (

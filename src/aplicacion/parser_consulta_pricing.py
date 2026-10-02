@@ -28,7 +28,7 @@ RULES=[
     r"\bprogramas? basicos\b",
     r"\binstalar windows\b[^.!?]{0,40}\by office\b",
 )),
-("SOPORTE_REMOTO",(r"\bsoporte remoto\b",r"\basistencia remota\b",r"\ba distancia\b",r"\bteamviewer\b",r"\banydesk\b",r"\bacceso remoto\b")),
+("SOPORTE_REMOTO",(r"\bsoporte (?:tecnico )?remoto\b",r"\basistencia remota\b",r"\ba distancia\b",r"\bteamviewer\b",r"\banydesk\b",r"\bacceso remoto\b")),
 ("ARMADO_PC",(
     r"\barmado de pc\b",
     r"\barmar (?:una|la) pc\b",
@@ -144,6 +144,13 @@ def _naked_number_is_non_price_context(x:str,m:re.Match)->bool:
 
     return False
 
+_CURRENCY_WORD = r"(?:usd|u\$s|d[oó]lares?|ars|pesos(?: argentinos)?)"
+_EXPLICIT_CURRENCY_AMOUNT = (
+    rf"(?<!\w)(?:{_CURRENCY_WORD}\s*(?P<prefix_amount>\d+(?:[.,]\d+)*)"
+    rf"|(?P<suffix_amount>\d+(?:[.,]\d+)*)\s*{_CURRENCY_WORD}\b)"
+)
+
+
 def _has_multiple_monetary_mentions(t:str)->bool:
     x=t.lower()
 
@@ -156,7 +163,7 @@ def _has_multiple_monetary_mentions(t:str)->bool:
 
     patterns=(
         r"\b[\d.,]+\s*(?:lucas?|mil|k|palos?)\b",
-        r"\b[\d.,]+\s*(?:usd|u\$s|d[oó]lares?)\b",
+        _EXPLICIT_CURRENCY_AMOUNT,
         r"(?<!\w)\$\s*[\d.]+(?:,\d+)?",
         r"\bun palo\b",
     )
@@ -193,12 +200,13 @@ def price(t):
         pt=_price_type_from_scope(t)
         return PriceMention(pt,v,currency="ARS",raw_expression=m.group(0),is_approximate=approx)
     if re.search(r"\bun palo\b",x): return PriceMention(PriceType.EXACT,1_000_000,currency="ARS",raw_expression="un palo")
-    m=re.search(r"\b([\d.,]+)\s*(usd|u\$s|d[oó]lares?)\b",x)
+    m=re.search(_EXPLICIT_CURRENCY_AMOUNT,x)
     if m:
+        group = "prefix_amount" if m.group("prefix_amount") else "suffix_amount"
         pt=_price_type_from_scope(t)
-        return PriceMention(pt,money_num(m.group(1)),currency="USD",raw_expression=m.group(0))
+        return PriceMention(pt,money_num(m.group(group)),currency=_component_currency(x,m,group),raw_expression=m.group(0))
     m=re.search(r"(?<!\w)\$\s*(\d+(?:\.\d+)*(?:,\d+)?)",x)
-    if m: return PriceMention(PriceType.EXACT,money_num(m.group(1)),currency="ARS",raw_expression=m.group(0))
+    if m: return PriceMention(PriceType.EXACT,money_num(m.group(1)),currency=_component_currency(x,m,1),raw_expression=m.group(0))
     m=re.search(
         r"(?<![\w$])(\d{1,3}(?:[.,]\d{3})+(?:,\d{1,2})?|\d{2,}(?:[.,]\d+)?)\b",
         x,
@@ -228,24 +236,27 @@ _CONTEXTUAL_MONEY_PATTERN = re.compile(
 def _component_currency(
     text: str,
     match: re.Match,
+    group: int | str = 0,
 ) -> str:
     before = fold(
-        text[max(0, match.start() - 12):match.start()]
+        text[max(0, match.start(group) - 24):match.start(group)]
     )
     after = fold(
-        text[match.end():match.end() + 16]
+        text[match.end(group):match.end(group) + 24]
     )
 
-    if re.search(r"\$\s*$", before):
-        return "ARS"
-
-    if re.match(
-        r"\s*(?:usd|u\$s|dolares?)\b",
-        after,
+    currencies = set()
+    for currency, marker in (
+        ("USD", r"(?:usd|u\$s|dolares?)"),
+        ("ARS", r"(?:ars|pesos(?: argentinos)?)"),
     ):
-        return "USD"
+        if re.search(rf"(?<!\w){marker}\s*$", before) or re.match(rf"\s*{marker}\b", after):
+            currencies.add(currency)
+    # A bare peso symbol retains the existing ARS convention; u$s is USD.
+    if re.search(r"(?<![\w$])\$\s*$", before):
+        currencies.add("ARS")
 
-    return "UNKNOWN"
+    return next(iter(currencies)) if len(currencies) == 1 else "UNKNOWN"
 
 
 def _component_role(

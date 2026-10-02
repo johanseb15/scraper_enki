@@ -13,6 +13,10 @@ export type QuoteInterpretationView = {
 export type DecisionReadoutState =
   | "potentially_comparable"
   | "not_comparable"
+  | "no_evidence"
+  | "unsupported_query"
+  | "clarification_required"
+  | "insufficient_evidence"
   | "indeterminate";
 
 export type DecisionDimension = {

@@ -17,6 +17,26 @@ const stateCopy: Record<DecisionReadoutState, { label: string; tone: "positive" 
     tone: "attention",
     description: "Estas propuestas no incluyen lo mismo.",
   },
+  no_evidence: {
+    label: "Sin evidencia comparable",
+    tone: "attention",
+    description: "No encontramos precios comparables para esta consulta.",
+  },
+  unsupported_query: {
+    label: "Fuera del alcance actual",
+    tone: "attention",
+    description: "Esta consulta está fuera del alcance admitido.",
+  },
+  clarification_required: {
+    label: "Falta aclarar la consulta",
+    tone: "attention",
+    description: "Necesitamos que confirmes un dato de la consulta.",
+  },
+  insufficient_evidence: {
+    label: "Evidencia insuficiente",
+    tone: "attention",
+    description: "La evidencia observada todavía no alcanza para una evaluación confiable.",
+  },
   indeterminate: {
     label: "Información insuficiente",
     tone: "attention",

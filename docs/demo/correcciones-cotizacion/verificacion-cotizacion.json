@@ -1,0 +1,654 @@
+{
+  "real_api": true,
+  "synthetic_responses": false,
+  "cases": [
+    {
+      "viewport": "escritorio",
+      "case": "soporte",
+      "response": {
+        "status": "UNSUPPORTED_QUERY",
+        "headline": "Todavía no puedo comparar esta consulta",
+        "summary": "La consulta está fuera del alcance seguro de Enki Decision v1.",
+        "evidence_line": null,
+        "caveat": "UNSUPPORTED_MARKET_SCOPE",
+        "clarification_reason": null,
+        "clarification_question": null,
+        "unsupported_reason": "UNSUPPORTED_MARKET_SCOPE",
+        "market_resolution": null,
+        "pricing_readiness": null,
+        "evidence_probe": null,
+        "parsed": {
+          "query_kind": "ECONOMIC_QUERY",
+          "intent_action": "EVALUATE_PRICE",
+          "intent_side": "UNKNOWN",
+          "economic_object_kind": "SERVICE",
+          "canonical_services": [
+            "SOPORTE_REMOTO"
+          ],
+          "market_scope": "UNKNOWN",
+          "modality": "REMOTE",
+          "price": {
+            "type": "PER_HOUR",
+            "value": 35000.0,
+            "min": null,
+            "max": null,
+            "currency": "ARS",
+            "is_approximate": false
+          },
+          "geography": {
+            "province": null,
+            "city": null
+          },
+          "device_type": null,
+          "condition": "UNKNOWN",
+          "is_bundle": false,
+          "goods_components": [],
+          "parts_scope": "UNKNOWN",
+          "commercial_context": {
+            "value": "UNKNOWN",
+            "status": "UNKNOWN",
+            "origin": "USER_CLAIM",
+            "raw_basis": [],
+            "resolution_method": "commercial-context-v1"
+          },
+          "clarification_required": false,
+          "clarification_reason": null,
+          "clarification_question": null,
+          "technical_need": null,
+          "monetary_components": []
+        },
+        "evidence": null
+      }
+    },
+    {
+      "viewport": "escritorio",
+      "case": "usd",
+      "response": {
+        "status": "UNSUPPORTED_QUERY",
+        "headline": "Todavía no puedo comparar esta consulta",
+        "summary": "La consulta está fuera del alcance seguro de Enki Decision v1.",
+        "evidence_line": null,
+        "caveat": "ARS_ONLY_V1",
+        "clarification_reason": null,
+        "clarification_question": null,
+        "unsupported_reason": "ARS_ONLY_V1",
+        "market_resolution": null,
+        "pricing_readiness": null,
+        "evidence_probe": null,
+        "parsed": {
+          "query_kind": "ECONOMIC_QUERY",
+          "intent_action": "EVALUATE_PRICE",
+          "intent_side": "BUY",
+          "economic_object_kind": "SERVICE",
+          "canonical_services": [
+            "SOPORTE_REMOTO"
+          ],
+          "market_scope": "REMOTE_NATIONAL",
+          "modality": "REMOTE",
+          "price": {
+            "type": "PER_HOUR",
+            "value": 100.0,
+            "min": null,
+            "max": null,
+            "currency": "USD",
+            "is_approximate": false
+          },
+          "geography": {
+            "province": null,
+            "city": null
+          },
+          "device_type": null,
+          "condition": "UNKNOWN",
+          "is_bundle": false,
+          "goods_components": [],
+          "parts_scope": "UNKNOWN",
+          "commercial_context": {
+            "value": "UNKNOWN",
+            "status": "UNKNOWN",
+            "origin": "USER_CLAIM",
+            "raw_basis": [],
+            "resolution_method": "commercial-context-v1"
+          },
+          "clarification_required": false,
+          "clarification_reason": null,
+          "clarification_question": null,
+          "technical_need": null,
+          "monetary_components": []
+        },
+        "evidence": null
+      }
+    },
+    {
+      "viewport": "escritorio",
+      "case": "centavos",
+      "response": {
+        "status": "NO_EVIDENCE",
+        "headline": "Sin evidencia comparable",
+        "summary": "No encontré precios comparables para este servicio y mercado.",
+        "evidence_line": null,
+        "caveat": null,
+        "clarification_reason": null,
+        "clarification_question": null,
+        "unsupported_reason": null,
+        "market_resolution": null,
+        "pricing_readiness": null,
+        "evidence_probe": null,
+        "parsed": {
+          "query_kind": "ECONOMIC_QUERY",
+          "intent_action": "EVALUATE_PRICE",
+          "intent_side": "BUY",
+          "economic_object_kind": "SERVICE",
+          "canonical_services": [
+            "FORMATEO_INSTALACION_SO"
+          ],
+          "market_scope": "LOCAL",
+          "modality": "UNKNOWN",
+          "price": {
+            "type": "EXACT",
+            "value": 35000.5,
+            "min": null,
+            "max": null,
+            "currency": "ARS",
+            "is_approximate": false
+          },
+          "geography": {
+            "province": "Córdoba",
+            "city": null
+          },
+          "device_type": "NOTEBOOK",
+          "condition": "UNKNOWN",
+          "is_bundle": false,
+          "goods_components": [],
+          "parts_scope": "UNKNOWN",
+          "commercial_context": {
+            "value": "UNKNOWN",
+            "status": "UNKNOWN",
+            "origin": "USER_CLAIM",
+            "raw_basis": [],
+            "resolution_method": "commercial-context-v1"
+          },
+          "clarification_required": false,
+          "clarification_reason": null,
+          "clarification_question": null,
+          "technical_need": null,
+          "monetary_components": []
+        },
+        "evidence": {
+          "market": "Córdoba",
+          "canonical_service": "FORMATEO_INSTALACION_SO",
+          "observations_n": 0,
+          "providers_n": 0,
+          "source_count": 0,
+          "provider_independence_version": null,
+          "min_ars": null,
+          "q1_ars": null,
+          "median_ars": null,
+          "q3_ars": null,
+          "max_ars": null,
+          "evidence_confidence": "NONE",
+          "price_position": null,
+          "decision_label": null,
+          "price_scope": "UNKNOWN",
+          "commercial_context": "UNKNOWN",
+          "commercial_context_provenance": {
+            "value": "UNKNOWN",
+            "status": "UNKNOWN",
+            "origin": "USER_CLAIM",
+            "raw_basis": [],
+            "resolution_method": "commercial-context-v1"
+          },
+          "evidence_commercial_context": null,
+          "lineage_gate_version": null,
+          "service_reach_gate_version": null,
+          "temporal_gate_version": null,
+          "temporal_state": null,
+          "acquired_at_min": null,
+          "acquired_at_max": null,
+          "freshness_policy_version": null,
+          "observation_ids": []
+        }
+      }
+    },
+    {
+      "viewport": "escritorio",
+      "case": "ambigua",
+      "response": {
+        "status": "CLARIFICATION_REQUIRED",
+        "headline": "Necesito una aclaración",
+        "summary": "¿Ese monto está expresado en pesos argentinos o en otra moneda?",
+        "evidence_line": null,
+        "caveat": "UNKNOWN_CURRENCY",
+        "clarification_reason": "UNKNOWN_CURRENCY",
+        "clarification_question": "¿Ese monto está expresado en pesos argentinos o en otra moneda?",
+        "unsupported_reason": null,
+        "market_resolution": null,
+        "pricing_readiness": null,
+        "evidence_probe": null,
+        "parsed": {
+          "query_kind": "ECONOMIC_QUERY",
+          "intent_action": "EVALUATE_PRICE",
+          "intent_side": "BUY",
+          "economic_object_kind": "SERVICE",
+          "canonical_services": [
+            "SOPORTE_REMOTO"
+          ],
+          "market_scope": "REMOTE_NATIONAL",
+          "modality": "REMOTE",
+          "price": {
+            "type": "EXACT",
+            "value": 100.0,
+            "min": null,
+            "max": null,
+            "currency": "UNKNOWN",
+            "is_approximate": false
+          },
+          "geography": {
+            "province": null,
+            "city": null
+          },
+          "device_type": null,
+          "condition": "UNKNOWN",
+          "is_bundle": false,
+          "goods_components": [],
+          "parts_scope": "UNKNOWN",
+          "commercial_context": {
+            "value": "UNKNOWN",
+            "status": "UNKNOWN",
+            "origin": "USER_CLAIM",
+            "raw_basis": [],
+            "resolution_method": "commercial-context-v1"
+          },
+          "clarification_required": true,
+          "clarification_reason": "UNKNOWN_CURRENCY",
+          "clarification_question": "¿Ese monto está expresado en pesos argentinos o en otra moneda?",
+          "technical_need": null,
+          "monetary_components": []
+        },
+        "evidence": null
+      }
+    },
+    {
+      "viewport": "escritorio",
+      "case": "contradictoria",
+      "response": {
+        "status": "CLARIFICATION_REQUIRED",
+        "headline": "Necesito una aclaración",
+        "summary": "¿Ese monto está expresado en pesos argentinos o en otra moneda?",
+        "evidence_line": null,
+        "caveat": "UNKNOWN_CURRENCY",
+        "clarification_reason": "UNKNOWN_CURRENCY",
+        "clarification_question": "¿Ese monto está expresado en pesos argentinos o en otra moneda?",
+        "unsupported_reason": null,
+        "market_resolution": null,
+        "pricing_readiness": null,
+        "evidence_probe": null,
+        "parsed": {
+          "query_kind": "ECONOMIC_QUERY",
+          "intent_action": "EVALUATE_PRICE",
+          "intent_side": "BUY",
+          "economic_object_kind": "SERVICE",
+          "canonical_services": [
+            "SOPORTE_REMOTO"
+          ],
+          "market_scope": "REMOTE_NATIONAL",
+          "modality": "REMOTE",
+          "price": {
+            "type": "PER_HOUR",
+            "value": 100.0,
+            "min": null,
+            "max": null,
+            "currency": "UNKNOWN",
+            "is_approximate": false
+          },
+          "geography": {
+            "province": null,
+            "city": null
+          },
+          "device_type": null,
+          "condition": "UNKNOWN",
+          "is_bundle": false,
+          "goods_components": [],
+          "parts_scope": "UNKNOWN",
+          "commercial_context": {
+            "value": "UNKNOWN",
+            "status": "UNKNOWN",
+            "origin": "USER_CLAIM",
+            "raw_basis": [],
+            "resolution_method": "commercial-context-v1"
+          },
+          "clarification_required": true,
+          "clarification_reason": "UNKNOWN_CURRENCY",
+          "clarification_question": "¿Ese monto está expresado en pesos argentinos o en otra moneda?",
+          "technical_need": null,
+          "monetary_components": []
+        },
+        "evidence": null
+      }
+    },
+    {
+      "viewport": "movil",
+      "case": "soporte",
+      "response": {
+        "status": "UNSUPPORTED_QUERY",
+        "headline": "Todavía no puedo comparar esta consulta",
+        "summary": "La consulta está fuera del alcance seguro de Enki Decision v1.",
+        "evidence_line": null,
+        "caveat": "UNSUPPORTED_MARKET_SCOPE",
+        "clarification_reason": null,
+        "clarification_question": null,
+        "unsupported_reason": "UNSUPPORTED_MARKET_SCOPE",
+        "market_resolution": null,
+        "pricing_readiness": null,
+        "evidence_probe": null,
+        "parsed": {
+          "query_kind": "ECONOMIC_QUERY",
+          "intent_action": "EVALUATE_PRICE",
+          "intent_side": "UNKNOWN",
+          "economic_object_kind": "SERVICE",
+          "canonical_services": [
+            "SOPORTE_REMOTO"
+          ],
+          "market_scope": "UNKNOWN",
+          "modality": "REMOTE",
+          "price": {
+            "type": "PER_HOUR",
+            "value": 35000.0,
+            "min": null,
+            "max": null,
+            "currency": "ARS",
+            "is_approximate": false
+          },
+          "geography": {
+            "province": null,
+            "city": null
+          },
+          "device_type": null,
+          "condition": "UNKNOWN",
+          "is_bundle": false,
+          "goods_components": [],
+          "parts_scope": "UNKNOWN",
+          "commercial_context": {
+            "value": "UNKNOWN",
+            "status": "UNKNOWN",
+            "origin": "USER_CLAIM",
+            "raw_basis": [],
+            "resolution_method": "commercial-context-v1"
+          },
+          "clarification_required": false,
+          "clarification_reason": null,
+          "clarification_question": null,
+          "technical_need": null,
+          "monetary_components": []
+        },
+        "evidence": null
+      }
+    },
+    {
+      "viewport": "movil",
+      "case": "usd",
+      "response": {
+        "status": "UNSUPPORTED_QUERY",
+        "headline": "Todavía no puedo comparar esta consulta",
+        "summary": "La consulta está fuera del alcance seguro de Enki Decision v1.",
+        "evidence_line": null,
+        "caveat": "ARS_ONLY_V1",
+        "clarification_reason": null,
+        "clarification_question": null,
+        "unsupported_reason": "ARS_ONLY_V1",
+        "market_resolution": null,
+        "pricing_readiness": null,
+        "evidence_probe": null,
+        "parsed": {
+          "query_kind": "ECONOMIC_QUERY",
+          "intent_action": "EVALUATE_PRICE",
+          "intent_side": "BUY",
+          "economic_object_kind": "SERVICE",
+          "canonical_services": [
+            "SOPORTE_REMOTO"
+          ],
+          "market_scope": "REMOTE_NATIONAL",
+          "modality": "REMOTE",
+          "price": {
+            "type": "PER_HOUR",
+            "value": 100.0,
+            "min": null,
+            "max": null,
+            "currency": "USD",
+            "is_approximate": false
+          },
+          "geography": {
+            "province": null,
+            "city": null
+          },
+          "device_type": null,
+          "condition": "UNKNOWN",
+          "is_bundle": false,
+          "goods_components": [],
+          "parts_scope": "UNKNOWN",
+          "commercial_context": {
+            "value": "UNKNOWN",
+            "status": "UNKNOWN",
+            "origin": "USER_CLAIM",
+            "raw_basis": [],
+            "resolution_method": "commercial-context-v1"
+          },
+          "clarification_required": false,
+          "clarification_reason": null,
+          "clarification_question": null,
+          "technical_need": null,
+          "monetary_components": []
+        },
+        "evidence": null
+      }
+    },
+    {
+      "viewport": "movil",
+      "case": "centavos",
+      "response": {
+        "status": "NO_EVIDENCE",
+        "headline": "Sin evidencia comparable",
+        "summary": "No encontré precios comparables para este servicio y mercado.",
+        "evidence_line": null,
+        "caveat": null,
+        "clarification_reason": null,
+        "clarification_question": null,
+        "unsupported_reason": null,
+        "market_resolution": null,
+        "pricing_readiness": null,
+        "evidence_probe": null,
+        "parsed": {
+          "query_kind": "ECONOMIC_QUERY",
+          "intent_action": "EVALUATE_PRICE",
+          "intent_side": "BUY",
+          "economic_object_kind": "SERVICE",
+          "canonical_services": [
+            "FORMATEO_INSTALACION_SO"
+          ],
+          "market_scope": "LOCAL",
+          "modality": "UNKNOWN",
+          "price": {
+            "type": "EXACT",
+            "value": 35000.5,
+            "min": null,
+            "max": null,
+            "currency": "ARS",
+            "is_approximate": false
+          },
+          "geography": {
+            "province": "Córdoba",
+            "city": null
+          },
+          "device_type": "NOTEBOOK",
+          "condition": "UNKNOWN",
+          "is_bundle": false,
+          "goods_components": [],
+          "parts_scope": "UNKNOWN",
+          "commercial_context": {
+            "value": "UNKNOWN",
+            "status": "UNKNOWN",
+            "origin": "USER_CLAIM",
+            "raw_basis": [],
+            "resolution_method": "commercial-context-v1"
+          },
+          "clarification_required": false,
+          "clarification_reason": null,
+          "clarification_question": null,
+          "technical_need": null,
+          "monetary_components": []
+        },
+        "evidence": {
+          "market": "Córdoba",
+          "canonical_service": "FORMATEO_INSTALACION_SO",
+          "observations_n": 0,
+          "providers_n": 0,
+          "source_count": 0,
+          "provider_independence_version": null,
+          "min_ars": null,
+          "q1_ars": null,
+          "median_ars": null,
+          "q3_ars": null,
+          "max_ars": null,
+          "evidence_confidence": "NONE",
+          "price_position": null,
+          "decision_label": null,
+          "price_scope": "UNKNOWN",
+          "commercial_context": "UNKNOWN",
+          "commercial_context_provenance": {
+            "value": "UNKNOWN",
+            "status": "UNKNOWN",
+            "origin": "USER_CLAIM",
+            "raw_basis": [],
+            "resolution_method": "commercial-context-v1"
+          },
+          "evidence_commercial_context": null,
+          "lineage_gate_version": null,
+          "service_reach_gate_version": null,
+          "temporal_gate_version": null,
+          "temporal_state": null,
+          "acquired_at_min": null,
+          "acquired_at_max": null,
+          "freshness_policy_version": null,
+          "observation_ids": []
+        }
+      }
+    },
+    {
+      "viewport": "movil",
+      "case": "ambigua",
+      "response": {
+        "status": "CLARIFICATION_REQUIRED",
+        "headline": "Necesito una aclaración",
+        "summary": "¿Ese monto está expresado en pesos argentinos o en otra moneda?",
+        "evidence_line": null,
+        "caveat": "UNKNOWN_CURRENCY",
+        "clarification_reason": "UNKNOWN_CURRENCY",
+        "clarification_question": "¿Ese monto está expresado en pesos argentinos o en otra moneda?",
+        "unsupported_reason": null,
+        "market_resolution": null,
+        "pricing_readiness": null,
+        "evidence_probe": null,
+        "parsed": {
+          "query_kind": "ECONOMIC_QUERY",
+          "intent_action": "EVALUATE_PRICE",
+          "intent_side": "BUY",
+          "economic_object_kind": "SERVICE",
+          "canonical_services": [
+            "SOPORTE_REMOTO"
+          ],
+          "market_scope": "REMOTE_NATIONAL",
+          "modality": "REMOTE",
+          "price": {
+            "type": "EXACT",
+            "value": 100.0,
+            "min": null,
+            "max": null,
+            "currency": "UNKNOWN",
+            "is_approximate": false
+          },
+          "geography": {
+            "province": null,
+            "city": null
+          },
+          "device_type": null,
+          "condition": "UNKNOWN",
+          "is_bundle": false,
+          "goods_components": [],
+          "parts_scope": "UNKNOWN",
+          "commercial_context": {
+            "value": "UNKNOWN",
+            "status": "UNKNOWN",
+            "origin": "USER_CLAIM",
+            "raw_basis": [],
+            "resolution_method": "commercial-context-v1"
+          },
+          "clarification_required": true,
+          "clarification_reason": "UNKNOWN_CURRENCY",
+          "clarification_question": "¿Ese monto está expresado en pesos argentinos o en otra moneda?",
+          "technical_need": null,
+          "monetary_components": []
+        },
+        "evidence": null
+      }
+    },
+    {
+      "viewport": "movil",
+      "case": "contradictoria",
+      "response": {
+        "status": "CLARIFICATION_REQUIRED",
+        "headline": "Necesito una aclaración",
+        "summary": "¿Ese monto está expresado en pesos argentinos o en otra moneda?",
+        "evidence_line": null,
+        "caveat": "UNKNOWN_CURRENCY",
+        "clarification_reason": "UNKNOWN_CURRENCY",
+        "clarification_question": "¿Ese monto está expresado en pesos argentinos o en otra moneda?",
+        "unsupported_reason": null,
+        "market_resolution": null,
+        "pricing_readiness": null,
+        "evidence_probe": null,
+        "parsed": {
+          "query_kind": "ECONOMIC_QUERY",
+          "intent_action": "EVALUATE_PRICE",
+          "intent_side": "BUY",
+          "economic_object_kind": "SERVICE",
+          "canonical_services": [
+            "SOPORTE_REMOTO"
+          ],
+          "market_scope": "REMOTE_NATIONAL",
+          "modality": "REMOTE",
+          "price": {
+            "type": "PER_HOUR",
+            "value": 100.0,
+            "min": null,
+            "max": null,
+            "currency": "UNKNOWN",
+            "is_approximate": false
+          },
+          "geography": {
+            "province": null,
+            "city": null
+          },
+          "device_type": null,
+          "condition": "UNKNOWN",
+          "is_bundle": false,
+          "goods_components": [],
+          "parts_scope": "UNKNOWN",
+          "commercial_context": {
+            "value": "UNKNOWN",
+            "status": "UNKNOWN",
+            "origin": "USER_CLAIM",
+            "raw_basis": [],
+            "resolution_method": "commercial-context-v1"
+          },
+          "clarification_required": true,
+          "clarification_reason": "UNKNOWN_CURRENCY",
+          "clarification_question": "¿Ese monto está expresado en pesos argentinos o en otra moneda?",
+          "technical_need": null,
+          "monetary_components": []
+        },
+        "evidence": null
+      }
+    }
+  ],
+  "connection_failure_and_retry": true,
+  "horizontal_overflow": false
+}

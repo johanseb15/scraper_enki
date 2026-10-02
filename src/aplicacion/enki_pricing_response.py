@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from decimal import Decimal
 
 from src.aplicacion.enki_pricing_query_service import EnkiPricingQueryResult
 
@@ -16,8 +17,10 @@ class EnkiUserResponse:
 def _money(value) -> str:
     if value is None:
         return "-"
-    n = int(round(float(value)))
-    return f"${n:,.0f}".replace(",", ".")
+    amount = Decimal(str(value))
+    digits = 0 if amount == amount.to_integral_value() else 2
+    formatted = f"{amount:,.{digits}f}".translate(str.maketrans({",": ".", ".": ","}))
+    return f"${formatted}"
 
 
 def presentar_resultado_pricing(result: EnkiPricingQueryResult) -> EnkiUserResponse:
