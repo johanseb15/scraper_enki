@@ -1,0 +1,16 @@
+{
+  "desktop": "1440x1000",
+  "mobile": "390x844",
+  "horizontal_overflow": false,
+  "offline_external_requests_blocked": true,
+  "page_errors": [],
+  "verified": [
+    "fuentes y captura",
+    "centavos y porcentaje",
+    "grupos separados",
+    "filtro geográfico",
+    "estado vacío",
+    "restablecer",
+    "precio inválido y reintento"
+  ]
+}

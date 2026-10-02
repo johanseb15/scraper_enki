@@ -1,4 +1,5 @@
 from typing import Optional
+from decimal import Decimal
 
 from src.aplicacion.dto.oferta_dto import OfertaDTO
 from src.dominio.empresa import Empresa
@@ -39,11 +40,15 @@ class OfertaFactory:
         )
 
         precio = dto.precio if precio_normalizado is None else precio_normalizado
+        # La captura original tiene prioridad sobre un importe truncado por
+        # un scraper histórico. Mantiene también moneda, periodo y raw.
+        if precio_raw_observado not in (None, ""):
+            precio = NormalizadorPrecios.normalizar(precio_raw_observado)
         moneda = dto.moneda
 
         if isinstance(precio, PrecioValor):
             moneda = precio.moneda
-        elif isinstance(precio, int) and not isinstance(precio, bool):
+        elif isinstance(precio, (int, Decimal, float)) and not isinstance(precio, bool):
             precio = PrecioValor(valor=precio, moneda=moneda)
         elif precio is not None and hasattr(precio, "valor"):
             moneda = getattr(precio, "moneda", moneda)
@@ -74,7 +79,7 @@ class OfertaFactory:
             moneda=moneda,
             fecha_relevamiento=dto.fecha_relevamiento,
             servicio_raw=dto.servicio_raw,
-            modalidad=modalidad,
+            modalidad=modalidad if modalidad is not None else dto.modalidad,
             precio_raw=precio_raw_observado,
         )
 

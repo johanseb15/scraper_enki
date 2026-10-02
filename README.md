@@ -1,5 +1,15 @@
 # Enki
 
+## Demo comercial local
+
+```powershell
+powershell -NoProfile -ExecutionPolicy Bypass -File .\iniciar-demo.ps1
+```
+
+Recorrido en español: **http://127.0.0.1:3000/mercado**. Fuentes verificadas,
+consultas offline, filtros, precio propio, hipótesis y límites visibles.
+Preparación, evidencia y guion de cinco minutos: [guía de demo](docs/DEMO-COMERCIAL.md).
+
 > **Enki reduce la incertidumbre económica al comprar, vender o contratar tecnología.**
 
 Enki es una plataforma de inteligencia de precios tecnológicos orientada a decisiones reales. Su objetivo principal es poder responder, con evidencia trazable y sin inventar precisión:

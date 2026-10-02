@@ -15,6 +15,7 @@ export function EnkiHeader() {
           <Link className="text-[var(--enki-teal-700)] underline decoration-[var(--enki-teal-400)] decoration-2 underline-offset-[18px]" href="/">Inicio</Link>
         </nav>
         <div className="flex items-center gap-2">
+          <Link className="rounded-md px-3 py-2 text-sm font-bold text-[var(--enki-teal-700)] focus-visible:ring-2" href="/mercado">Mercado</Link>
           <span className="hidden rounded-full bg-[var(--enki-teal-50)] px-3 py-1.5 text-xs font-bold text-[var(--enki-teal-700)] sm:inline-flex">Nuevo</span>
           <span className="grid size-9 place-items-center rounded-full bg-[var(--enki-amber-100)] text-xs font-extrabold text-[var(--enki-ink-900)]">AR</span>
         </div>

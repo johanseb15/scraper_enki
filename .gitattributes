@@ -1,2 +1,4 @@
 data/raw/near_comparable_v1/** -text -diff
 data/raw/near_comparable_v1/**/*.metadata.json text diff
+# Capturas HTTP: conservar exactamente los bytes que respaldan su SHA-256.
+data/demo/*.html -text -diff

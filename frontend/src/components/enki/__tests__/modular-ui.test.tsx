@@ -3,8 +3,13 @@ import userEvent from "@testing-library/user-event";
 import { DecisionState } from "@/components/enki/decision-state";
 import { MissingDimension } from "@/components/enki/missing-dimension";
 import { QuoteComposer } from "@/features/decision/components/QuoteComposer";
+import { EnkiHeader } from "@/components/enki/EnkiHeader";
 
 describe("modular Enki product UI", () => {
+  it("permite abrir el recorrido comercial desde la navegación", () => {
+    render(<EnkiHeader/>);
+    expect(screen.getByRole("link", {name:"Mercado"})).toHaveAttribute("href","/mercado");
+  });
   it("renders indeterminate DecisionState without inventing a score", () => {
     render(<DecisionState state="indeterminate" />);
 

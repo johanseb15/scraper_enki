@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from datetime import date
 from typing import Optional
+from decimal import Decimal
 
 
 @dataclass(frozen=True, init=False)
@@ -33,7 +34,7 @@ class OfertaDTO:
     servicio_raw: str
     equipo_raw: str
 
-    precio: Optional[int]
+    precio: Optional[int | Decimal]
     moneda: str
 
     fecha_relevamiento: Optional[date]
@@ -41,6 +42,7 @@ class OfertaDTO:
     precio_raw: Optional[str]
     precio_freelance_raw: Optional[str]
     precio_local_raw: Optional[str]
+    modalidad: Optional[str]
 
 
     def __init__(
@@ -59,6 +61,7 @@ class OfertaDTO:
         equipo_raw="",
         precio_freelance_raw=None,
         precio_local_raw=None,
+        modalidad=None,
     ):
 
         object.__setattr__(
@@ -132,6 +135,7 @@ class OfertaDTO:
             "fecha_relevamiento",
             fecha_relevamiento
         )
+        object.__setattr__(self, "modalidad", modalidad)
 
 
     @property

@@ -79,6 +79,8 @@ class CatalogoServicios:
                     "asistencia tecnica",
                     "mesa de ayuda",
                     "helpdesk",
+                    "conexión remota",
+                    "conexion remota",
                 ),
             ),
         ]

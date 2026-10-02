@@ -1,22 +1,23 @@
 from typing import Any, Iterable
+from decimal import Decimal
 
 from src.dominio.comparabilidad import es_observacion_puntual
 from src.dominio.servicios import ServicioCanonico
 
 
-def _extraer_monto(item: Any) -> float | None:
+def _extraer_monto(item: Any) -> Decimal | None:
     if item is None:
         return None
-    if isinstance(item, (int, float)):
-        return float(item)
+    if isinstance(item, (int, float, Decimal)):
+        return Decimal(str(item))
     if hasattr(item, "precio"):
         precio_val = item.precio
         if hasattr(precio_val, "monto"):
-            return float(precio_val.monto)
-        if isinstance(precio_val, (int, float)):
-            return float(precio_val)
+            return Decimal(str(precio_val.monto))
+        if isinstance(precio_val, (int, float, Decimal)):
+            return Decimal(str(precio_val))
     if hasattr(item, "monto"):
-        return float(item.monto)
+        return Decimal(str(item.monto))
     return None
 
 

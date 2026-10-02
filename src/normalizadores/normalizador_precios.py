@@ -1,4 +1,5 @@
 import re
+from decimal import Decimal
 
 from src.dominio.oferta import PrecioValor
 
@@ -6,7 +7,7 @@ from src.dominio.oferta import PrecioValor
 class NormalizadorPrecios:
     _PATRON_EXACTO = re.compile(
         r"^\s*(?:(?:AR\$|ARS|US\$|USD|U\$S|\$)\s*)?"
-        r"\d+(?:[.,]\d+)*"
+        r"(?:\d+(?:[.,]\d{1,2})?|\d{1,3}(?:\.\d{3})+(?:,\d{1,2})?|\d{1,3}(?:,\d{3})+(?:\.\d{1,2})?)"
         r"\s*(?:(?:ARS|USD))?"
         r"(?:\s*(?:/|X)\s*MES)?\s*$",
         re.IGNORECASE,
@@ -44,8 +45,15 @@ class NormalizadorPrecios:
 
         texto = str(valor_crudo).upper()
         moneda = "USD" if "USD" in texto or "US$" in texto or "U$S" in texto else "ARS"
-        numeros = re.sub(r"[^\d]", "", texto)
-        valor = int(numeros) if numeros else 0
+        numero = re.search(r"\d+(?:[.,]\d+)*", texto).group()
+        # Un último separador con dos dígitos expresa centavos; los grupos
+        # de tres dígitos expresan miles en los tarifarios existentes.
+        if re.search(r"[.,]\d{1,2}$", numero):
+            entero, centavos = re.split(r"[.,](?=\d{1,2}$)", numero)
+            numero = re.sub(r"[.,]", "", entero) + "." + centavos
+        else:
+            numero = re.sub(r"[.,]", "", numero)
+        valor = Decimal(numero)
         periodo = "mensual" if "MES" in texto else None
 
-        return PrecioValor(valor=valor, moneda=moneda, periodo=periodo)
+        return PrecioValor(valor=valor, moneda=moneda, periodo=periodo, raw=valor_crudo)

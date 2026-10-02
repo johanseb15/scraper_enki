@@ -1,4 +1,5 @@
 import sqlite3
+from decimal import Decimal
 from contextlib import closing
 from datetime import date
 
@@ -21,6 +22,7 @@ class RepositorioSQLiteOfertas:
         "modalidad": "TEXT",
         "precio_raw": "TEXT",
         "periodo": "TEXT",
+        "precio_decimal": "TEXT",
     }
     _COLUMNAS_BASE_ACTUALES = {
         "empresa",
@@ -62,6 +64,14 @@ class RepositorioSQLiteOfertas:
         conexion = sqlite3.connect(self.ruta_db)
         conexion.row_factory = sqlite3.Row
         return conexion
+
+    @staticmethod
+    def _texto_decimal(valor) -> str:
+        texto = format(Decimal(str(valor)), "f")
+        entero, punto, decimales = texto.partition(".")
+        if not punto:
+            return entero + ".00"
+        return entero + "." + decimales.rstrip("0").ljust(2, "0")
 
     @staticmethod
     def _tabla_ofertas_existe(conexion: sqlite3.Connection) -> bool:
@@ -137,11 +147,16 @@ class RepositorioSQLiteOfertas:
                 fila["name"]
                 for fila in conexion.execute("PRAGMA table_info(ofertas)")
             }
+            for fila in conexion.execute("SELECT id, precio FROM ofertas WHERE precio_decimal IS NULL AND precio IS NOT NULL").fetchall():
+                conexion.execute("UPDATE ofertas SET precio_decimal = ? WHERE id = ?",(self._texto_decimal(fila["precio"]),fila["id"]))
             if self._COLUMNAS_IDENTIDAD.issubset(columnas):
+                # El índice previo usaba REAL como identidad cuando faltaba raw.
+                # La nueva identidad conserva los centavos y las observaciones.
+                conexion.execute("DROP INDEX IF EXISTS idx_ofertas_observacion_unica")
                 conexion.execute(
                     """
                     CREATE UNIQUE INDEX IF NOT EXISTS
-                        idx_ofertas_observacion_unica
+                        idx_ofertas_observacion_exacta_v2
                     ON ofertas (
                         COALESCE(empresa, X'00'),
                         COALESCE(fuente, X'00'),
@@ -154,6 +169,7 @@ class RepositorioSQLiteOfertas:
                         ),
                         COALESCE(
                             NULLIF(precio_raw, ''),
+                            precio_decimal,
                             precio,
                             X'00'
                         ),
@@ -197,16 +213,17 @@ class RepositorioSQLiteOfertas:
                     servicio_raw,
                     modalidad,
                     precio_raw,
-                    periodo
+                    periodo,
+                    precio_decimal
                 )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ON CONFLICT DO NOTHING
                 """,
                 (
                     oferta.empresa.nombre,
                     oferta.empresa.fuente,
                     servicio,
-                    precio,
+                    self._texto_decimal(precio),
                     oferta.moneda,
                     oferta.empresa.provincia,
                     oferta.empresa.ciudad,
@@ -215,6 +232,7 @@ class RepositorioSQLiteOfertas:
                     oferta.modalidad,
                     oferta.precio_raw,
                     getattr(oferta.precio, "periodo", None),
+                    self._texto_decimal(precio),
                 ),
             )
         return oferta
@@ -240,7 +258,7 @@ class RepositorioSQLiteOfertas:
             fuente=fila["fuente"],
         )
         precio = (
-            PrecioValor(fila["precio"], fila["moneda"], fila["periodo"])
+            PrecioValor(fila["precio_decimal"] or str(fila["precio"]), fila["moneda"], fila["periodo"], fila["precio_raw"])
             if fila["precio"] is not None
             else None
         )

@@ -44,3 +44,10 @@ data/live_diagnostics/
 data/live_specific/
 data/live_temporal_strong/
 scraper_enki.xml
+
+# Verificaciones y procesos locales de la demo
+.demo-runtime/
+*-suite.log
+baseline-demo.log
+frontend/frontend-build.log
+frontend/frontend-tests.log

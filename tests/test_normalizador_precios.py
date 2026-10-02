@@ -1,4 +1,12 @@
 from src.normalizadores.normalizador_precios import NormalizadorPrecios
+from decimal import Decimal
+
+
+def test_centavos_decimal_y_texto_original():
+    resultado = NormalizadorPrecios.normalizar("$1.299,50")
+    assert resultado.valor == Decimal("1299.50")
+    assert isinstance(resultado.valor, Decimal)
+    assert resultado.raw == "$1.299,50"
 
 
 def test_normaliza_precio_argentino_con_simbolo_y_separadores():

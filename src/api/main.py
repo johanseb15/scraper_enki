@@ -14,9 +14,11 @@ from src.infraestructura.sqlite.repositorio_sqlite_ofertas import RepositorioSQL
 from src.normalizadores.normalizador_servicios import NormalizadorServicios
 from src.reporte import generar_resumen_servicio
 from src.dominio.commercial_context import serialize_commercial_context
+from src.api.market import router as market_router
 
 
 app = FastAPI(title="Enki API", version="0.2.0")
+app.include_router(market_router)
 
 app.add_middleware(
     CORSMiddleware,

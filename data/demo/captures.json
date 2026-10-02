@@ -1,0 +1,20 @@
+[
+  {
+    "id": "bairescloud",
+    "path": "bairescloud.html",
+    "sha256": "f043c1c79553ce3df13c9a0984c9287c0d77fa321d2ac7b61393a3d330788b0a",
+    "source_url": "https://bairescloud.ar/servicio-tecnico.php",
+    "captured_at": "2026-10-02T14:10:52.225398+00:00",
+    "http_status": 200,
+    "effective_date": null
+  },
+  {
+    "id": "bitz",
+    "path": "bitz.html",
+    "sha256": "5b1e5f5de21a0ae263162d57f6d58fc0c45c250f1699cd0f282c5f631cfcae2c",
+    "source_url": "https://bitz.com.ar/tarifas-de-servicio-tecnico",
+    "captured_at": "2026-10-02T14:10:54.535054+00:00",
+    "http_status": 200,
+    "effective_date": null
+  }
+]

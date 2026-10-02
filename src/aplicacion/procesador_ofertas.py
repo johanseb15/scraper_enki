@@ -182,4 +182,5 @@ class ProcesadorOfertas:
             precio_raw=getattr(dto, "precio_raw", None),
             precio_freelance_raw=getattr(dto, "precio_freelance_raw", None),
             precio_local_raw=getattr(dto, "precio_local_raw", None),
+            modalidad=getattr(dto, "modalidad", None),
         )
