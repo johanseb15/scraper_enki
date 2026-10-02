@@ -174,6 +174,7 @@ def resolver_consulta_pricing(
         and compare_commercial_contexts(
             c.commercial_context,
             commercial_context,
+            canonical_service=canonical_service,
         )
         is CommercialContextCompatibility.COMPATIBLE
     ]

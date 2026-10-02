@@ -9,6 +9,7 @@ from src.dominio.commercial_context import (
     CommercialContext,
     CommercialContextCompatibility,
     CommercialContextOrigin,
+    PARTS_SCOPE_SENSITIVE_SERVICES,
     compare_commercial_contexts,
     commercial_context_from_value,
 )
@@ -115,6 +116,27 @@ def evaluar_precio(
         commercial_context,
         origin=CommercialContextOrigin.USER_CLAIM,
     )
+    cohortes = tuple(cohortes)
+    if canonical_service in PARTS_SCOPE_SENSITIVE_SERVICES:
+        scoped_ids = [
+            c.evidence_id for c in cohortes
+            if c.market == market
+            and c.canonical_service == canonical_service
+            and (
+                price_scope is None
+                or compare_price_scopes(c.price_scope, price_scope)
+                is ScopeCompatibility.COMPATIBLE
+            )
+            and c.commercial_context.value is query_context.value
+        ]
+        if len(scoped_ids) != len(set(scoped_ids)):
+            return ResultadoEvidenciaPrecio(
+                status="NO_EVIDENCE",
+                market=market,
+                canonical_service=canonical_service,
+                price_scope=price_scope or "UNKNOWN",
+                commercial_context=query_context,
+            )
     cohort = next(
         (
             c for c in cohortes
@@ -127,6 +149,7 @@ def evaluar_precio(
             and compare_commercial_contexts(
                 c.commercial_context,
                 query_context,
+                canonical_service=canonical_service,
             ) is CommercialContextCompatibility.COMPATIBLE
         ),
         None,

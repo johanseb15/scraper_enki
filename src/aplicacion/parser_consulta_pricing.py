@@ -475,7 +475,7 @@ def device(t):
 
 def _economic_clauses(text: str) -> list[str]:
     return re.split(
-        r"(?<=[.!?])\s+(?=[a-z])|,\s*pero\s+|,\s*(?=me (?:ofrecieron|ofrecen)\b)",
+        r"(?<=[.!?])\s+(?=[a-z])|;\s*|,\s*pero\s+|\s+pero\s+(?=(?:ahora|actualmente|hoy|esta vez)\b)|,\s*(?=me (?:ofrecieron|ofrecen)\b)",
         fold(text),
     )
 
@@ -588,20 +588,61 @@ def _resolve_condition(text: str, device_type: str | None) -> str:
         return "UNKNOWN"
     return conditions.pop()
 def parts(t):
-    x=fold(t)
-    if re.search(r"\b(?:solo|solamente) (?:de )?(?:la )?mano de obra\b|\bsin repuesto\b",x): return PartsScope.LABOR_ONLY
-    if (
-        re.search(r"\bmano de obra\b", x)
-        and re.search(
-            r"\b(?:el |la )?(?:repuesto|ssd|disco|fuente|teclado|pantalla)\b"
-            r"[^.!?]{0,40}\bva aparte\b",
-            x,
-        )
-    ):
-        return PartsScope.LABOR_ONLY
-    if re.search(r"\bincluye (?:el |la |los |las )?(?:repuesto|panel|pantalla|ssd|fuente|teclado|materiales)\b",x): return PartsScope.PARTS_INCLUDED
-    if re.search(r"\bya (?:tengo|compre|compro) (?:el |la )?(?:repuesto|ssd|fuente|teclado|pantalla)\b",x): return PartsScope.USER_PROVIDED
-    return PartsScope.UNKNOWN
+    clauses = _economic_clauses(t)
+    historical = r"\b(?:antes|anterior|pasad[oa]|previo|previamente)\b"
+    current = r"\b(?:ahora|actualmente|hoy|esta vez)\b"
+    current_anchors = [
+        i for i, clause in enumerate(clauses)
+        if re.search(current, clause) and _has_explicit_economic_intent(clause)
+    ]
+    economic_anchors = [
+        i for i, clause in enumerate(clauses)
+        if _has_explicit_economic_intent(clause)
+        and not re.search(historical, clause)
+    ]
+    anchors = current_anchors or economic_anchors
+    relevant = []
+    if anchors:
+        for i in anchors:
+            relevant.append(clauses[i])
+            for detail in clauses[i + 1:]:
+                if (
+                    re.search(historical, detail)
+                    or re.search(current, detail)
+                    or _has_explicit_economic_intent(detail)
+                ):
+                    break
+                relevant.append(detail)
+    else:
+        relevant = [
+            clause for clause in clauses
+            if not re.search(historical, clause)
+        ]
+
+    claims = set()
+    for clause in relevant:
+        if re.search(r"\b(?:solo|solamente) (?:de )?(?:la )?mano de obra\b", clause):
+            claims.add(PartsScope.LABOR_ONLY)
+        for match in re.finditer(r"\bsin repuesto\b", clause):
+            if not re.search(r"\bno\s+(?:\w+\s+){0,2}$", clause[:match.start()]):
+                claims.add(PartsScope.LABOR_ONLY)
+        if (
+            re.search(r"\bmano de obra\b", clause)
+            and re.search(
+                r"\b(?:el |la )?(?:repuesto|ssd|disco|fuente|teclado|pantalla)\b"
+                r"[^.!?]{0,40}\bva aparte\b",
+                clause,
+            )
+        ):
+            claims.add(PartsScope.LABOR_ONLY)
+        for match in re.finditer(r"\b(?:incluye|incluia) (?:el |la |los |las )?(?:repuesto|panel|pantalla|ssd|fuente|teclado|materiales)\b", clause):
+            if re.search(r"\b(?:no|nunca|tampoco)\s+(?:(?:me|se|te|nos)\s+)?$", clause[:match.start()]):
+                claims.add(PartsScope.LABOR_ONLY)
+            else:
+                claims.add(PartsScope.PARTS_INCLUDED)
+        if re.search(r"\b(?:ya (?:tengo|compre|compro)|yo (?:pongo|aporto)) (?:el |la )?(?:repuesto|ssd|fuente|teclado|pantalla)\b", clause):
+            claims.add(PartsScope.USER_PROVIDED)
+    return claims.pop() if len(claims) == 1 else PartsScope.UNKNOWN
 
 
 
