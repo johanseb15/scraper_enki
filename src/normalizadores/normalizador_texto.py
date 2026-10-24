@@ -8,5 +8,5 @@ def normalizar_texto(texto: str) -> str:
         return ""
     texto = unicodedata.normalize("NFD", texto)
     texto = "".join(c for c in texto if unicodedata.category(c) != "Mn")
-    texto = re.sub(r"[^\w\s]", "", texto)
-    return texto.strip().lower()
+    texto = re.sub(r"[^\w\s]+", " ", texto)
+    return " ".join(texto.lower().split())
