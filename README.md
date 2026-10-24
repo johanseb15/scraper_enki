@@ -1,3 +1,29 @@
+<!-- VYNTRAVA / ENKI SIGNAL : SHOWCASE -->
+<div align="center">
+
+# ENKI · Price intelligence with evidence
+
+**Datos de precios que conservan su contexto. Decisiones que no dependen de adivinar.**
+
+**[Explorar la demo interactiva](https://johanseb15.github.io/scraper_enki/)** · **[Ver las muestras y el código del showcase](https://github.com/johanseb15/scraper_enki/tree/gh-pages)**
+
+</div>
+
+### Dos casos comerciales de referencia
+
+| Caso | Combinaciones | Qué demuestra |
+| --- | ---: | --- |
+| **Celavie — Top Deportivo** | 15 observaciones comunicadas | Precio unitario y total por cantidad, 5 variantes, stock visible |
+| **IdentiBasics — Cotizador** | 6 observaciones comunicadas | Precios escalonados y distinción entre importe **«Desde»** y cotización definitiva |
+
+> **Transparencia:** La [vitrina ENKI Signal](https://johanseb15.github.io/scraper_enki/) es una demostración estática e interactiva basada en resultados comunicados de una corrida con Playwright del 24/10/2026. **No consulta comercios en vivo, no es una auditoría independiente y no acredita integración con los sitios de un cliente**. Los comercios citados son ejemplos de referencia, sin vinculación comercial.
+
+**Stack del caso:** Python · Playwright · SQLite · JSON/CSV · evidencias HTML · historial de capturas · criterios de calidad ADEL.
+
+**Vyntrava Technologies:** ingeniería de automatizaciones e inteligencia comercial. La página pública presenta la experiencia y los datos de referencia; el módulo operativo del monitor no se incluye en el sitio de demostración.
+
+---
+
 # Enki
 
 > **Enki reduce la incertidumbre económica al comprar, vender o contratar tecnología.**
