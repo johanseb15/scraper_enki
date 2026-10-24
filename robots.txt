@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://johanseb15.github.io/scraper_enki/sitemap.xml
