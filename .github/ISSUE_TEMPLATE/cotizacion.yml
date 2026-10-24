@@ -1,0 +1,71 @@
+name: "Solicitar diagnóstico ENKI Signal"
+description: "Contanos qué tipo de monitoreo de precios necesitás. Esta solicitud será pública."
+title: "[Consulta comercial] "
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Gracias por tu interés en **ENKI Signal · Vyntrava Technologies**.
+
+        **Atención:** las solicitudes de GitHub Issues son públicas. No compartas datos personales, direcciones de correo, contraseñas, contratos, información reservada ni URLs privadas. Podemos delimitar el trabajo inicial usando datos generales.
+        Este formulario **no constituye un presupuesto, contrato ni compromiso de prestación del servicio**.
+  - type: dropdown
+    id: tipo
+    attributes:
+      label: ¿Qué necesitás resolver?
+      options:
+        - Monitorear precios de competidores
+        - Registrar variantes, cantidades y stock
+        - Detectar cambios entre ejecuciones
+        - Automatizar un catálogo y exportar CSV/JSON
+        - Otro caso de automatización comercial
+    validations:
+      required: true
+  - type: input
+    id: rubro
+    attributes:
+      label: Rubro o categoría
+      description: Indicá solo información comercial pública o general.
+      placeholder: "Ej.: indumentaria mayorista, ferretería, tecnología"
+    validations:
+      required: true
+  - type: dropdown
+    id: fuentes
+    attributes:
+      label: Aproximadamente, ¿cuántos sitios?
+      options:
+        - "1"
+        - "2–3"
+        - "4–10"
+        - "Más de 10"
+        - "A definir"
+    validations:
+      required: true
+  - type: dropdown
+    id: frecuencia
+    attributes:
+      label: ¿Cada cuánto necesitás actualizar los precios?
+      options:
+        - Una vez / prueba inicial
+        - Diariamente
+        - Semanalmente
+        - Varias veces por día (a evaluar)
+        - A definir
+    validations:
+      required: true
+  - type: textarea
+    id: resultado
+    attributes:
+      label: ¿Qué resultado te sería útil?
+      description: Describí el entregable esperado y las combinaciones a monitorear, sin información confidencial.
+      placeholder: "Ej.: CSV diario con precios por talle, color y cantidad; historial de cambios en Windows."
+    validations:
+      required: true
+  - type: checkboxes
+    id: acknowledgment
+    attributes:
+      label: Confirmación
+      options:
+        - label: Entiendo que esta solicitud es pública y no compartiré información sensible.
+          required: true
