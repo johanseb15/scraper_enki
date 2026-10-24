@@ -7,9 +7,15 @@
 
 **Datos de precios que conservan su contexto. Decisiones que no dependen de adivinar.**
 
-**[Explorar la demo interactiva](https://johanseb15.github.io/scraper_enki/)** · **[Ver las muestras y el código del showcase](https://github.com/johanseb15/scraper_enki/tree/gh-pages)**
+**[Explorar la demo interactiva](https://johanseb15.github.io/scraper_enki/)** · **[Solicitar evaluación comercial](https://github.com/johanseb15/scraper_enki/issues/new?template=cotizacion.yml)** · **[Ver oferta y alcance](docs/ENKI_SIGNAL_OFERTA_COMERCIAL.md)**
 
 </div>
+
+### ENKI Signal para negocios
+
+**¿Tu competencia cambia precios por color, talle, cantidad o configuración?** Podemos evaluar una adaptación a tus comercios autorizados: captura trazable, diferencias entre precio exacto e indicativo, historial SQLite, reportes CSV/JSON y operación documentada.
+
+**[Solicitar evaluación comercial](https://github.com/johanseb15/scraper_enki/issues/new?template=cotizacion.yml)** · Alcance y cotización a medida. *GitHub Issues es público: no incluyas datos sensibles.*
 
 ### Dos casos comerciales de referencia
 
