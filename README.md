@@ -1,3 +1,26 @@
+# scraper_enki
+
+> **Ficha de proyecto — Vyntrava | 2026-11-20**
+> Revisión documental del repositorio. Esta ficha no certifica un despliegue ni un estado de producción.
+
+## Para qué sirve
+
+**Enki Signal — demostración pública de inteligencia de precios.** Producto experimental de captura y normalización de precios, con evidencia, histórico, scripts Python y demo interactiva estática de Enki Signal.
+
+## Estado y límites
+
+La demostración pública no representa datos en tiempo real ni autoriza extrapolaciones a otras cohortes. Las decisiones comerciales requieren vigencia, alcance, comparabilidad y atribución de evidencia.
+
+## Lugar en el portfolio
+
+Showcase técnico público del producto. El desarrollo y los laboratorios privados se mantienen en EnkiLabWorkspace; no sincronizar automáticamente sus ramas.
+
+[Consultar repositorio](https://github.com/johanseb15/scraper_enki)
+
+---
+
+> **README técnico original:** se conserva íntegro a continuación.
+
 <!-- VYNTRAVA / ENKI SIGNAL : SHOWCASE -->
 <p align="center"><a href="https://johanseb15.github.io/scraper_enki/"><img src="https://raw.githubusercontent.com/johanseb15/scraper_enki/gh-pages/banner.svg" width="100%" alt="ENKI Signal · Vyntrava Technologies · demo comercial de inteligencia de precios"/></a></p>
 
